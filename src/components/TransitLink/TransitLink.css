@@ -1,0 +1,8 @@
+@import '../variables.css';
+
+.container {
+  display: inline-block;
+  border: 1px solid #eeeeee;
+  height: 48px;
+  padding: 6px;
+}
