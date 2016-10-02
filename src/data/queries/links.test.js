@@ -5,17 +5,17 @@ const test = tester({
   url: 'http://localhost:3000/graphql',
   contentType: 'application/json'
 });
+
+const createLinkMutation = JSON.stringify({
+  query: 'mutation ($link:TransitLinkInput!) {link(link:$link) {from {name,lat,lng}, to {name,lat,lng}}}',
+  variables: { link: { from: 'moscow', to: 'helsinki' } }
+});
  
 describe('data/queries/links', () => {
 
   it('should create new link', async () => {
-    
-    const query = JSON.stringify({
-      query: 'mutation ($link:TransitLinkInput!) {link(link:$link) {from {name,lat,lng}, to {name,lat,lng}}}',
-      variables: { link: { from: 'ChIJybDUc_xKtUYRTM9XV8zWRD0', to: 'ChIJA280k5i_3ocRe-IAInh_ilY' } }
-    });
-    
-    const response = await test(query);
+        
+    const response = await test(createLinkMutation);
     
     assert(response.success == true);
     assert(response.status == 200); 
@@ -24,6 +24,8 @@ describe('data/queries/links', () => {
   });
 
   it('returns links by locality id', async () => {
+        
+    await test(createLinkMutation);
     
     const query = JSON.stringify({
       query: 'query {links(localityId:1) {from {name,lat,lng}, to {name,lat,lng}}}',
@@ -39,6 +41,8 @@ describe('data/queries/links', () => {
   });
   
   it('returns link by id', async () => {
+    
+    await test(createLinkMutation);
     
     const query = JSON.stringify({
       query: 'query {link(id:1) {from {name,lat,lng}, to {name,lat,lng}}}',
