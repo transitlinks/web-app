@@ -29,6 +29,7 @@ import assets from './assets'; // eslint-disable-line import/no-unresolved
 
 //import { HTTP_HOST, HTTP_PORT, locales } from './config';
 
+console.log("ENV VARS", HTTP_HOST, HTTP_PORT, locales);
 const app = express();
 app.schema = schema;
 app.assets = assets;
