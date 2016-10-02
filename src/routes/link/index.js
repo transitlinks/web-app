@@ -11,7 +11,6 @@ export default {
 
   async action({ params, context }) {
     
-    console.log("call new path", params);    
     if (params.id) {
       
       const { graphqlRequest } = context.store.helpers;

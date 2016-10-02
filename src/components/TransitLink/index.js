@@ -6,9 +6,13 @@ import FontIcon from 'material-ui/FontIcon';
 function TransitLink({ link }) {
   return (
     <div className={s.container}>
-      <span id="place-from">{link.from.name}</span>
-      <FontIcon className="material-icons">arrow_forward</FontIcon>
-      <span id="place-to">{link.to.name}</span>
+      <div className={s.header}>
+        <div className={s.title}>
+          <span id="place-from">{link.from.name}</span>
+          <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
+          <span id="place-to">{link.to.name}</span>
+        </div>
+      </div>
     </div>
   );
 }

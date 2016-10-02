@@ -2,6 +2,7 @@ import { graphqlReduce } from './utils';
 import { navigate } from '../actions/route';
 import {
   SELECTED_LOCALITY,
+  SET_TRANSPORT,
   SAVE_LINK_START,
   SAVE_LINK_SUCCESS,
   SAVE_LINK_ERROR,
@@ -16,6 +17,8 @@ export default function editLink(state = null, action) {
       const endState = { ...state };
       endState[action.payload.endpoint] = action.payload.locality;
       return endState;    
+    case SET_TRANSPORT:
+      return { ...state, transport: action.payload.transport };
     case LINK_RESET:
       return { ...state, link: null };
 

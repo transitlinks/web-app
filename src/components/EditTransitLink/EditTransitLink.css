@@ -5,3 +5,26 @@
   height: 48px;
   padding: 6px;
 }
+
+.header {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.header .title {
+  font-size: 24px;
+}
+
+.endpoints {
+  display: flex;
+  align-items: center;
+}
+
+.endpoints .arrow {
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.save {
+  margin-top: 12px;
+}

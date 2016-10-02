@@ -1,6 +1,7 @@
 import { graphqlAction } from './utils';
 import {
   SELECTED_LOCALITY,
+  SET_TRANSPORT,
   SAVE_LINK_START,
   SAVE_LINK_SUCCESS,
   SAVE_LINK_ERROR,
@@ -16,6 +17,23 @@ export function selectLocality({ endpoint, locality }) {
       payload: {
         endpoint,
         locality
+      },
+    });
+
+    return true;
+  
+  };
+
+}
+
+export function setTransport(transport) {
+  
+  return async (dispatch) => {
+    
+    dispatch({
+      type: SET_TRANSPORT,
+      payload: {
+        transport
       },
     });
 

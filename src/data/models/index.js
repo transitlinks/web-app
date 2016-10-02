@@ -2,6 +2,8 @@ import sequelize from '../sequelize';
 import User from './User';
 import Locality from './Locality';
 import TransitLink from './TransitLink';
+import LinkInstance from './LinkInstance';
+import TransportType from './TransportType';
 
 TransitLink.belongsTo(Locality, {
   foreignKey: 'fromId',
@@ -13,9 +15,14 @@ TransitLink.belongsTo(Locality, {
   as: 'to'
 });
 
+LinkInstance.belongsTo(TransportType, {
+  foreignKey: 'transportId',
+  as: 'transport'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink };
+export { User, Locality, TransitLink, LinkInstance, TransportType };

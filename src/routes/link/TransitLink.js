@@ -48,7 +48,6 @@ class TransitLink extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1 className={s.title}>Link</h1>
           { 
             !this.state.edit ?
               <ViewTransitLink link={link} /> :
