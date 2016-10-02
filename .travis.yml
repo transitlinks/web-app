@@ -13,7 +13,6 @@ cache:
   bundler: true
   directories:
   	- node_modules # NPM packages
-before_script:
-  - ./start.sh
+before_script: ./start.sh
 script:
   - npm run test
