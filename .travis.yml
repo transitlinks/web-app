@@ -9,7 +9,11 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+cache:
+  bundler: true
+  directories:
+  	- node_modules # NPM packages
 before_script:
-  - npm start -- --test
+  - ./start.sh
 script:
   - npm run test

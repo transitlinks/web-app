@@ -11,3 +11,4 @@ docker/web-app/deploy.sh
 test/e2e/lib
 .env*
 *.swp
+log.txt
