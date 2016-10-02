@@ -43,8 +43,16 @@ function runServer(cb) {
     server.kill('SIGTERM');
   }
 
+  const properties = {
+    NODE_ENV: 'development'
+  };
+
+  if (process.argv.includes('--test')) {
+    properties.TEST_ENV = 'test';
+  }
+
   server = cp.spawn('node', [serverPath], {
-    env: Object.assign({ NODE_ENV: 'development' }, process.env),
+    env: Object.assign(properties, process.env),
     silent: false,
   });
   if (cbIsPending) {

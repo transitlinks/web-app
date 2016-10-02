@@ -1,6 +1,6 @@
 import { GraphQLList, GraphQLString } from 'graphql';
 import LocalityType from '../types/LocalityType';
-import placesApi from '../source/placesApi';
+import { placesApi } from '../source';
 
 export default {
 

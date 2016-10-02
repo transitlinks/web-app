@@ -43,6 +43,7 @@
     "pg": "^6.1.0",
     "pg-hstore": "^2.3.2",
     "pretty-error": "2.0.0",
+    "properties": "^1.2.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-hot-loader": "^3.0.0-beta.2",

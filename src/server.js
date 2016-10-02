@@ -22,9 +22,12 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import { initEndpoints } from './routes';
+
 import { HTTP_HOST, HTTP_PORT, locales } from './config';
 
 import assets from './assets'; // eslint-disable-line import/no-unresolved
+
+//import { HTTP_HOST, HTTP_PORT, locales } from './config';
 
 const app = express();
 app.schema = schema;

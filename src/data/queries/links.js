@@ -1,9 +1,11 @@
 import { getLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
-import localityRepo from '../source/localityRepository';
-import linkRepo from '../source/linkRepository';
-import placesApi from '../source/placesApi';
+import { 
+  localityRepository, 
+  linkRepository, 
+  placesApi 
+} from '../source';
 
 import { TransitLinkType, TransitLinkInputType } from '../types/TransitLinkType';
 import {
@@ -16,14 +18,14 @@ import {
 
 const getOrCreateLocality = async (apiId) => {
   
-  let locality = await localityRepo.getByApiId(apiId); 
+  let locality = await localityRepository.getByApiId(apiId); 
 
   if (!locality) {
     
     const details = await placesApi.getDetails(apiId);
     const { lat, lng } = details.geometry.location;
     locality = { apiId, name: details.formatted_address, lat, lng };
-    locality = await localityRepo.create(locality);
+    locality = await localityRepository.create(locality);
   
   }
 
@@ -42,10 +44,10 @@ const createOrUpdateLink = async (link) => {
       throw new Error('Cannot create link: invalid place id');
     }
  
-    return await linkRepo.create({ fromId: from.id, toId: to.id });
+    return await linkRepository.create({ fromId: from.id, toId: to.id });
 
   } else { // Update existing link
-    return await linkRepo.update(link);
+    return await linkRepository.update(link);
   }
 
 };
@@ -78,7 +80,7 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, { id }) => {
       
-      const link = await linkRepo.getById(id);
+      const link = await linkRepository.getById(id);
       if (!link) {
         throw new Error(`Link (id ${id}) not found`);
       }
@@ -97,7 +99,7 @@ export const TransitLinkQueryFields = {
       localityId: { type: GraphQLInt }
     },
     resolve: async ({ request }, { localityId }) => {
-      return linkRepo.getByLocalityId(localityId); 
+      return linkRepository.getByLocalityId(localityId); 
     }
   
   }
