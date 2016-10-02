@@ -26,12 +26,12 @@ const createLink = async (link) => {
 describe('data/queries/links', () => {
 
   it('should create new link', async () => {
-    createLink(validLink); 
+    await createLink(validLink); 
   });
 
   it('returns links by locality id', async () => {
         
-    createLink(validLink); 
+    await createLink(validLink); 
     
     const query = JSON.stringify({
       query: 'query {links(localityId:1) {from {name,lat,lng}, to {name,lat,lng}}}',
@@ -48,7 +48,7 @@ describe('data/queries/links', () => {
   
   it('returns link by id', async () => {
     
-    createLink(validLink);
+    await createLink(validLink);
     
     const query = JSON.stringify({
       query: 'query {link(id:1) {from {name,lat,lng}, to {name,lat,lng}}}',
