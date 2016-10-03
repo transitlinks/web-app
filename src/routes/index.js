@@ -18,6 +18,7 @@ import App from '../components/App';
 import home from './home';
 import search from './search';
 import link from './link';
+import linkInstance from './linkInstance';
 import login from './login';
 import content from './content';
 import error from './error';
@@ -34,6 +35,7 @@ const routes = {
     login,
     search,
     link,
+    linkInstance,
     // place new routes before...
     content,
     error,

@@ -23,7 +23,7 @@ const TransportType = Model.define('TransportType', {
 
   indexes: [
     { fields: [ 'id', 'uuid', 'slug' ] },
-  ],
+  ]
 
 });
 

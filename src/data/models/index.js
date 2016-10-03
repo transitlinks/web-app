@@ -15,6 +15,11 @@ TransitLink.belongsTo(Locality, {
   as: 'to'
 });
 
+LinkInstance.belongsTo(TransitLink, {
+  foreignKey: 'linkId',
+  as: 'link'
+});
+
 LinkInstance.belongsTo(TransportType, {
   foreignKey: 'transportId',
   as: 'transport'

@@ -1,4 +1,5 @@
 import LocalityType from './LocalityType';
+import TransportTypeType from './TransportTypeType';
 import {
   GraphQLObjectType,
   GraphQLInputObjectType,
@@ -24,6 +25,27 @@ export const TransitLinkInputType = new GraphQLInputObjectType({
     id: { type: GraphQLInt },
     from: { type: new GraphQLNonNull(GraphQLString) },
     to: { type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+export const LinkInstanceType = new GraphQLObjectType({
+  name: 'LinkInstance',
+  description: 'An instance of travel between places in the link.',
+  fields: () => ({
+    id: { type: new GraphQLNonNull(GraphQLInt) },
+    link: { type: TransitLinkType },
+    transport: { type: TransportTypeType }
+  })
+});
+
+export const LinkInstanceInputType = new GraphQLInputObjectType({
+  name: 'LinkInstanceInput',
+  description: 'Input properties for LinkInstance.',
+  fields: () => ({
+    id: { type: GraphQLInt },
+    from: { type: new GraphQLNonNull(GraphQLString) },
+    to: { type: new GraphQLNonNull(GraphQLString) },
+    transport: { type: new GraphQLNonNull(GraphQLString) }
   })
 });
 

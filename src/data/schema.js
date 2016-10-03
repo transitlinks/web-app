@@ -18,6 +18,7 @@ const schema = new Schema({
       content,
       localities,
       link: TransitLinkQueryFields.link,
+      linkInstance: TransitLinkQueryFields.linkInstance,
       links: TransitLinkQueryFields.links,
       intl
     },
@@ -25,7 +26,7 @@ const schema = new Schema({
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
-      link: TransitLinkMutationFields.link
+      linkInstance: TransitLinkMutationFields.linkInstance
     },
   })
 });

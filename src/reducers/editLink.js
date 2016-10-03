@@ -27,11 +27,14 @@ export default function editLink(state = null, action) {
   return graphqlReduce(
     state, action,
     { 
-      start: () => ({ link: null }), 
+      start: () => ({ linkInstance: null }), 
       success: () => ({ 
-        link: Object.assign(action.payload.link, { saved: (new Date()).getTime() })
+        linkInstance: Object.assign(
+          action.payload.linkInstance, 
+          { saved: (new Date()).getTime() }
+        )
       }), 
-      error: () => ({ link: null })
+      error: () => ({ linkInstance: null })
     },
     SAVE_LINK_START,
     SAVE_LINK_SUCCESS,

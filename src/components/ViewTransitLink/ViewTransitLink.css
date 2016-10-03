@@ -1,0 +1,22 @@
+@import '../variables.css';
+
+.container {
+  display: inline-block;
+  height: 48px;
+  padding: 6px;
+}
+
+.header {
+  margin-top: 6px;
+}
+
+.header .title {
+  font-size: 24px;
+  display: flex;
+  align-items: center; 
+}
+
+.header .title .arrow {
+  margin-left: 6px;
+  margin-right: 6px;
+}

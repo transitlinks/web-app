@@ -7,7 +7,12 @@ import {
   placesApi 
 } from '../source';
 
-import { TransitLinkType, TransitLinkInputType } from '../types/TransitLinkType';
+import { 
+	TransitLinkType, 
+	TransitLinkInputType,
+	LinkInstanceType, 
+	LinkInstanceInputType, 
+} from '../types/TransitLinkType';
 import {
   GraphQLObjectType,
   GraphQLString,
@@ -33,19 +38,30 @@ const getOrCreateLocality = async (apiId) => {
 
 };
 
-const createOrUpdateLink = async (link) => {
-  
-  if (!link.id) { // Create new link
-        
-    const from = await getOrCreateLocality(link.from);
-    const to = await getOrCreateLocality(link.to);
+const createOrUpdateLink = async (linkInstance) => {
+ 	
+  if (!linkInstance.id) { // Create new link
+    
+    const from = await getOrCreateLocality(linkInstance.from);
+    const to = await getOrCreateLocality(linkInstance.to);
     
     if (!from || !to) {
       throw new Error('Cannot create link: invalid place id');
     }
- 
-    return await linkRepository.create({ fromId: from.id, toId: to.id });
-
+		
+		let link = await linkRepository.getByEndpoints(from.id, to.id); 
+    
+		if (!link) {
+			link = await linkRepository.create({ fromId: from.id, toId: to.id });
+		}
+		
+		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
+		
+		return await linkRepository.createInstance({ 
+			linkId: link.id,
+			transportId: transport.id 
+		});
+			
   } else { // Update existing link
     return await linkRepository.update(link);
   }
@@ -54,15 +70,15 @@ const createOrUpdateLink = async (link) => {
 
 export const TransitLinkMutationFields = {
   
-  link: {
+  linkInstance: {
     
-    type: TransitLinkType,
-    description: 'Create a new link',
+    type: LinkInstanceType,
+    description: 'Create a new link instance',
     args: {
-      link: { type: TransitLinkInputType }
+      linkInstance: { type: LinkInstanceInputType }
     },
-    resolve: async ({ request }, { link }) => {
-      return await createOrUpdateLink(link);
+    resolve: async ({ request }, { linkInstance }) => {
+      return await createOrUpdateLink(linkInstance);
     }
   
   }
@@ -86,6 +102,26 @@ export const TransitLinkQueryFields = {
       }
 
       return link;
+    
+    }
+  
+  },
+  
+	linkInstance: {
+    
+    type: LinkInstanceType,
+    description: 'Find a link instance by id',
+    args: {
+      id: { type: GraphQLInt }
+    },
+    resolve: async ({ request }, { id }) => {
+      
+      const linkInstance = await linkRepository.getInstanceById(id);
+      if (!linkInstance) {
+        throw new Error(`Link instance (id ${id}) not found`);
+      }
+
+      return linkInstance;
     
     }
   

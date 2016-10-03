@@ -1,9 +1,12 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './TransitLink.css';
+import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 
-function TransitLink({ link }) {
+const ViewLinkInstance = ({ linkInstance }) => {
+  
+  const { link, transport } = linkInstance;
+  
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -13,8 +16,11 @@ function TransitLink({ link }) {
           <span id="place-to">{link.to.name}</span>
         </div>
       </div>
+      <div>
+        {transport.slug}
+      </div>
     </div>
   );
 }
 
-export default withStyles(s)(TransitLink);
+export default withStyles(s)(ViewLinkInstance);

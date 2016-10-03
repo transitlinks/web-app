@@ -51,26 +51,32 @@ export function resetLink() {
   };
 }
 
-export function saveLink({ link }) {
+export function saveLinkInstance({ linkInstance }) {
   
   return async (...args) => {
     
-    let json = JSON.stringify(link);
+    let json = JSON.stringify(linkInstance);
     json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
     json = json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\""); 
     const query = `
-      mutation saveLink {
-        link(link:${json}) {
+      mutation saveLinkInstance {
+        linkInstance(linkInstance:${json}) {
           id,
-          from{id,name,lat,lng},
-          to{id,name,lat,lng}
+          link {
+            id,
+            from{id,name,lat,lng},
+            to{id,name,lat,lng}
+          },
+          transport {
+            slug
+          }
         }
       }
     `;
 
     return graphqlAction(
       ...args, 
-      { query }, [ 'link' ],
+      { query }, [ 'linkInstance' ],
       SAVE_LINK_START,
       SAVE_LINK_SUCCESS,
       SAVE_LINK_ERROR

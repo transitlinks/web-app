@@ -1,20 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { saveLink, setTransport } from '../../actions/editLink';
+import { saveLinkInstance, setTransport } from '../../actions/editLink';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './EditTransitLink.css';
+import s from './EditLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 import LocalityAutocomplete from './LocalityAutocomplete';
 
-const EditTransitLink = ({ 
-  saveLink, setTransport,
-  link, 
+const EditLinkInstance = ({ 
+  saveLinkInstance, setTransport,
+  linkInstance, 
   from, to, transport 
 }) => {
   
   const onSave = () => {
-    saveLink({ link: { from, to, transport } });
+    saveLinkInstance({ linkInstance: { from, to, transport } });
   };
   
   return (
@@ -45,8 +45,9 @@ const EditTransitLink = ({
 export default connect(state => ({
   from: state.editLink.from,
   to: state.editLink.to,
-  transport: state.editLink.transport
+  transport: state.editLink.transport,
+  linkInstance: state.editLink.linkInstance
 }), {
-  saveLink,
+  saveLinkInstance,
   setTransport
-})(withStyles(s)(EditTransitLink));
+})(withStyles(s)(EditLinkInstance));

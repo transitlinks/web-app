@@ -1,10 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './TransitLink.css';
-import ViewTransitLink from '../../components/TransitLink';
-import EditTransitLink from '../../components/EditTransitLink';
+import ViewTransitLink from '../../components/ViewTransitLink';
 import { FormattedRelative } from 'react-intl';
 
 const title = 'Transitlinks - Link';
@@ -23,23 +21,6 @@ class TransitLink extends React.Component {
   
   }
   
-  componentWillReceiveProps(props) {
-    
-    // Transition to link when save is detected    
-    const stateUpdated = this.state.updated;
-    const propUpdated = props.saved ? props.saved.saved : stateUpdated;
-    this.setState({
-      edit: props.edit,
-      link: (propUpdated > stateUpdated) ? props.saved : props.link,
-      updated: propUpdated
-    });
-     
-    if (propUpdated > stateUpdated) {
-      props.navigate(`/link/${props.saved.id}`);
-    }
-
-  }
-  
   render() {
     
     this.context.setTitle(title);
@@ -48,14 +29,7 @@ class TransitLink extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          { 
-            !this.state.edit ?
-              <ViewTransitLink link={link} /> :
-              <EditTransitLink link={link} />
-          }
-          <div>
-
-          </div>
+          <ViewTransitLink link={link} /> :
         </div>
       </div>
     );
@@ -70,7 +44,5 @@ TransitLink.propTypes = {
 TransitLink.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
-  saved: state.editLink.link
 }), {
-  navigate
 })(withStyles(s)(TransitLink));
