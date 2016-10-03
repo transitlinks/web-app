@@ -6,18 +6,34 @@ const test = tester({
   contentType: 'application/json'
 });
 
-const validLink = { from: 'moscow', to: 'helsinki' };
-const createLink = async (link) => {
+const validLinkInstance = { 
+  from: 'moscow', 
+  to: 'helsinki',
+  transport: 'bus'
+};
+
+const createLinkInstance = async (linkInstance) => {
   
   const query = JSON.stringify({
-    query: 'mutation ($link:TransitLinkInput!) {link(link:$link) {from {name,lat,lng}, to {name,lat,lng}}}',
-    variables: { link }
+    query: `
+      mutation ($linkInstance:LinkInstanceInput!) {
+        linkInstance(linkInstance:$linkInstance) {
+          link {
+            id,
+            from {name,lat,lng}, 
+            to {name,lat,lng}
+          },
+          transport { slug }
+        }
+      }
+    `,
+    variables: { linkInstance }
   });
   
   const response = await test(query);
   assert(response.success == true);
   assert(response.status == 200); 
-  assert(response.data.link.from && response.data.link.to);
+  assert(response.data.linkInstance);
   return response;
 
 };
@@ -25,16 +41,23 @@ const createLink = async (link) => {
  
 describe('data/queries/links', () => {
 
-  it('should create new link', async () => {
-    await createLink(validLink); 
+  it('should create new link instance', async () => {
+    await createLinkInstance(validLinkInstance); 
   });
 
   it('returns links by locality id', async () => {
         
-    await createLink(validLink); 
+    await createLinkInstance(validLinkInstance); 
     
     const query = JSON.stringify({
-      query: 'query {links(localityId:1) {from {name,lat,lng}, to {name,lat,lng}}}',
+      query: `
+        query { 
+          links(localityId:1) {
+            from {name,lat,lng}, 
+            to {name,lat,lng}
+          }
+        }
+      `,
       variables: {}
     });
     
@@ -48,10 +71,17 @@ describe('data/queries/links', () => {
   
   it('returns link by id', async () => {
     
-    await createLink(validLink);
+    await createLinkInstance(validLinkInstance);
     
     const query = JSON.stringify({
-      query: 'query {link(id:1) {from {name,lat,lng}, to {name,lat,lng}}}',
+      query: `
+        query {
+          link(id:1) {
+            from {name,lat,lng},
+            to {name,lat,lng}
+          }
+        }
+      `,
       variables: {}
     });
     
@@ -60,6 +90,34 @@ describe('data/queries/links', () => {
     assert(response.success == true);
     assert(response.status == 200); 
     assert(response.data.link.from && response.data.link.to);
+
+  });
+  
+  it('returns link instance by id', async () => {
+    
+    await createLinkInstance(validLinkInstance);
+    
+    const query = JSON.stringify({
+      query: `
+        query {
+          linkInstance(id:1) {
+            id,
+            transport { slug }
+            link {
+              from { name, lat, lng },
+              to { name, lat, lng }
+            }
+          }
+        }
+      `,
+      variables: {}
+    });
+    
+    const response = await test(query);
+    
+    assert(response.success == true);
+    assert(response.status == 200); 
+    assert(response.data.linkInstance);
 
   });
 
