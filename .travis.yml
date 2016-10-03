@@ -19,6 +19,6 @@ cache:
 before_script: 
   - ./start.sh
 script:
-  - npm run test
-after_script: 
+  - ./test.sh
+after_success:
   - ./deploy.sh
