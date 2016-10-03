@@ -2,7 +2,27 @@
 
 .container {
   display: inline-block;
-  border: 1px solid #eeeeee;
-  height: 48px;
-  padding: 6px;
+}
+
+.header {
+  margin-top: 6px;
+}
+
+.header .title {
+  font-size: 24px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.link :hover {
+  color: blue;
+}
+
+.link .arrow { 
+  margin-left: 6px;
+  margin-right: 6px;
 }

@@ -132,10 +132,10 @@ export const TransitLinkQueryFields = {
     type: new GraphQLList(TransitLinkType),
     description: 'Find links by localities',
     args: {
-      localityId: { type: GraphQLInt }
+      input: { type: GraphQLString }
     },
-    resolve: async ({ request }, { localityId }) => {
-      return linkRepository.getByLocalityId(localityId); 
+    resolve: async ({ request }, { input }) => {
+      return linkRepository.getByLocalityName(input); 
     }
   
   }

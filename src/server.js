@@ -102,7 +102,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 
 // Launch the server
 /* eslint-disable no-console */
-models.sync({ force: true, logging: console.log }).catch(err => console.error(err.stack)).then(() => {
+models.sync({ force: false, logging: console.log }).catch(err => console.error(err.stack)).then(() => {
 	
 	loadFixtures();	
   app.listen(HTTP_PORT, () => {

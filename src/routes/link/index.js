@@ -17,11 +17,19 @@ export default {
       
       const { data } = await graphqlRequest(
         `query {
-          link(id: ${params.id}) 
-          {id,from{id,name,lat,lng},to{id,name,lat,lng}}
+          link(id: ${params.id}) {
+            id,
+            from {id,name,lat,lng},
+            to {id,name,lat,lng},
+            instances {
+              id,
+              transport { id, slug }
+            }
+          }
         }`
       );
       
+      console.log("DATA", data); 
       return <TransitLink link={data.link} />; 
     
     } catch (error) {

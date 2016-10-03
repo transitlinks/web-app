@@ -29,7 +29,7 @@ class TransitLink extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <ViewTransitLink link={link} /> :
+          <ViewTransitLink link={link} />
         </div>
       </div>
     );

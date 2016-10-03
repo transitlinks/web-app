@@ -8,9 +8,27 @@ import { TransitLink, LinkInstance, TransportType, Locality } from '../models';
 export default {
   
   getById: async (id) => {
-    const link = await TransitLink.findById(id, { include: [ { all: true } ] });
-    return link ? link.toJSON() : null;
-  },
+    
+		let link = await TransitLink.findById(id, { include: [ { all: true } ] });
+    
+		if (link === null) {
+			return null;
+		}
+		
+		link = link.toJSON();
+		
+		const instances = await LinkInstance.findAll({
+			where: { linkId: id },
+			include: [
+				{ model: TransportType, as: 'transport' }
+			]
+		});
+		
+		return Object.assign(link, {
+			instances: instances.map(instance => instance.toJSON())
+		});
+  	
+	},
   
 	getInstanceById: async (id) => {
     const linkInstance = await LinkInstance.findById(id, {
@@ -27,6 +45,31 @@ export default {
     const links = await TransitLink.findAll({ 
       where: { $or: [{ fromId: localityId }, { toId: localityId }] },
       include: [ { all: true } ] 
+    });
+    
+    return links.map(link => link.toJSON());
+  
+  },
+  
+	getByLocalityName: async (input) => {
+  	
+		const localities = await Locality.findAll({
+			where: { name: { $like: `%${input}%` } }
+		});
+		
+		if (localities.length === 0) {
+			return [];
+		}
+		
+		const localityIds = localities.map(locality => locality.id);
+    const links = await TransitLink.findAll({ 
+      where: { 
+				$or: [
+					{ fromId: { $in: localityIds } }, 
+					{ toId: { $in: localityIds } }
+				]
+			},
+			include: [ { all: true } ] 
     });
     
     return links.map(link => link.toJSON());

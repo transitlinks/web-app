@@ -5,28 +5,9 @@ import {
   GraphQLInputObjectType,
   GraphQLString,
   GraphQLNonNull,
+  GraphQLList,
   GraphQLInt
 } from 'graphql';
-
-export const TransitLinkType = new GraphQLObjectType({
-  name: 'TransitLink',
-  description: 'Transitlink between two localities.',
-  fields: () => ({
-    id: { type: new GraphQLNonNull(GraphQLInt) },
-    from: { type: LocalityType },
-    to: { type: LocalityType }
-  })
-});
-
-export const TransitLinkInputType = new GraphQLInputObjectType({
-  name: 'TransitLinkInput',
-  description: 'Input properties for TransitLink.',
-  fields: () => ({
-    id: { type: GraphQLInt },
-    from: { type: new GraphQLNonNull(GraphQLString) },
-    to: { type: new GraphQLNonNull(GraphQLString) }
-  })
-});
 
 export const LinkInstanceType = new GraphQLObjectType({
   name: 'LinkInstance',
@@ -46,6 +27,27 @@ export const LinkInstanceInputType = new GraphQLInputObjectType({
     from: { type: new GraphQLNonNull(GraphQLString) },
     to: { type: new GraphQLNonNull(GraphQLString) },
     transport: { type: new GraphQLNonNull(GraphQLString) }
+  })
+});
+
+export const TransitLinkType = new GraphQLObjectType({
+  name: 'TransitLink',
+  description: 'Transitlink between two localities.',
+  fields: () => ({
+    id: { type: new GraphQLNonNull(GraphQLInt) },
+    from: { type: LocalityType },
+    to: { type: LocalityType },
+    instances: { type: new GraphQLList(LinkInstanceType) }
+  })
+});
+
+export const TransitLinkInputType = new GraphQLInputObjectType({
+  name: 'TransitLinkInput',
+  description: 'Input properties for TransitLink.',
+  fields: () => ({
+    id: { type: GraphQLInt },
+    from: { type: new GraphQLNonNull(GraphQLString) },
+    to: { type: new GraphQLNonNull(GraphQLString) }
   })
 });
 

@@ -8,21 +8,7 @@ export default {
   path: '/search',
 
   async action({ context }) {
-    
-      const { graphqlRequest } = context.store.helpers; 
-
-      try {
-        
-        const { data } = await graphqlRequest(
-          'query {links(localityId:1) {from {name,lat,lng}, to {name,lat,lng}}}'
-        );
-       
-        return <Search links={data.links} />; 
-
-      } catch (error) {
-        return <ErrorPage errors={error.errors} />
-      }
-    
-  },
+    return <Search />; 
+  }
 
 };
