@@ -6,7 +6,7 @@ tail -f ./log.txt |
   while IFS= read -r line
   do
     echo "$line"
-    if [[ $line == *"Finished 'start'"* ]]
+    if [[ $line == *"webpack: bundle is now VALID"* ]]
     then
       exit;
     fi
