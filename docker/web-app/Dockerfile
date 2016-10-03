@@ -1,8 +1,4 @@
-FROM ubuntu:14.04
-RUN apt-get update
-RUN apt-get install -y build-essential python curl git vim
-RUN curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
-RUN apt-get install -y nodejs
+FROM vhalme/txlinks-base
 RUN mkdir /transitlinks
 RUN cd /transitlinks && \
   git clone https://github.com/transitlinks/web-app.git && \

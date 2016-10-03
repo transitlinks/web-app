@@ -20,3 +20,5 @@ before_script:
   - ./start.sh
 script:
   - npm run test
+after_script: 
+  - ./deploy.sh
