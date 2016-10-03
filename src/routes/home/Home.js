@@ -14,7 +14,7 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>Transitlinks</h1>
+          <h1>Transitlinks !</h1>
         </div>
       </div>
     );
