@@ -5,17 +5,28 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import LocalityAutocomplete from './LocalityAutocomplete';
 
 const EditLinkInstance = ({ 
   saveLinkInstance, setTransport,
-  linkInstance, 
+  linkInstance, transportTypes,  
   from, to, transport 
 }) => {
-  
+   
   const onSave = () => {
     saveLinkInstance({ linkInstance: { from, to, transport } });
   };
+  
+  const onChangeTransport = (event, index, value) => {
+    setTransport(value);
+  };
+
+  const transportOptions = transportTypes.map(type => (
+    <MenuItem key={type.slug} style={{ "WebkitAppearance": "initial" }} 
+      value={type.slug} primaryText={type.slug} />
+  ));
   
   return (
     <div className={s.container}>
@@ -31,8 +42,14 @@ const EditLinkInstance = ({
       </div>
       <div>
         <div>
-          <RaisedButton label="Bus" onClick={() => setTransport('bus')} />
-          <RaisedButton label="Train" onClick={() => setTransport('train')} />
+          <SelectField id="transport-select"
+            value={transport} 
+            onChange={onChangeTransport.bind(this)}
+            floatingLabelText="Transport"
+            floatingLabelFixed={true}
+            hintText="Select transport type">
+            {transportOptions}
+          </SelectField>
         </div>
       </div>
       <div className={s.save}>

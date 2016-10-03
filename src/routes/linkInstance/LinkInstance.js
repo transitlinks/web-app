@@ -43,7 +43,10 @@ class LinkInstance extends React.Component {
   render() {
     
     this.context.setTitle(title);
-    const linkInstance = this.props.linkInstance;
+    const {
+      linkInstance,
+      transportTypes
+    }  = this.props;
     
     return (
       <div className={s.root}>
@@ -51,7 +54,9 @@ class LinkInstance extends React.Component {
           { 
             !this.state.edit ?
               <ViewLinkInstance linkInstance={linkInstance} /> :
-              <EditLinkInstance linkInstance={linkInstance} />
+              <EditLinkInstance 
+                transportTypes={transportTypes}
+                linkInstance={linkInstance} />
           }
           <div>
 

@@ -6,6 +6,7 @@ import {
 import me from './queries/me';
 import content from './queries/content';
 import localities from './queries/localities';
+import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
 import * as links from './queries/links';
@@ -17,6 +18,7 @@ const schema = new Schema({
       me,
       content,
       localities,
+      transportTypes,
       link: TransitLinkQueryFields.link,
       linkInstance: TransitLinkQueryFields.linkInstance,
       links: TransitLinkQueryFields.links,

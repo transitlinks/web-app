@@ -10,11 +10,11 @@ export default {
 
   async action({ params, context }) {
     
-    if (params.id) {
-      
-      const { graphqlRequest } = context.store.helpers;
-      
-      try { 
+    const { graphqlRequest } = context.store.helpers;
+    
+    try { 
+    
+      if (params.id) {
         
         const { data } = await graphqlRequest(
           `query {
@@ -23,17 +23,28 @@ export default {
           }`
         );
         
-        return <LinkInstance edit={false} linkInstance={data.linkInstance} />; 
+        return <LinkInstance edit={false} 
+          linkInstance={data.linkInstance} />;
+    
+      } else {
+          
+        const { data } = await graphqlRequest(
+          `query {
+            transportTypes 
+            { id, slug }
+          }`
+        );
+          
+        return <LinkInstance edit={true} 
+          linkInstance={{}} 
+          transportTypes={data.transportTypes} />;
       
-      } catch (error) {
-        return <ErrorPage errors={error.errors} />
       }
 
-    
-    } else {
-      return <LinkInstance edit={true} linkInstance={{}} />;
+    } catch (error) {
+      return <ErrorPage errors={error.errors} />
     }
-
+  
   }
 
 };

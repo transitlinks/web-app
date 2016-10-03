@@ -46,6 +46,7 @@ const LocalityAutocomplete = ({
     <div className={s.container}>
       <AutoComplete id="locality-autocomplete"
         hintText="Search place"
+        floatingLabelText={endpoint === 'from' ? 'Origin' : 'Destination'}
         filter={AutoComplete.noFilter}
         dataSource={dataSource()}
         onUpdateInput={onUpdateInput}

@@ -17,12 +17,12 @@
 
 .endpoints {
   display: flex;
-  align-items: center;
+  align-items: baseline;
 }
 
 .endpoints .arrow {
-  margin-left: 6px;
-  margin-right: 6px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .save {

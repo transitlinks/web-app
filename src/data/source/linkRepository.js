@@ -59,6 +59,11 @@ export default {
 
   },
   
+	getTransportTypes: async () => {
+    const transportTypes = await TransportType.findAll();
+    return transportTypes.map(transportType => transportType.toJSON());
+  },
+
 	getTransportBySlug: async (slug) => {
     const transport = await TransportType.findOne({
 			where: { slug }

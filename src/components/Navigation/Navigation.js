@@ -31,7 +31,7 @@ const messages = defineMessages({
 function Navigation({ className }) {
   return (
     <div className={cx(s.root, className)} role="navigation">
-      <Link className={s.link} to="/link">
+      <Link className={s.link} to="/link-instance">
         <FormattedMessage {...messages.newLink} />
       </Link>
       <Link className={s.link} to="/search">
