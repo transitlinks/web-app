@@ -13,6 +13,7 @@ export const {
   DB_PORT,
   DB_NAME,
   DB_URL,
+  GRAPHQL_URL,
   AUTH_JWT_SECRET,
   AUTH_FB_APPID,
   AUTH_FB_SECRET,

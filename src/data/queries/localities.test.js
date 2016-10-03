@@ -1,8 +1,9 @@
 import assert from 'assert';
 import { tester } from 'graphql-tester';
+import { GRAPHQL_URL } from '../../config';
  
 const test = tester({
-  url: 'http://localhost:3000/graphql',
+  url: GRAPHQL_URL,
   contentType: 'application/json'
 });
  

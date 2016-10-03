@@ -1,8 +1,9 @@
 import assert from 'assert';
 import { tester } from 'graphql-tester';
+import { GRAPHQL_URL } from '../../config';
  
 const test = tester({
-  url: 'http://localhost:3000/graphql',
+  url: GRAPHQL_URL,
   contentType: 'application/json'
 });
 
@@ -52,7 +53,7 @@ describe('data/queries/links', () => {
     const query = JSON.stringify({
       query: `
         query { 
-          links(input:"moscow") {
+          links(input:"Moscow") {
             from { name, lat, lng }, 
             to { name, lat, lng }
           }

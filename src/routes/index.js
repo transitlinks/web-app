@@ -52,7 +52,7 @@ const routes = {
 };
 
 export const initEndpoints = (app) => {
-
+  
   app.get('/login/fb',
     app.passport.authenticate(
       'login-facebook',
@@ -92,7 +92,11 @@ export const initEndpoints = (app) => {
   });
   
   app.get('*', async (req, res, next) => {
-  
+    
+    if (req.path.indexOf('/assets') !== -1) {
+      return next();
+    }
+
     log.debug('user auth', req.user, req.isAuthenticated());
     const history = createHistory(req.url);
     // let currentLocation = history.getCurrentLocation();
