@@ -44,17 +44,17 @@ describe('data/queries/links', () => {
   it('should create new link instance', async () => {
     await createLinkInstance(validLinkInstance); 
   });
-
-  it('returns links by locality id', async () => {
+  
+  it('returns links by locality name', async () => {
         
     await createLinkInstance(validLinkInstance); 
     
     const query = JSON.stringify({
       query: `
         query { 
-          links(localityId:1) {
-            from {name,lat,lng}, 
-            to {name,lat,lng}
+          links(input:"moscow") {
+            from { name, lat, lng }, 
+            to { name, lat, lng }
           }
         }
       `,
@@ -77,8 +77,11 @@ describe('data/queries/links', () => {
       query: `
         query {
           link(id:1) {
-            from {name,lat,lng},
-            to {name,lat,lng}
+            from { name, lat, lng },
+            to { name, lat, lng },
+            instances {
+              transport { slug }
+            }
           }
         }
       `,
@@ -90,6 +93,7 @@ describe('data/queries/links', () => {
     assert(response.success == true);
     assert(response.status == 200); 
     assert(response.data.link.from && response.data.link.to);
+    assert(response.data.link.instances && response.data.link.instances.length > 0);
 
   });
   
