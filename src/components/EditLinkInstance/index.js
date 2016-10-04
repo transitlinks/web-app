@@ -51,6 +51,18 @@ const EditLinkInstance = ({
             {transportOptions}
           </SelectField>
         </div>
+        <div className={s.times}>
+          <div>
+          </div>
+          <div>
+          </div>
+        </div>
+        <div className={s.terminals}>
+        </div>
+        <div className={s.price}>
+        </div>
+        <div className={s.description}>
+        </div>
       </div>
       <div className={s.save}>
         <RaisedButton label="Save" onClick={onSave} />

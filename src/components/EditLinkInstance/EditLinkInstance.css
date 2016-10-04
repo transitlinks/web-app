@@ -25,6 +25,19 @@
   margin-right: 10px;
 }
 
+.times {
+  display: flex;
+}
+
+.terminals {
+}
+
+.price {
+}
+
+.description {
+}
+
 .save {
   margin-top: 12px;
 }
