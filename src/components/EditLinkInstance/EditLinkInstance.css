@@ -29,6 +29,10 @@
   display: flex;
 }
 
+.time-picker {
+  background-color: red;
+}
+
 .terminals {
 }
 

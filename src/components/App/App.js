@@ -3,6 +3,7 @@ import emptyFunction from 'fbjs/lib/emptyFunction';
 import s from './App.css';
 import Header from '../Header';
 import Footer from '../Footer';
+import TimePicker from 'material-ui/TimePicker';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
@@ -14,7 +15,7 @@ class App extends Component {
       store: PropTypes.object.isRequired,
       insertCss: PropTypes.func,
       setTitle: PropTypes.func,
-      setMeta: PropTypes.func,
+      setMeta: PropTypes.func
     }).isRequired,
     children: PropTypes.element.isRequired,
     error: PropTypes.object,
@@ -24,7 +25,7 @@ class App extends Component {
     createHref: PropTypes.func.isRequired,
     insertCss: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,
-    setMeta: PropTypes.func.isRequired,
+    setMeta: PropTypes.func.isRequired
   };
 
   getChildContext() {
@@ -33,7 +34,7 @@ class App extends Component {
       createHref: context.createHref,
       insertCss: context.insertCss || emptyFunction,
       setTitle: context.setTitle || emptyFunction,
-      setMeta: context.setMeta || emptyFunction,
+      setMeta: context.setMeta || emptyFunction
     };
   }
 
@@ -52,8 +53,11 @@ class App extends Component {
       return this.props.children;
     }
     
+    const state = this.props.context.store.getState();
+    const { userAgent } = state.runtime; 
+    
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(null, { userAgent: 'all' })}>
+      <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
           <Header />
           {this.props.children}

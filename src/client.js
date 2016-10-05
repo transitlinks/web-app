@@ -91,7 +91,7 @@ function render(container, state, config, component) {
         config.store.getState()
       );
     }
-
+    
     try {
       log.debug('Render DOM');
       ReactDOM.render(

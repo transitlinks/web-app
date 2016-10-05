@@ -125,6 +125,12 @@ export const initEndpoints = (app) => {
         name: 'initialNow',
         value: Date.now(),
       }));
+      
+      store.dispatch(setRuntimeVariable({
+        name: 'userAgent',
+        value: req.headers['user-agent']
+      }));
+      
       let css = new Set();
       let statusCode = 200;
       const locale = req.language;
@@ -175,7 +181,6 @@ export const initEndpoints = (app) => {
           // It is important to have rendered output and state in sync,
           // otherwise React will write error to console when mounting on client
           data.state = store.getState();
-
           data.style = [...css].join('');
           return true;
         },

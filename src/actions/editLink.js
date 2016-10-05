@@ -2,6 +2,7 @@ import { graphqlAction } from './utils';
 import {
   SELECTED_LOCALITY,
   SET_TRANSPORT,
+  SET_PROPERTY,
   SAVE_LINK_START,
   SAVE_LINK_SUCCESS,
   SAVE_LINK_ERROR,
@@ -17,6 +18,24 @@ export function selectLocality({ endpoint, locality }) {
       payload: {
         endpoint,
         locality
+      },
+    });
+
+    return true;
+  
+  };
+
+}
+
+export function setProperty(name, value) {
+  
+  return async (dispatch) => {
+    
+    dispatch({
+      type: SET_PROPERTY,
+      payload: {
+        name,
+        value
       },
     });
 
