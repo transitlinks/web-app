@@ -92,7 +92,8 @@ export function saveLinkInstance({ linkInstance }) {
         }
       }
     `;
-
+    
+    console.log("sending link instance", json);
     return graphqlAction(
       ...args, 
       { query }, [ 'linkInstance' ],

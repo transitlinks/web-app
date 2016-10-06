@@ -26,7 +26,17 @@
 }
 
 .times {
+}
+
+.times .dateTime {
   display: flex;
+}
+
+.times .dateTime .date {
+}
+
+.times .dateTime .time {
+  margin-left: 8px;
 }
 
 .time-picker {

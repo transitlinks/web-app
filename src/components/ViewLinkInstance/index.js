@@ -5,7 +5,11 @@ import FontIcon from 'material-ui/FontIcon';
 
 const ViewLinkInstance = ({ linkInstance }) => {
   
-  const { link, transport } = linkInstance;
+  const { 
+    link, transport,
+    departureDate, departureHour, departureMinute,
+    arrivalDate, arrivalHour, arrivalMinute
+  } = linkInstance;
   
   return (
     <div className={s.container}>
@@ -18,6 +22,12 @@ const ViewLinkInstance = ({ linkInstance }) => {
       </div>
       <div>
         {transport.slug}
+      </div>
+      <div>
+        DEPARTURE: {departureDate}/{departureHour}/{departureMinute}
+      </div>
+      <div>
+        ARRIVAL: {arrivalDate}/{arrivalHour}/{arrivalMinute}
       </div>
     </div>
   );

@@ -18,11 +18,20 @@ export default {
         
         const { data } = await graphqlRequest(
           `query {
-            linkInstance(id: ${params.id}) 
-            {id,link{from{id,name,lat,lng},to{id,name,lat,lng}},transport{slug}}
+            linkInstance(id: ${params.id}) {
+              id,
+              link {
+                from { id, name, lat, lng },
+                to { id, name, lat, lng} 
+              },
+              transport { slug },
+              departureDate, departureHour, departureMinute,
+              arrivalDate, arrivalHour, arrivalMinute
+            }
           }`
         );
         
+        console.log("received data", data);        
         return <LinkInstance edit={false} 
           linkInstance={data.linkInstance} />;
     

@@ -22,11 +22,39 @@ const EditLinkInstance = ({
   from, to, transport,
   departureDate, departureTime, arrivalDate, arrivalTime 
 }) => {
-   
-  const onSave = () => {
-    saveLinkInstance({ linkInstance: { from, to, transport } });
-  };
+
+  const toLocalDate = (date) => {
+    const addZ = n => (n < 10 ? '0' : '') + n;
+    return date.getFullYear() + '-' + 
+      addZ(date.getMonth() + 1) + '-' + 
+      addZ(date.getDate());
+  }
   
+  const mergeNonNull = (obj1, obj2) => {
+    Object.keys(obj2).forEach(key => {
+      if (obj2[key]) obj1[key] = obj2[key];
+    });
+    return obj1;
+  };
+
+  const onSave = () => {
+    
+    const departureDateJson = departureDate ? toLocalDate(departureDate) : null;
+    const departureHour = departureTime ? departureTime.getHours() : null;
+    const departureMinute = departureTime ? departureTime.getMinutes() : null;
+    
+    const arrivalDateJson = arrivalDate ? toLocalDate(arrivalDate) : null;
+    const arrivalHour = arrivalTime ? arrivalTime.getHours() : null;
+    const arrivalMinute = arrivalTime ? arrivalTime.getMinutes() : null;
+
+    saveLinkInstance({ linkInstance: mergeNonNull({ 
+      from, to, transport,
+    }, {
+      departureDate: departureDateJson, departureHour, departureMinute,
+      arrivalDate: arrivalDateJson, arrivalHour, arrivalMinute  
+    })});
+  };
+
   const onChangeTime = (property) => {
     return (event, value) => {
       setProperty(property, value);

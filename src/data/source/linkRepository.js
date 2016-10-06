@@ -114,12 +114,9 @@ export default {
     return transport ? transport.toJSON() : null;
   },
   
-	createInstance: async ({ linkId, transportId }) => {
+	createInstance: async (linkInstance) => {
     
-    let created = await LinkInstance.create({
-      linkId,
-      transportId
-    });
+    let created = await LinkInstance.create(linkInstance);
     
     if (!created) {
       throw new Error('Failed to create a link instance (null result)');

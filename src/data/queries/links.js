@@ -56,10 +56,20 @@ const createOrUpdateLink = async (linkInstance) => {
 		}
 		
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
-		
+	  
+    let {
+      departureDate, departureHour, departureMinute,
+      arrivalDate, arrivalHour, arrivalMinute
+    } = linkInstance;
+    
+    departureDate = departureDate ? new Date(departureDate) : null;   
+    arrivalDate = arrivalDate ? new Date(arrivalDate) : null;
+
 		return await linkRepository.createInstance({ 
 			linkId: link.id,
-			transportId: transport.id 
+			transportId: transport.id,
+      departureDate, departureHour, departureMinute,
+      arrivalDate, arrivalHour, arrivalMinute
 		});
 			
   } else { // Update existing link

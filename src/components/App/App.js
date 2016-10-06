@@ -52,9 +52,10 @@ class App extends Component {
     if (this.props.error) {
       return this.props.children;
     }
-    
-    const state = this.props.context.store.getState();
-    const { userAgent } = state.runtime; 
+  
+    const store = this.props.context.store;
+    const userAgent = store ?
+      store.getState().runtime.userAgent : 'all';
     
     return (
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>

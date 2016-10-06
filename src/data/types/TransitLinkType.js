@@ -15,7 +15,13 @@ export const LinkInstanceType = new GraphQLObjectType({
   fields: () => ({
     id: { type: new GraphQLNonNull(GraphQLInt) },
     link: { type: TransitLinkType },
-    transport: { type: TransportTypeType }
+    transport: { type: TransportTypeType },
+    departureDate: { type: GraphQLString },
+    departureHour: { type: GraphQLInt },
+    departureMinute: { type: GraphQLInt },
+    arrivalDate: { type: GraphQLString },
+    arrivalHour: { type: GraphQLInt },
+    arrivalMinute: { type: GraphQLInt }
   })
 });
 
@@ -26,7 +32,13 @@ export const LinkInstanceInputType = new GraphQLInputObjectType({
     id: { type: GraphQLInt },
     from: { type: new GraphQLNonNull(GraphQLString) },
     to: { type: new GraphQLNonNull(GraphQLString) },
-    transport: { type: new GraphQLNonNull(GraphQLString) }
+    transport: { type: new GraphQLNonNull(GraphQLString) },
+    departureDate: { type: GraphQLString },
+    departureHour: { type: GraphQLInt },
+    departureMinute: { type: GraphQLInt },
+    arrivalDate: { type: GraphQLString },
+    arrivalHour: { type: GraphQLInt },
+    arrivalMinute: { type: GraphQLInt }
   })
 });
 
