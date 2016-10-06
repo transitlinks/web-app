@@ -11,23 +11,25 @@ const sequelize = new Sequelize(dbUrl, {
   }
 });
 
+const createTransport = (slug) => {
+  return {
+    model: 'TransportType',
+    data: { slug }
+  };
+};
+
 export const loadFixtures = () => {
 
 	const models = require('./models');
 	const data = [
-		{
-			model: 'TransportType',
-			data: {
-				slug: 'bus'
-			}
-		},
-		{
-			model: 'TransportType',
-			data: {
-				slug: 'train'
-			}
-		}
-	];
+	  createTransport('train'),
+	  createTransport('bus'),
+	  createTransport('van'),
+	  createTransport('shared-taxi'),
+	  createTransport('hitch-hike'),
+	  createTransport('walk'),
+	  createTransport('bike')
+  ];
 	
 	console.log(models);	
 	fixtures.loadFixtures(data, models).then((...args) => {

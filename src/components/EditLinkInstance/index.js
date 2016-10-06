@@ -15,8 +15,11 @@ import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import MenuItem from 'material-ui/MenuItem';
 import LocalityAutocomplete from './LocalityAutocomplete';
+import { injectIntl, FormattedMessage } from 'react-intl';
+import msg from './messages';
 
-const EditLinkInstance = ({ 
+const EditLinkInstance = ({
+  intl,
   saveLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,  
   from, to, transport,
@@ -67,14 +70,14 @@ const EditLinkInstance = ({
 
   const transportOptions = transportTypes.map(type => (
     <MenuItem key={type.slug} style={{ "WebkitAppearance": "initial" }} 
-      value={type.slug} primaryText={type.slug} />
+      value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
   
   return (
     <div className={s.container}>
       <div className={s.header}>
         <div className={s.title}>
-          Add link
+          <FormattedMessage {...msg.addLink} />
         </div>
       </div>
       <div className={s.endpoints}>
@@ -144,17 +147,19 @@ const EditLinkInstance = ({
   );
 }
 
-export default connect(state => ({
-  from: state.editLink.from,
-  to: state.editLink.to,
-  transport: state.editLink.transport,
-  departureDate: state.editLink.departureDate,
-  departureTime: state.editLink.departureTime,
-  arrivalDate: state.editLink.arrivalDate,
-  arrivalTime: state.editLink.arrivalTime,
-  linkInstance: state.editLink.linkInstance
-}), {
-  saveLinkInstance,
-  setTransport,
-  setProperty
-})(withStyles(s)(EditLinkInstance));
+export default injectIntl(
+  connect(state => ({
+    from: state.editLink.from,
+    to: state.editLink.to,
+    transport: state.editLink.transport,
+    departureDate: state.editLink.departureDate,
+    departureTime: state.editLink.departureTime,
+    arrivalDate: state.editLink.arrivalDate,
+    arrivalTime: state.editLink.arrivalTime,
+    linkInstance: state.editLink.linkInstance
+  }), {
+    saveLinkInstance,
+    setTransport,
+    setProperty
+  })(withStyles(s)(EditLinkInstance))
+);

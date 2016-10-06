@@ -10,7 +10,13 @@ const test = tester({
 const validLinkInstance = { 
   from: 'moscow', 
   to: 'helsinki',
-  transport: 'bus'
+  transport: 'bus',
+  departureDate: (new Date()).toJSON(),
+  departureHour: 12,
+  departureMinute: 30,
+  arrivalDate: (new Date()).toJSON(),
+  arrivalHour: 15,
+  arrivalMinute: 45
 };
 
 const createLinkInstance = async (linkInstance) => {
@@ -111,7 +117,9 @@ describe('data/queries/links', () => {
             link {
               from { name, lat, lng },
               to { name, lat, lng }
-            }
+            },
+            departureDate, departureHour, departureMinute,
+            arrivalDate, arrivalHour, arrivalMinute
           }
         }
       `,
@@ -123,6 +131,11 @@ describe('data/queries/links', () => {
     assert(response.success == true);
     assert(response.status == 200); 
     assert(response.data.linkInstance);
+
+    const { linkInstance } = response.data;
+    assert(linkInstance.transport);
+    assert(linkInstance.departureDate);
+    assert(linkInstance.arrivalMinute);
 
   });
 

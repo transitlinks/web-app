@@ -99,7 +99,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   res.send(`<!doctype html>${html}`);
 });
 
-const force = process.env.TEST_ENV === 'test';
+const force = true; //process.env.TEST_ENV === 'test';
 // Launch the server
 /* eslint-disable no-console */
 models.sync({ force, logging: console.log }).catch(err => console.error(err.stack)).then(() => {

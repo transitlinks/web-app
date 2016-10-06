@@ -1,65 +1,119 @@
 [
   {
-    "id": "header.banner.desc",
-    "defaultMessage": "Complex web apps made easy",
+    "id": "transport.bike",
+    "description": "Biking",
+    "defaultMessage": "Biking",
     "message": "",
-    "description": "Description in header",
     "files": [
-      "src/components/Header/Header.js"
+      "src/components/EditLinkInstance/messages.js"
     ]
   },
   {
-    "id": "header.banner.title",
-    "defaultMessage": "React",
+    "id": "transport.bus",
+    "description": "Bus",
+    "defaultMessage": "Bus",
     "message": "",
-    "description": "Title in page header",
     "files": [
-      "src/components/Header/Header.js"
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.hitch-hike",
+    "description": "Hitch-hiking",
+    "defaultMessage": "Hitch-hiking (autostop)",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.shared-taxi",
+    "description": "Shared taxi",
+    "defaultMessage": "Shared taxi",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.train",
+    "description": "Train",
+    "defaultMessage": "Train",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.van",
+    "description": "Van",
+    "defaultMessage": "Van (mini bus, marshrutka)",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.walk",
+    "description": "Walking",
+    "defaultMessage": "Walking",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
     ]
   },
   {
     "id": "header.brand",
+    "description": "Brand name displayed in header",
     "defaultMessage": "Your Company Brand",
     "message": "",
-    "description": "Brand name displayed in header",
     "files": [
       "src/components/Header/Header.js"
     ]
   },
   {
     "id": "navigation.about",
+    "description": "About",
     "defaultMessage": "About",
     "message": "",
-    "description": "About link in header",
     "files": [
-      "src/components/Navigation/Navigation.js"
+      "src/components/Navigation/messages.js"
     ]
   },
   {
     "id": "navigation.login",
-    "defaultMessage": "Log in",
+    "description": "Login",
+    "defaultMessage": "Login",
     "message": "",
-    "description": "Log in link in header",
     "files": [
-      "src/components/Navigation/Navigation.js"
-    ]
-  },
-  {
-    "id": "navigation.search",
-    "defaultMessage": "Search",
-    "message": "",
-    "description": "Search link",
-    "files": [
-      "src/components/Navigation/Navigation.js"
+      "src/components/Navigation/messages.js"
     ]
   },
   {
     "id": "navigation.newLink",
+    "description": "Create",
     "defaultMessage": "Create",
     "message": "",
-    "description": "New link link",
     "files": [
-      "src/components/Navigation/Navigation.js"
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.search",
+    "description": "Search",
+    "defaultMessage": "Search",
+    "message": "",
+    "files": [
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "editLinkInstance.addLink",
+    "description": "Add link",
+    "defaultMessage": "Add link",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
     ]
   }
 ]

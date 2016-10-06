@@ -1,65 +1,119 @@
 [
   {
-    "id": "header.banner.desc",
-    "defaultMessage": "Complex web apps made easy",
-    "message": "Maailman reitit",
-    "description": "Description in header",
+    "id": "transport.bike",
+    "description": "Biking",
+    "defaultMessage": "Biking",
+    "message": "Pyöräily",
     "files": [
-      "src/components/Header/Header.js"
+      "src/components/EditLinkInstance/messages.js"
     ]
   },
   {
-    "id": "header.banner.title",
-    "defaultMessage": "React",
-    "message": "Reitit",
-    "description": "Title in page header",
+    "id": "transport.bus",
+    "description": "Bus",
+    "defaultMessage": "Bus",
+    "message": "Bussi",
     "files": [
-      "src/components/Header/Header.js"
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.hitch-hike",
+    "description": "Hitch-hiking",
+    "defaultMessage": "Hitch-hiking (autostop)",
+    "message": "Peukkukyyti",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.shared-taxi",
+    "description": "Shared taxi",
+    "defaultMessage": "Shared taxi",
+    "message": "Jaettu taksi",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.train",
+    "description": "Train",
+    "defaultMessage": "Train",
+    "message": "Juna",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.van",
+    "description": "Van",
+    "defaultMessage": "Van (mini bus, marshrutka)",
+    "message": "Minibussi (marshrutka)",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.walk",
+    "description": "Walking",
+    "defaultMessage": "Walking",
+    "message": "Kävellen",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
     ]
   },
   {
     "id": "header.brand",
+    "description": "Brand name displayed in header",
     "defaultMessage": "Your Company Brand",
     "message": "Transitlinks",
-    "description": "Brand name displayed in header",
     "files": [
       "src/components/Header/Header.js"
     ]
   },
   {
     "id": "navigation.about",
+    "description": "About",
     "defaultMessage": "About",
     "message": "Tietoja",
-    "description": "About link in header",
     "files": [
-      "src/components/Navigation/Navigation.js"
+      "src/components/Navigation/messages.js"
     ]
   },
   {
     "id": "navigation.login",
-    "defaultMessage": "Log in",
+    "description": "Login",
+    "defaultMessage": "Login",
     "message": "Sisään",
-    "description": "Log in link in header",
     "files": [
-      "src/components/Navigation/Navigation.js"
-    ]
-  },
-  {
-    "id": "navigation.search",
-    "defaultMessage": "Search",
-    "message": "Etsi",
-    "description": "Search link",
-    "files": [
-      "src/components/Navigation/Navigation.js"
+      "src/components/Navigation/messages.js"
     ]
   },
   {
     "id": "navigation.newLink",
+    "description": "Create",
     "defaultMessage": "Create",
     "message": "Luo",
-    "description": "New link link",
     "files": [
-      "src/components/Navigation/Navigation.js"
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.search",
+    "description": "Search",
+    "defaultMessage": "Search",
+    "message": "Etsi",
+    "files": [
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "editLinkInstance.addLink",
+    "description": "Add link",
+    "defaultMessage": "Add link",
+    "message": "Uusi linkki",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
     ]
   }
 ]
