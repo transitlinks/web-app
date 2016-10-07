@@ -6,7 +6,8 @@ import {
   GraphQLString,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLFloat
 } from 'graphql';
 
 export const LinkInstanceType = new GraphQLObjectType({
@@ -21,7 +22,10 @@ export const LinkInstanceType = new GraphQLObjectType({
     departureMinute: { type: GraphQLInt },
     arrivalDate: { type: GraphQLString },
     arrivalHour: { type: GraphQLInt },
-    arrivalMinute: { type: GraphQLInt }
+    arrivalMinute: { type: GraphQLInt },
+    priceAmount: { type: GraphQLFloat },
+    priceCurrency: { type: GraphQLString },
+    description: { type: GraphQLString }
   })
 });
 
@@ -38,7 +42,10 @@ export const LinkInstanceInputType = new GraphQLInputObjectType({
     departureMinute: { type: GraphQLInt },
     arrivalDate: { type: GraphQLString },
     arrivalHour: { type: GraphQLInt },
-    arrivalMinute: { type: GraphQLInt }
+    arrivalMinute: { type: GraphQLInt },
+    priceAmount: { type: GraphQLFloat },
+    priceCurrency: { type: GraphQLString },
+    description: { type: GraphQLString }
   })
 });
 

@@ -7,8 +7,11 @@
 }
 
 .header {
-  margin-top: 6px;
+  margin-top: 16px;
   margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .header .title {
@@ -29,14 +32,12 @@
 }
 
 .times .dateTime {
-  display: flex;
 }
 
 .times .dateTime .date {
 }
 
 .times .dateTime .time {
-  margin-left: 8px;
 }
 
 .time-picker {
@@ -44,14 +45,49 @@
 }
 
 .terminals {
+  margin-top: 16px;
+  display: flex;
 }
 
-.price {
+.terminals .terminalHeader {
+  text-align: center;
+}
+
+.terminals .departure, .arrival {
+}
+
+.terminals .departure {
+  margin-right: 42px;
+}
+
+.terminals .arrival {
+}
+
+.cost {
+  margin-top: 16px;
+}
+
+.cost .costHeader {
+  text-align: center;
+}
+
+.cost .price {
+  display: flex;
+  justify-content: center;
+}
+
+.cost .price .amount {
+  margin-right: 16px;
+}
+
+.cost .price .currency {
 }
 
 .description {
+  margin-bottom: 24px;
 }
 
 .save {
-  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
 }

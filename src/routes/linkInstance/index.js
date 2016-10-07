@@ -26,7 +26,9 @@ export default {
               },
               transport { slug },
               departureDate, departureHour, departureMinute,
-              arrivalDate, arrivalHour, arrivalMinute
+              arrivalDate, arrivalHour, arrivalMinute,
+              priceAmount, priceCurrency,
+              description
             }
           }`
         );

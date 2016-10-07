@@ -59,7 +59,9 @@ const createOrUpdateLink = async (linkInstance) => {
 	  
     let {
       departureDate, departureHour, departureMinute,
-      arrivalDate, arrivalHour, arrivalMinute
+      arrivalDate, arrivalHour, arrivalMinute,
+      priceAmount, priceCurrency,
+      description
     } = linkInstance;
     
     departureDate = departureDate ? new Date(departureDate) : null;   
@@ -69,7 +71,9 @@ const createOrUpdateLink = async (linkInstance) => {
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute,
-      arrivalDate, arrivalHour, arrivalMinute
+      arrivalDate, arrivalHour, arrivalMinute,
+      priceAmount, priceCurrency,
+      description
 		});
 			
   } else { // Update existing link

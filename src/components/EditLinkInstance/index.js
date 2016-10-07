@@ -7,14 +7,14 @@ import {
 } from '../../actions/editLink';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditLinkInstance.css';
+import cc from 'currency-codes';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
 import MenuItem from 'material-ui/MenuItem';
 import LocalityAutocomplete from './LocalityAutocomplete';
+import Terminal from './Terminal';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
@@ -23,7 +23,9 @@ const EditLinkInstance = ({
   saveLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,  
   from, to, transport,
-  departureDate, departureTime, arrivalDate, arrivalTime 
+  departureDate, departureTime, arrivalDate, arrivalTime,
+  priceAmount, priceCurrency,
+  description
 }) => {
 
   const toLocalDate = (date) => {
@@ -54,16 +56,18 @@ const EditLinkInstance = ({
       from, to, transport,
     }, {
       departureDate: departureDateJson, departureHour, departureMinute,
-      arrivalDate: arrivalDateJson, arrivalHour, arrivalMinute  
+      arrivalDate: arrivalDateJson, arrivalHour, arrivalMinute,
+      priceAmount: parseFloat(priceAmount), priceCurrency,
+      description
     })});
   };
 
-  const onChangeTime = (property) => {
-    return (event, value) => {
-      setProperty(property, value);
+  const onChangeProperty = (property) => {
+    return (event, value, selectValue) => {
+      setProperty(property, selectValue || value);
     };
   };
-  
+   
   const onChangeTransport = (event, index, value) => {
     setTransport(value);
   };
@@ -73,11 +77,19 @@ const EditLinkInstance = ({
       value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
   
+  const currencies = cc.codes().map(code => (
+    <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code} ${cc.code(code).currency}`} />
+  ));
+  
+  console.log("price", priceAmount, priceCurrency);
   return (
     <div className={s.container}>
       <div className={s.header}>
         <div className={s.title}>
           <FormattedMessage {...msg.addLink} />
+        </div>
+        <div className={s.save}>
+          <RaisedButton label="Save" onClick={onSave} />
         </div>
       </div>
       <div className={s.endpoints}>
@@ -96,48 +108,66 @@ const EditLinkInstance = ({
             {transportOptions}
           </SelectField>
         </div>
-        <div className={s.times}>
-          <div className={s.dateTime}>
-            <div className={s.date}>
-              <DatePicker id="departure-date-picker"
-                hintText="Departure date"
-                value={departureDate}
-                onChange={onChangeTime('departureDate')}
-              />
-            </div>
-            <div className={s.time}>
-              <TimePicker className="time-picker" id="departure-time-picker"
-                dialogBodyStyle={{ }}
-                format="24hr"
-                hintText="Departure time"
-                value={departureTime}
-                onChange={onChangeTime('departureTime')}
-              />
-            </div>
-          </div>
-          <div className={s.dateTime}>
-            <div className={s.date}>
-              <DatePicker id="arrival-date-picker"
-                hintText="Arrival date"
-                value={arrivalDate}
-                onChange={onChangeTime('arrivalDate')}
-              />
-            </div>
-            <div className={s.time}>
-              <TimePicker id="arrival-time-picker"
-                format="24hr"
-                hintText="Arrival time"
-                value={arrivalTime}
-                onChange={onChangeTime('arrivalTime')}
-              />
-            </div>
-          </div>
-        </div>
         <div className={s.terminals}>
+          <div className={s.departure}>
+            <div className={s.terminalHeader}>
+              Departure
+            </div>
+            <Terminal { ...{
+              terminal: 'departure', 
+              date: departureDate, 
+              time: departureTime, 
+              onChangeTime: onChangeProperty 
+            } } />
+          </div>
+          <div className={s.arrival}>
+            <div className={s.terminalHeader}>
+              Arrival
+            </div>
+            <Terminal { ...{
+              terminal: 'arrival', 
+              date: arrivalDate, 
+              time: arrivalTime, 
+              onChangeTime: onChangeProperty
+            } } />
+          </div>
         </div>
-        <div className={s.price}>
+        <div className={s.cost}>
+          <div className={s.costHeader}>
+            Cost
+          </div>
+          <div className={s.price}>
+            <div className={s.amount}>
+              <TextField id="price-amount-input"
+                value={priceAmount}
+                floatingLabelText="Price"
+                hintText="Trip price"
+                onChange={onChangeProperty('priceAmount')} 
+              />
+            </div>
+            <div className={s.currency}>
+              <SelectField id="currency-select"
+                value={priceCurrency}
+                floatingLabelText="Currency"
+                floatingLabelFixed={true}
+                hintText="Select currency"
+                onChange={onChangeProperty('priceCurrency')}>
+                {currencies}
+              </SelectField>
+            </div>
+          </div>
         </div>
         <div className={s.description}>
+          <TextField id="description-input"
+            hintText="Description and comments about this link..."
+            floatingLabelText="Description"
+            floatingLabelStyle={ { color: '#000000' } }
+            floatingLabelFocusStyle={ { fontSize: '21px' } }
+            multiLine={true}
+            fullWidth={true}
+            rows={3}
+            onChange={onChangeProperty('description')}
+          />
         </div>
       </div>
       <div className={s.save}>
@@ -156,6 +186,9 @@ export default injectIntl(
     departureTime: state.editLink.departureTime,
     arrivalDate: state.editLink.arrivalDate,
     arrivalTime: state.editLink.arrivalTime,
+    priceAmount: state.editLink.priceAmount,
+    priceCurrency: state.editLink.priceCurrency,
+    description: state.editLink.description,
     linkInstance: state.editLink.linkInstance
   }), {
     saveLinkInstance,

@@ -55,11 +55,11 @@ const LinkInstance = Model.define('LinkInstance', {
     type: DataType.INTEGER
   },
 
-  price: {
+  priceAmount: {
     type: DataType.DECIMAL
   },
 
-  currency: {
+  priceCurrency: {
     type: DataType.CHAR(3)
   },
 

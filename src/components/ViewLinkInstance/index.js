@@ -8,7 +8,9 @@ const ViewLinkInstance = ({ linkInstance }) => {
   const { 
     link, transport,
     departureDate, departureHour, departureMinute,
-    arrivalDate, arrivalHour, arrivalMinute
+    arrivalDate, arrivalHour, arrivalMinute,
+    priceAmount, priceCurrency,
+    description
   } = linkInstance;
   
   return (
@@ -28,6 +30,12 @@ const ViewLinkInstance = ({ linkInstance }) => {
       </div>
       <div>
         ARRIVAL: {arrivalDate}/{arrivalHour}/{arrivalMinute}
+      </div>
+      <div>
+        PRICE: {priceAmount}/{priceCurrency}
+      </div>
+      <div>
+        DESC: {description}
       </div>
     </div>
   );
