@@ -16,7 +16,10 @@ const validLinkInstance = {
   departureMinute: 30,
   arrivalDate: (new Date()).toJSON(),
   arrivalHour: 15,
-  arrivalMinute: 45
+  arrivalMinute: 45,
+  priceAmount: 120.50,
+  priceCurrency: 'USD',
+  description: 'this is description'
 };
 
 const createLinkInstance = async (linkInstance) => {
@@ -119,7 +122,9 @@ describe('data/queries/links', () => {
               to { name, lat, lng }
             },
             departureDate, departureHour, departureMinute,
-            arrivalDate, arrivalHour, arrivalMinute
+            arrivalDate, arrivalHour, arrivalMinute,
+            priceAmount, priceCurrency,
+            description
           }
         }
       `,
@@ -134,8 +139,18 @@ describe('data/queries/links', () => {
 
     const { linkInstance } = response.data;
     assert(linkInstance.transport);
+    assert(linkInstance.link);
+    assert(linkInstance.link.from);
+    assert(linkInstance.link.to);
     assert(linkInstance.departureDate);
+    assert(linkInstance.departureHour);
+    assert(linkInstance.departureMinute);
+    assert(linkInstance.arrivalDate);
+    assert(linkInstance.arrivalHour);
     assert(linkInstance.arrivalMinute);
+    assert(linkInstance.priceAmount);
+    assert(linkInstance.priceCurrency);
+    assert(linkInstance.description);
 
   });
 
