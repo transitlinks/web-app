@@ -23,7 +23,8 @@ const EditLinkInstance = ({
   saveLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,  
   from, to, transport,
-  departureDate, departureTime, arrivalDate, arrivalTime,
+  departureDate, departureTime, departurePlace,
+  arrivalDate, arrivalTime, arrivalPlace,
   priceAmount, priceCurrency,
   description
 }) => {
@@ -55,8 +56,10 @@ const EditLinkInstance = ({
     saveLinkInstance({ linkInstance: mergeNonNull({ 
       from, to, transport,
     }, {
-      departureDate: departureDateJson, departureHour, departureMinute,
-      arrivalDate: arrivalDateJson, arrivalHour, arrivalMinute,
+      departureDate: departureDateJson, 
+      departureHour, departureMinute, departurePlace,
+      arrivalDate: arrivalDateJson, 
+      arrivalHour, arrivalMinute, arrivalPlace,
       priceAmount: parseFloat(priceAmount), priceCurrency,
       description
     })});
@@ -117,7 +120,9 @@ const EditLinkInstance = ({
               terminal: 'departure', 
               date: departureDate, 
               time: departureTime, 
-              onChangeTime: onChangeProperty 
+              place: departurePlace, 
+              onChangeTime: onChangeProperty,
+              onChangePlace: onChangeProperty
             } } />
           </div>
           <div className={s.arrival}>
@@ -127,8 +132,10 @@ const EditLinkInstance = ({
             <Terminal { ...{
               terminal: 'arrival', 
               date: arrivalDate, 
-              time: arrivalTime, 
-              onChangeTime: onChangeProperty
+              time: arrivalTime,
+              place: arrivalPlace, 
+              onChangeTime: onChangeProperty,
+              onChangePlace: onChangeProperty
             } } />
           </div>
         </div>
@@ -184,8 +191,10 @@ export default injectIntl(
     transport: state.editLink.transport,
     departureDate: state.editLink.departureDate,
     departureTime: state.editLink.departureTime,
+    departurePlace: state.editLink.departurePlace,
     arrivalDate: state.editLink.arrivalDate,
     arrivalTime: state.editLink.arrivalTime,
+    arrivalPlace: state.editLink.arrivalPlace,
     priceAmount: state.editLink.priceAmount,
     priceCurrency: state.editLink.priceCurrency,
     description: state.editLink.description,

@@ -8,7 +8,9 @@ import TextField from 'material-ui/TextField';
 const Terminal = ({
   terminal,
   date, time,
-  onChangeTime
+  place,
+  onChangeTime,
+  onChangePlace
 }) => {
   
   const labels = {
@@ -45,8 +47,12 @@ const Terminal = ({
       </div>
       <div className={s.place}>
         <TextField id={`${terminal}-terminal-place-input`}
+          value={place}
           floatingLabelText={labels[terminal].placeInputTitle}
-          hintText="Place description" />
+          hintText="Place description"
+          multiLine={true}
+          rows={1}
+          onChange={onChangePlace(`${terminal}Place`)} />
       </div>
     </div>
   );

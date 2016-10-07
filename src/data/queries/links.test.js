@@ -14,9 +14,11 @@ const validLinkInstance = {
   departureDate: (new Date()).toJSON(),
   departureHour: 12,
   departureMinute: 30,
+  departurePlace: 'leningradsky vokzal',
   arrivalDate: (new Date()).toJSON(),
   arrivalHour: 15,
   arrivalMinute: 45,
+  arrivalPlace: 'central railway station',
   priceAmount: 120.50,
   priceCurrency: 'USD',
   description: 'this is description'
@@ -121,8 +123,8 @@ describe('data/queries/links', () => {
               from { name, lat, lng },
               to { name, lat, lng }
             },
-            departureDate, departureHour, departureMinute,
-            arrivalDate, arrivalHour, arrivalMinute,
+            departureDate, departureHour, departureMinute, departurePlace,
+            arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
             priceAmount, priceCurrency,
             description
           }
@@ -145,9 +147,11 @@ describe('data/queries/links', () => {
     assert(linkInstance.departureDate);
     assert(linkInstance.departureHour);
     assert(linkInstance.departureMinute);
+    assert(linkInstance.departurePlace);
     assert(linkInstance.arrivalDate);
     assert(linkInstance.arrivalHour);
     assert(linkInstance.arrivalMinute);
+    assert(linkInstance.arrivalPlace);
     assert(linkInstance.priceAmount);
     assert(linkInstance.priceCurrency);
     assert(linkInstance.description);

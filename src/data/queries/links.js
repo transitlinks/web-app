@@ -58,8 +58,8 @@ const createOrUpdateLink = async (linkInstance) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
 	  
     let {
-      departureDate, departureHour, departureMinute,
-      arrivalDate, arrivalHour, arrivalMinute,
+      departureDate, departureHour, departureMinute, departurePlace,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
       priceAmount, priceCurrency,
       description
     } = linkInstance;
@@ -70,8 +70,8 @@ const createOrUpdateLink = async (linkInstance) => {
 		return await linkRepository.createInstance({ 
 			linkId: link.id,
 			transportId: transport.id,
-      departureDate, departureHour, departureMinute,
-      arrivalDate, arrivalHour, arrivalMinute,
+      departureDate, departureHour, departureMinute, departurePlace,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
       priceAmount, priceCurrency,
       description
 		});

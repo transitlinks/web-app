@@ -25,8 +25,8 @@ export default {
                 to { id, name, lat, lng} 
               },
               transport { slug },
-              departureDate, departureHour, departureMinute,
-              arrivalDate, arrivalHour, arrivalMinute,
+              departureDate, departureHour, departureMinute, departurePlace,
+              arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
               priceAmount, priceCurrency,
               description
             }
