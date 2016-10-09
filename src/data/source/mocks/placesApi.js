@@ -1,6 +1,25 @@
 const data = {
   'moscow': {
+    name: 'Moscow',
     formatted_address: 'Moscow, Russia',
+    address_components: [
+      {
+        long_name: 'City of Moscow',
+        short_name: 'Moscow',
+        types: [
+          'locality',
+          'political'
+        ]
+      },
+      {
+        long_name: 'Russia',
+        short_name: 'RU',
+        types: [
+          'country',
+          'political'
+        ]
+      }
+    ],
     geometry: {
       location: {
         lat: 54.8171,
@@ -9,7 +28,26 @@ const data = {
     }
   },
   'helsinki': {
+    name: 'Helsinki',
     formatted_address: 'Helsinki, Finland',
+    address_components: [
+      {
+        long_name: 'Municipality of Helsinki',
+        short_name: 'Helsinki',
+        types: [
+          'locality',
+          'political'
+        ]
+      },
+      {
+        long_name: 'Finland',
+        short_name: 'FI',
+        types: [
+          'country',
+          'political'
+        ]
+      }
+    ],
     geometry: {
       location: {
         lat: 54.8171,

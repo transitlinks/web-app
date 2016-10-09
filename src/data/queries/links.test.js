@@ -32,8 +32,8 @@ const createLinkInstance = async (linkInstance) => {
         linkInstance(linkInstance:$linkInstance) {
           link {
             id,
-            from {name,lat,lng}, 
-            to {name,lat,lng}
+            from { name, description, country, lat, lng }, 
+            to { name, description, country, lat, lng }
           },
           transport { slug }
         }
@@ -45,7 +45,19 @@ const createLinkInstance = async (linkInstance) => {
   const response = await test(query);
   assert(response.success == true);
   assert(response.status == 200); 
+  
   assert(response.data.linkInstance);
+  
+  const { link } = response.data.linkInstance;
+  assert(link);
+  assert(link.from);
+  assert(link.to);
+  assert(link.from.name);
+  assert(link.from.description);
+  assert(link.from.country);
+  assert(link.from.lat);
+  assert(link.from.lng);
+  
   return response;
 
 };

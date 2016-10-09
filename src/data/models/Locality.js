@@ -16,12 +16,20 @@ const Locality = Model.define('Locality', {
   },
     
   apiId: {
-    type: DataType.STRING(255),
+    type: DataType.STRING,
     unique: true
   },
 
   name: {
-    type: DataType.STRING(255)
+    type: DataType.STRING
+  },
+
+  country: {
+    type: DataType.STRING
+  },
+
+  description: {
+    type: DataType.STRING
   },
 
   lat: {

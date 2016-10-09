@@ -29,7 +29,18 @@ const getOrCreateLocality = async (apiId) => {
     
     const details = await placesApi.getDetails(apiId);
     const { lat, lng } = details.geometry.location;
-    locality = { apiId, name: details.formatted_address, lat, lng };
+    let country = details.address_components.filter(
+      component => component.types.includes("country")
+    );
+    country = country.length > 0 ? country[0].long_name : null;
+
+    locality = { 
+      apiId,
+      name: details.name,
+      country,
+      description: details.formatted_address, 
+      lat, lng 
+    };
     locality = await localityRepository.create(locality);
   
   }
