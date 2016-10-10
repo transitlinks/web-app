@@ -19,11 +19,12 @@ export default {
         `query {
           link(id: ${params.id}) {
             id,
-            from {id,name,lat,lng},
-            to {id,name,lat,lng},
+            from { id, description, lat, lng},
+            to { id, description, lat, lng},
             instances {
               id,
-              transport { id, slug }
+              transport { slug },
+              priceAmount, priceCurrency
             }
           }
         }`

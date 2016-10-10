@@ -14,9 +14,14 @@ const LinkSearch = ({
   const linkResults = (links || []).map(link => (
     <div key={link.id}
       className={s.link} onClick={() => navigate('/link/' + link.id)}>
-      <span id="place-from">{link.from.name}</span>
-      <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
-      <span id="place-to">{link.to.name}</span>
+      <div className={s.linkTitle}>
+        <span id="place-from" className="locality">{link.from.description}</span>
+        <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
+        <span id="place-to" className="locality">{link.to.description}</span>
+      </div>
+      <div className={s.linkStats}>
+        ({`${link.instanceCount}`})
+      </div>
     </div>
   ));
   
@@ -30,7 +35,7 @@ const LinkSearch = ({
       <div>
         <LinkSearchInput />
       </div>
-      <div>
+      <div className={s.results}>
         {linkResults}
       </div>
     </div>

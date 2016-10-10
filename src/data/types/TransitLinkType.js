@@ -60,7 +60,8 @@ export const TransitLinkType = new GraphQLObjectType({
     id: { type: new GraphQLNonNull(GraphQLInt) },
     from: { type: LocalityType },
     to: { type: LocalityType },
-    instances: { type: new GraphQLList(LinkInstanceType) }
+    instances: { type: new GraphQLList(LinkInstanceType) },
+    instanceCount: { type: GraphQLInt }
   })
 });
 

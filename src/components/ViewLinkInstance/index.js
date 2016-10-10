@@ -17,9 +17,9 @@ const ViewLinkInstance = ({ linkInstance }) => {
     <div className={s.container}>
       <div className={s.header}>
         <div className={s.title}>
-          <span id="place-from">{link.from.name}</span>
+          <span id="place-from">{link.from.description}</span>
           <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
-          <span id="place-to">{link.to.name}</span>
+          <span id="place-to">{link.to.description}</span>
         </div>
       </div>
       <div>

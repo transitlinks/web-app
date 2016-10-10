@@ -32,8 +32,8 @@ const createLinkInstance = async (linkInstance) => {
         linkInstance(linkInstance:$linkInstance) {
           link {
             id,
-            from { name, description, country, lat, lng }, 
-            to { name, description, country, lat, lng }
+            from { name, description, countryLong, countryShort, lat, lng }, 
+            to { name, description, countryLong, countryShort, lat, lng }
           },
           transport { slug }
         }
@@ -54,7 +54,8 @@ const createLinkInstance = async (linkInstance) => {
   assert(link.to);
   assert(link.from.name);
   assert(link.from.description);
-  assert(link.from.country);
+  assert(link.from.countryLong);
+  assert(link.from.countryShort);
   assert(link.from.lat);
   assert(link.from.lng);
   
@@ -77,8 +78,9 @@ describe('data/queries/links', () => {
       query: `
         query { 
           links(input:"Moscow") {
-            from { name, lat, lng }, 
-            to { name, lat, lng }
+            from { description }, 
+            to { description },
+            instanceCount
           }
         }
       `,
@@ -89,7 +91,12 @@ describe('data/queries/links', () => {
     
     assert(response.success == true);
     assert(response.status == 200);
-    assert(response.data.links.length > 0, '0 links by id results');
+
+    const { links } = response.data;
+    assert(links.length > 0, '0 links by id results');
+    assert(links[0].from);
+    assert(links[0].to);
+    assert(links[0].instanceCount);
   
   });
   

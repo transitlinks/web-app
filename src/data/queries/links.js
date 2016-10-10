@@ -29,15 +29,22 @@ const getOrCreateLocality = async (apiId) => {
     
     const details = await placesApi.getDetails(apiId);
     const { lat, lng } = details.geometry.location;
-    let country = details.address_components.filter(
+    const country = details.address_components.filter(
       component => component.types.includes("country")
     );
-    country = country.length > 0 ? country[0].long_name : null;
+   
+    let countryLong = null;
+    let countryShort = null;
+    if (country.length > 0) {
+      countryLong = country[0].long_name;
+      countryShort = country[0].short_name;
+    }
 
     locality = { 
       apiId,
       name: details.name,
-      country,
+      countryLong,
+      countryShort,
       description: details.formatted_address, 
       lat, lng 
     };
@@ -151,11 +158,24 @@ export const TransitLinkQueryFields = {
     }
   
   },
+  
+  linkSearch: {
+    
+    type: new GraphQLList(TransitLinkType),
+    description: 'Find links by localities',
+    args: {
+      input: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { input }) => {
+      return linkRepository.getByLocalityName(input); 
+    }
+
+  },
 
   links: {
     
     type: new GraphQLList(TransitLinkType),
-    description: 'Find links by localities',
+    description: 'Get full links data by localities',
     args: {
       input: { type: GraphQLString }
     },

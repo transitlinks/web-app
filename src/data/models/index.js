@@ -15,6 +15,7 @@ TransitLink.belongsTo(Locality, {
   as: 'to'
 });
 
+TransitLink.hasMany(LinkInstance);
 LinkInstance.belongsTo(TransitLink, {
   foreignKey: 'linkId',
   as: 'link'

@@ -1,6 +1,7 @@
 import { getLog } from '../../core/log';
 const log = getLog('data/source/linkRepository');
 
+import Sequelize from 'sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { TransitLink, LinkInstance, TransportType, Locality } from '../models';
@@ -62,17 +63,25 @@ export default {
 		}
 		
 		const localityIds = localities.map(locality => locality.id);
-    const links = await TransitLink.findAll({ 
+    const links = await TransitLink.findAll({
       where: { 
 				$or: [
 					{ fromId: { $in: localityIds } }, 
 					{ toId: { $in: localityIds } }
 				]
 			},
-			include: [ { all: true } ] 
+      include: [ 
+        { model: Locality, as: 'from', attributes: [ 'description' ] },
+        { model: Locality, as: 'to', attributes: [ 'description' ] }
+      ]
     });
-    
-    return links.map(link => link.toJSON());
+
+    const linkResults = await Promise.all(links.map(async link => {
+      const instanceCount = await LinkInstance.count({ where: { linkId: link.id } });
+      return Object.assign(link.toJSON(), { instanceCount });
+    }));
+
+    return linkResults;
   
   },
 

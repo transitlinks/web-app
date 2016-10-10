@@ -14,8 +14,9 @@ export const searchLinks = (input) => {
       query {
         links (input:"${input}") {
           id,
-          from { name, lat, lng },
-          to { name, lat, lng },
+          from { description },
+          to { description },
+          instanceCount
         }
       }
     `;

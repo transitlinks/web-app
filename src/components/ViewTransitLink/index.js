@@ -10,9 +10,12 @@ const ViewTransitLink = ({
 }) => {
 
   const instances = link.instances.map(instance => (
-    <div key={instance.id} className={s.instance}
+    <div key={instance.id} className={s.instanceRow + " " +s.selectable}
       onClick={() => navigate('/link-instance/' + instance.id)}>
-      {instance.transport.slug}
+      <div className={s.cell}>
+        <span className={s.transport}>{instance.transport.slug}</span>
+      </div>
+      <div className={s.cell}>{instance.priceAmount} {instance.priceCurrency}</div>
     </div>
   ));
 
@@ -20,12 +23,16 @@ const ViewTransitLink = ({
     <div className={s.container}>
       <div className={s.header}>
         <div className={s.title}>
-          <span id="place-from">{link.from.name}</span>
+          <span id="place-from">{link.from.description}</span>
           <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
-          <span id="place-to">{link.to.name}</span>
+          <span id="place-to">{link.to.description}</span>
         </div>
       </div>
-      <div>
+      <div className={s.instances}>
+        <div className={s.instanceHeader + " " + s.instanceRow}>
+          <div className={s.cell}>Transport</div>
+          <div className={s.cell}>Price</div>
+        </div>
         {instances}
       </div>
     </div>

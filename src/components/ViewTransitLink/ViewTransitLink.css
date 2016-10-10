@@ -2,12 +2,11 @@
 
 .container {
   display: inline-block;
-  height: 48px;
-  padding: 6px;
 }
 
 .header {
-  margin-top: 6px;
+  margin-top: 16px;
+  margin-bottom: 6px;
 }
 
 .header .title {
@@ -21,10 +20,29 @@
   margin-right: 6px;
 }
 
-.instance {
+.instances {
+  margin-top: 24px;
+}
+
+.instanceHeader {
+}
+
+.instanceRow {
+  display: flex;
+}
+
+.selectable {
   cursor: pointer;
 }
 
-.instance :hover {
+.selectable:hover > .transport {
+  color: blue;
+}
+
+.instanceRow .cell {
+  width: 50%;
+}
+
+.transport:hover {
   color: blue;
 }

@@ -21,8 +21,8 @@ export default {
             linkInstance(id: ${params.id}) {
               id,
               link {
-                from { id, name, lat, lng },
-                to { id, name, lat, lng} 
+                from { id, name, description, lat, lng },
+                to { id, name, description, lat, lng} 
               },
               transport { slug },
               departureDate, departureHour, departureMinute, departurePlace,
