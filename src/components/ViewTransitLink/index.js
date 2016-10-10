@@ -2,20 +2,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { FormattedMessage } from 'react-intl';
 import s from './ViewTransitLink.css';
 import FontIcon from 'material-ui/FontIcon';
+import msgTransport from '../common/messages/transport';
 
 const ViewTransitLink = ({ 
   link, navigate 
 }) => {
 
   const instances = link.instances.map(instance => (
-    <div key={instance.id} className={s.instanceRow + " " +s.selectable}
+    <div key={instance.id} className={"table-row " +s.selectable}
       onClick={() => navigate('/link-instance/' + instance.id)}>
-      <div className={s.cell}>
-        <span className={s.transport}>{instance.transport.slug}</span>
+      <div className="col-1-4">
+        <span className={s.transport}>
+          <FormattedMessage { ...msgTransport[instance.transport.slug] } />
+        </span>
       </div>
-      <div className={s.cell}>{instance.priceAmount} {instance.priceCurrency}</div>
+      <div className="col-1-4"></div>
+      <div className="col-1-4">{instance.priceAmount} {instance.priceCurrency}</div>
+      <div className="col-1-4"></div>
     </div>
   ));
 
@@ -29,9 +35,11 @@ const ViewTransitLink = ({
         </div>
       </div>
       <div className={s.instances}>
-        <div className={s.instanceHeader + " " + s.instanceRow}>
-          <div className={s.cell}>Transport</div>
-          <div className={s.cell}>Price</div>
+        <div className={"table-row " + s.instanceHeader}>
+          <div className="col-1-4"></div>
+          <div className="col-1-4">Duration</div>
+          <div className="col-1-4">Price</div>
+          <div className="col-1-4">Score</div>
         </div>
         {instances}
       </div>

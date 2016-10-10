@@ -1,7 +1,6 @@
 @import '../variables.css';
 
 .container {
-  display: inline-block;
 }
 
 .header {
@@ -22,27 +21,18 @@
 
 .instances {
   margin-top: 24px;
+  width: 100%;
+  max-width: 640px;
 }
 
 .instanceHeader {
-}
-
-.instanceRow {
-  display: flex;
 }
 
 .selectable {
   cursor: pointer;
 }
 
-.selectable:hover > .transport {
-  color: blue;
+.selectable:hover {
+  background: #f6f6f6;
 }
 
-.instanceRow .cell {
-  width: 50%;
-}
-
-.transport:hover {
-  color: blue;
-}
