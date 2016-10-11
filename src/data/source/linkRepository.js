@@ -4,7 +4,7 @@ const log = getLog('data/source/linkRepository');
 import Sequelize from 'sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
-import { TransitLink, LinkInstance, TransportType, Locality } from '../models';
+import { TransitLink, LinkInstance, TransportType, Locality, Rating } from '../models';
 
 export default {
   
@@ -140,6 +140,14 @@ export default {
     
     return created.toJSON();
 
+  },
+
+  saveInstanceRatings: async (linkInstanceId, ratings) => {
+    
+    await Promise.all(ratings.map(async rating => {
+      await Rating.create({ linkInstanceId, ...rating });
+    }));
+  
   },
 
   update: async (link) => {
