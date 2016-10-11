@@ -124,7 +124,6 @@ const createOrUpdateLink = async (linkInstance) => {
       });
     }
     
-    console.log("saving ratings", ratings);
     await linkRepository.saveInstanceRatings(linkInstance.id, ratings);
 
     return linkInstance;

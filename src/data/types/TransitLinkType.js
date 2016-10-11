@@ -28,10 +28,11 @@ export const LinkInstanceType = new GraphQLObjectType({
     priceAmount: { type: GraphQLFloat },
     priceCurrency: { type: GraphQLString },
     description: { type: GraphQLString },
-    availabilityRating: { type: GraphQLInt },
-    departureRating: { type: GraphQLInt },
-    arrivalRating: { type: GraphQLInt },
-    awesomeRating: { type: GraphQLInt }
+    avgAvailabilityRating: { type: GraphQLFloat },
+    avgDepartureRating: { type: GraphQLFloat },
+    avgArrivalRating: { type: GraphQLFloat },
+    avgAwesomeRating: { type: GraphQLFloat },
+    avgRating: { type: GraphQLFloat }
   })
 });
 

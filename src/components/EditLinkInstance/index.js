@@ -80,7 +80,6 @@ const EditLinkInstance = ({
   
   const onChangeRating = (name) => {
     return (rating) => {
-      console.log("rating", name, rating);
       setProperty(`${name}Rating`, rating);
     }
   };
@@ -212,7 +211,8 @@ const EditLinkInstance = ({
               <label>Availability</label>
             </div>
             <div className="col-1-2">
-              <Rating {...ratingStyles} onChange={onChangeRating('availability')} />
+              <Rating {...ratingStyles} initialRate={availabilityRating} 
+                onChange={onChangeRating('availability')} />
             </div>
           </div>
           <div className={"table-row " + s.rating}>
@@ -220,7 +220,8 @@ const EditLinkInstance = ({
               <label>Departure reliability</label>
             </div>
             <div className="col-1-2">
-              <Rating {...ratingStyles} onChange={onChangeRating('departure')} />
+              <Rating {...ratingStyles} initialRate={departureRating} 
+                onChange={onChangeRating('departure')} />
             </div>
           </div>
           <div className={"table-row " + s.rating}>
@@ -228,7 +229,8 @@ const EditLinkInstance = ({
               <label>Arrival reliability</label>
             </div>
             <div className="col-1-2">
-              <Rating {...ratingStyles} onChange={onChangeRating('arrival')} />
+              <Rating {...ratingStyles} initialRate={arrivalRating} 
+                onChange={onChangeRating('arrival')} />
             </div>
           </div>
           <div className={"table-row " + s.rating}>
@@ -236,7 +238,8 @@ const EditLinkInstance = ({
               <label>Awesomeness</label>
             </div>
             <div className="col-1-2">
-              <Rating {...ratingStyles} onChange={onChangeRating('awesome')} />
+              <Rating {...ratingStyles} initialRate={awesomeRating}
+                onChange={onChangeRating('awesome')} />
             </div>
           </div>
         </div>

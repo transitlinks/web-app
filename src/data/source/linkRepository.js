@@ -24,9 +24,33 @@ export default {
 				{ model: TransportType, as: 'transport' }
 			]
 		});
-		
+
+    const getAvgRating = async (linkInstanceId, property) => {
+      
+      const result = await Rating.findOne({
+        attributes: [
+          [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
+        ],
+        where: { linkInstanceId, property }
+      });
+
+      return result ? result.avgRating : null;
+
+    };
+
+    const ratings = {};
+    await Promise.all(instances.map(async instance => {
+      if (!ratings[instance.id]) {
+        ratings[instance.id] = {};
+      }
+      ratings[instance.id].avgAvailabilityRating = await getAvgRating(instance.id, 'availability');
+      ratings[instance.id].avgDepartureRating = await getAvgRating(instance.id, 'departure');
+      ratings[instance.id].avgArrivalRating = await getAvgRating(instance.id, 'arrival');
+      ratings[instance.id].avgAwesomeRating = await getAvgRating(instance.id, 'awesome');
+    }));
+
 		return Object.assign(link, {
-			instances: instances.map(instance => instance.toJSON())
+			instances: instances.map(instance => ({ ...instance.toJSON(), ...ratings[instance.id] }))
 		});
   	
 	},
