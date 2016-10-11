@@ -5,6 +5,7 @@
     "defaultMessage": "Biking",
     "message": "Pyöräily",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -14,6 +15,7 @@
     "defaultMessage": "Bus",
     "message": "Bussi",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -23,6 +25,7 @@
     "defaultMessage": "Hitch-hiking (autostop)",
     "message": "Peukkukyyti",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -32,6 +35,7 @@
     "defaultMessage": "Shared taxi",
     "message": "Jaettu taksi",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -41,6 +45,7 @@
     "defaultMessage": "Train",
     "message": "Juna",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -50,6 +55,7 @@
     "defaultMessage": "Van (mini bus, marshrutka)",
     "message": "Minibussi (marshrutka)",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -59,6 +65,7 @@
     "defaultMessage": "Walking",
     "message": "Kävellen",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },

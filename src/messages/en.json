@@ -5,6 +5,7 @@
     "defaultMessage": "Biking",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -14,6 +15,7 @@
     "defaultMessage": "Bus",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -23,6 +25,7 @@
     "defaultMessage": "Hitch-hiking (autostop)",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -32,6 +35,7 @@
     "defaultMessage": "Shared taxi",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -41,6 +45,7 @@
     "defaultMessage": "Train",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -50,6 +55,7 @@
     "defaultMessage": "Van (mini bus, marshrutka)",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -59,6 +65,7 @@
     "defaultMessage": "Walking",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
