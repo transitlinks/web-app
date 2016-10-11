@@ -24,7 +24,8 @@ export default {
             instances {
               id,
               transport { slug },
-              priceAmount, priceCurrency
+              priceAmount, priceCurrency,
+              avgRating
             }
           }
         }`

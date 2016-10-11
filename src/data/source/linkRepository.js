@@ -33,22 +33,57 @@ export default {
         ],
         where: { linkInstanceId, property }
       });
-
-      return result ? result.avgRating : null;
+      
+      console.log("avg results", result);
+      return result ? result.toJSON().avgRating : null;
 
     };
 
     const ratings = {};
     await Promise.all(instances.map(async instance => {
+      
       if (!ratings[instance.id]) {
         ratings[instance.id] = {};
       }
-      ratings[instance.id].avgAvailabilityRating = await getAvgRating(instance.id, 'availability');
-      ratings[instance.id].avgDepartureRating = await getAvgRating(instance.id, 'departure');
-      ratings[instance.id].avgArrivalRating = await getAvgRating(instance.id, 'arrival');
-      ratings[instance.id].avgAwesomeRating = await getAvgRating(instance.id, 'awesome');
-    }));
+      
+      
+      const avgAvailabilityRating = await getAvgRating(instance.id, 'availability');
+      const avgDepartureRating = await getAvgRating(instance.id, 'departure');
+      const avgArrivalRating = await getAvgRating(instance.id, 'arrival');
+      const avgAwesomeRating = await getAvgRating(instance.id, 'awesome');
+      
+      let ratingCount = 0;
+      let avgRating = 0;
+      if (avgAvailabilityRating) {
+        avgRating += avgAvailabilityRating;
+        ratingCount += 1;
+      }
+      if (avgDepartureRating) {
+        avgRating += avgDepartureRating;
+        ratingCount += 1;
+      }
+      if (avgArrivalRating) {
+        avgRating += avgArrivalRating;
+        ratingCount += 1;
+      }
+      if (avgAwesomeRating) {
+        avgRating += avgAwesomeRating;
+        ratingCount += 1;
+      }
+      
+      avgRating = avgRating / ratingCount;
 
+      ratings[instance.id] = {
+        avgAvailabilityRating,
+        avgDepartureRating,
+        avgArrivalRating,
+        avgAwesomeRating,
+        avgRating
+      };  
+
+    }));
+    
+    console.log("ratings", ratings);
 		return Object.assign(link, {
 			instances: instances.map(instance => ({ ...instance.toJSON(), ...ratings[instance.id] }))
 		});
