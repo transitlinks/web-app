@@ -28,7 +28,8 @@ export default {
               departureDate, departureHour, departureMinute, departurePlace,
               arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
               priceAmount, priceCurrency,
-              description
+              description,
+              avgRating
             }
           }`
         );

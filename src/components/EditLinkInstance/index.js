@@ -13,6 +13,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
+import Rating from 'react-rating';
 import LocalityAutocomplete from './LocalityAutocomplete';
 import Terminal from './Terminal';
 import { injectIntl, FormattedMessage } from 'react-intl';
@@ -26,7 +27,8 @@ const EditLinkInstance = ({
   departureDate, departureTime, departurePlace,
   arrivalDate, arrivalTime, arrivalPlace,
   priceAmount, priceCurrency,
-  description
+  description,
+  availabilityRating, departureRating, arrivalRating, awesomeRating
 }) => {
 
   const toLocalDate = (date) => {
@@ -61,7 +63,8 @@ const EditLinkInstance = ({
       arrivalDate: arrivalDateJson, 
       arrivalHour, arrivalMinute, arrivalPlace,
       priceAmount: parseFloat(priceAmount), priceCurrency,
-      description
+      description,
+      availabilityRating, departureRating, arrivalRating, awesomeRating
     })});
   };
 
@@ -74,6 +77,12 @@ const EditLinkInstance = ({
   const onChangeTransport = (event, index, value) => {
     setTransport(value);
   };
+  
+  const onChangeRating = (name) => {
+    return (rating) => {
+      setProperty(`${name}Rating`, rating);
+    }
+  };
 
   const transportOptions = transportTypes.map(type => (
     <MenuItem key={type.slug} style={{ "WebkitAppearance": "initial" }} 
@@ -84,7 +93,27 @@ const EditLinkInstance = ({
     <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code} ${cc.code(code).currency}`} />
   ));
   
-  console.log("price", priceAmount, priceCurrency);
+  const ratingCss = { 
+    'display': 'inline-block',
+    'borderRadius': '50%',
+    'border': '5px double white',
+    'width': '20px',
+    'height': '20px',
+  };
+  
+  const ratingEmptyCss = Object.assign({
+    'backgroundColor': '#f0f0f0'
+  }, ratingCss);
+  const ratingFullCss = Object.assign({
+    'backgroundColor': 'black'
+  }, ratingCss);
+  
+
+  const ratingStyles = {
+    empty: ratingEmptyCss,
+    full: ratingFullCss
+  };
+
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -176,6 +205,44 @@ const EditLinkInstance = ({
             onChange={onChangeProperty('description')}
           />
         </div>
+        <div className={s.ratings}>
+          <div className={"table-row " + s.rating}>
+            <div className={"col-1-2 " + s.ratingLabel}>
+              <label>Availability</label>
+            </div>
+            <div className="col-1-2">
+              <Rating {...ratingStyles} initialRate={availabilityRating} 
+                onChange={onChangeRating('availability')} />
+            </div>
+          </div>
+          <div className={"table-row " + s.rating}>
+            <div className={"col-1-2 " + s.ratingLabel}>
+              <label>Departure reliability</label>
+            </div>
+            <div className="col-1-2">
+              <Rating {...ratingStyles} initialRate={departureRating} 
+                onChange={onChangeRating('departure')} />
+            </div>
+          </div>
+          <div className={"table-row " + s.rating}>
+            <div className={"col-1-2 " + s.ratingLabel}>
+              <label>Arrival reliability</label>
+            </div>
+            <div className="col-1-2">
+              <Rating {...ratingStyles} initialRate={arrivalRating} 
+                onChange={onChangeRating('arrival')} />
+            </div>
+          </div>
+          <div className={"table-row " + s.rating}>
+            <div className={"col-1-2 " + s.ratingLabel}>
+              <label>Awesomeness</label>
+            </div>
+            <div className="col-1-2">
+              <Rating {...ratingStyles} initialRate={awesomeRating}
+                onChange={onChangeRating('awesome')} />
+            </div>
+          </div>
+        </div>
       </div>
       <div className={s.save}>
         <RaisedButton label="Save" onClick={onSave} />
@@ -198,6 +265,10 @@ export default injectIntl(
     priceAmount: state.editLink.priceAmount,
     priceCurrency: state.editLink.priceCurrency,
     description: state.editLink.description,
+    availabilityRating: state.editLink.availabilityRating, 
+    departureRating: state.editLink.departureRating, 
+    arrivalRating: state.editLink.arrivalRating, 
+    awesomeRating: state.editLink.awesomeRating,
     linkInstance: state.editLink.linkInstance
   }), {
     saveLinkInstance,

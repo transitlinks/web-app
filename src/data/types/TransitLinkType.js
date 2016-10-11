@@ -27,7 +27,12 @@ export const LinkInstanceType = new GraphQLObjectType({
     arrivalPlace: { type: GraphQLString },
     priceAmount: { type: GraphQLFloat },
     priceCurrency: { type: GraphQLString },
-    description: { type: GraphQLString }
+    description: { type: GraphQLString },
+    avgAvailabilityRating: { type: GraphQLFloat },
+    avgDepartureRating: { type: GraphQLFloat },
+    avgArrivalRating: { type: GraphQLFloat },
+    avgAwesomeRating: { type: GraphQLFloat },
+    avgRating: { type: GraphQLFloat }
   })
 });
 
@@ -49,7 +54,11 @@ export const LinkInstanceInputType = new GraphQLInputObjectType({
     arrivalPlace: { type: GraphQLString },
     priceAmount: { type: GraphQLFloat },
     priceCurrency: { type: GraphQLString },
-    description: { type: GraphQLString }
+    description: { type: GraphQLString },
+    availabilityRating: { type: GraphQLInt },
+    departureRating: { type: GraphQLInt },
+    arrivalRating: { type: GraphQLInt },
+    awesomeRating: { type: GraphQLInt }
   })
 });
 

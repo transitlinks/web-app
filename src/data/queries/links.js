@@ -79,20 +79,54 @@ const createOrUpdateLink = async (linkInstance) => {
       departureDate, departureHour, departureMinute, departurePlace,
       arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
       priceAmount, priceCurrency,
-      description
+      description,
+      availabilityRating, departureRating, arrivalRating, awesomeRating
     } = linkInstance;
-    
+     
     departureDate = departureDate ? new Date(departureDate) : null;   
     arrivalDate = arrivalDate ? new Date(arrivalDate) : null;
 
-		return await linkRepository.createInstance({ 
+		linkInstance = await linkRepository.createInstance({ 
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departurePlace,
       arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
       priceAmount, priceCurrency,
       description
-		});
+    });
+
+    const ratings = [];
+    if (availabilityRating) {
+      ratings.push({
+        property: 'availability',
+        rating: availabilityRating
+      });
+    }
+
+    if (departureRating) {
+      ratings.push({
+        property: 'departure',
+        rating: departureRating
+      });
+    }
+    
+    if (arrivalRating) {
+      ratings.push({ 
+        property: 'arrival',
+        rating: arrivalRating
+      });
+    }
+
+    if (awesomeRating) {
+      ratings.push({
+        property: 'awesome',
+        rating: awesomeRating
+      });
+    }
+    
+    await linkRepository.saveInstanceRatings(linkInstance.id, ratings);
+
+    return linkInstance;
 			
   } else { // Update existing link
     return await linkRepository.update(link);

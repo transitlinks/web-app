@@ -4,6 +4,7 @@ import Locality from './Locality';
 import TransitLink from './TransitLink';
 import LinkInstance from './LinkInstance';
 import TransportType from './TransportType';
+import Rating from './Rating';
 
 TransitLink.belongsTo(Locality, {
   foreignKey: 'fromId',
@@ -15,7 +16,6 @@ TransitLink.belongsTo(Locality, {
   as: 'to'
 });
 
-TransitLink.hasMany(LinkInstance);
 LinkInstance.belongsTo(TransitLink, {
   foreignKey: 'linkId',
   as: 'link'
@@ -26,9 +26,13 @@ LinkInstance.belongsTo(TransportType, {
   as: 'transport'
 });
 
+LinkInstance.hasMany(Rating, {
+  foreignKey: 'linkInstanceId'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType };
+export { User, Locality, TransitLink, LinkInstance, TransportType, Rating };
