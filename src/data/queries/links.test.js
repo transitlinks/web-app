@@ -21,7 +21,9 @@ const validLinkInstance = {
   arrivalPlace: 'central railway station',
   priceAmount: 120.50,
   priceCurrency: 'USD',
-  description: 'this is description'
+  description: 'this is description',
+  availabilityRating: 5,
+  awesomeRating: 3
 };
 
 const createLinkInstance = async (linkInstance) => {
@@ -111,7 +113,8 @@ describe('data/queries/links', () => {
             from { name, lat, lng },
             to { name, lat, lng },
             instances {
-              transport { slug }
+              transport { slug },
+              avgRating
             }
           }
         }
@@ -124,7 +127,10 @@ describe('data/queries/links', () => {
     assert(response.success == true);
     assert(response.status == 200); 
     assert(response.data.link.from && response.data.link.to);
-    assert(response.data.link.instances && response.data.link.instances.length > 0);
+
+    const { instances } = response.data.link;
+    assert(instances && instances.length > 0);
+    assert(instances[0].avgRating === 4);
 
   });
   
@@ -145,7 +151,8 @@ describe('data/queries/links', () => {
             departureDate, departureHour, departureMinute, departurePlace,
             arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
             priceAmount, priceCurrency,
-            description
+            description,
+            avgRating
           }
         }
       `,
@@ -174,6 +181,7 @@ describe('data/queries/links', () => {
     assert(linkInstance.priceAmount);
     assert(linkInstance.priceCurrency);
     assert(linkInstance.description);
+    assert(linkInstance.avgRating === 4);
 
   });
 
