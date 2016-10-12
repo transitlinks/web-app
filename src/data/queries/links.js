@@ -21,6 +21,42 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
+const calcInstanceRating = (instance) => {
+  
+  const {
+    avgAvailabilityRating,
+    avgDepartureRating,
+    avgArrivalRating,
+    avgAwesomeRating
+  } = instance;
+
+  let divisor = 0;
+  let ratingSum = 0;
+
+  if (avgAvailabilityRating) {
+    divisor += 1;
+    ratingSum += parseFloat(avgAvailabilityRating);
+  }
+  
+  if (avgDepartureRating) {
+    divisor += 1;
+    ratingSum += parseFloat(avgDepartureRating);
+  }
+  
+  if (avgArrivalRating) {
+    divisor += 1;
+    ratingSum += parseFloat(avgArrivalRating);
+  }
+  
+  if (avgAwesomeRating) {
+    divisor += 1;
+    ratingSum += parseFloat(avgAwesomeRating);
+  }
+  
+  return divisor > 0 ? ratingSum / divisor : null;
+
+};
+
 const getOrCreateLocality = async (apiId) => {
   
   let locality = await localityRepository.getByApiId(apiId); 
@@ -166,7 +202,11 @@ export const TransitLinkQueryFields = {
       if (!link) {
         throw new Error(`Link (id ${id}) not found`);
       }
-
+      
+      link.instances.forEach(instance => {
+        instance.avgRating = calcInstanceRating(instance);
+      });
+      
       return link;
     
     }
@@ -186,7 +226,8 @@ export const TransitLinkQueryFields = {
       if (!linkInstance) {
         throw new Error(`Link instance (id ${id}) not found`);
       }
-
+      
+      linkInstance.avgRating = calcInstanceRating(linkInstance);
       return linkInstance;
     
     }

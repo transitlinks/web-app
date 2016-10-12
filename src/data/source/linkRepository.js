@@ -18,86 +18,69 @@ export default {
 		
 		link = link.toJSON();
 		
-		const instances = await LinkInstance.findAll({
+		let instances = await LinkInstance.findAll({
 			where: { linkId: id },
 			include: [
 				{ model: TransportType, as: 'transport' }
 			]
 		});
 
-    const getAvgRating = async (linkInstanceId, property) => {
-      
-      const result = await Rating.findOne({
-        attributes: [
-          [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
-        ],
-        where: { linkInstanceId, property }
-      });
-      
-      console.log("avg results", result);
-      return result ? result.toJSON().avgRating : null;
-
-    };
-
-    const ratings = {};
-    await Promise.all(instances.map(async instance => {
-      
-      if (!ratings[instance.id]) {
-        ratings[instance.id] = {};
-      }
-      
-      
-      const avgAvailabilityRating = await getAvgRating(instance.id, 'availability');
-      const avgDepartureRating = await getAvgRating(instance.id, 'departure');
-      const avgArrivalRating = await getAvgRating(instance.id, 'arrival');
-      const avgAwesomeRating = await getAvgRating(instance.id, 'awesome');
-      
-      let ratingCount = 0;
-      let avgRating = 0;
-      if (avgAvailabilityRating) {
-        avgRating += avgAvailabilityRating;
-        ratingCount += 1;
-      }
-      if (avgDepartureRating) {
-        avgRating += avgDepartureRating;
-        ratingCount += 1;
-      }
-      if (avgArrivalRating) {
-        avgRating += avgArrivalRating;
-        ratingCount += 1;
-      }
-      if (avgAwesomeRating) {
-        avgRating += avgAwesomeRating;
-        ratingCount += 1;
-      }
-      
-      avgRating = avgRating / ratingCount;
-
-      ratings[instance.id] = {
-        avgAvailabilityRating,
-        avgDepartureRating,
-        avgArrivalRating,
-        avgAwesomeRating,
-        avgRating
-      };  
-
-    }));
+    const ratingResults = await Rating.findAll({
+      attributes: [
+        'property',
+        'linkInstanceId',
+        [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
+      ],
+      where: { linkInstanceId: { $in: instances.map(instance => instance.id) }, rating: { $ne: null } },
+      group: [ 'linkInstanceId', 'property' ]
+    });
     
-    console.log("ratings", ratings);
+    const ratings = {};
+    ratingResults.forEach(result => {
+      const linkInstanceId = result.get('linkInstanceId');
+      if (!ratings[linkInstanceId]) {
+        ratings[linkInstanceId] = {};
+      }
+      const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
+      ratings[linkInstanceId][`avg${propertyName}Rating`] = result.get('avgRating');
+    });
+     
 		return Object.assign(link, {
 			instances: instances.map(instance => ({ ...instance.toJSON(), ...ratings[instance.id] }))
 		});
   	
 	},
   
-	getInstanceById: async (id) => {
+  getInstanceById: async (id) => {
+
     const linkInstance = await LinkInstance.findById(id, {
 			include: [
 				{ model: TransportType, as: 'transport' },
 				{ model: TransitLink, as: 'link', include: [ { all: true } ] } 
 			 ] 
 		});
-    return linkInstance ? linkInstance.toJSON() : null;
+    
+    if (!linkInstance) {
+      return null;
+    }
+
+    const ratingResults = await Rating.findAll({
+      attributes: [
+        'property',
+        [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
+      ],
+      where: { linkInstanceId: id, rating: { $ne: null } },
+      group: [ 'property' ]
+    });
+    
+    const ratings = {};
+    ratingResults.forEach(result => {
+      const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
+      ratings[`avg${propertyName}Rating`] = result.get('avgRating');
+    });
+
+    return { ...linkInstance.toJSON(), ...ratings };
+  
   },
   
   getByLocalityId: async (localityId) => {

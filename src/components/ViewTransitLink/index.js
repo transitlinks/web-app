@@ -21,7 +21,7 @@ const ViewTransitLink = ({
       </div>
       <div className="col-1-4"></div>
       <div className="col-1-4">{instance.priceAmount} {instance.priceCurrency}</div>
-      <div className="col-1-4"></div>
+      <div className="col-1-4">{instance.avgRating}</div>
     </div>
   ));
 
