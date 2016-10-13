@@ -1,6 +1,11 @@
 import { getLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
+import {
+  calcInstanceRating,
+  calcTransitDuration
+} from '../../services/linkService';
+
 import { 
   localityRepository, 
   linkRepository, 
@@ -20,42 +25,6 @@ import {
   GraphQLList,
   GraphQLNonNull
 } from 'graphql';
-
-const calcInstanceRating = (instance) => {
-  
-  const {
-    avgAvailabilityRating,
-    avgDepartureRating,
-    avgArrivalRating,
-    avgAwesomeRating
-  } = instance;
-
-  let divisor = 0;
-  let ratingSum = 0;
-
-  if (avgAvailabilityRating) {
-    divisor += 1;
-    ratingSum += parseFloat(avgAvailabilityRating);
-  }
-  
-  if (avgDepartureRating) {
-    divisor += 1;
-    ratingSum += parseFloat(avgDepartureRating);
-  }
-  
-  if (avgArrivalRating) {
-    divisor += 1;
-    ratingSum += parseFloat(avgArrivalRating);
-  }
-  
-  if (avgAwesomeRating) {
-    divisor += 1;
-    ratingSum += parseFloat(avgAwesomeRating);
-  }
-  
-  return divisor > 0 ? ratingSum / divisor : null;
-
-};
 
 const getOrCreateLocality = async (apiId) => {
   
@@ -205,6 +174,7 @@ export const TransitLinkQueryFields = {
       
       link.instances.forEach(instance => {
         instance.avgRating = calcInstanceRating(instance);
+        instance.durationMinutes = calcTransitDuration(instance);
       });
       
       return link;
@@ -228,6 +198,7 @@ export const TransitLinkQueryFields = {
       }
       
       linkInstance.avgRating = calcInstanceRating(linkInstance);
+      linkInstance.durationMinutes = calcTransitDuration(linkInstance);
       return linkInstance;
     
     }

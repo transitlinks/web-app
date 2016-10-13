@@ -25,7 +25,8 @@ export default {
               id,
               transport { slug },
               priceAmount, priceCurrency,
-              avgRating
+              avgRating,
+              durationMinutes
             }
           }
         }`

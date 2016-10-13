@@ -32,7 +32,8 @@ export const LinkInstanceType = new GraphQLObjectType({
     avgDepartureRating: { type: GraphQLFloat },
     avgArrivalRating: { type: GraphQLFloat },
     avgAwesomeRating: { type: GraphQLFloat },
-    avgRating: { type: GraphQLFloat }
+    avgRating: { type: GraphQLFloat },
+    durationMinutes: { type: GraphQLInt }
   })
 });
 
@@ -44,6 +45,9 @@ export const LinkInstanceInputType = new GraphQLInputObjectType({
     from: { type: new GraphQLNonNull(GraphQLString) },
     to: { type: new GraphQLNonNull(GraphQLString) },
     transport: { type: new GraphQLNonNull(GraphQLString) },
+    durationDays: { type: GraphQLInt },
+    durationHours: { type: GraphQLInt },
+    durationMinutes: { type: GraphQLInt },
     departureDate: { type: GraphQLString },
     departureHour: { type: GraphQLInt },
     departureMinute: { type: GraphQLInt },
