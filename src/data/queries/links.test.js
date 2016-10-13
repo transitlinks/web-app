@@ -125,7 +125,7 @@ describe('data/queries/links', () => {
     const response = await test(query);
     console.log(response); 
     
-    assert(response.success == true, `response failure: status: ${response.status}`);
+    assert(response.success == true, `response failure: status: ${response.status}, raw: ${response.raw}, errors: ${response.errors}`);
     assert.equal(response.status, 200);
 
     const { link } = response.data;
