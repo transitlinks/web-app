@@ -124,12 +124,16 @@ describe('data/queries/links', () => {
     
     const response = await test(query);
     
-    assert(response.success == true);
-    assert(response.status == 200); 
-    assert(response.data.link.from && response.data.link.to);
+    assert(response.success == true, `response failure: ${response}`);
+    assert.equal(response.status, 200);
 
-    const { instances } = response.data.link;
-    assert(instances && instances.length > 0);
+    const { link } = response.data;
+    assert(link, 'missing property: link');
+    assert(link.from, 'missing property: link.from');
+    assert(link.to, 'missing property: link.to');
+
+    const { instances } = link;
+    assert(instances && instances.length > 0, 'missing or empty property: link.instances');
     assert.equal(instances[0].avgRating, 4);
 
   });
