@@ -123,8 +123,9 @@ describe('data/queries/links', () => {
     });
     
     const response = await test(query);
+    console.log(response); 
     
-    assert(response.success == true, `response failure: ${response}`);
+    assert(response.success == true, `response failure: status: ${response.status}`);
     assert.equal(response.status, 200);
 
     const { link } = response.data;
@@ -164,8 +165,9 @@ describe('data/queries/links', () => {
     });
     
     const response = await test(query);
+    console.log(response); 
     
-    assert(response.success == true);
+    assert(response.success == true, `response failure: status ${response.status}`);
     assert(response.status == 200); 
     assert(response.data.linkInstance);
 
