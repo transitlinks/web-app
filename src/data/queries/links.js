@@ -90,7 +90,7 @@ const createOrUpdateLink = async (linkInstance) => {
      
     departureDate = departureDate ? new Date(departureDate) : null;   
     arrivalDate = arrivalDate ? new Date(arrivalDate) : null;
-
+    console.log("dates", departureDate, arrivalDate);
 		linkInstance = await linkRepository.createInstance({ 
 			linkId: link.id,
 			transportId: transport.id,
