@@ -130,7 +130,7 @@ describe('data/queries/links', () => {
 
     const { instances } = response.data.link;
     assert(instances && instances.length > 0);
-    assert(instances[0].avgRating === 4);
+    assert.equal(instances[0].avgRating, 4);
 
   });
   
@@ -166,22 +166,22 @@ describe('data/queries/links', () => {
     assert(response.data.linkInstance);
 
     const { linkInstance } = response.data;
-    assert(linkInstance.transport);
-    assert(linkInstance.link);
-    assert(linkInstance.link.from);
-    assert(linkInstance.link.to);
-    assert(linkInstance.departureDate);
-    assert(linkInstance.departureHour);
-    assert(linkInstance.departureMinute);
-    assert(linkInstance.departurePlace);
-    assert(linkInstance.arrivalDate);
-    assert(linkInstance.arrivalHour);
-    assert(linkInstance.arrivalMinute);
-    assert(linkInstance.arrivalPlace);
-    assert(linkInstance.priceAmount);
-    assert(linkInstance.priceCurrency);
-    assert(linkInstance.description);
-    assert(linkInstance.avgRating === 4);
+    assert(linkInstance.transport, 'missing property: linkInstance.transport');
+    assert(linkInstance.link, 'missing property: linkInstance.link');
+    assert(linkInstance.link.from, 'missing property: linkInstance.link.from');
+    assert(linkInstance.link.to, 'missing property: linkInstance.link.to');
+    assert(linkInstance.departureDate, 'missing property: linkInstance.departureDate');
+    assert(linkInstance.departureHour, 'missing property: linkInstance.departureHour');
+    assert(linkInstance.departureMinute, 'missing property: linkInstance.departureMinute');
+    assert(linkInstance.departurePlace, 'missing property: linkInstance.departurePlace');
+    assert(linkInstance.arrivalDate, 'missing property: linkInstance.arrivalDate');
+    assert(linkInstance.arrivalHour, 'missing property: linkInstance.arrivalHour');
+    assert(linkInstance.arrivalMinute, 'missing property: linkInstance.arrivalMinute');
+    assert(linkInstance.arrivalPlace, 'missing property: linkInstance.arrivalPlace');
+    assert(linkInstance.priceAmount, 'missing property: linkInstance.priceAmount');
+    assert(linkInstance.priceCurrency, 'missing property: linkInstance.priceCurrency');
+    assert(linkInstance.description, 'missing property: linkInstance.description');
+    assert.equal(linkInstance.avgRating, 4);
 
   });
 
