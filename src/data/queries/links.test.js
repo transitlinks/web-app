@@ -12,17 +12,18 @@ const assertResponse = (response) => {
   assert.equal(response.status, 200);
 };
 
+const date = new Date();
 const validLinkInstance = { 
   from: 'moscow', 
   to: 'helsinki',
   transport: 'bus',
-  departureDate: (new Date()).toJSON(),
-  departureHour: 12,
+  departureDate: date.toJSON(),
+  departureHour: 15,
   departureMinute: 30,
   departurePlace: 'leningradsky vokzal',
-  arrivalDate: (new Date()).toJSON(),
-  arrivalHour: 15,
-  arrivalMinute: 45,
+  arrivalDate: (new Date(date.getTime() + 48 * 60 * 60 * 1000)).toJSON(),
+  arrivalHour: 13,
+  arrivalMinute: 30,
   arrivalPlace: 'central railway station',
   priceAmount: 120.50,
   priceCurrency: 'USD',
@@ -116,7 +117,8 @@ describe('data/queries/links', () => {
             to { name, lat, lng },
             instances {
               transport { slug },
-              avgRating
+              avgRating,
+              durationMinutes
             }
           }
         }
@@ -135,6 +137,7 @@ describe('data/queries/links', () => {
     const { instances } = link;
     assert(instances && instances.length > 0, 'missing or empty property: link.instances');
     assert.equal(instances[0].avgRating, 4);
+    assert.equal(instances[0].durationMinutes, 46 * 60);
 
   });
   
@@ -156,7 +159,8 @@ describe('data/queries/links', () => {
             arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
             priceAmount, priceCurrency,
             description,
-            avgRating
+            avgRating,
+            durationMinutes
           }
         }
       `,
@@ -185,6 +189,7 @@ describe('data/queries/links', () => {
     assert(linkInstance.priceCurrency, 'missing property: linkInstance.priceCurrency');
     assert(linkInstance.description, 'missing property: linkInstance.description');
     assert.equal(linkInstance.avgRating, 4);
+    assert.equal(linkInstance.durationMinutes, 46 * 60);
 
   });
 
