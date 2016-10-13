@@ -53,9 +53,16 @@ export const calcTransitDuration = (instance) => {
     return arrivalTime;
   }
   
-  throw new Error("Travis debug " + departureDate);
-  if (departureDate) departureTime += (departureDate.getTime() / (1000 * 60));
-  if (arrivalDate) arrivalTime += (arrivalDate.getTime() / (1000 * 60));
+  const getDate = (date) => {
+    if (date instanceof Date) {
+      return date;
+    } else {
+      return new Date(date);
+    }
+  };
+
+  if (departureDate) departureTime += (getDate(departureDate).getTime() / (1000 * 60));
+  if (arrivalDate) arrivalTime += (getDate(arrivalDate).getTime() / (1000 * 60));
   if (departureHour) departureTime += departureHour * 60;
   if (arrivalHour) arrivalTime += arrivalHour * 60;
   if (departureMinute) departureTime += departureMinute;

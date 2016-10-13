@@ -7,6 +7,11 @@ const test = tester({
   contentType: 'application/json'
 });
 
+const assertResponse = (response) => {
+  assert(response.success == true, `response failure: status: ${response.status}, raw: ${response.raw}`);
+  assert.equal(response.status, 200);
+};
+
 const validLinkInstance = { 
   from: 'moscow', 
   to: 'helsinki',
@@ -45,8 +50,7 @@ const createLinkInstance = async (linkInstance) => {
   });
   
   const response = await test(query);
-  assert(response.success == true);
-  assert(response.status == 200); 
+  assertResponse(response);
   
   assert(response.data.linkInstance);
   
@@ -90,9 +94,7 @@ describe('data/queries/links', () => {
     });
     
     const response = await test(query);
-    
-    assert(response.success == true);
-    assert(response.status == 200);
+    assertResponse(response);   
 
     const { links } = response.data;
     assert(links.length > 0, '0 links by id results');
@@ -122,11 +124,8 @@ describe('data/queries/links', () => {
       variables: {}
     });
     
-    const response = await test(query);
-    console.log(response); 
-    
-    assert(response.success == true, `response failure: status: ${response.status}, raw: ${response.raw}, errors: ${response.errors}`);
-    assert.equal(response.status, 200);
+    const response = await test(query); 
+    assertResponse(response);
 
     const { link } = response.data;
     assert(link, 'missing property: link');
@@ -165,10 +164,8 @@ describe('data/queries/links', () => {
     });
     
     const response = await test(query);
-    console.log(response); 
+    assertResponse(response);
     
-    assert(response.success == true, `response failure: status ${response.status}`);
-    assert(response.status == 200); 
     assert(response.data.linkInstance);
 
     const { linkInstance } = response.data;
