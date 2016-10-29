@@ -13,6 +13,10 @@ const assertResponse = (response) => {
 };
 
 const date = new Date();
+const twoDaysLater = new Date(date.getTime());
+twoDaysLater.setDate(date.getDate() + 2);
+const twoDaysInMinutes = (twoDaysLater.getTime() - date.getTime()) / 1000 / 60;
+
 const validLinkInstance = { 
   from: 'moscow', 
   to: 'helsinki',
@@ -21,7 +25,7 @@ const validLinkInstance = {
   departureHour: 15,
   departureMinute: 30,
   departurePlace: 'leningradsky vokzal',
-  arrivalDate: (new Date(date.getTime() + 48 * 60 * 60 * 1000)).toJSON(),
+  arrivalDate: twoDaysLater.toJSON(),
   arrivalHour: 13,
   arrivalMinute: 30,
   arrivalPlace: 'central railway station',
@@ -70,7 +74,6 @@ const createLinkInstance = async (linkInstance) => {
 
 };
 
- 
 describe('data/queries/links', () => {
 
   it('should create new link instance', async () => {
@@ -137,7 +140,7 @@ describe('data/queries/links', () => {
     const { instances } = link;
     assert(instances && instances.length > 0, 'missing or empty property: link.instances');
     assert.equal(instances[0].avgRating, 4);
-    assert.equal(instances[0].durationMinutes, 46 * 60);
+    assert.equal(instances[0].durationMinutes, (twoDaysInMinutes - 120));
 
   });
   
@@ -189,7 +192,7 @@ describe('data/queries/links', () => {
     assert(linkInstance.priceCurrency, 'missing property: linkInstance.priceCurrency');
     assert(linkInstance.description, 'missing property: linkInstance.description');
     assert.equal(linkInstance.avgRating, 4);
-    assert.equal(linkInstance.durationMinutes, 46 * 60);
+    assert.equal(linkInstance.durationMinutes, (twoDaysInMinutes - 120));
 
   });
 
