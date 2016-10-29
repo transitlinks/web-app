@@ -19,7 +19,12 @@ export default defineMessages({
   },
   login: {
     id: 'navigation.login',
-    defaultMessage: 'Login',
-    description: 'Login'
+    defaultMessage: 'Log in',
+    description: 'Log in'
+  },
+  logout: {
+    id: 'navigation.logout',
+    defaultMessage: 'Log out',
+    description: 'Log out'
   }
 });

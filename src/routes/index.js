@@ -52,7 +52,32 @@ const routes = {
 };
 
 export const initEndpoints = (app) => {
-  
+	
+	app.get('/logout', (req, res, next) => { 
+    req.logout();
+    res.redirect('/');
+  });
+	
+	app.post('/login', (req, res, next) => { 
+     
+    app.passport.authenticate('login-local', (err, user, info) => {
+      
+      if (err) {
+        req.session.error = err;
+        res.redirect('/login');
+        return;
+      }
+
+      req.logIn(user, (err) => {
+        if (err) return next(err);
+        req.session.newUser = user.isNew;
+        res.redirect('/');
+      });
+    
+    })(req, res, next);
+    
+  });
+ 
   app.get('/login/fb',
     app.passport.authenticate(
       'login-facebook',
@@ -61,6 +86,19 @@ export const initEndpoints = (app) => {
 
   app.get('/login/fb/callback',
     app.passport.authenticate('login-facebook', { failureRedirect: '/login' }),
+    (req, res) => {
+      // Successful authentication, redirect home.
+      res.redirect('/');
+  });
+  
+  app.get('/login/google',
+    app.passport.authenticate(
+      'login-google',
+      { scope: [ 'email', 'profile' ], session: false }
+  ));
+
+  app.get('/login/google/callback',
+    app.passport.authenticate('login-google', { failureRedirect: '/login' }),
     (req, res) => {
       // Successful authentication, redirect home.
       res.redirect('/');
@@ -98,7 +136,14 @@ export const initEndpoints = (app) => {
     }
 
     log.debug('user auth', req.user, req.isAuthenticated());
-    const history = createHistory(req.url);
+    const auth = req.isAuthenticated() ? {
+			loggedIn: true,
+			user: req.user
+		} : {
+			loggedIn: false
+		};
+
+		const history = createHistory(req.url);
     // let currentLocation = history.getCurrentLocation();
     let sent = false;
     const removeHistoryListener = history.listen(location => {
@@ -116,7 +161,10 @@ export const initEndpoints = (app) => {
     });
 
     try {
-      const store = configureStore({}, {
+
+      const store = configureStore({
+					auth: { auth }
+				}, {
         cookie: req.headers.cookie,
         history,
       });
@@ -145,11 +193,11 @@ export const initEndpoints = (app) => {
 
       store.dispatch(setRuntimeVariable({
         name: 'availableLocales',
-        value: locales,
+        value: locales
       }));
 
       await store.dispatch(setLocale({
-        locale,
+        locale
       }));
 
       await UniversalRouter.resolve(routes, {

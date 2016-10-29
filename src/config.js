@@ -5,6 +5,7 @@ const env = process.env || {};
 //export const AUTH_FB_SECRET = 'jdhajdhkjahk';
 
 export const {
+	APP_URL,
   HTTP_PORT,
   HTTP_HOST,
   DB_USER,
@@ -17,6 +18,8 @@ export const {
   AUTH_JWT_SECRET,
   AUTH_FB_APPID,
   AUTH_FB_SECRET,
+  GOOGLE_OAUTH_ID,
+  GOOGLE_OAUTH_SECRET,
   PLACES_API_URL,
   PLACES_API_KEY,
   LOG_LEVEL_NODE,
