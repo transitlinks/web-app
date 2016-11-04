@@ -31,7 +31,8 @@ exports.config = {
     reporters: ['spec'],
     
     mochaOpts: {
-			compilers: ['js:babel-register'],
+      compilers: ['js:babel-register'],
+      timeout: 60000,
 			ui: 'bdd'
     },
 
