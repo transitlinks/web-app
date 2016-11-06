@@ -10,14 +10,12 @@ import msg from './messages';
 
 const Navigation = ({ setAuth, auth, className }) => {
 
-  console.log("NAV AUTH", auth);
-
   const loginElem = auth.loggedIn ? (
-    <a className={s.link} href="/logout">
+    <a className={s.link} id="logout-link" href="/logout">
       <FormattedMessage {...msg.logout} />
     </a>
   ) : (
-    <Link className={s.link} to="/login">
+    <Link className={s.link} id="login-link" to="/login">
       <FormattedMessage {...msg.login} />
     </Link>
   );
