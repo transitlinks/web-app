@@ -9,7 +9,7 @@ cp .env .env.test
 - Edit environment variables in .env.dev to reflect local development environment
 - Edit environment variables in .env.test to reflect local test environment
 
-# Running (development mode)
+### Running (development mode)
 ```
 source .env.dev
 npm start
@@ -40,4 +40,4 @@ file. The documentation to the project is licensed under the
 [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
 
 ---
-Footer
+...
