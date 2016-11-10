@@ -11,6 +11,7 @@ npm start
 ### Test automation
 
 ```
+npm start -- --release --test
 npm run test
 npm run e2e
 ```
