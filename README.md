@@ -1,16 +1,23 @@
 ## Transitlinks — Worldwide transit planner
 
-### Getting Started
-
+### Installation
 ```
 npm install
-cp <path-to-config>/config.js .
+cp .env .env.dev
+cp .env .env.test
+```
+- Edit environment variables in .env.dev to reflect local development environment
+- Edit environment variables in .env.test to reflect local test environment
+
+# Running (development mode)
+```
+source .env.dev
 npm start
 ```
 
 ### Test automation
-
 ```
+source .env.test
 npm start -- --release --test
 npm run test
 npm run e2e
