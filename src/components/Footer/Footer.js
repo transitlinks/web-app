@@ -12,6 +12,12 @@ function Footer() {
         <Link className={s.link} to="/">Home</Link>
         <span className={s.spacer}>·</span>
         <Link className={s.link} to="/privacy">Privacy</Link>
+        <span className={s.browserstack}>
+          Tested with
+          <a href="http://www.browserstack.com/">
+            <img src={require("./browserstack.png")} />
+          </a>
+        </span>
       </div>
     </div>
   );

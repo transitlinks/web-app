@@ -50,3 +50,14 @@
 .link:hover {
   color: rgba(0, 0, 0, 1);
 }
+
+.browserstack {
+  color: rgba(0, 0, 0, 0.3);
+  margin-left: 16px;
+}
+
+.browserstack img {
+  height: 70px;
+  margin-left: 8px;
+}
+
