@@ -1,30 +1,32 @@
 ## Transitlinks — Worldwide transit planner
 
-### Getting Started
-
+### Installation
 ```
 npm install
-cp <path-to-config>/config.js .
+cp .env .env.dev
+cp .env .env.test
+```
+- Edit environment variables in .env.dev to reflect local development environment
+- Edit environment variables in .env.test to reflect local test environment
+
+### Running (development mode)
+```
+source .env.dev
 npm start
 ```
 
-### Customization
-
+### Test automation
+```
+source .env.test
+npm start -- --release --test
+npm run test
+npm run e2e
+```
+E2E testing environment is graciously provided by 
+<br>
+[<img src="https://www.browserstack.com/images/layout/browserstack-logo-600x315.png" height="100">](http://www.browserstack.com)
 
 ### How to Contribute
-
-
-### Learn More
-
-  * [Getting Started with React.js](http://facebook.github.io/react/)
-  * [Getting Started with GraphQL and Relay](https://quip.com/oLxzA1gTsJsE)
-  * [React.js Questions on StackOverflow](http://stackoverflow.com/questions/tagged/reactjs)
-  * [React.js Discussion Board](https://discuss.reactjs.org/)
-  * [Flux Architecture for Building User Interfaces](http://facebook.github.io/flux/)
-  * [Enzyme — JavaScript Testing utilities for React](http://airbnb.io/enzyme/)
-  * [Flow — A static type checker for JavaScript](http://flowtype.org/)
-  * [The Future of React](https://github.com/reactjs/react-future)
-  * [Learn ES6](https://babeljs.io/docs/learn-es6/), [ES6 Features](https://github.com/lukehoban/es6features#readme)
 
 
 ### Support
@@ -38,4 +40,4 @@ file. The documentation to the project is licensed under the
 [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license.
 
 ---
-Footer
+...
