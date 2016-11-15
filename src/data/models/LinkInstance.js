@@ -15,6 +15,12 @@ const LinkInstance = Model.define('LinkInstance', {
     unique: true
   },
   
+  privateUuid: {
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV1,
+    unique: true
+  },
+  
   departureDate: {
     type: DataType.DATEONLY
   },

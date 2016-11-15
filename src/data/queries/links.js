@@ -61,7 +61,7 @@ const getOrCreateLocality = async (apiId) => {
 
 };
 
-const createOrUpdateLink = async (linkInstance) => {
+const createOrUpdateLink = async (linkInstance, user) => {
  	
   if (!linkInstance.id) { // Create new link
     
@@ -87,11 +87,12 @@ const createOrUpdateLink = async (linkInstance) => {
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
     } = linkInstance;
-     
+
+    const userId = user ? user.id : null; 
     departureDate = departureDate ? new Date(departureDate) : null;   
     arrivalDate = arrivalDate ? new Date(arrivalDate) : null;
-    console.log("dates", departureDate, arrivalDate);
-		linkInstance = await linkRepository.createInstance({ 
+    linkInstance = await linkRepository.createInstance({
+      userId, 
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departurePlace,
@@ -149,7 +150,8 @@ export const TransitLinkMutationFields = {
       linkInstance: { type: LinkInstanceInputType }
     },
     resolve: async ({ request }, { linkInstance }) => {
-      return await createOrUpdateLink(linkInstance);
+      log.info(`graphql-request=create-llink-instance user=${request.user ? request.user.id : null} from=${linkInstance.from} to=${linkInstance.to} transport=${linkInstance.transport}`);
+      return await createOrUpdateLink(linkInstance, request.user);
     }
   
   }

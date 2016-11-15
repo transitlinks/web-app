@@ -30,6 +30,11 @@ LinkInstance.hasMany(Rating, {
   foreignKey: 'linkInstanceId'
 });
 
+LinkInstance.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
