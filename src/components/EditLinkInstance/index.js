@@ -113,6 +113,11 @@ const EditLinkInstance = ({
     empty: ratingEmptyCss,
     full: ratingFullCss
   };
+  
+  const saveDisabled = !(from && to && transport);
+  const additionalHidden = {
+    display: (from && to && transport) ? 'block' : 'none'
+  };
 
   return (
     <div className={s.container}>
@@ -121,7 +126,7 @@ const EditLinkInstance = ({
           <FormattedMessage {...msg.addLink} />
         </div>
         <div className={s.save}>
-          <RaisedButton label="Save" onClick={onSave} />
+          <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
         </div>
       </div>
       <div className={s.endpoints}>
@@ -139,6 +144,11 @@ const EditLinkInstance = ({
             hintText="Select transport type">
             {transportOptions}
           </SelectField>
+        </div>
+      </div>
+      <div className={s.additionalInfo} style={additionalHidden}>
+        <div className={s.additionalHeader}>
+          Any additional information is greatly appreciated!
         </div>
         <div className={s.terminals}>
           <div className={s.departure}>
@@ -197,8 +207,8 @@ const EditLinkInstance = ({
           <TextField id="description-input"
             hintText="Description and comments about this link..."
             floatingLabelText="Description"
-            floatingLabelStyle={ { color: '#000000' } }
-            floatingLabelFocusStyle={ { fontSize: '21px' } }
+            floatingLabelStyle={ { color: '#000000', top: '12px' } }
+            floatingLabelFocusStyle={ { fontSize: '21px', transform: 'scale(0.75) translate(0px, -16px)' } }
             multiLine={true}
             fullWidth={true}
             rows={3}
@@ -245,7 +255,7 @@ const EditLinkInstance = ({
         </div>
       </div>
       <div className={s.save}>
-        <RaisedButton label="Save" onClick={onSave} />
+        <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
       </div>
     </div>
   );

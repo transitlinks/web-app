@@ -1,7 +1,9 @@
 @import '../variables.css';
 
 .container {
-  display: inline-block;
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .header {
@@ -24,6 +26,15 @@
 .endpoints .arrow {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.additionalInfo {
+  margin-top: 42px;
+}
+
+.additionalInfo .additionalHeader {
+  color: #e0e0e0;
+  text-align: center;
 }
 
 .times {
@@ -49,20 +60,26 @@
 
 .terminals .terminalHeader {
   text-align: center;
+  margin-bottom: 16px;
 }
 
 .terminals .departure, .arrival {
 }
 
 .terminals .departure {
-  margin-right: 42px;
+  padding-right: 21px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.terminals .arrival {
+  padding-left: 21px;
 }
 
 .terminals .arrival {
 }
 
 .cost {
-  margin-top: 16px;
+  margin-top: 42px;
 }
 
 .cost .costHeader {
@@ -82,6 +99,7 @@
 }
 
 .description {
+  margin-top: 12px;
   margin-bottom: 24px;
 }
 
