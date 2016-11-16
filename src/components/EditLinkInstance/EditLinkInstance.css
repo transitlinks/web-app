@@ -21,11 +21,33 @@
 .endpoints {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.endpoints .full, .compact {
+}
+
+@media (max-width: 425px) {
+  .endpoints .full {
+    display: none;
+  }
+}
+
+@media (min-width: 426px) {
+  .endpoints .compact {
+    display: none;
+  }
 }
 
 .endpoints .arrow {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+@media (max-width: 425px) {
+  .endpoints .arrow {
+    display: none;
+  }
 }
 
 .additionalInfo {

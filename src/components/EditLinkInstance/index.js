@@ -130,9 +130,13 @@ const EditLinkInstance = ({
         </div>
       </div>
       <div className={s.endpoints}>
-        <LocalityAutocomplete endpoint="from" items={[]} />
-        <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
-        <LocalityAutocomplete endpoint="to" items={[]} />
+        <LocalityAutocomplete className={s.compact} compact={true} endpoint="from" items={[]} />
+        <LocalityAutocomplete className={s.full} compact={false} endpoint="from" items={[]} />
+        <span className={s.arrow}>
+          <FontIcon className="material-icons">arrow_forward</FontIcon>
+        </span>
+        <LocalityAutocomplete className={s.compact} compact={true} endpoint="to" items={[]} />
+        <LocalityAutocomplete className={s.full} compact={false} endpoint="to" items={[]} />
       </div>
       <div>
         <div>

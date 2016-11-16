@@ -1,6 +1,7 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './LocalityAutocomplete.css';
+import cx from 'classnames';
 import { connect } from 'react-redux';
 import { autocomplete } from '../../actions/autocomplete';
 import { selectLocality } from '../../actions/editLink';
@@ -12,7 +13,8 @@ import MenuItem from 'material-ui/MenuItem';
 import FontIcon from 'material-ui/FontIcon';
 
 const LocalityAutocomplete = ({ 
-  endpoint, predictions, autocomplete, selectLocality 
+  endpoint, predictions, autocomplete, selectLocality,
+  className, compact
 }) => {
 
   const onSelect = (value) => {
@@ -41,10 +43,19 @@ const LocalityAutocomplete = ({
       };
     });
   };
+  
+  const props = compact ? {
+    fullWidth: true,
+    style: { height: '52px' },
+    floatingLabelStyle: { top: '20px' },
+    floatingLabelFocusStyle: { transform: 'scale(0.75) translate(0px, -20px)' }
+  } : {
+  };
 
   return (
-    <div className={s.container}>
+    <div className={cx(className, s.container)}>
       <AutoComplete id="locality-autocomplete"
+        {...props}
         hintText="Search place"
         floatingLabelText={endpoint === 'from' ? 'Origin' : 'Destination'}
         filter={AutoComplete.noFilter}

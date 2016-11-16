@@ -2,4 +2,11 @@
 
 .container {
   display: inline-block;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 425px) {
+  .container {
+    width: 100%;
+  }
 }
