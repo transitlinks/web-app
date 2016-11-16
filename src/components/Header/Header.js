@@ -29,13 +29,13 @@ function Header() {
               <FormattedMessage {...messages.brand} />
             </span>
           </Link>
+          <div className={s.languages}>
+            <LanguageSwitcher />
+          </div>
         </div>
         <div className={s.navigation}>
           <Navigation className={s.nav} />
         </div>
-      </div>
-      <div className={s.languages}>
-        <LanguageSwitcher />
       </div>
     </div>
   );

@@ -12,8 +12,9 @@
 
 .container {
   margin: 0 auto;
-  padding: 20px 10px;
-  max-width: var(--max-content-width);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
   display: flex;
   justify-content: space-between;
 }
@@ -28,12 +29,16 @@
 }
 
 .logo {
+  display: flex;
+  align-items: center;
 }
 
 .brand {
   color: color(var(--brand-color) lightness(+10%));
   text-decoration: none;
-  font-size: 1.75em; /* ~28px */
+  font-size: 1.75em;
+  display: flex;
+  align-items: center;
 }
 
 .brandTxt {
@@ -65,6 +70,7 @@
 }
 
 .languages {
+  margin-left: 20px;
 }
 
 @media (max-width: 425px) {
