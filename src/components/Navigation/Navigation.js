@@ -22,16 +22,12 @@ const Navigation = ({ setAuth, auth, className }) => {
 
   return (
     <div className={cx(s.root, className)} role="navigation">
-      <Link className={s.link} to="/link-instance">
+      <Link className={cx(s.optional, s.link)} to="/link-instance">
         <FormattedMessage {...msg.newLink} />
       </Link>
-      <Link className={s.link} to="/search">
+      <Link className={cx(s.optional, s.link)} to="/search">
         <FormattedMessage {...msg.search} />
       </Link>
-      <Link className={s.link} to="/about">
-        <FormattedMessage {...msg.about} />
-      </Link>
-      <span className={s.spacer}> | </span>
       {loginElem}
     </div>
   );

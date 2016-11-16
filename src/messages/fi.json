@@ -5,8 +5,8 @@
     "defaultMessage": "Biking",
     "message": "Pyöräily",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {
@@ -15,18 +15,18 @@
     "defaultMessage": "Bus",
     "message": "Bussi",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {
     "id": "transport.hitch-hike",
     "description": "Hitch-hiking",
-    "defaultMessage": "Hitch-hiking (autostop)",
+    "defaultMessage": "Hitch-hiking",
     "message": "Peukkukyyti",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {
@@ -35,8 +35,8 @@
     "defaultMessage": "Shared taxi",
     "message": "Jaettu taksi",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {
@@ -45,18 +45,18 @@
     "defaultMessage": "Train",
     "message": "Juna",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {
     "id": "transport.van",
     "description": "Van",
-    "defaultMessage": "Van (mini bus, marshrutka)",
+    "defaultMessage": "Van",
     "message": "Minibussi (marshrutka)",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {
@@ -65,8 +65,8 @@
     "defaultMessage": "Walking",
     "message": "Kävellen",
     "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/EditLinkInstance/messages.js",
+      "src/components/common/messages/transport.js"
     ]
   },
   {

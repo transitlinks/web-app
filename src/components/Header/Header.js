@@ -2,6 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.css';
+import cx from 'classnames';
 import Link from '../Link';
 import Navigation from '../Navigation';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -21,13 +22,19 @@ function Header() {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <Navigation className={s.nav} />
-        <Link className={s.brand} to="/">
-          <FontIcon className="material-icons">shuffle</FontIcon>
-          <span className={s.brandTxt}>
-            <FormattedMessage {...messages.brand} />
-          </span>
-        </Link>
+        <div className={s.logo}>
+          <Link className={s.brand} to="/">
+            <FontIcon className="material-icons">shuffle</FontIcon>
+            <span className={s.brandTxt}>
+              <FormattedMessage {...messages.brand} />
+            </span>
+          </Link>
+        </div>
+        <div className={s.navigation}>
+          <Navigation className={s.nav} />
+        </div>
+      </div>
+      <div className={s.languages}>
         <LanguageSwitcher />
       </div>
     </div>
