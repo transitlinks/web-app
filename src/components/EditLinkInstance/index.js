@@ -138,7 +138,7 @@ const EditLinkInstance = ({
         <LocalityAutocomplete className={s.compact} compact={true} endpoint="to" items={[]} />
         <LocalityAutocomplete className={s.full} compact={false} endpoint="to" items={[]} />
       </div>
-      <div>
+      <div className={s.transport}>
         <div>
           <SelectField id="transport-select"
             value={transport} 
@@ -189,14 +189,16 @@ const EditLinkInstance = ({
           <div className={s.price}>
             <div className={s.amount}>
               <TextField id="price-amount-input"
+                style={ { width: '100%'} }
                 value={priceAmount}
                 floatingLabelText="Price"
-                hintText="Trip price"
+                hintText="Price"
                 onChange={onChangeProperty('priceAmount')} 
               />
             </div>
             <div className={s.currency}>
               <SelectField id="currency-select"
+                style={ { width: '100%'} }
                 value={priceCurrency}
                 floatingLabelText="Currency"
                 floatingLabelFixed={true}
@@ -220,38 +222,38 @@ const EditLinkInstance = ({
           />
         </div>
         <div className={s.ratings}>
-          <div className={"table-row " + s.rating}>
-            <div className={"col-1-2 " + s.ratingLabel}>
+          <div className={s.rating}>
+            <div className={s.ratingLabel}>
               <label>Availability</label>
             </div>
-            <div className="col-1-2">
+            <div className={s.ratingValue}>
               <Rating {...ratingStyles} initialRate={availabilityRating} 
                 onChange={onChangeRating('availability')} />
             </div>
           </div>
-          <div className={"table-row " + s.rating}>
-            <div className={"col-1-2 " + s.ratingLabel}>
+          <div className={s.rating}>
+            <div className={s.ratingLabel}>
               <label>Departure reliability</label>
             </div>
-            <div className="col-1-2">
+            <div className={s.ratingValue}>
               <Rating {...ratingStyles} initialRate={departureRating} 
                 onChange={onChangeRating('departure')} />
             </div>
           </div>
-          <div className={"table-row " + s.rating}>
-            <div className={"col-1-2 " + s.ratingLabel}>
+          <div className={s.rating}>
+            <div className={s.ratingLabel}>
               <label>Arrival reliability</label>
             </div>
-            <div className="col-1-2">
+            <div className={s.ratingValue}>
               <Rating {...ratingStyles} initialRate={arrivalRating} 
                 onChange={onChangeRating('arrival')} />
             </div>
           </div>
-          <div className={"table-row " + s.rating}>
-            <div className={"col-1-2 " + s.ratingLabel}>
+          <div className={s.rating}>
+            <div className={s.ratingLabel}>
               <label>Awesomeness</label>
             </div>
-            <div className="col-1-2">
+            <div className={s.ratingValue}>
               <Rating {...ratingStyles} initialRate={awesomeRating}
                 onChange={onChangeRating('awesome')} />
             </div>

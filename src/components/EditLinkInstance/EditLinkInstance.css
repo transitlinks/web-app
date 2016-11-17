@@ -50,6 +50,16 @@
   }
 }
 
+.transport {
+  display: flex;
+}
+
+@media (max-width: 425px) {
+  .transport {
+    justify-content: center;
+  }
+}
+
 .additionalInfo {
   margin-top: 42px;
 }
@@ -78,6 +88,13 @@
 .terminals {
   margin-top: 16px;
   display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .terminals {
+    justify-content: center;
+  }
 }
 
 .terminals .terminalHeader {
@@ -93,8 +110,22 @@
   border-right: 1px solid #e0e0e0;
 }
 
+@media (max-width: 768px) {
+  .terminals .departure {
+    border: none;
+    padding-right: initial;
+  }
+}
+
 .terminals .arrival {
   padding-left: 21px;
+}
+
+@media (max-width: 768px) {
+  .terminals .arrival {
+    margin-top: 16px;
+    padding-left: initial;
+  }
 }
 
 .terminals .arrival {
@@ -102,6 +133,7 @@
 
 .cost {
   margin-top: 42px;
+  width: 100%;
 }
 
 .cost .costHeader {
@@ -111,13 +143,17 @@
 .cost .price {
   display: flex;
   justify-content: center;
+  width: 100%;
+  position: relative;
 }
 
 .cost .price .amount {
+  width: 65px;
   margin-right: 16px;
 }
 
 .cost .price .currency {
+  width: 200px;
 }
 
 .description {
@@ -138,6 +174,34 @@
   text-align: right;
   margin-top: -6px;
   padding-right: 12px;
+  width: 50%;
+}
+
+.rating .ratingValuel {
+  text-align: right;
+  margin-top: -6px;
+  padding-right: 12px;
+  width: 50%;
+}
+
+@media (max-width: 425px) {
+  
+  .rating {
+    display: block;
+    margin-bottom: 16px;
+  }
+  
+  .rating .ratingLabel {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  
+  .rating .ratingValue {
+    width: 100%;
+    text-align: center;
+  }
+
 }
 
 .save {
