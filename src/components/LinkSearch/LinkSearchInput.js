@@ -21,9 +21,19 @@ const LinkSearchInput = ({
 
   };
 
+  const props = {
+    fullWidth: true,
+    style: { height: '40px' },
+    floatingLabelStyle: { top: '8px' },
+    floatingLabelFocusStyle: { display: 'none' },
+    hintStyle: { bottom: '10px', left: '4px' },
+    inputStyle: { marginTop: '-2px' }
+  };
+
   return (
     <div className={s.container}>
       <TextField id="link-search-input"
+        {...props}
         hintText="Search any place"
         floatingLabelText="Origin or destination"
         onChange={onUpdateInput}

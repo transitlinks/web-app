@@ -22,12 +22,6 @@ const Navigation = ({ setAuth, auth, className }) => {
 
   return (
     <div className={cx(s.root, className)} role="navigation">
-      <Link className={cx(s.optional, s.link)} to="/link-instance">
-        <FormattedMessage {...msg.newLink} />
-      </Link>
-      <Link className={cx(s.optional, s.link)} to="/search">
-        <FormattedMessage {...msg.search} />
-      </Link>
       {loginElem}
     </div>
   );

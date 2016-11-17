@@ -1,0 +1,40 @@
+@import '../variables.css';
+
+.root {
+  background: #fff;
+  color: #000;
+  border-bottom: 1px solid #aaa;
+}
+
+.container {
+  max-width: 600px;
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 426px) {
+  .container {
+    padding-top: 6px;
+  }
+}
+
+.search {
+  display: flex;
+  align-items: center;
+}
+
+.search .searchIcon {
+  margin-top: 4px;
+}
+
+.search .searchField {
+  margin-left: 6px;
+}
+
+.createLink {
+  margin-left: 12px;
+}
+

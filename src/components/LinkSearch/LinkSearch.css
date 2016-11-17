@@ -1,7 +1,10 @@
 @import '../variables.css';
 
 .container {
-  display: inline-block;
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  max-width: 600px;
 }
 
 .header {
@@ -15,6 +18,11 @@
 
 .results {
   margin-top: 24px;
+}
+
+.noResults {
+  margin-top: 24px;
+  text-align: center;
 }
 
 .link {

@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import emptyFunction from 'fbjs/lib/emptyFunction';
 import s from './App.css';
 import Header from '../Header';
+import FunctionBar from '../FunctionBar';
 import Footer from '../Footer';
 import TimePicker from 'material-ui/TimePicker';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -61,6 +62,7 @@ class App extends Component {
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
           <Header />
+          <FunctionBar />
           {this.props.children}
           <Footer />
         </div>
