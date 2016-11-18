@@ -6,7 +6,7 @@ import {
 } from '../constants';
 
 export function autocomplete(input) {
-  
+ 
   return async (...args) => {
     
     const query = `
@@ -14,6 +14,7 @@ export function autocomplete(input) {
         localities(input:"${input}") {
           id,
           name,
+          countryLong,
           lat,
           lng
         }

@@ -14,6 +14,7 @@ export default {
     return predictions.map(prediction => ({
       id: prediction.place_id,
       name: prediction.description,
+      countryLong: prediction.terms[prediction.terms.length - 1].value,
       lat: "0",
       lng: "0"
     }));

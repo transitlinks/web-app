@@ -25,7 +25,16 @@ export default function editLink(state = null, action) {
       endState[action.payload.name] = action.payload.value;
       return endState;
     case LINK_RESET:
-      return { ...state, link: null };
+      return { 
+        ...state, 
+        to: null, from: null, 
+        transport: null, 
+        departureDate: null, departureTime: null, departurePlace: '',
+        arrivalDate: null, arrivalTime: null, arrivalPlace: '',
+        priceAmount: '', priceCurrency: null,
+        description: '',
+        availabilityRating: null, departureRating: null, arrivalRating: null, awesomeRating: null
+      };
 
   }
   

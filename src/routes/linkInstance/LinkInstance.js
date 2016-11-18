@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { navigate } from '../../actions/route'
+import { resetLink } from '../../actions/editLink';
+import { navigate } from '../../actions/route';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './LinkInstance.css';
 import ViewLinkInstance from '../../components/ViewLinkInstance';
@@ -35,6 +36,7 @@ class LinkInstance extends React.Component {
     });
      
     if (propUpdated > stateUpdated) {
+      props.resetLink();
       props.navigate(`/link-instance/${props.saved.id}`);
     }
 
@@ -77,5 +79,5 @@ LinkInstance.contextTypes = { setTitle: PropTypes.func.isRequired };
 export default connect(state => ({
   saved: state.editLink.linkInstance
 }), {
-  navigate
+  resetLink, navigate
 })(withStyles(s)(LinkInstance));

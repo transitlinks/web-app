@@ -30,7 +30,7 @@ const EditLinkInstance = ({
   description,
   availabilityRating, departureRating, arrivalRating, awesomeRating
 }) => {
-
+  
   const toLocalDate = (date) => {
     const addZ = n => (n < 10 ? '0' : '') + n;
     return date.getFullYear() + '-' + 
@@ -56,7 +56,7 @@ const EditLinkInstance = ({
     const arrivalMinute = arrivalTime ? arrivalTime.getMinutes() : null;
 
     saveLinkInstance({ linkInstance: mergeNonNull({ 
-      from, to, transport,
+      from: from.id, to: to.id, transport,
     }, {
       departureDate: departureDateJson, 
       departureHour, departureMinute, departurePlace,
@@ -89,8 +89,27 @@ const EditLinkInstance = ({
       value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
   
-  const currencies = cc.codes().map(code => (
-    <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code} ${cc.code(code).currency}`} />
+  const currencyCodes = {
+  };
+
+  if (from) {
+    cc.country(from.countryLong).forEach(currency => {
+      currencyCodes[currency.code] = currency;
+    });
+  }
+  
+  if (to) {
+    cc.country(to.countryLong).forEach(currency => {
+      currencyCodes[currency.code] = currency;
+    });
+  }
+  
+  currencyCodes['USD'] = cc.code('USD');
+  currencyCodes['EUR'] = cc.code('EUR');
+  currencyCodes['GBP'] = cc.code('GBP');
+
+  const currencies = Object.keys(currencyCodes).map(code => (
+    <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code} ${currencyCodes[code].currency}`} />
   ));
   
   const ratingCss = { 
@@ -163,7 +182,7 @@ const EditLinkInstance = ({
               terminal: 'departure', 
               date: departureDate, 
               time: departureTime, 
-              place: departurePlace, 
+              place: departurePlace || '', 
               onChangeTime: onChangeProperty,
               onChangePlace: onChangeProperty
             } } />
@@ -176,7 +195,7 @@ const EditLinkInstance = ({
               terminal: 'arrival', 
               date: arrivalDate, 
               time: arrivalTime,
-              place: arrivalPlace, 
+              place: arrivalPlace || '', 
               onChangeTime: onChangeProperty,
               onChangePlace: onChangeProperty
             } } />
@@ -190,7 +209,7 @@ const EditLinkInstance = ({
             <div className={s.amount}>
               <TextField id="price-amount-input"
                 style={ { width: '100%'} }
-                value={priceAmount}
+                value={priceAmount || ''}
                 floatingLabelText="Price"
                 hintText="Price"
                 onChange={onChangeProperty('priceAmount')} 

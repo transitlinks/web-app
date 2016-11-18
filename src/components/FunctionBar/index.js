@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './FunctionBar.css';
 import cx from 'classnames';
@@ -11,12 +10,8 @@ import Link from '../Link';
 import msg from './messages';
 
 const FunctionBar = ({
-  links, navigate
+  links, showLinks
 }) => {
-  
-  if (links) {
-    navigate('/search');
-  }
 
   return (
     <div className={s.container}>
@@ -33,10 +28,12 @@ const FunctionBar = ({
       </div>
     </div>
   );
+
 };
 
-export default connect(state => ({
-  links: state.searchLinks.links
-}), {
-  navigate
-})(withStyles(s)(FunctionBar));
+export default connect(
+  state => ({
+    links: state.searchLinks.links
+  }), {
+  }
+)(withStyles(s)(FunctionBar));

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { routerReducer } from 'react-router-redux';
 import runtime from './runtime';
 import intl from './intl';
 import auth from './auth';
@@ -11,6 +12,7 @@ export default combineReducers({
   runtime,
   intl,
   auth,
+  routing: routerReducer,
   login,
   autocomplete,
   editLink,

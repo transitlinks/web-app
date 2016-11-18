@@ -5,7 +5,6 @@ import {
   SEARCH_LINKS_ERROR,
 } from '../constants';
 
-
 export const searchLinks = (input) => {
   
   return async (...args) => {

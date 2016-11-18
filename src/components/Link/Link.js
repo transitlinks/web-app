@@ -1,44 +1,24 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { navigate } from '../../actions/route';
 
-function isLeftClickEvent(event) {
+const isLeftClickEvent = (event) => {
   return event.button === 0;
 }
 
-function isModifiedEvent(event) {
+const isModifiedEvent = (event) => {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends Component { // eslint-disable-line react/prefer-stateless-function
+const Link = ({
+  className,
+  to, navigate,
+  children
+}, context) => {
 
-  static propTypes = {
-    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-    onClick: PropTypes.func,
-
-    // actions
-    navigate: PropTypes.func,
-  };
-
-  static contextTypes = {
-    createHref: PropTypes.func.isRequired,
-  };
-
-  handleClick = (event) => {
+  const handleClick = (event) => {
+    
     let allowTransition = true;
-
-    if (this.props.onClick) {
-      this.props.onClick(event);
-    }
 
     if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
       return;
@@ -51,28 +31,35 @@ class Link extends Component { // eslint-disable-line react/prefer-stateless-fun
     event.preventDefault();
 
     if (allowTransition) {
-      if (this.props.to) {
-        this.props.navigate(this.props.to);
+      if (to) {
+        navigate(to);
       } else {
-        this.props.navigate({
+        navigate({
           pathname: event.currentTarget.pathname,
-          search: event.currentTarget.search,
+          search: event.currentTarget.search
         });
       }
     }
+  
   };
-
-  render() {
-    const { to, navigate: _, ...props } = this.props; // eslint-disable-line no-unused-vars
-    return <a href={this.context.createHref(to)} {...props} onClick={this.handleClick} />;
-  }
+  
+  return (
+    <a href={context.createHref(to)} className={className} onClick={handleClick}>
+      {children}
+    </a>
+  );
 
 }
 
-const mapState = null;
-
-const mapDispatch = {
-  navigate,
+Link.propTypes = {  
+  to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired
 };
 
-export default connect(mapState, mapDispatch)(Link);
+Link.contextTypes = {
+  createHref: PropTypes.func.isRequired
+};
+
+export default connect(state => ({
+}), {
+  navigate
+})(Link);
