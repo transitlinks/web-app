@@ -61,6 +61,10 @@ const getOrCreateLocality = async (apiId) => {
 
 };
 
+const strippedDate = (date) => {
+  return date ? new Date(date.substring(0, 10)) : null;
+};
+
 const createOrUpdateLink = async (linkInstance, user) => {
  	
   if (!linkInstance.id) { // Create new link
@@ -89,8 +93,8 @@ const createOrUpdateLink = async (linkInstance, user) => {
     } = linkInstance;
 
     const userId = user ? user.id : null; 
-    departureDate = departureDate ? new Date(departureDate) : null;   
-    arrivalDate = arrivalDate ? new Date(arrivalDate) : null;
+    departureDate = strippedDate(departureDate);   
+    arrivalDate = strippedDate(arrivalDate);
     linkInstance = await linkRepository.createInstance({
       userId, 
 			linkId: link.id,
