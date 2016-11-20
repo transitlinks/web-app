@@ -250,7 +250,8 @@ const EditLinkInstance = ({
               <label>Availability</label>
             </div>
             <div className={s.ratingValue}>
-              <Rating {...ratingStyles} initialRate={availabilityRating} 
+              <Rating id="availability-rating"
+                {...ratingStyles} initialRate={availabilityRating} 
                 onChange={onChangeRating('availability')} />
             </div>
           </div>
@@ -259,7 +260,8 @@ const EditLinkInstance = ({
               <label>Departure reliability</label>
             </div>
             <div className={s.ratingValue}>
-              <Rating {...ratingStyles} initialRate={departureRating} 
+              <Rating id="dept-reliability-rating" 
+                {...ratingStyles} initialRate={departureRating} 
                 onChange={onChangeRating('departure')} />
             </div>
           </div>
@@ -268,7 +270,8 @@ const EditLinkInstance = ({
               <label>Arrival reliability</label>
             </div>
             <div className={s.ratingValue}>
-              <Rating {...ratingStyles} initialRate={arrivalRating} 
+              <Rating id="arr-reliability-rating"
+                {...ratingStyles} initialRate={arrivalRating} 
                 onChange={onChangeRating('arrival')} />
             </div>
           </div>
@@ -277,7 +280,8 @@ const EditLinkInstance = ({
               <label>Awesomeness</label>
             </div>
             <div className={s.ratingValue}>
-              <Rating {...ratingStyles} initialRate={awesomeRating}
+              <Rating id="awesomeness-rating"
+                {...ratingStyles} initialRate={awesomeRating}
                 onChange={onChangeRating('awesome')} />
             </div>
           </div>
