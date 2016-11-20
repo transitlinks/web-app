@@ -63,7 +63,11 @@ export default {
     
     return Object.keys(data).map(key => ({
       description: data[key].formatted_address,
-      place_id: key
+      place_id: key,
+      terms: data[key].address_components.map(cmp => ({
+        name: key,
+        value: cmp.long_name
+      }))
     }));
     
   },

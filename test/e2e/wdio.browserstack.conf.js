@@ -22,7 +22,7 @@ exports.config = {
     logLevel: 'verbose',
     coloredLogs: true,
     screenshotPath: './test/e2e/screenshots',
-    //    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:3000',
     waitforTimeout: 20000,
     connectionRetryTimeout: 90000,
     connectionRetryCount: 3,

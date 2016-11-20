@@ -85,7 +85,7 @@ const EditLinkInstance = ({
   };
 
   const transportOptions = transportTypes.map(type => (
-    <MenuItem key={type.slug} style={{ "WebkitAppearance": "initial" }} 
+    <MenuItem id={type.slug} key={type.slug} style={{ "WebkitAppearance": "initial" }} 
       value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
   
@@ -144,18 +144,22 @@ const EditLinkInstance = ({
         <div className={s.title}>
           <FormattedMessage {...msg.addLink} />
         </div>
-        <div className={s.save}>
+        <div id="save-top" className={s.save}>
           <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
         </div>
       </div>
       <div className={s.endpoints}>
-        <LocalityAutocomplete className={s.compact} compact={true} endpoint="from" items={[]} />
-        <LocalityAutocomplete className={s.full} compact={false} endpoint="from" items={[]} />
+        <LocalityAutocomplete id="from-autocomplete-compact"
+          className={s.compact} compact={true} endpoint="from" items={[]} />
+        <LocalityAutocomplete id="from-autocomplete-full"
+          className={s.full} compact={false} endpoint="from" items={[]} />
         <span className={s.arrow}>
           <FontIcon className="material-icons">arrow_forward</FontIcon>
         </span>
-        <LocalityAutocomplete className={s.compact} compact={true} endpoint="to" items={[]} />
-        <LocalityAutocomplete className={s.full} compact={false} endpoint="to" items={[]} />
+        <LocalityAutocomplete id="to-autocomplete-compact" 
+          className={s.compact} compact={true} endpoint="to" items={[]} />
+        <LocalityAutocomplete id="to-autocomplete-full"
+          className={s.full} compact={false} endpoint="to" items={[]} />
       </div>
       <div className={s.transport}>
         <div>
@@ -178,27 +182,27 @@ const EditLinkInstance = ({
             <div className={s.terminalHeader}>
               Departure
             </div>
-            <Terminal { ...{
+            <Terminal id="departure-terminal" {...{
               terminal: 'departure', 
               date: departureDate, 
               time: departureTime, 
               place: departurePlace || '', 
               onChangeTime: onChangeProperty,
               onChangePlace: onChangeProperty
-            } } />
+            }} />
           </div>
           <div className={s.arrival}>
             <div className={s.terminalHeader}>
               Arrival
             </div>
-            <Terminal { ...{
+            <Terminal id="arrival-terminal" {...{
               terminal: 'arrival', 
               date: arrivalDate, 
               time: arrivalTime,
               place: arrivalPlace || '', 
               onChangeTime: onChangeProperty,
               onChangePlace: onChangeProperty
-            } } />
+            }} />
           </div>
         </div>
         <div className={s.cost}>

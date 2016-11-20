@@ -19,7 +19,7 @@ const searchTriggered = (input) => {
 
 const LocalityAutocomplete = ({ 
   endpoint, className, compact,
-  predictions, input,
+  predictions, input, id,
   setProperty, autocomplete, selectLocality
 }) => {
   
@@ -46,7 +46,7 @@ const LocalityAutocomplete = ({
         text: locality.name,
         value: locality,
         elem: (
-          <MenuItem style={{ "WebkitAppearance": "initial" }}
+          <MenuItem id={locality.id} style={{ "WebkitAppearance": "initial" }}
             primaryText={locality.name} />
         )
       };
@@ -63,7 +63,7 @@ const LocalityAutocomplete = ({
 
   return (
     <div className={cx(className, s.container)}>
-      <AutoComplete id="locality-autocomplete"
+      <AutoComplete id={id}
         {...props}
         hintText="Search place"
         floatingLabelText={endpoint === 'from' ? 'Origin' : 'Destination'}
