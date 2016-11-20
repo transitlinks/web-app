@@ -20,11 +20,15 @@ const formatTime = (hours, minutes) => {
   
   if (hours) {
     time += (hours < 10) ? '0' + hours : hours;
+  } else {
+    time += '00';
   }
   
   if (minutes) {
     time += ':';
     time += (minutes < 10) ? '0' + minutes : minutes;
+  } else {
+    time += ':00';
   }
 
   return time;

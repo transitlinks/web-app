@@ -22,7 +22,7 @@ const LinkInstance = Model.define('LinkInstance', {
   },
   
   departureDate: {
-    type: DataType.DATEONLY
+    type: DataType.STRING(10)
   },
   
   departureHour: {
@@ -38,7 +38,7 @@ const LinkInstance = Model.define('LinkInstance', {
   },
 
   arrivalDate: {
-    type: DataType.DATEONLY
+    type: DataType.STRING(10)
   },
   
   arrivalHour: {
