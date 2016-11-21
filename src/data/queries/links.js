@@ -61,6 +61,25 @@ const getOrCreateLocality = async (apiId) => {
 
 };
 
+const getLinkByInstance = async (linkInstance) => {
+  
+  const from = await getOrCreateLocality(linkInstance.from);
+  const to = await getOrCreateLocality(linkInstance.to);
+
+  if (!from || !to) {
+    throw new Error('Cannot create link: invalid place id');
+  }
+
+  let link = await linkRepository.getByEndpoints(from.id, to.id); 
+
+  if (!link) {
+    link = await linkRepository.create({ fromId: from.id, toId: to.id });
+  }
+
+  return link;
+
+};
+
 const strippedDate = (date) => {
   console.log("DATE", date);
   return date ? new Date(date.substring(0, 10)) : null;
@@ -70,19 +89,7 @@ const createOrUpdateLink = async (linkInstance, user) => {
  	
   if (!linkInstance.id) { // Create new link
     
-    const from = await getOrCreateLocality(linkInstance.from);
-    const to = await getOrCreateLocality(linkInstance.to);
-    
-    if (!from || !to) {
-      throw new Error('Cannot create link: invalid place id');
-    }
-		
-		let link = await linkRepository.getByEndpoints(from.id, to.id); 
-    
-		if (!link) {
-			link = await linkRepository.create({ fromId: from.id, toId: to.id });
-		}
-		
+    const link = await getLinkByInstance(linkInstance);
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
 	  
     let {
@@ -94,8 +101,6 @@ const createOrUpdateLink = async (linkInstance, user) => {
     } = linkInstance;
 
     const userId = user ? user.id : null; 
-    //departureDate = strippedDate(departureDate);   
-    //arrivalDate = strippedDate(arrivalDate);
     linkInstance = await linkRepository.createInstance({
       userId, 
 			linkId: link.id,
@@ -140,7 +145,29 @@ const createOrUpdateLink = async (linkInstance, user) => {
     return linkInstance;
 			
   } else { // Update existing link
-    return await linkRepository.update(link);
+    
+    const link = await getLinkByInstance(linkInstance);
+		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
+    
+    let {
+      departureDate, departureHour, departureMinute, departurePlace,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+      priceAmount, priceCurrency,
+      description
+    } = linkInstance;
+
+    linkInstance = {
+      id: linkInstance.id,
+			linkId: link.id,
+			transportId: transport.id,
+      departureDate, departureHour, departureMinute, departurePlace,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+      priceAmount, priceCurrency,
+      description
+    };
+    
+    return await linkRepository.updateInstance(linkInstance);
+  
   }
 
 };

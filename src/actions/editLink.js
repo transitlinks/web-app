@@ -62,10 +62,13 @@ export function setTransport(transport) {
 
 }
 
-export function resetLink() {
+export function resetLink(linkInstance) {
   return async (dispatch) => {
     dispatch({
-      type: LINK_RESET  
+      type: LINK_RESET,
+      payload: {
+        linkInstance
+      }
     });
   };
 }
@@ -83,8 +86,8 @@ export function saveLinkInstance({ linkInstance }) {
           id,
           link {
             id,
-            from{id,name,lat,lng},
-            to{id,name,lat,lng}
+            from { id, apiId, name, description, lat, lng },
+            to { id, apiId, name, description, lat, lng }
           },
           transport {
             slug

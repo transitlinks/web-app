@@ -6,6 +6,38 @@ import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { TransitLink, LinkInstance, TransportType, Locality, Rating } from '../models';
 
+const getInstanceById = async (id) => {
+
+  const linkInstance = await LinkInstance.findById(id, {
+    include: [
+      { model: TransportType, as: 'transport' },
+      { model: TransitLink, as: 'link', include: [ { all: true } ] } 
+     ] 
+  });
+  
+  if (!linkInstance) {
+    return null;
+  }
+
+  const ratingResults = await Rating.findAll({
+    attributes: [
+      'property',
+      [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
+    ],
+    where: { linkInstanceId: id, rating: { $ne: null } },
+    group: [ 'property' ]
+  });
+  
+  const ratings = {};
+  ratingResults.forEach(result => {
+    const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
+    ratings[`avg${propertyName}Rating`] = result.get('avgRating');
+  });
+
+  return { ...linkInstance.toJSON(), ...ratings };
+
+};
+
 export default {
   
   getById: async (id) => {
@@ -51,38 +83,8 @@ export default {
   	
 	},
   
-  getInstanceById: async (id) => {
-
-    const linkInstance = await LinkInstance.findById(id, {
-			include: [
-				{ model: TransportType, as: 'transport' },
-				{ model: TransitLink, as: 'link', include: [ { all: true } ] } 
-			 ] 
-		});
-    
-    if (!linkInstance) {
-      return null;
-    }
-
-    const ratingResults = await Rating.findAll({
-      attributes: [
-        'property',
-        [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
-      ],
-      where: { linkInstanceId: id, rating: { $ne: null } },
-      group: [ 'property' ]
-    });
-    
-    const ratings = {};
-    ratingResults.forEach(result => {
-      const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
-      ratings[`avg${propertyName}Rating`] = result.get('avgRating');
-    });
-
-    return { ...linkInstance.toJSON(), ...ratings };
-  
-  },
-  
+  getInstanceById: getInstanceById,
+   
   getByLocalityId: async (localityId) => {
   
     const links = await TransitLink.findAll({ 
@@ -198,6 +200,17 @@ export default {
     log.trace('update result', result);
     return updated.toJSON();
   
+  }, 
+  
+  updateInstance: async (linkInstance) => {
+  
+    const result = await LinkInstance.update(linkInstance, { where: { id: linkInstance.id } });
+    if (result.length !== 1 || result[0] !== 1) {
+      throw new Error('Invalid link instance update result', result);
+    }
+    
+    return getInstanceById(linkInstance.id);    
+     
   } 
 
 };

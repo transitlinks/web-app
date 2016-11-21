@@ -22,7 +22,8 @@ import msg from './messages';
 const EditLinkInstance = ({
   intl,
   saveLinkInstance, setTransport, setProperty,
-  linkInstance, transportTypes,  
+  linkInstance, transportTypes,
+  id,
   from, to, transport,
   departureDate, departureTime, departurePlace,
   arrivalDate, arrivalTime, arrivalPlace,
@@ -56,8 +57,9 @@ const EditLinkInstance = ({
     const arrivalMinute = arrivalTime ? arrivalTime.getMinutes() : null;
 
     saveLinkInstance({ linkInstance: mergeNonNull({ 
-      from: from.id, to: to.id, transport,
+      from: from.apiId, to: to.apiId, transport,
     }, {
+      id,
       departureDate: departureDateJson, 
       departureHour, departureMinute, departurePlace,
       arrivalDate: arrivalDateJson, 
@@ -137,6 +139,13 @@ const EditLinkInstance = ({
   const additionalHidden = {
     display: (from && to && transport) ? 'block' : 'none'
   };
+  
+  let fromInputValue = '';
+  let toInputValue = '';
+  if (id && from && to) {
+    fromInputValue = from.description;
+    toInputValue = to.description;
+  }
 
   return (
     <div className={s.container}>
@@ -149,16 +158,16 @@ const EditLinkInstance = ({
         </div>
       </div>
       <div className={s.endpoints}>
-        <LocalityAutocomplete id="from-autocomplete-compact"
+        <LocalityAutocomplete id="from-autocomplete-compact" initialInput={fromInputValue}
           className={s.compact} compact={true} endpoint="from" items={[]} />
-        <LocalityAutocomplete id="from-autocomplete-full"
+        <LocalityAutocomplete id="from-autocomplete-full" initialInput={fromInputValue}
           className={s.full} compact={false} endpoint="from" items={[]} />
         <span className={s.arrow}>
           <FontIcon className="material-icons">arrow_forward</FontIcon>
         </span>
-        <LocalityAutocomplete id="to-autocomplete-compact" 
+        <LocalityAutocomplete id="to-autocomplete-compact" initialInput={toInputValue} 
           className={s.compact} compact={true} endpoint="to" items={[]} />
-        <LocalityAutocomplete id="to-autocomplete-full"
+        <LocalityAutocomplete id="to-autocomplete-full" initialInput={toInputValue}
           className={s.full} compact={false} endpoint="to" items={[]} />
       </div>
       <div className={s.transport}>
@@ -234,6 +243,7 @@ const EditLinkInstance = ({
         </div>
         <div className={s.description}>
           <TextField id="description-input"
+            value={description}
             hintText="Description and comments about this link..."
             floatingLabelText="Description"
             floatingLabelStyle={ { color: '#000000', top: '12px' } }
@@ -244,6 +254,7 @@ const EditLinkInstance = ({
             onChange={onChangeProperty('description')}
           />
         </div>
+        {!id &&
         <div className={s.ratings}>
           <div className={s.rating}>
             <div className={s.ratingLabel}>
@@ -286,6 +297,7 @@ const EditLinkInstance = ({
             </div>
           </div>
         </div>
+        }
       </div>
       <div className={s.save}>
         <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
@@ -296,6 +308,7 @@ const EditLinkInstance = ({
 
 export default injectIntl(
   connect(state => ({
+    id: state.editLink.id,
     from: state.editLink.from,
     to: state.editLink.to,
     transport: state.editLink.transport,

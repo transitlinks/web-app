@@ -12,8 +12,8 @@ export function autocomplete(input) {
     const query = `
       query {
         localities(input:"${input}") {
-          id,
-          name,
+          apiId,
+          description,
           countryLong,
           lat,
           lng

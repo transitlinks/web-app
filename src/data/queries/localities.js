@@ -12,8 +12,8 @@ export default {
   resolve: async (root, { input }) => {
     const predictions = await placesApi.autocomplete(input);
     return predictions.map(prediction => ({
-      id: prediction.place_id,
-      name: prediction.description,
+      apiId: prediction.place_id,
+      description: prediction.description,
       countryLong: prediction.terms[prediction.terms.length - 1].value,
       lat: "0",
       lng: "0"

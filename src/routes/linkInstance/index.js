@@ -6,11 +6,24 @@ import fetch from '../../core/fetch';
 
 export default {
 
-  path: '/link-instance/:id?',
+  path: '/link-instance/:id?/:action?',
 
   async action({ params, context }) {
     
     const { graphqlRequest } = context.store.helpers;
+    
+    const getTransportTypes = async () => {
+
+      const { data } = await graphqlRequest(
+        `query {
+          transportTypes 
+          { id, slug }
+        }`
+      );
+
+      return data.transportTypes;
+
+    };
     
     try { 
     
@@ -21,8 +34,8 @@ export default {
             linkInstance(id: ${params.id}) {
               id,
               link {
-                from { id, name, description, lat, lng },
-                to { id, name, description, lat, lng} 
+                from { id, apiId, name, description, countryLong, lat, lng },
+                to { id, apiId, name, description, countryLong, lat, lng} 
               },
               transport { slug },
               departureDate, departureHour, departureMinute, departurePlace,
@@ -35,22 +48,21 @@ export default {
           }`
         );
         
-        console.log("received data", data);        
-        return <LinkInstance edit={false} 
-          linkInstance={data.linkInstance} />;
+        log.info("received link instance", data);
+        
+        const edit = params.action === 'edit';
+        const props = { edit, linkInstance: data.linkInstance };
+        if (edit) {
+          props.transportTypes = await getTransportTypes();
+        }
+        
+        return <LinkInstance {...props} />;
     
       } else {
-          
-        const { data } = await graphqlRequest(
-          `query {
-            transportTypes 
-            { id, slug }
-          }`
-        );
-          
+        
         return <LinkInstance edit={true} 
           linkInstance={{}} 
-          transportTypes={data.transportTypes} />;
+          transportTypes={await getTransportTypes()} />;
       
       }
 

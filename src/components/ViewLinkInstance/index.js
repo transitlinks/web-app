@@ -9,7 +9,7 @@ const formatDate = (dateStr) => {
     return '';
   }
   
-  return dateStr;
+  return dateStr.substring(0, 10);
 
 };
 

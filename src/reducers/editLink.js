@@ -10,6 +10,26 @@ import {
   LINK_RESET
 } from '../constants';
 
+const formatTime = (hour, minute) => {
+  
+  let time = '';
+  
+  if (hour) {
+    time += ((hour < 10 ? '0' : '') + hour);
+  } else {
+    time += '00';
+  }
+  
+  if (minute) {
+    time += ':' + ((minute < 10 ? '0' : '') + minute);
+  } else {
+    time += ':00';
+  }
+
+  return time;
+
+};
+
 export default function editLink(state = null, action) {
   
   const endState = { ...state };
@@ -25,16 +45,53 @@ export default function editLink(state = null, action) {
       endState[action.payload.name] = action.payload.value;
       return endState;
     case LINK_RESET:
-      return { 
-        ...state, 
-        to: null, from: null, 
-        transport: null, 
-        departureDate: null, departureTime: null, departurePlace: '',
-        arrivalDate: null, arrivalTime: null, arrivalPlace: '',
-        priceAmount: '', priceCurrency: null,
-        description: '',
-        availabilityRating: null, departureRating: null, arrivalRating: null, awesomeRating: null
-      };
+      if (action.payload.linkInstance && action.payload.linkInstance.link) {
+        
+        const { linkInstance } = action.payload;
+        const { link } = linkInstance;
+        
+        let departureDate = null;
+        if (linkInstance.departureDate) {
+          departureDate = new Date(linkInstance.departureDate);
+          departureDate.setHours(linkInstance.departureHour || 0);
+          departureDate.setMinutes(linkInstance.departureMinute || 0);
+        }
+        
+        let arrivalDate = null;        
+        if (linkInstance.arrivalDate) {
+          arrivalDate = new Date(linkInstance.arrivalDate);
+          arrivalDate.setHours(linkInstance.arrivalHour || 0);
+          arrivalDate.setMinutes(linkInstance.arrivalMinute || 0);
+        }
+
+        return { 
+          ...state,
+          id: linkInstance.id, 
+          from: link.from, 
+          to: link.to,
+          transport: linkInstance.transport.slug, 
+          departureDate: departureDate, departureTime: departureDate, 
+          departurePlace: linkInstance.departurePlace,
+          arrivalDate: arrivalDate, arrivalTime: arrivalDate, 
+          arrivalPlace: linkInstance.arrivalPlace || '',
+          priceAmount: linkInstance.priceAmount || '', priceCurrency: linkInstance.priceCurrency,
+          description: linkInstance.description || ''
+        };
+
+      } else {
+
+        return { 
+          ...state, 
+          to: null, from: null, 
+          transport: null, 
+          departureDate: null, departureTime: null, departurePlace: '',
+          arrivalDate: null, arrivalTime: null, arrivalPlace: '',
+          priceAmount: '', priceCurrency: null,
+          description: '',
+          availabilityRating: null, departureRating: null, arrivalRating: null, awesomeRating: null
+        };
+
+      }
 
   }
   

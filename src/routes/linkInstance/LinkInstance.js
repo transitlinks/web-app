@@ -34,12 +34,17 @@ class LinkInstance extends React.Component {
       linkInstance: (propUpdated > stateUpdated) ? props.saved : props.linkInstance,
       updated: propUpdated
     });
-     
+      
     if (propUpdated > stateUpdated) {
       props.resetLink();
       props.navigate(`/link-instance/${props.saved.id}`);
+      return;
     }
-
+    
+    if (props.edit) {
+      props.resetLink(props.linkInstance);
+    }
+    
   }
   
   render() {
