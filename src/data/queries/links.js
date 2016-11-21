@@ -80,11 +80,6 @@ const getLinkByInstance = async (linkInstance) => {
 
 };
 
-const strippedDate = (date) => {
-  console.log("DATE", date);
-  return date ? new Date(date.substring(0, 10)) : null;
-};
-
 const createOrUpdateLink = async (linkInstance, user) => {
  	
   if (!linkInstance.id) { // Create new link

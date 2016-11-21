@@ -36,18 +36,20 @@ const validLinkInstance = {
   awesomeRating: 3
 };
 
-const createLinkInstance = async (linkInstance) => {
+const createOrUpdateLinkInstance = async (linkInstance) => {
   
   const query = JSON.stringify({
     query: `
       mutation ($linkInstance:LinkInstanceInput!) {
         linkInstance(linkInstance:$linkInstance) {
+          id,
           link {
             id,
             from { name, description, countryLong, countryShort, lat, lng }, 
             to { name, description, countryLong, countryShort, lat, lng }
           },
-          transport { slug }
+          transport { slug },
+          description
         }
       }
     `,
@@ -77,12 +79,31 @@ const createLinkInstance = async (linkInstance) => {
 describe('data/queries/links', () => {
 
   it('should create new link instance', async () => {
-    await createLinkInstance(validLinkInstance); 
+    await createOrUpdateLinkInstance(validLinkInstance); 
+  });
+  
+  it('should update existing link instance', async () => {
+    
+    let response = await createOrUpdateLinkInstance(validLinkInstance); 
+    assertResponse(response);
+    
+    let linkInstance = response.data.linkInstance;
+    assert(linkInstance);
+    
+    linkInstance = { ...validLinkInstance, id: linkInstance.id, description: 'this is not description' };
+    
+    response = await createOrUpdateLinkInstance(linkInstance)
+    assertResponse(response);
+    linkInstance = response.data.linkInstance;
+    assert(linkInstance);
+
+    assert.equal(linkInstance.description, 'this is not description');  
+
   });
   
   it('returns links by locality name', async () => {
         
-    await createLinkInstance(validLinkInstance); 
+    await createOrUpdateLinkInstance(validLinkInstance); 
     
     const query = JSON.stringify({
       query: `
@@ -110,7 +131,7 @@ describe('data/queries/links', () => {
   
   it('returns link by id', async () => {
     
-    await createLinkInstance(validLinkInstance);
+    await createOrUpdateLinkInstance(validLinkInstance);
     
     const query = JSON.stringify({
       query: `
@@ -146,7 +167,7 @@ describe('data/queries/links', () => {
   
   it('returns link instance by id', async () => {
     
-    await createLinkInstance(validLinkInstance);
+    await createOrUpdateLinkInstance(validLinkInstance);
     
     const query = JSON.stringify({
       query: `

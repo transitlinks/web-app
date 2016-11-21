@@ -12,14 +12,13 @@ describe('data/queries/localities', async () => {
   await it('returns autocomplete predictions', async () => {
     
     const query = JSON.stringify({
-      query: 'query {localities(input:"moscow") {id,name,lat,lng}}',
+      query: 'query {localities(input:"moscow") {apiId,description,name,lat,lng}}',
       variables: {}
     });
     
     const response = await test(query);
     
-    assert(response.success == true);
-    assert(response.status == 200);
+    assert.equal(response.status, 200);
     assert(response.data.localities.length > 0, '0 autocomplete results');
   
   });
