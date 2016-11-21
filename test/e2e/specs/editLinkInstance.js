@@ -17,19 +17,9 @@ const testTerminal = (terminal) => {
     browser.setValue(`#${terminal}-terminal-place-input`, `${terminal} desc`);
 
 };
- 
-describe('Edit link instance', () => {
 
-	it('Link instance is editable and saveable', () => {
-	  
-		browser
-      .url('/link-instance');
-   
-    browser.waitForExist('#from-autocomplete-full');
-    browser.waitForExist('#from-autocomplete-compact');
-    browser.waitForExist('#to-autocomplete-compact');
-    browser.waitForExist('#to-autocomplete-full');
-    
+export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, description, ratings) => {
+      
     if (browser.isVisible('#from-autocomplete-full')) {
       browser.click('#from-autocomplete-full'); 
     } else {
@@ -44,8 +34,10 @@ describe('Edit link instance', () => {
     
     if (browser.isVisible('#to-autocomplete-full')) {
       browser.click('#to-autocomplete-full'); 
+      browser.setValue('#to-autocomplete-full', ''); 
     } else {
       browser.click('#to-autocomplete-compact'); 
+      browser.setValue('#to-autocomplete-compact', ''); 
     }
 
     browser.keys('mo'); 
@@ -56,31 +48,34 @@ describe('Edit link instance', () => {
     
     browser
       .click('#transport-select')
-      .click('#train');
+      .click(`#${transport}`);
     
     browser.pause(500); 
     testTerminal('departure');
     testTerminal('arrival');
     
-    browser.setValue('#price-amount-input', '120.50');    
+    browser.setValue('#price-amount-input', priceAmount);    
     browser.click('#currency-select');
     browser.pause(500);
-    browser.click('span*=RUB');
+    browser.click(`span*=${priceCurrency}`);
     browser.pause(500);
     browser.click('#description-input');
+    browser.setValue('#description-input', ''); 
     browser.pause(500);
-    browser.keys('general desc');
+    browser.keys(description);
     browser.pause(500);    
     
-    browser.moveToObject('#availability-rating span:nth-child(2)', 2, 2);
-    browser.click('#availability-rating span:nth-child(2)');
-    browser.moveToObject('#dept-reliability-rating span:nth-child(2)', 2, 2);
-    browser.click('#dept-reliability-rating span:nth-child(2)');
-    browser.moveToObject('#arr-reliability-rating span:nth-child(4)', 2, 2);
-    browser.click('#arr-reliability-rating span:nth-child(4)');
-    browser.moveToObject('#awesomeness-rating span:nth-child(4)', 2, 2);
-    browser.click('#awesomeness-rating span:nth-child(4)');
-    
+    if (ratings) { 
+      browser.moveToObject('#availability-rating span:nth-child(2)', 2, 2);
+      browser.click('#availability-rating span:nth-child(2)');
+      browser.moveToObject('#dept-reliability-rating span:nth-child(2)', 2, 2);
+      browser.click('#dept-reliability-rating span:nth-child(2)');
+      browser.moveToObject('#arr-reliability-rating span:nth-child(4)', 2, 2);
+      browser.click('#arr-reliability-rating span:nth-child(4)');
+      browser.moveToObject('#awesomeness-rating span:nth-child(4)', 2, 2);
+      browser.click('#awesomeness-rating span:nth-child(4)');
+    }
+
     const deptDate = browser.getValue('#departure-date-picker');
     const deptTime = browser.getValue('#departure-time-picker');
     const arrDate = browser.getValue('#arrival-date-picker');
@@ -96,10 +91,36 @@ describe('Edit link instance', () => {
     assert.equal(browser.getText('#dept-time-value'), deptTime);
     assert.equal(browser.getText('#arr-date-value'), arrDate);
     assert.equal(browser.getText('#arr-time-value'), arrTime);
-    assert.equal(browser.getText('#price-value'), '120.5 RUB');
-    assert.equal(browser.getText('#desc-value'), 'general desc');
+    assert.equal(browser.getText('#price-value'), `${priceAmount} ${priceCurrency}`);
+    assert.equal(browser.getText('#desc-value'), description);
     assert.equal(browser.getText('#avg-rating-value'), '2.5');
- 
+
+};
+
+describe('Edit link instance', () => {
+
+	it('Can create link instance', () => {
+		
+    browser
+      .url('/link-instance');
+   
+    browser.waitForExist('#from-autocomplete-full');
+    browser.waitForExist('#from-autocomplete-compact');
+    browser.waitForExist('#to-autocomplete-compact');
+    browser.waitForExist('#to-autocomplete-full');
+    
+    editAndSaveLinkInstance('train', '120.5', 'RUB', 'general desc', []);
+  
+  });
+	
+  it('Can edit link instance', () => {
+    
+    browser
+      .url('/link-instance/1/edit');
+    
+    browser.waitForValue('#description-input');
+    editAndSaveLinkInstance('bus', '110', 'EUR', 'other desc');
+  
   });
 
 });
