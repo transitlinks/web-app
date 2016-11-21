@@ -93,7 +93,10 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     assert.equal(browser.getText('#arr-time-value'), arrTime);
     assert.equal(browser.getText('#price-value'), `${priceAmount} ${priceCurrency}`);
     assert.equal(browser.getText('#desc-value'), description);
-    assert.equal(browser.getText('#avg-rating-value'), '2.5');
+    
+    if (ratings) {
+      assert.equal(browser.getText('#avg-rating-value'), '2.5');
+    }
 
 };
 
