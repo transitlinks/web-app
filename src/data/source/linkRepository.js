@@ -6,9 +6,10 @@ import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { TransitLink, LinkInstance, TransportType, Locality, Rating } from '../models';
 
-const getInstanceById = async (id) => {
+const getInstanceByUuid = async (uuid) => {
 
-  const linkInstance = await LinkInstance.findById(id, {
+  const linkInstance = await LinkInstance.findOne({ 
+    where: { uuid },
     include: [
       { model: TransportType, as: 'transport' },
       { model: TransitLink, as: 'link', include: [ { all: true } ] } 
@@ -24,7 +25,7 @@ const getInstanceById = async (id) => {
       'property',
       [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
     ],
-    where: { linkInstanceId: id, rating: { $ne: null } },
+    where: { linkInstanceId: linkInstance.id, rating: { $ne: null } },
     group: [ 'property' ]
   });
   
@@ -33,25 +34,26 @@ const getInstanceById = async (id) => {
     const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
     ratings[`avg${propertyName}Rating`] = result.get('avgRating');
   });
-
-  return { ...linkInstance.toJSON(), ...ratings };
+  
+  return { ...linkInstance.json(), ...ratings };
 
 };
 
 export default {
   
-  getById: async (id) => {
+  getByUuid: async (uuid) => {
     
-		let link = await TransitLink.findById(id, { include: [ { all: true } ] });
+		let link = await TransitLink.findOne({ 
+      where: { uuid },
+      include: [ { all: true } ] 
+    });
     
 		if (link === null) {
 			return null;
 		}
-		
-		link = link.toJSON();
-		
+			
 		let instances = await LinkInstance.findAll({
-			where: { linkId: id },
+			where: { linkId: link.id },
 			include: [
 				{ model: TransportType, as: 'transport' }
 			]
@@ -77,13 +79,15 @@ export default {
       ratings[linkInstanceId][`avg${propertyName}Rating`] = result.get('avgRating');
     });
      
-		return Object.assign(link, {
+		link = link.toJSON();
+		
+    return Object.assign(link, {
 			instances: instances.map(instance => ({ ...instance.toJSON(), ...ratings[instance.id] }))
 		});
   	
 	},
   
-  getInstanceById: getInstanceById,
+  getInstanceByUuid: getInstanceByUuid,
    
   getByLocalityId: async (localityId) => {
   
@@ -195,21 +199,21 @@ export default {
   },
 
   update: async (link) => {
-  
     const updated = await TransitLink.update(link, { where: { id: link.id } });
     log.trace('update result', result);
     return updated.toJSON();
-  
   }, 
   
   updateInstance: async (linkInstance) => {
   
-    const result = await LinkInstance.update(linkInstance, { where: { id: linkInstance.id } });
+    const result = await LinkInstance.update(linkInstance, { 
+      where: { uuid: linkInstance.uuid } 
+    });
     if (result.length !== 1 || result[0] !== 1) {
-      throw new Error('Invalid link instance update result', result);
+      throw new Error(`Invalid link instance update result: ${result}`);
     }
     
-    return getInstanceById(linkInstance.id);    
+    return getInstanceByUuid(linkInstance.uuid);    
      
   } 
 

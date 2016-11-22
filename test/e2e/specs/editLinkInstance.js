@@ -101,9 +101,9 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
 };
 
 describe('Edit link instance', () => {
-
-	it('Can create link instance', () => {
-		
+	
+  it('Can create and edit link instance', () => {
+    
     browser
       .url('/link-instance');
    
@@ -113,13 +113,12 @@ describe('Edit link instance', () => {
     browser.waitForExist('#to-autocomplete-full');
     
     editAndSaveLinkInstance('train', '120.5', 'RUB', 'general desc', []);
-  
-  });
-	
-  it('Can edit link instance', () => {
-    
+    const url = browser.getUrl();
+    const urlParts = url.split('/');
+    const uuid = urlParts[urlParts.length - 1];
+
     browser
-      .url('/link-instance/1/edit');
+      .url(`/link-instance/${uuid}/edit`);
     
     browser.waitForValue('#description-input');
     editAndSaveLinkInstance('bus', '110', 'EUR', 'other desc');

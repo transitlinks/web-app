@@ -8,8 +8,9 @@ import {
 
 import { 
   localityRepository, 
-  linkRepository, 
-  placesApi 
+  linkRepository,
+  userRepository,
+  placesApi
 } from '../source';
 
 import { 
@@ -80,9 +81,9 @@ const getLinkByInstance = async (linkInstance) => {
 
 };
 
-const createOrUpdateLink = async (linkInstance, user) => {
+const createOrUpdateLink = async (linkInstance, reqUser) => {
  	
-  if (!linkInstance.id) { // Create new link
+  if (!linkInstance.uuid) { // Create new link
     
     const link = await getLinkByInstance(linkInstance);
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
@@ -95,7 +96,12 @@ const createOrUpdateLink = async (linkInstance, user) => {
       availabilityRating, departureRating, arrivalRating, awesomeRating
     } = linkInstance;
 
-    const userId = user ? user.id : null; 
+    let userId = null;
+    if (reqUser) {
+      const user = userRepository.getByUuid(reqUser.uuid);
+      userId = user.id;
+    }
+    
     linkInstance = await linkRepository.createInstance({
       userId, 
 			linkId: link.id,
@@ -136,7 +142,8 @@ const createOrUpdateLink = async (linkInstance, user) => {
     }
     
     await linkRepository.saveInstanceRatings(linkInstance.id, ratings);
-
+    
+    delete linkInstance.id;
     return linkInstance;
 			
   } else { // Update existing link
@@ -152,7 +159,7 @@ const createOrUpdateLink = async (linkInstance, user) => {
     } = linkInstance;
 
     linkInstance = {
-      id: linkInstance.id,
+      uuid: linkInstance.uuid,
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departurePlace,
@@ -192,13 +199,13 @@ export const TransitLinkQueryFields = {
     type: TransitLinkType,
     description: 'Find a link by id',
     args: {
-      id: { type: GraphQLInt }
+      uuid: { type: GraphQLString }
     },
-    resolve: async ({ request }, { id }) => {
+    resolve: async ({ request }, { uuid }) => {
       
-      const link = await linkRepository.getById(id);
+      const link = await linkRepository.getByUuid(uuid);
       if (!link) {
-        throw new Error(`Link (id ${id}) not found`);
+        throw new Error(`Link (uuid ${uuid}) not found`);
       }
       
       link.instances.forEach(instance => {
@@ -215,15 +222,15 @@ export const TransitLinkQueryFields = {
 	linkInstance: {
     
     type: LinkInstanceType,
-    description: 'Find a link instance by id',
+    description: 'Find a link instance by uuid',
     args: {
-      id: { type: GraphQLInt }
+      uuid: { type: GraphQLString }
     },
-    resolve: async ({ request }, { id }) => {
+    resolve: async ({ request }, { uuid }) => {
       
-      const linkInstance = await linkRepository.getInstanceById(id);
+      const linkInstance = await linkRepository.getInstanceByUuid(uuid);
       if (!linkInstance) {
-        throw new Error(`Link instance (id ${id}) not found`);
+        throw new Error(`Link instance (uuid ${uuid}) not found`);
       }
       
       linkInstance.avgRating = calcInstanceRating(linkInstance);

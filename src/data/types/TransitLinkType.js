@@ -14,7 +14,7 @@ export const LinkInstanceType = new GraphQLObjectType({
   name: 'LinkInstance',
   description: 'An instance of travel between places in the link.',
   fields: () => ({
-    id: { type: new GraphQLNonNull(GraphQLInt) },
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
     link: { type: TransitLinkType },
     transport: { type: TransportTypeType },
     departureDate: { type: GraphQLString },
@@ -41,7 +41,7 @@ export const LinkInstanceInputType = new GraphQLInputObjectType({
   name: 'LinkInstanceInput',
   description: 'Input properties for LinkInstance.',
   fields: () => ({
-    id: { type: GraphQLInt },
+    uuid: { type: GraphQLString },
     from: { type: new GraphQLNonNull(GraphQLString) },
     to: { type: new GraphQLNonNull(GraphQLString) },
     transport: { type: new GraphQLNonNull(GraphQLString) },
@@ -70,7 +70,7 @@ export const TransitLinkType = new GraphQLObjectType({
   name: 'TransitLink',
   description: 'Transitlink between two localities.',
   fields: () => ({
-    id: { type: new GraphQLNonNull(GraphQLInt) },
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
     from: { type: LocalityType },
     to: { type: LocalityType },
     instances: { type: new GraphQLList(LinkInstanceType) },
@@ -82,7 +82,7 @@ export const TransitLinkInputType = new GraphQLInputObjectType({
   name: 'TransitLinkInput',
   description: 'Input properties for TransitLink.',
   fields: () => ({
-    id: { type: GraphQLInt },
+    uuid: { type: GraphQLString },
     from: { type: new GraphQLNonNull(GraphQLString) },
     to: { type: new GraphQLNonNull(GraphQLString) }
   })

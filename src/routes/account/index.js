@@ -7,16 +7,16 @@ import Account from './Account';
 
 export default {
 
-  path: '/account/:section?/:id?',
+  path: '/account/:section?/:uuid?',
 
   async action({ params, context }) {
     
-    let id = params.id;
-    if (!id) {
+    let uuid = params.uuid;
+    if (!uuid) {
       const state = context.store.getState();
       const { auth } = state.auth;
       if (auth.loggedIn) {
-        id = auth.user.id;
+        uuid = auth.user.uuid;
       }
     }
     
@@ -30,8 +30,8 @@ export default {
         
         const { data } = await graphqlRequest(
           `query {
-            profile (id: ${id}) {
-              id,
+            profile (uuid: "${uuid}") {
+              uuid,
               email,
               photo
             }
@@ -45,8 +45,8 @@ export default {
         
         const { data } = await graphqlRequest(
           `query {
-            userLinks (id: ${id}) {
-              id,
+            userLinks (uuid: "${uuid}") {
+              uuid,
               links { from, to, transport }
             }
           }`

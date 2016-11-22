@@ -9,11 +9,11 @@ export const AccountQueryFields = {
     type: ProfileType,
     description: 'Basic user info', 
     args: {
-      id: { type: GraphQLInt }
+      uuid: { type: GraphQLString }
     },
-    resolve: async (root, { id }) => {
+    resolve: async (root, { uuid }) => {
       return {
-        id,
+        uuid,
         email: 'test@test.com',
         photo: 'abc.jpg'
       };
@@ -26,11 +26,11 @@ export const AccountQueryFields = {
     type: UserLinksType,
     description: 'User links and stats', 
     args: {
-      id: { type: GraphQLInt }
+      uuid: { type: GraphQLString }
     },
-    resolve: async (root, { id }) => {
+    resolve: async (root, { uuid }) => {
       return {
-        id,
+        uuid,
         links: [
           { from: 'Alabama, USA', to: 'Wisconsin, USA', transport: 'bus' }
         ]

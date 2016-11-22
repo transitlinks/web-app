@@ -12,8 +12,8 @@ const ViewTransitLink = ({
 }) => {
 
   const instances = link.instances.map(instance => (
-    <div key={instance.id} className={"table-row " +s.selectable}
-      onClick={() => navigate('/link-instance/' + instance.id)}>
+    <div key={instance.uuid} className={"table-row " +s.selectable}
+      onClick={() => navigate('/link-instance/' + instance.uuid)}>
       <div className="col-1-4">
         <span className={s.transport}>
           <FormattedMessage { ...msgTransport[instance.transport.slug] } />

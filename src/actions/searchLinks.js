@@ -12,7 +12,7 @@ export const searchLinks = (input) => {
     const query = `
       query {
         links (input:"${input}") {
-          id,
+          uuid,
           from { description },
           to { description },
           instanceCount

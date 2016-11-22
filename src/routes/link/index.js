@@ -1,4 +1,6 @@
-import log from '../../core/log';
+import { getLog } from '../../core/log';
+const log = getLog('routes/link');
+
 import React from 'react';
 import TransitLink from './TransitLink';
 import ErrorPage from '../../components/common/ErrorPage';
@@ -7,7 +9,7 @@ import fetch from '../../core/fetch';
 
 export default {
 
-  path: '/link/:id',
+  path: '/link/:uuid',
 
   async action({ params, context }) {
       
@@ -17,12 +19,12 @@ export default {
       
       const { data } = await graphqlRequest(
         `query {
-          link(id: ${params.id}) {
-            id,
-            from { id, description, lat, lng},
-            to { id, description, lat, lng},
+          link(uuid: "${params.uuid}") {
+            uuid,
+            from { description, lat, lng},
+            to { description, lat, lng},
             instances {
-              id,
+              uuid,
               transport { slug },
               priceAmount, priceCurrency,
               avgRating,
@@ -32,7 +34,7 @@ export default {
         }`
       );
       
-      console.log("DATA", data); 
+      log.info('event=received-link-data', data);
       return <TransitLink link={data.link} />; 
     
     } catch (error) {

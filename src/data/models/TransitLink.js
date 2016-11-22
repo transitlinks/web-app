@@ -21,6 +21,15 @@ const TransitLink = Model.define('TransitLink', {
 
 }, {
 
+  instanceMethods: {
+    json: function() {
+      return {
+        uuid: this.get('uuid'),
+        slug: this.get('slug')
+      };
+    }
+  },
+
   indexes: [
     { fields: ['id', 'uuid', 'slug'] },
   ],

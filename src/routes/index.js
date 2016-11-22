@@ -241,6 +241,7 @@ export const initEndpoints = (app) => {
         res.status(statusCode);
         res.send(`<!doctype html>${html}`);
       }
+
     } catch (err) {
       next(err);
     } finally {

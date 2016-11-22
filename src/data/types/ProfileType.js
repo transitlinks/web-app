@@ -8,7 +8,7 @@ import {
 const ProfileType = new GraphQLObjectType({
   name: 'Profile',
   fields: {
-    id: { type: new GraphQLNonNull(GraphQLString) },
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
     email: { type: new GraphQLNonNull(GraphQLString) },
     photo: { type: GraphQLString }
   },

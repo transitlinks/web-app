@@ -30,6 +30,16 @@ const User = Model.define('User', {
   }
 
 }, {
+  
+  instanceMethods: {
+    json: function() {
+      return {
+        uuid: this.get('uuid'),
+        email: this.get('email'),
+        photo: this.get('photo')
+      };
+    }
+  },
 
   indexes: [
     { fields: ['email'] },

@@ -46,6 +46,14 @@ const Locality = Model.define('Locality', {
 
 }, {
 
+  instanceMethods: {
+    json: function() {
+      const json = this.toJSON();
+      delete json.id;
+      return json;
+    }
+  },
+
   indexes: [
     { fields: ['id', 'uuid', 'apiId', 'name'] },
   ],

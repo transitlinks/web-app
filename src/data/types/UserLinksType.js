@@ -18,7 +18,7 @@ const UserLinkInstanceType = new GraphQLObjectType({
 const UserLinksType = new GraphQLObjectType({
   name: 'UserLinks',
   fields: {
-    id: { type: new GraphQLNonNull(GraphQLInt) },
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
     links: { type: new GraphQLList(UserLinkInstanceType) }
   },
 });

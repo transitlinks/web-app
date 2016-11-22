@@ -83,6 +83,14 @@ const LinkInstance = Model.define('LinkInstance', {
 
 }, {
 
+  instanceMethods: {
+    json: function() {
+      const json = this.toJSON();
+      delete json.id;
+      return json;
+    }
+  },
+
   indexes: [
     { fields: [ 'id', 'uuid' ] },
   ],

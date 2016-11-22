@@ -15,8 +15,8 @@ const LinkSearch = ({
 
   
   const linkResults = (links && links.length > 0) ? links.map(link => (
-    <div key={link.id}
-      className={s.link} onClick={() => navigate('/link/' + link.id)}>
+    <div key={link.uuid}
+      className={s.link} onClick={() => navigate('/link/' + link.uuid)}>
       <div className={s.linkTitle}>
         <span id="place-from" className="locality">{link.from.description}</span>
         <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>

@@ -83,11 +83,11 @@ export function saveLinkInstance({ linkInstance }) {
     const query = `
       mutation saveLinkInstance {
         linkInstance(linkInstance:${json}) {
-          id,
+          uuid,
           link {
-            id,
-            from { id, apiId, name, description, lat, lng },
-            to { id, apiId, name, description, lat, lng }
+            uuid,
+            from { apiId, name, description, lat, lng },
+            to { apiId, name, description, lat, lng }
           },
           transport {
             slug
@@ -96,7 +96,6 @@ export function saveLinkInstance({ linkInstance }) {
       }
     `;
     
-    console.log("sending link instance", json);
     return graphqlAction(
       ...args, 
       { query }, [ 'linkInstance' ],

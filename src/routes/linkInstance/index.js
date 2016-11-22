@@ -6,7 +6,7 @@ import fetch from '../../core/fetch';
 
 export default {
 
-  path: '/link-instance/:id?/:action?',
+  path: '/link-instance/:uuid?/:action?',
 
   async action({ params, context }) {
     
@@ -16,8 +16,7 @@ export default {
 
       const { data } = await graphqlRequest(
         `query {
-          transportTypes 
-          { id, slug }
+          transportTypes { slug }
         }`
       );
 
@@ -27,15 +26,15 @@ export default {
     
     try { 
     
-      if (params.id) {
+      if (params.uuid) {
         
         const { data } = await graphqlRequest(
           `query {
-            linkInstance(id: ${params.id}) {
-              id,
+            linkInstance(uuid: "${params.uuid}") {
+              uuid,
               link {
-                from { id, apiId, name, description, countryLong, lat, lng },
-                to { id, apiId, name, description, countryLong, lat, lng} 
+                from { apiId, name, description, countryLong, lat, lng },
+                to { apiId, name, description, countryLong, lat, lng} 
               },
               transport { slug },
               departureDate, departureHour, departureMinute, departurePlace,

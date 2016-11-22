@@ -42,9 +42,9 @@ const createOrUpdateLinkInstance = async (linkInstance) => {
     query: `
       mutation ($linkInstance:LinkInstanceInput!) {
         linkInstance(linkInstance:$linkInstance) {
-          id,
+          uuid,
           link {
-            id,
+            uuid,
             from { name, description, countryLong, countryShort, lat, lng }, 
             to { name, description, countryLong, countryShort, lat, lng }
           },
@@ -58,7 +58,6 @@ const createOrUpdateLinkInstance = async (linkInstance) => {
   
   const response = await test(query);
   assertResponse(response);
-  
   assert(response.data.linkInstance);
   
   const { link } = response.data.linkInstance;
@@ -90,8 +89,7 @@ describe('data/queries/links', () => {
     let linkInstance = response.data.linkInstance;
     assert(linkInstance);
     
-    linkInstance = { ...validLinkInstance, id: linkInstance.id, description: 'this is not description' };
-    
+    linkInstance = { ...validLinkInstance, uuid: linkInstance.uuid, description: 'this is not description' };
     response = await createOrUpdateLinkInstance(linkInstance)
     assertResponse(response);
     linkInstance = response.data.linkInstance;
@@ -108,7 +106,8 @@ describe('data/queries/links', () => {
     const query = JSON.stringify({
       query: `
         query { 
-          links(input:"Moscow") {
+          links (input: "Moscow") {
+            uuid,
             from { description }, 
             to { description },
             instanceCount
@@ -131,15 +130,20 @@ describe('data/queries/links', () => {
   
   it('returns link by id', async () => {
     
-    await createOrUpdateLinkInstance(validLinkInstance);
+    let response = await createOrUpdateLinkInstance(validLinkInstance); 
+    assertResponse(response);
+    
+    let linkInstance = response.data.linkInstance;
+    assert(linkInstance);
     
     const query = JSON.stringify({
       query: `
         query {
-          link(id:1) {
+          link (uuid: "${linkInstance.link.uuid}") {
             from { name, lat, lng },
             to { name, lat, lng },
             instances {
+              uuid,
               transport { slug },
               avgRating,
               durationMinutes
@@ -150,7 +154,7 @@ describe('data/queries/links', () => {
       variables: {}
     });
     
-    const response = await test(query); 
+    response = await test(query); 
     assertResponse(response);
 
     const { link } = response.data;
@@ -167,13 +171,17 @@ describe('data/queries/links', () => {
   
   it('returns link instance by id', async () => {
     
-    await createOrUpdateLinkInstance(validLinkInstance);
+    let response = await createOrUpdateLinkInstance(validLinkInstance); 
+    assertResponse(response);
+    
+    let linkInstance = response.data.linkInstance;
+    assert(linkInstance);
     
     const query = JSON.stringify({
       query: `
         query {
-          linkInstance(id:1) {
-            id,
+          linkInstance(uuid:"${linkInstance.uuid}") {
+            uuid,
             transport { slug }
             link {
               from { name, lat, lng },
@@ -191,12 +199,12 @@ describe('data/queries/links', () => {
       variables: {}
     });
     
-    const response = await test(query);
+    response = await test(query);
     assertResponse(response);
     
     assert(response.data.linkInstance);
 
-    const { linkInstance } = response.data;
+    linkInstance = response.data.linkInstance;
     assert(linkInstance.transport, 'missing property: linkInstance.transport');
     assert(linkInstance.link, 'missing property: linkInstance.link');
     assert(linkInstance.link.from, 'missing property: linkInstance.link.from');

@@ -30,21 +30,21 @@ const getUser = async (email, photo) => {
   }
   
   if (user) {
-    log.debug('getUser', 'user-found', `user.id=${user.get('id')} user.uuid=${user.get('uuid')}`);
-    return user.toJSON();
+    log.debug('getUser', 'user-found', `user.uuid=${user.get('uuid')}`);
+    return user.json();
   }
 
 };
 
 passport.serializeUser((user, done) => {
-  log.debug('passport.serializeUser', `user.id=${user.id}`); 
-  done(null, user.id); 
+  log.debug('passport.serializeUser', `user.uuid=${user.uuid}`); 
+  done(null, user.uuid); 
 });
   
-passport.deserializeUser((id, done) => {
-  log.debug('deserialize-user', `id=${id}`); 
-  User.findOne({ where: { id } })
-  .then(user => done(null, user.toJSON()));
+passport.deserializeUser((uuid, done) => {
+  log.debug('deserialize-user', `uuid=${uuid}`); 
+  User.findOne({ where: { uuid } })
+  .then(user => done(null, user.json()));
 });
 
 passport.use('login-local', new LocalStrategy({
