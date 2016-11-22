@@ -129,18 +129,9 @@
     "defaultMessage": "Create",
     "message": "",
     "files": [
-      "src/components/FunctionBar/messages.js",
       "src/components/LinkSearch/messages.js",
-      "src/components/Navigation/messages.js"
-    ]
-  },
-  {
-    "id": "header.brand",
-    "description": "Brand name displayed in header",
-    "defaultMessage": "Your Company Brand",
-    "message": "",
-    "files": [
-      "src/components/Header/Header.js"
+      "src/components/Navigation/messages.js",
+      "src/components/FunctionBar/messages.js"
     ]
   },
   {
@@ -330,6 +321,15 @@
     "message": "",
     "files": [
       "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "header.logoText",
+    "description": "Transitlinks",
+    "defaultMessage": "Transitlinks",
+    "message": "",
+    "files": [
+      "src/components/Header/messages.js"
     ]
   }
 ]

@@ -1,5 +1,4 @@
 import React from 'react';
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.css';
 import cx from 'classnames';
@@ -10,13 +9,8 @@ import logoUrl from './logo-small.png';
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 
-const messages = defineMessages({
-  brand: {
-    id: 'header.brand',
-    defaultMessage: 'Your Company Brand',
-    description: 'Brand name displayed in header',
-  },
-});
+import { FormattedMessage, injectIntl } from 'react-intl';
+import msg from './messages';
 
 function Header() {
   return (
@@ -26,7 +20,7 @@ function Header() {
           <Link className={s.brand} to="/">
             <FontIcon className="material-icons">shuffle</FontIcon>
             <span className={s.brandTxt}>
-              <FormattedMessage {...messages.brand} />
+              <FormattedMessage {...msg['logo-text']} />
             </span>
           </Link>
           <div className={s.languages}>
