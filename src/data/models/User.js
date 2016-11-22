@@ -24,6 +24,10 @@ const User = Model.define('User', {
     type: DataType.BOOLEAN,
     defaultValue: false,
   },
+  
+  photo: {
+    type: DataType.STRING
+  }
 
 }, {
 

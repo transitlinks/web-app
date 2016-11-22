@@ -5,6 +5,7 @@ import passport from 'passport';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import {
 	APP_URL, 
+  FB_GRAPH_API,
   AUTH_FB_APPID, AUTH_FB_SECRET,
   GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SECRET
 } from '../config';
@@ -13,7 +14,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-const getUser = async (email) => {
+const getUser = async (email, photo) => {
   
   log.debug('getUser', `email=${email}`);
   
@@ -21,8 +22,11 @@ const getUser = async (email) => {
   if (!user) {
     log.debug('getUser', 'create-user', `email=${email}`);
     user = await User.create({
-      email
+      email,
+      photo
     });
+  } else if (photo) {
+    await User.update({ photo }, { where: { id: user.id } });
   }
   
   if (user) {
@@ -70,7 +74,8 @@ passport.use('login-facebook', new FacebookStrategy({
     const emails = profile.emails;
     if (emails && emails.length > 0) {
       const email = emails[0].value;
-      const user = await getUser(email);
+      const photo = `${FB_GRAPH_API}/${profile.id}/picture?type=large`;
+      const user = await getUser(email, photo);
       done(null, user);
     } else {
       done({ message: 'Invalid Facebook profile' });
@@ -91,7 +96,14 @@ passport.use('login-google', new GoogleStrategy({
     const emails = profile.emails;
     if (emails && emails.length > 0) {
       const email = emails[0].value;
-      const user = await getUser(email);
+      let photo = null;
+      if (profile.photos && profile.photos.length > 0) { 
+        photo = profile.photos[0].value;
+        if (photo.indexOf('?sz') != -1) {
+          photo = photo.split('?')[0] + '?sz=250';
+        }
+      }
+      const user = await getUser(email, photo);
       done(null, user);
     } else {
       done({ message: 'Invalid Google profile' });
