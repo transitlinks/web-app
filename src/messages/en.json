@@ -286,5 +286,50 @@
     "files": [
       "src/components/Navigation/messages.js"
     ]
+  },
+  {
+    "id": "account.linksLink",
+    "description": "Links",
+    "defaultMessage": "Links",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.js"
+    ]
+  },
+  {
+    "id": "account.profileLink",
+    "description": "Profile",
+    "defaultMessage": "Profile",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.js"
+    ]
+  },
+  {
+    "id": "account.links.linksTitle",
+    "description": "User links",
+    "defaultMessage": "User links",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.links.js"
+    ]
+  },
+  {
+    "id": "account.profile.email",
+    "description": "E-mail",
+    "defaultMessage": "E-mail",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.photo",
+    "description": "User photo",
+    "defaultMessage": "User photo",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
   }
 ]
