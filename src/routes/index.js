@@ -20,6 +20,7 @@ import search from './search';
 import link from './link';
 import linkInstance from './linkInstance';
 import login from './login';
+import account from './account';
 import content from './content';
 import error from './error';
 
@@ -33,6 +34,7 @@ const routes = {
   children: [
     home,
     login,
+    account,
     search,
     link,
     linkInstance,

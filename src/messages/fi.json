@@ -1,293 +1,5 @@
 [
   {
-    "id": "transport.bike",
-    "description": "Biking",
-    "defaultMessage": "Biking",
-    "message": "Pyöräily",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "transport.bus",
-    "description": "Bus",
-    "defaultMessage": "Bus",
-    "message": "Bussi",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "transport.hitch-hike",
-    "description": "Hitch-hiking",
-    "defaultMessage": "Hitch-hiking (autostop)",
-    "message": "Peukkukyyti",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "transport.shared-taxi",
-    "description": "Shared taxi",
-    "defaultMessage": "Shared taxi",
-    "message": "Jaettu taksi",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "transport.train",
-    "description": "Train",
-    "defaultMessage": "Train",
-    "message": "Juna",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "transport.van",
-    "description": "Van",
-    "defaultMessage": "Van (mini bus, marshrutka)",
-    "message": "Minibussi (marshrutka)",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "transport.walk",
-    "description": "Walking",
-    "defaultMessage": "Walking",
-    "message": "Kävellen",
-    "files": [
-      "src/components/common/messages/transport.js",
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "header.brand",
-    "description": "Brand name displayed in header",
-    "defaultMessage": "Your Company Brand",
-    "message": "Transitlinks",
-    "files": [
-      "src/components/Header/Header.js"
-    ]
-  },
-  {
-    "id": "navigation.about",
-    "description": "About",
-    "defaultMessage": "About",
-    "message": "Tietoja",
-    "files": [
-      "src/components/Navigation/messages.js"
-    ]
-  },
-  {
-    "id": "navigation.login",
-    "description": "Log in",
-    "defaultMessage": "Log in",
-    "message": "Sisään",
-    "files": [
-      "src/components/Navigation/messages.js"
-    ]
-  },
-  {
-    "id": "navigation.newLink",
-    "description": "Create",
-    "defaultMessage": "Create",
-    "message": "Luo",
-    "files": [
-      "src/components/FunctionBar/messages.js",
-      "src/components/LinkSearch/messages.js",
-      "src/components/Navigation/messages.js"
-    ]
-  },
-  {
-    "id": "navigation.search",
-    "description": "Search",
-    "defaultMessage": "Search",
-    "message": "Etsi",
-    "files": [
-      "src/components/Navigation/messages.js"
-    ]
-  },
-  {
-    "id": "editLinkInstance.addLink",
-    "description": "Add link",
-    "defaultMessage": "Add link",
-    "message": "Uusi linkki",
-    "files": [
-      "src/components/EditLinkInstance/messages.js"
-    ]
-  },
-  {
-    "id": "login.facebook",
-    "description": "Sign in with Facebook",
-    "defaultMessage": "Sign in with Facebook",
-    "message": "Kirjaudu Facebook-tunnuksilla",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.google",
-    "description": "Sign in with Google",
-    "defaultMessage": "Sign in with Google",
-    "message": "Kirjaudu Google-tunnuksilla",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.local",
-    "description": "Sign in with e-mail and password",
-    "defaultMessage": "Sign in with e-mail and password",
-    "message": "Kirjaudu sähköpostilla ja salasanalla",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.loginInfo",
-    "description": "Login info",
-    "defaultMessage": "Sign in using any of the methods below. In case you haven't signed in before, your account will be created at your first login.",
-    "message": "Valitse kirjautumistapa ja kirjaudu sisään. Jos et ole aiemmin kirjautunut sovellukseen, tunnuksesi luodaan ensimmäisen kirjautumisen yhteydessä.",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.reset-password",
-    "description": "Reset password",
-    "defaultMessage": "Reset password",
-    "message": "Palauta salasana",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.signIn",
-    "description": "Sign in",
-    "defaultMessage": "Sign in",
-    "message": "Sisään",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.termsLink",
-    "description": "service agreement",
-    "defaultMessage": "service agreement",
-    "message": "palveluehdot",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.termsText",
-    "description": "Terms text",
-    "defaultMessage": "By signing you are accepting our",
-    "message": "Kirjautumalla sisään hyväksyt meidän",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.emailLabel",
-    "description": "E-mail",
-    "defaultMessage": "E-mail",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.missingAt",
-    "description": "@ symbol is missing",
-    "defaultMessage": "@ symbol is missing",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.missingDomain",
-    "description": "Domain name is missing",
-    "defaultMessage": "Domain name is missing",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.missingPostfix",
-    "description": "Domain postfix is missing",
-    "defaultMessage": "Domain postfix is missing",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.missingPrefix",
-    "description": "E-mail prefix is missing",
-    "defaultMessage": "E-mail prefix is missing",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.postfixTooShort",
-    "description": "Domain postfix too short",
-    "defaultMessage": "Domain postfix too short",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.tooManyAts",
-    "description": "Too many @ symbols",
-    "defaultMessage": "Too many @ symbols",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.passwordLabel",
-    "description": "Password",
-    "defaultMessage": "Password",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.passwordTooShort",
-    "description": "At least 4 characters",
-    "defaultMessage": "At least 4 characters",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "navigation.logout",
-    "description": "Log out",
-    "defaultMessage": "Log out",
-    "message": "",
-    "files": [
-      "src/components/Navigation/messages.js"
-    ]
-  },
-  {
     "id": "account.linksLink",
     "description": "Links",
     "defaultMessage": "Links",
@@ -330,6 +42,294 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "transport.bike",
+    "description": "Biking",
+    "defaultMessage": "Biking",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.bus",
+    "description": "Bus",
+    "defaultMessage": "Bus",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.hitch-hike",
+    "description": "Hitch-hiking",
+    "defaultMessage": "Hitch-hiking (autostop)",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.shared-taxi",
+    "description": "Shared taxi",
+    "defaultMessage": "Shared taxi",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.train",
+    "description": "Train",
+    "defaultMessage": "Train",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.van",
+    "description": "Van",
+    "defaultMessage": "Van (mini bus, marshrutka)",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.walk",
+    "description": "Walking",
+    "defaultMessage": "Walking",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "editLinkInstance.addLink",
+    "description": "Add link",
+    "defaultMessage": "Add link",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.newLink",
+    "description": "Create",
+    "defaultMessage": "Create",
+    "message": "",
+    "files": [
+      "src/components/FunctionBar/messages.js",
+      "src/components/LinkSearch/messages.js",
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "header.brand",
+    "description": "Brand name displayed in header",
+    "defaultMessage": "Your Company Brand",
+    "message": "",
+    "files": [
+      "src/components/Header/Header.js"
+    ]
+  },
+  {
+    "id": "navigation.about",
+    "description": "About",
+    "defaultMessage": "About",
+    "message": "",
+    "files": [
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.login",
+    "description": "Log in",
+    "defaultMessage": "Log in",
+    "message": "",
+    "files": [
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.logout",
+    "description": "Log out",
+    "defaultMessage": "Log out",
+    "message": "",
+    "files": [
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.search",
+    "description": "Search",
+    "defaultMessage": "Search",
+    "message": "",
+    "files": [
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
+    "id": "login.emailLabel",
+    "description": "E-mail",
+    "defaultMessage": "E-mail",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.facebook",
+    "description": "Sign in with Facebook",
+    "defaultMessage": "Sign in with Facebook",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.google",
+    "description": "Sign in with Google",
+    "defaultMessage": "Sign in with Google",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.local",
+    "description": "Sign in with e-mail and password",
+    "defaultMessage": "Sign in with e-mail and password",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.loginInfo",
+    "description": "Login info",
+    "defaultMessage": "Sign in using any of the methods below. In case you haven't signed in before, your account will be created at your first login.",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.missingAt",
+    "description": "@ symbol is missing",
+    "defaultMessage": "@ symbol is missing",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.missingDomain",
+    "description": "Domain name is missing",
+    "defaultMessage": "Domain name is missing",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.missingPostfix",
+    "description": "Domain postfix is missing",
+    "defaultMessage": "Domain postfix is missing",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.missingPrefix",
+    "description": "E-mail prefix is missing",
+    "defaultMessage": "E-mail prefix is missing",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.passwordLabel",
+    "description": "Password",
+    "defaultMessage": "Password",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.passwordTooShort",
+    "description": "At least 4 characters",
+    "defaultMessage": "At least 4 characters",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.postfixTooShort",
+    "description": "Domain postfix too short",
+    "defaultMessage": "Domain postfix too short",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.reset-password",
+    "description": "Reset password",
+    "defaultMessage": "Reset password",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.signIn",
+    "description": "Sign in",
+    "defaultMessage": "Sign in",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.termsLink",
+    "description": "service agreement",
+    "defaultMessage": "service agreement",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.termsText",
+    "description": "Terms text",
+    "defaultMessage": "By signing you are accepting our",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
+  },
+  {
+    "id": "login.tooManyAts",
+    "description": "Too many @ symbols",
+    "defaultMessage": "Too many @ symbols",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
     ]
   }
 ]

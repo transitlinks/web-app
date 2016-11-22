@@ -1,5 +1,50 @@
 [
   {
+    "id": "account.linksLink",
+    "description": "Links",
+    "defaultMessage": "Links",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.js"
+    ]
+  },
+  {
+    "id": "account.profileLink",
+    "description": "Profile",
+    "defaultMessage": "Profile",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.js"
+    ]
+  },
+  {
+    "id": "account.links.linksTitle",
+    "description": "User links",
+    "defaultMessage": "User links",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.links.js"
+    ]
+  },
+  {
+    "id": "account.profile.email",
+    "description": "E-mail",
+    "defaultMessage": "E-mail",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.photo",
+    "description": "User photo",
+    "defaultMessage": "User photo",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
     "id": "transport.bike",
     "description": "Biking",
     "defaultMessage": "Biking",
@@ -70,6 +115,26 @@
     ]
   },
   {
+    "id": "editLinkInstance.addLink",
+    "description": "Add link",
+    "defaultMessage": "Add link",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "navigation.newLink",
+    "description": "Create",
+    "defaultMessage": "Create",
+    "message": "",
+    "files": [
+      "src/components/FunctionBar/messages.js",
+      "src/components/LinkSearch/messages.js",
+      "src/components/Navigation/messages.js"
+    ]
+  },
+  {
     "id": "header.brand",
     "description": "Brand name displayed in header",
     "defaultMessage": "Your Company Brand",
@@ -97,13 +162,11 @@
     ]
   },
   {
-    "id": "navigation.newLink",
-    "description": "Create",
-    "defaultMessage": "Create",
+    "id": "navigation.logout",
+    "description": "Log out",
+    "defaultMessage": "Log out",
     "message": "",
     "files": [
-      "src/components/FunctionBar/messages.js",
-      "src/components/LinkSearch/messages.js",
       "src/components/Navigation/messages.js"
     ]
   },
@@ -117,12 +180,12 @@
     ]
   },
   {
-    "id": "editLinkInstance.addLink",
-    "description": "Add link",
-    "defaultMessage": "Add link",
+    "id": "login.emailLabel",
+    "description": "E-mail",
+    "defaultMessage": "E-mail",
     "message": "",
     "files": [
-      "src/components/EditLinkInstance/messages.js"
+      "src/components/Login/messages.js"
     ]
   },
   {
@@ -156,51 +219,6 @@
     "id": "login.loginInfo",
     "description": "Login info",
     "defaultMessage": "Sign in using any of the methods below. In case you haven't signed in before, your account will be created at your first login.",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.reset-password",
-    "description": "Reset password",
-    "defaultMessage": "Reset password",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.signIn",
-    "description": "Sign in",
-    "defaultMessage": "Sign in",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.termsLink",
-    "description": "service agreement",
-    "defaultMessage": "service agreement",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.termsText",
-    "description": "Terms text",
-    "defaultMessage": "By signing you are accepting our",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.emailLabel",
-    "description": "E-mail",
-    "defaultMessage": "E-mail",
     "message": "",
     "files": [
       "src/components/Login/messages.js"
@@ -243,24 +261,6 @@
     ]
   },
   {
-    "id": "login.postfixTooShort",
-    "description": "Domain postfix too short",
-    "defaultMessage": "Domain postfix too short",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
-    "id": "login.tooManyAts",
-    "description": "Too many @ symbols",
-    "defaultMessage": "Too many @ symbols",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
     "id": "login.passwordLabel",
     "description": "Password",
     "defaultMessage": "Password",
@@ -279,57 +279,57 @@
     ]
   },
   {
-    "id": "navigation.logout",
-    "description": "Log out",
-    "defaultMessage": "Log out",
+    "id": "login.postfixTooShort",
+    "description": "Domain postfix too short",
+    "defaultMessage": "Domain postfix too short",
     "message": "",
     "files": [
-      "src/components/Navigation/messages.js"
+      "src/components/Login/messages.js"
     ]
   },
   {
-    "id": "account.linksLink",
-    "description": "Links",
-    "defaultMessage": "Links",
+    "id": "login.reset-password",
+    "description": "Reset password",
+    "defaultMessage": "Reset password",
     "message": "",
     "files": [
-      "src/components/Account/messages.js"
+      "src/components/Login/messages.js"
     ]
   },
   {
-    "id": "account.profileLink",
-    "description": "Profile",
-    "defaultMessage": "Profile",
+    "id": "login.signIn",
+    "description": "Sign in",
+    "defaultMessage": "Sign in",
     "message": "",
     "files": [
-      "src/components/Account/messages.js"
+      "src/components/Login/messages.js"
     ]
   },
   {
-    "id": "account.links.linksTitle",
-    "description": "User links",
-    "defaultMessage": "User links",
+    "id": "login.termsLink",
+    "description": "service agreement",
+    "defaultMessage": "service agreement",
     "message": "",
     "files": [
-      "src/components/Account/messages.links.js"
+      "src/components/Login/messages.js"
     ]
   },
   {
-    "id": "account.profile.email",
-    "description": "E-mail",
-    "defaultMessage": "E-mail",
+    "id": "login.termsText",
+    "description": "Terms text",
+    "defaultMessage": "By signing you are accepting our",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Login/messages.js"
     ]
   },
   {
-    "id": "account.profile.photo",
-    "description": "User photo",
-    "defaultMessage": "User photo",
+    "id": "login.tooManyAts",
+    "description": "Too many @ symbols",
+    "defaultMessage": "Too many @ symbols",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Login/messages.js"
     ]
   }
 ]
