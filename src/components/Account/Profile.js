@@ -4,7 +4,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Profile.css';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import * as utils from "../../core/utils";
+import EmailInput from '../EmailInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.profile';
 

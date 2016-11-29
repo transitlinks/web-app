@@ -6,6 +6,7 @@ import s from './Login.css';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as utils from "../../core/utils";
+import EmailInput from '../EmailInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
@@ -85,13 +86,7 @@ const LoginView = ({ intl, setLoginParams, email, password }) => {
           </div>
           <div className={s.formItem}>
             <div className={s.formInput}>
-              <TextField id="input-email"
-                style={textFieldCss}
-                name="email"
-                floatingLabelText={intl.formatMessage(msg[emailStatus.text])}
-                floatingLabelStyle={emailStatus.style}
-                value={email} 
-                onChange={(event) => handleInputChange(event)} />
+              <EmailInput value={email} onChange={handleInputChange} />
             </div>
           </div>
           <div className={s.formItem}>

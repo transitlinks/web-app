@@ -47,36 +47,6 @@ export default defineMessages({
     defaultMessage: 'E-mail',
     description: 'E-mail'
   },
-  'missing-at': {
-    id: 'login.missingAt',
-    defaultMessage: '@ symbol is missing',
-    description: '@ symbol is missing'
-  },
-  'missing-prefix': {
-    id: 'login.missingPrefix',
-    defaultMessage: 'E-mail prefix is missing',
-    description: 'E-mail prefix is missing'
-  },
-  'too-many-ats': {
-    id: 'login.tooManyAts',
-    defaultMessage: 'Too many @ symbols',
-    description: 'Too many @ symbols'
-  },
-  'missing-domain': {
-    id: 'login.missingDomain',
-    defaultMessage: 'Domain name is missing',
-    description: 'Domain name is missing'
-  },
-  'missing-postfix': {
-    id: 'login.missingPostfix',
-    defaultMessage: 'Domain postfix is missing',
-    description: 'Domain postfix is missing'
-  },
-  'postfix-too-short': {
-    id: 'login.postfixTooShort',
-    defaultMessage: 'Domain postfix too short',
-    description: 'Domain postfix too short'
-  },
   'password': {
     id: 'login.passwordLabel',
     defaultMessage: 'Password',
