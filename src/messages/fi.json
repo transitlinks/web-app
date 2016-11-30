@@ -376,5 +376,14 @@
     "files": [
       "src/components/Account/messages.profile.js"
     ]
+  },
+  {
+    "id": "login.invalidPasswordError",
+    "description": "Invalid password",
+    "defaultMessage": "Invalid password",
+    "message": "",
+    "files": [
+      "src/components/Login/messages.js"
+    ]
   }
 ]

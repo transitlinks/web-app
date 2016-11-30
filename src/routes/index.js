@@ -65,7 +65,6 @@ export const initEndpoints = (app) => {
     app.passport.authenticate('login-local', (err, user, info) => {
 
       if (err) {
-        console.log("ERR", err);
         req.session.error = err;
         res.redirect('/login');
         return;
@@ -175,6 +174,11 @@ export const initEndpoints = (app) => {
       store.dispatch(setRuntimeVariable({
         name: 'initialNow',
         value: Date.now(),
+      }));
+      
+      store.dispatch(setRuntimeVariable({
+        name: 'reqError',
+        value: req.session.error
       }));
       
       store.dispatch(setRuntimeVariable({

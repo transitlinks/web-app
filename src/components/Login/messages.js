@@ -51,5 +51,10 @@ export default defineMessages({
     id: 'login.passwordLabel',
     defaultMessage: 'Password',
     description: 'Password'
+  },
+  'invalid-password': {
+    id: 'login.invalidPasswordError',
+    defaultMessage: 'Invalid password',
+    description: 'Invalid password'
   }
 });

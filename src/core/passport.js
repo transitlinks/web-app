@@ -39,7 +39,7 @@ const getUser = async (email, photo, password) => {
     
     if (password) {
       if (!bcrypt.compareSync(password, user.get('password'))) {
-        throw new Error("Invalid password");
+        throw new Error('invalid-password');
       }
     }
 
@@ -71,7 +71,7 @@ passport.use('login-local', new LocalStrategy({
 			  const user = await getUser(email, null, password);
 			  done(null, user);
       } catch (error) {
-        done({ message: 'some error' });
+        done({ message: error.message });
       }
     } else {
 			done({ message: 'Invalid login credentials' });

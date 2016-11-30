@@ -8,17 +8,6 @@
   padding-top: 24px;
   background-color: white;
 
-  .error {
-    background: #dc4e41;
-    color: white;
-    max-width: 500px;
-    text-align: center;
-    padding: 6px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 12px;
-  }
-
 }
 
 .container {
@@ -103,6 +92,17 @@
   flex-grow: 1;
   text-align: center;
   padding-top: 10px;
+}
+
+.error {
+  background: #dc4e41;
+  color: white;
+  max-width: 420px;
+  text-align: center;
+  padding: 6px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 12px;
 }
 
 .pwdLogin {

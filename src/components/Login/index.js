@@ -12,7 +12,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
 const LoginView = ({ 
-  intl, 
+  intl, error, 
   setProperty, 
   email, emailValid, password, passwordValid
 }) => {
@@ -60,6 +60,12 @@ const LoginView = ({
             </a>  
           </div>
         </div>
+        {
+          error &&
+          <div className={s.error}>
+            <FormattedMessage {...msg[error.message]} />
+          </div>
+        }
         <form action="/login" method="post" className={s.pwdLogin}>
           <div className={s.formTitle}>
             <FormattedMessage {...msg['local']} />
@@ -103,7 +109,8 @@ export default injectIntl(
 	  email: state.login.email,
 	  emailValid: state.login.emailValid,
     password: state.login.password,
-    passwordValid: state.login.passwordValid
+    passwordValid: state.login.passwordValid,
+    error: state.runtime.reqError
   }), {
     setProperty
   })(withStyles(s)(LoginView))
