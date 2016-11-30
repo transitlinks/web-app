@@ -10,8 +10,8 @@ describe('Test Login', () => {
     browser.waitForExist('#login-email');
     
     browser
-      .setValue('#input-email', 'vhalme@gmail.com')
-      .setValue('#input-password', 'test1')
+      .setValue('#login-email', 'vhalme@gmail.com')
+      .setValue('#login-password input', 'test1')
       .click('form button');
     
     browser.waitForExist('#logout-link');
