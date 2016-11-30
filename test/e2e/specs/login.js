@@ -7,7 +7,7 @@ describe('Test Login', () => {
 		browser
       .url('http://localhost:3000/login');
     
-    browser.waitForExist('#input-email');
+    browser.waitForExist('#login-email');
     
     browser
       .setValue('#input-email', 'vhalme@gmail.com')
