@@ -225,15 +225,6 @@
     ]
   },
   {
-    "id": "login.passwordTooShort",
-    "description": "At least 4 characters",
-    "defaultMessage": "At least 4 characters",
-    "message": "",
-    "files": [
-      "src/components/Login/messages.js"
-    ]
-  },
-  {
     "id": "login.reset-password",
     "description": "Reset password",
     "defaultMessage": "Reset password",
@@ -339,6 +330,24 @@
     "message": "",
     "files": [
       "src/components/EmailInput/messages.js"
+    ]
+  },
+  {
+    "id": "password.passwordLabel",
+    "description": "Password",
+    "defaultMessage": "Password",
+    "message": "",
+    "files": [
+      "src/components/PasswordInput/messages.js"
+    ]
+  },
+  {
+    "id": "password.passwordTooShort",
+    "description": "At least 4 characters",
+    "defaultMessage": "At least 4 characters",
+    "message": "",
+    "files": [
+      "src/components/PasswordInput/messages.js"
     ]
   }
 ]

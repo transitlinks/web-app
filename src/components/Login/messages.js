@@ -51,10 +51,5 @@ export default defineMessages({
     id: 'login.passwordLabel',
     defaultMessage: 'Password',
     description: 'Password'
-  },
-  'password-too-short': {
-    id: 'login.passwordTooShort',
-    defaultMessage: 'At least 4 characters',
-    description: 'At least 4 characters'
   }
 });

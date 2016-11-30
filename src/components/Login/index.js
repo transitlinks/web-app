@@ -1,52 +1,34 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { setLoginParams } from '../../actions/login';
+import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as utils from "../../core/utils";
 import EmailInput from '../EmailInput';
+import PasswordInput from '../PasswordInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const LoginView = ({ intl, setLoginParams, email, password }) => {
+const LoginView = ({ 
+  intl, 
+  setProperty, 
+  email, emailValid, password, passwordValid
+}) => {
     
-  const textFieldCss = {
-    width: "100%"
-  };
-
-  const showPwdCss = {
-    position: "absolute",
-    right: "0px",
-    top: "40px",
-    cursor: "pointer"
-  };
-
   const emailStatus = utils.emailValid(email);
   const passwordStatus = utils.passwordValid(password);
-  const disableLogin = !(emailStatus.pass && passwordStatus.pass);
-	
-	const togglePassword = () => {
-    const pwdContainer = document.getElementById("password");
-    const pwdField = pwdContainer.getElementsByTagName("input")[0];
-    const imageElem = pwdContainer.getElementsByTagName("i")[0];
-    if (pwdField.type === "password") {
-      pwdField.type = "text";
-      imageElem.innerHTML = "&#xE8F4;";
-    } else {
-      pwdField.type = "password";
-      imageElem.innerHTML = "&#xE8F5;";
-    }
+  const disableLogin = !(emailValid && passwordValid);
+	 
+  const handleEmailChange = (input) => {
+    setProperty('login-email', { email: input.value, valid: input.pass });
   };
- 
-	const handleInputChange = (event) => { 
-    const loginParams = { email, password };
-    loginParams[event.target.name] = event.target.value;
-		setLoginParams(loginParams);
+  
+  const handlePasswordChange = (input) => {
+    setProperty('login-password', { password: input.value, valid: input.pass });
   };
-	
-	
+		
 	return (
     <div>
       <div>
@@ -86,22 +68,12 @@ const LoginView = ({ intl, setLoginParams, email, password }) => {
           </div>
           <div className={s.formItem}>
             <div className={s.formInput}>
-              <EmailInput value={email} onChange={handleInputChange} />
+              <EmailInput id="login-email" name="email" value={email || ''} onChange={handleEmailChange} />
             </div>
           </div>
           <div className={s.formItem}>
             <div className={s.formInput} id="password">
-              <TextField id="input-password"
-                style={textFieldCss}
-                type="password"
-                name="password"
-                floatingLabelText={intl.formatMessage(msg[passwordStatus.text])}
-                floatingLabelStyle={passwordStatus.style}
-                value={password}
-                onChange={(event) => handleInputChange(event)} /> 
-              <div onClick={() => togglePassword()} style={showPwdCss}>
-                <i className="material-icons">&#xE8F5;</i>
-              </div>
+              <PasswordInput id="login-password" name="password" value={password || ''} onChange={handlePasswordChange} />
             </div>
           </div>
           <div className={s.formSubmit}>  
@@ -130,9 +102,11 @@ LoginView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
   connect(state => ({
-	  email: state.login.loginParams.email,
-    password: state.login.loginParams.password
+	  email: state.login.email,
+	  emailValid: state.login.emailValid,
+    password: state.login.password,
+    passwordValid: state.login.passwordValid
   }), {
-    setLoginParams
+    setProperty
   })(withStyles(s)(LoginView))
 );

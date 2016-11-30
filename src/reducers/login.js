@@ -1,16 +1,18 @@
 import {
-  SET_LOGIN_PARAMS
+  SET_PROPERTY
 } from '../constants';
 
-export default function setLoginParams(state = null, action) {
+export default function setLoginParams(state = { login: '', password: '' }, action) {
   
-  switch (action.type) {
-    
-    case SET_LOGIN_PARAMS:
-      return { ...state, loginParams: action.payload.loginParams };
-    default:
-      return { ...state, loginParams: { email: '', password: '' } };
-
+  if (action.type === SET_PROPERTY) {
+    switch (action.payload.name) {
+      case 'login-email':
+        return { ...state, email: action.payload.value.email, emailValid: action.payload.value.valid };
+      case 'login-password':
+        return { ...state, password: action.payload.value.password, passwordValid: action.payload.value.valid };
+    }
   }
+
+  return state;
 
 }
