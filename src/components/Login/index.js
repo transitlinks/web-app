@@ -17,8 +17,6 @@ const LoginView = ({
   email, emailValid, password, passwordValid
 }) => {
     
-  const emailStatus = utils.emailValid(email);
-  const passwordStatus = utils.passwordValid(password);
   const disableLogin = !(emailValid && passwordValid);
 	 
   const handleEmailChange = (input) => {

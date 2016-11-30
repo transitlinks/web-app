@@ -63,8 +63,9 @@ export const initEndpoints = (app) => {
 	app.post('/login', (req, res, next) => { 
      
     app.passport.authenticate('login-local', (err, user, info) => {
-      
+
       if (err) {
+        console.log("ERR", err);
         req.session.error = err;
         res.redirect('/login');
         return;
@@ -137,7 +138,7 @@ export const initEndpoints = (app) => {
       return next();
     }
 
-    log.debug('user auth', req.user, req.isAuthenticated());
+    log.debug('user auth', req.user, req.session, req.isAuthenticated());
     const auth = req.isAuthenticated() ? {
 			loggedIn: true,
 			user: req.user

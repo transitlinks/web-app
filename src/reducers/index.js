@@ -7,6 +7,7 @@ import login from './login';
 import autocomplete from './autocomplete';
 import editLink from './editLink';
 import searchLinks from './searchLinks';
+import profile from './profile';
 
 export default combineReducers({
   runtime,
@@ -16,5 +17,6 @@ export default combineReducers({
   login,
   autocomplete,
   editLink,
-  searchLinks
+  searchLinks,
+  profile
 });

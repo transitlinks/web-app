@@ -349,5 +349,32 @@
     "files": [
       "src/components/PasswordInput/messages.js"
     ]
+  },
+  {
+    "id": "account.profile.resetPwd",
+    "description": "New password",
+    "defaultMessage": "New password",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.confirmResetPwd",
+    "description": "Change",
+    "defaultMessage": "CHANGE",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.saveProfile",
+    "description": "Save",
+    "defaultMessage": "Save",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
   }
 ]

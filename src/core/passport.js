@@ -2,6 +2,7 @@ import { getLog } from './log';
 const log = getLog('passport');
 
 import passport from 'passport';
+import bcrypt from 'bcrypt-nodejs';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import {
 	APP_URL, 
@@ -14,24 +15,36 @@ const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-const getUser = async (email, photo) => {
+const getUser = async (email, photo, password) => {
   
   log.debug('getUser', `email=${email}`);
   
   let user = await User.findOne({ where: { email } });
   if (!user) {
-    log.debug('getUser', 'create-user', `email=${email}`);
+    log.debug('getUser', 'create-user', `email=${email}`, `photo=${photo}`, `password=${password}`);
+    const pwdHash = !(password && password.length > 0) ? null :
+      bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
     user = await User.create({
       email,
-      photo
+      photo,
+      password: pwdHash
     });
   } else if (photo) {
     await User.update({ photo }, { where: { id: user.id } });
   }
   
   if (user) {
+    
     log.debug('getUser', 'user-found', `user.uuid=${user.get('uuid')}`);
+    
+    if (password) {
+      if (!bcrypt.compareSync(password, user.get('password'))) {
+        throw new Error("Invalid password");
+      }
+    }
+
     return user.json();
+  
   }
 
 };
@@ -54,8 +67,12 @@ passport.use('login-local', new LocalStrategy({
 	async (email, password, done) => {
 		log.debug('local-auth', `email=${email} password=${password}`);
     if (email) {
-			const user = await getUser(email);
-			done(null, user); 
+      try {
+			  const user = await getUser(email, null, password);
+			  done(null, user);
+      } catch (error) {
+        done({ message: 'some error' });
+      }
     } else {
 			done({ message: 'Invalid login credentials' });
 		}
