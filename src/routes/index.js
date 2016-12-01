@@ -68,6 +68,10 @@ export const initEndpoints = (app) => {
         req.session.error = err;
         res.redirect('/login');
         return;
+      } else {
+        if (req.session.error) {
+          delete req.session.error;
+        }
       }
 
       req.logIn(user, (err) => {

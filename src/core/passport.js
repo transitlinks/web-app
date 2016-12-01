@@ -3,6 +3,7 @@ const log = getLog('passport');
 
 import passport from 'passport';
 import bcrypt from 'bcrypt-nodejs';
+import { login } from './auth';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import {
 	APP_URL, 
@@ -14,40 +15,6 @@ import {
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
-const getUser = async (email, photo, password) => {
-  
-  log.debug('getUser', `email=${email}`);
-  
-  let user = await User.findOne({ where: { email } });
-  if (!user) {
-    log.debug('getUser', 'create-user', `email=${email}`, `photo=${photo}`, `password=${password}`);
-    const pwdHash = !(password && password.length > 0) ? null :
-      bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
-    user = await User.create({
-      email,
-      photo,
-      password: pwdHash
-    });
-  } else if (photo) {
-    await User.update({ photo }, { where: { id: user.id } });
-  }
-  
-  if (user) {
-    
-    log.debug('getUser', 'user-found', `user.uuid=${user.get('uuid')}`);
-    
-    if (password) {
-      if (!bcrypt.compareSync(password, user.get('password'))) {
-        throw new Error('invalid-password');
-      }
-    }
-
-    return user.json();
-  
-  }
-
-};
 
 passport.serializeUser((user, done) => {
   log.debug('passport.serializeUser', `user.uuid=${user.uuid}`); 
@@ -68,13 +35,13 @@ passport.use('login-local', new LocalStrategy({
 		log.debug('local-auth', `email=${email} password=${password}`);
     if (email) {
       try {
-			  const user = await getUser(email, null, password);
-			  done(null, user);
-      } catch (error) {
-        done({ message: error.message });
+        const user = await login({ email, password });
+        done(null, user);
+      } catch (err) {
+        done({ message: err.message });
       }
     } else {
-			done({ message: 'Invalid login credentials' });
+			done({ message: 'invalid-login-credentials' });
 		}
   }  
 ));
@@ -92,8 +59,12 @@ passport.use('login-facebook', new FacebookStrategy({
     if (emails && emails.length > 0) {
       const email = emails[0].value;
       const photo = `${FB_GRAPH_API}/${profile.id}/picture?type=large`;
-      const user = await getUser(email, photo);
-      done(null, user);
+      try {
+        const user = await login({ email, photo });
+        done(null, user);
+      } catch (err) {
+        done({ message: err.message });
+      }
     } else {
       done({ message: 'Invalid Facebook profile' });
     }
@@ -120,8 +91,12 @@ passport.use('login-google', new GoogleStrategy({
           photo = photo.split('?')[0] + '?sz=250';
         }
       }
-      const user = await getUser(email, photo);
-      done(null, user);
+      try {
+        const user = await login({ email, photo });
+        done(null, user);
+      } catch (err) {
+        done({ message: err.message });
+      }
     } else {
       done({ message: 'Invalid Google profile' });
     }
