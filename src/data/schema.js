@@ -10,6 +10,7 @@ import { AccountQueryFields } from './queries/account';
 import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
+import { UserMutationFields, UserQueryFields } from './queries/users';
 import * as links from './queries/links';
 
 const schema = new Schema({
@@ -25,13 +26,15 @@ const schema = new Schema({
       link: TransitLinkQueryFields.link,
       linkInstance: TransitLinkQueryFields.linkInstance,
       links: TransitLinkQueryFields.links,
+      user: UserQueryFields.user,
       intl
     }
   }),
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
-      linkInstance: TransitLinkMutationFields.linkInstance
+      linkInstance: TransitLinkMutationFields.linkInstance,
+      user: UserMutationFields.user
     },
   })
 });

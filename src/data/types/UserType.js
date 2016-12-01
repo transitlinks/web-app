@@ -1,25 +1,27 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import {
-  GraphQLObjectType as ObjectType,
-  GraphQLID as ID,
-  GraphQLString as StringType,
-  GraphQLNonNull as NonNull,
+  GraphQLObjectType,
+  GraphQLInputObjectType,
+  GraphQLID,
+  GraphQLString,
+  GraphQLNonNull
 } from 'graphql';
 
-const UserType = new ObjectType({
+export const UserType = new GraphQLObjectType({
   name: 'User',
   fields: {
-    id: { type: new NonNull(ID) },
-    email: { type: StringType },
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    email: { type: GraphQLString }
   },
+});
+
+export const UserInputType = new GraphQLInputObjectType({
+  name: 'UserInput',
+  description: 'Input properties for User',
+  fields: () => ({
+    uuid: { type: GraphQLString },
+    email: { type: GraphQLString },
+    password: { type: GraphQLString }
+  })
 });
 
 export default UserType;

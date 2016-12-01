@@ -1,6 +1,6 @@
 import localityRepositoryReal from './localityRepository';
 import linkRepositoryReal from './linkRepository';
-import userRepositoryReal from './userRepository';
+import * as userRepositoryReal from './userRepository';
 import filesReal from './files';
 
 import placesApiReal from './placesApi';
