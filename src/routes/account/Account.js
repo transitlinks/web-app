@@ -7,36 +7,45 @@ import UserLinks from '../../components/Account/UserLinks';
 
 const title = 'Transitlinks - Account';
 
-const Account = (props, context) => {
-  
-  context.setTitle(title);
-  
-  const errorElem = null;
-  
-  let section = null;
-  if (props.profile) {
-    section = (
-      <Profile profile={props.profile} />
-    );
-  } else if (props.links) {
-    section = (
-      <UserLinks links={props.links} />
-    );
-  }
+class Account extends React.Component {
 
-  return (
-    
-    <div>
-      <div className={s.root}>
-        <div className={s.container}>
-          <AccountView>
-            {section}
-          </AccountView>
-        </div>
-      </div>
-    </div>    
+  render() {  
+
+    const { context, props } = this;
+
+    context.setTitle(title);
+
+    const errorElem = null;
   
-  );
+    let section = null;
+    let sectionName = null;
+    if (props.profile) {
+      sectionName = 'profile';
+      section = (
+        <Profile profile={props.profile} />
+      );
+    } else if (props.links) {
+      sectionName = 'links';
+      section = (
+        <UserLinks links={props.links} />
+      );
+    }
+
+    return (
+      
+      <div>
+        <div className={s.root}>
+          <div className={s.container}>
+            <AccountView section={sectionName}>
+              {section}
+            </AccountView>
+          </div>
+        </div>
+      </div>    
+    
+    );
+
+  }
 
 };
 

@@ -385,5 +385,41 @@
     "files": [
       "src/components/Login/messages.js"
     ]
+  },
+  {
+    "id": "account.profile.resetPwdError",
+    "description": "There was an error saving password",
+    "defaultMessage": "Error! Failed saving new password :(",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.resetPwdSuccess",
+    "description": "Password changed",
+    "defaultMessage": "Password changed",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.saveProfileError",
+    "description": "There was an error saving profile",
+    "defaultMessage": "Error! Failed saving profile :(",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
+  },
+  {
+    "id": "account.profile.saveProfileSuccess",
+    "description": "Profile saved",
+    "defaultMessage": "Profile saved",
+    "message": "",
+    "files": [
+      "src/components/Account/messages.profile.js"
+    ]
   }
 ]

@@ -3,26 +3,35 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
 import LoginView from '../../components/Login';
 
-const title = 'Log In';
+const title = 'Transitlinks - Log In';
 
-const Login = (props, context) => {
-  
-  context.setTitle(title);
-  
-  const errorElem = null;
+class Login extends React.Component {
 
-  return (
+  constructor(props) {
+    super(props);
+  }
+  
+  render() {
     
-    <div>
-      <div className={s.root}>
-        {errorElem}
-        <div className={s.container}>
-          <LoginView />
+    this.context.setTitle(title);
+    
+    const errorElem = null;
+
+    return (
+    
+      <div>
+        <div className={s.root}>
+          {errorElem}
+          <div className={s.container}>
+            <LoginView />
+          </div>
         </div>
-      </div>
-    </div>    
+      </div>    
   
-  );
+    );
+  
+  }
+
 
 };
 

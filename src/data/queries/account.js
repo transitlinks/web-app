@@ -1,6 +1,7 @@
 import { GraphQLString, GraphQLInt } from 'graphql';
 import ProfileType from '../types/ProfileType';
 import UserLinksType from '../types/UserLinksType';
+import { userRepository, linkRepository } from '../source';
 
 export const AccountQueryFields = {
   
@@ -12,11 +13,8 @@ export const AccountQueryFields = {
       uuid: { type: GraphQLString }
     },
     resolve: async (root, { uuid }) => {
-      return {
-        uuid,
-        email: 'test@test.com',
-        photo: 'abc.jpg'
-      };
+      const user = await userRepository.getByUuid(uuid);
+      return { uuid: user.uuid, email: user.email, photo: user.photo };
     }
 
   },
@@ -31,9 +29,7 @@ export const AccountQueryFields = {
     resolve: async (root, { uuid }) => {
       return {
         uuid,
-        links: [
-          { from: 'Alabama, USA', to: 'Wisconsin, USA', transport: 'bus' }
-        ]
+        links: await linkRepository.getInstancesByUserId(uuid)
       };
     }
 

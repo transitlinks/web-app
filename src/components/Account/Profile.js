@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
-import { resetPassword, saveUser } from '../../actions/account';
+import { resetPassword, saveProfile } from '../../actions/account';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Profile.css';
 import TextField from 'material-ui/TextField';
@@ -14,8 +14,9 @@ import msg from './messages.profile';
 const Profile = ({ 
   intl,
   setProperty,
-  resetPassword, saveUser,
+  resetPassword, saveProfile,
   email, emailValid, password, passwordValid,
+  saveProfileResult, resetPasswordResult,
   profile
 }) => {	
 
@@ -26,32 +27,46 @@ const Profile = ({
   const handlePasswordChange = (input) => {
     setProperty('profile-password', { password: input.value, valid: input.pass });
   };
-
-  const onSave = () => {
-    saveUser(profile.uuid, { email });
-  };
   
-  const onResetPassword = () => {
-    resetPassword(profile.uuid, password);
-  };
-   
+  const emailValue = (email === null) ? profile.email : email;
 	return (
     <div>
-      <div>
-        <FormattedMessage {...msg['email']} />
-        <EmailInput id="profile-email" name="profile-email" value={email || ''} onChange={handleEmailChange} />
-        <RaisedButton disabled={!(emailValid)}
-          label={intl.formatMessage(msg['save-profile'])} onClick={onSave} />
+      <div className={s.profile}>
+        <div>
+          <EmailInput id="profile-email" name="profile-email" value={emailValue} onChange={handleEmailChange} />
+        </div>
+        <div className={s.save}>
+          <RaisedButton disabled={!(emailValid)}
+            label={intl.formatMessage(msg['save-profile'])} onClick={() => saveProfile(profile.uuid, { email })} />
+          { 
+            saveProfileResult === 'success' &&
+              <FormattedMessage {...msg['save-profile-success']} />
+          }
+          { 
+            saveProfileResult === 'error' &&
+              <FormattedMessage {...msg['save-profile-error']} />
+          }
+        </div>
+      </div>
+      <div className={s.password}>
+        <div>
+          <FormattedMessage {...msg['reset-password']} />
+          <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
+        </div>
+        <div className={s.save}>
+          <RaisedButton disabled={!(password && passwordValid)}
+            label={intl.formatMessage(msg['confirm-reset'])} onClick={() => resetPassword(profile.uuid, password)} />
+          { 
+            resetPasswordResult === 'success' &&
+              <FormattedMessage {...msg['reset-password-success']} />
+          }
+          { 
+            resetPasswordResult === 'error' &&
+              <FormattedMessage {...msg['reset-password-error']} />
+          }
+        </div>
       </div>
       <div>
-        <FormattedMessage {...msg['reset-password']} />
-        <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
-        <RaisedButton disabled={!(password && passwordValid)}
-          label={intl.formatMessage(msg['confirm-reset'])} onClick={onResetPassword} />
-      </div>
-      <div>
-        <FormattedMessage {...msg['photo']} />
-        {profile.photo}
       </div>
     </div>
   );
@@ -63,8 +78,10 @@ export default injectIntl(
     email: state.profile.email,
     emailValid: state.profile.emailValid,
     password: state.profile.password,
-    passwordValid: state.profile.passwordValid
+    passwordValid: state.profile.passwordValid,
+    saveProfileResult: state.profile.saveProfileResult,
+    resetPasswordResult: state.profile.resetPasswordResult
   }), {
-    setProperty, resetPassword, saveUser
+    setProperty, resetPassword, saveProfile
   })(withStyles(s)(Profile))
 );

@@ -6,6 +6,20 @@ import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { TransitLink, LinkInstance, TransportType, Locality, Rating } from '../models';
 
+const getInstancesByUserId = async (userId) => {
+
+  const linkInstances = await LinkInstance.find({ 
+    where: { userId },
+    include: [
+      { model: TransportType, as: 'transport' },
+      { model: TransitLink, as: 'link', include: [ { all: true } ] } 
+     ]
+  });
+
+  return linkInstances.map(linkInstance => linkInstance.json());
+
+};
+
 const getInstanceByUuid = async (uuid) => {
 
   const linkInstance = await LinkInstance.findOne({ 
@@ -88,6 +102,8 @@ export default {
 	},
   
   getInstanceByUuid: getInstanceByUuid,
+  
+  getInstancesByUserId: getInstancesByUserId,
    
   getByLocalityId: async (localityId) => {
   

@@ -1,7 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
+import { injectIntl, FormattedMessage } from 'react-intl';
 
 const formatDate = (dateStr) => {
   
@@ -34,7 +36,7 @@ const formatTime = (hours, minutes) => {
 
 };
  
-const ViewLinkInstance = ({ linkInstance }) => {
+const ViewLinkInstance = ({ intl, linkInstance }) => {
   
   const { 
     link, transport,
@@ -63,12 +65,12 @@ const ViewLinkInstance = ({ linkInstance }) => {
         <span id="dept-time-value">{formatTime(departureHour, departureMinute)}</span>
       </div>
       <div>
-        <span>ARRIVAL:c&nbps;</span> 
+        <span>ARRIVAL: &nbsp;</span> 
         <span id="arr-date-value">{formatDate(arrivalDate)}</span> /
         <span id="arr-time-value">{formatTime(arrivalHour, arrivalMinute)}</span>
       </div>
       <div>
-        <span>PRICE:c&nbsp;</span> 
+        <span>PRICE: &nbsp;</span> 
         <span id="price-value">{priceAmount} {priceCurrency}</span>
       </div>
       <div>
@@ -83,4 +85,8 @@ const ViewLinkInstance = ({ linkInstance }) => {
   );
 }
 
-export default withStyles(s)(ViewLinkInstance);
+export default injectIntl(
+  connect(state => ({
+  }), {
+  })(withStyles(s)(ViewLinkInstance))
+);
