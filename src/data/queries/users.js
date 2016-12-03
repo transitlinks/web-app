@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt-nodejs';
 import { GraphQLList, GraphQLString } from 'graphql';
 import { UserType, UserInputType } from '../types/UserType';
 import { userRepository } from '../source';
@@ -27,11 +28,14 @@ export const UserMutationFields = {
     type: UserType,
     description: 'Update a user',
     args: {
+      uuid: { type: GraphQLString },
       values: { type: UserInputType }
     },
-    resolve: async ({ request }, { values }) => {
-      const uuid = values.uuid;
-      delete values.uuid;
+    resolve: async ({ request }, { uuid, values }) => {
+      const { password } = values;
+      if (password && password.length > 0) {
+        values.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+      }
       const user = await userRepository.update(uuid, values);
       return user;
     }

@@ -1,3 +1,4 @@
+import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import {
   SELECTED_LOCALITY,
@@ -77,12 +78,9 @@ export function saveLinkInstance({ linkInstance }) {
   
   return async (...args) => {
     
-    let json = JSON.stringify(linkInstance);
-    json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
-    json = json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\""); 
     const query = `
       mutation saveLinkInstance {
-        linkInstance(linkInstance:${json}) {
+        linkInstance(linkInstance:${toGraphQLObject(linkInstance)}) {
           uuid,
           link {
             uuid,

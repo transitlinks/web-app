@@ -1,3 +1,9 @@
+export const toGraphQLObject = (object) => {
+  const json = JSON.stringify(object);
+  json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
+  return json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\""); 
+};
+
 export function emailValid(email) {
 
   if (!email) {
