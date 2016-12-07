@@ -24,10 +24,10 @@ class Account extends React.Component {
       section = (
         <Profile profile={props.profile} />
       );
-    } else if (props.links) {
+    } else if (props.userLinks) {
       sectionName = 'links';
       section = (
-        <UserLinks links={props.links} />
+        <UserLinks userLinks={props.userLinks} />
       );
     }
 

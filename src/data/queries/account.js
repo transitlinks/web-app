@@ -27,9 +27,10 @@ export const AccountQueryFields = {
       uuid: { type: GraphQLString }
     },
     resolve: async (root, { uuid }) => {
+      const user = await userRepository.getByUuid(uuid);
       return {
         uuid,
-        links: await linkRepository.getInstancesByUserId(uuid)
+        linkInstances: await linkRepository.getInstancesByUserId(user.id)
       };
     }
 

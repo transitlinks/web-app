@@ -21,8 +21,8 @@ export default {
         `query {
           link(uuid: "${params.uuid}") {
             uuid,
-            from { description, lat, lng},
-            to { description, lat, lng},
+            from { description, lat, lng },
+            to { description, lat, lng },
             instances {
               uuid,
               transport { slug },

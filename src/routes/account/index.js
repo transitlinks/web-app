@@ -47,13 +47,20 @@ export default {
           `query {
             userLinks (uuid: "${uuid}") {
               uuid,
-              links { from, to, transport }
+              linkInstances { 
+                uuid,
+                link {
+                  from { apiId, name, description, countryLong, lat, lng },
+                  to { apiId, name, description, countryLong, lat, lng } 
+                },
+                transport { slug }
+              }
             }
           }`
         );
         
         log.info("event=received-user-links-data", data);
-        return <Account links={data.userLinks} />;
+        return <Account userLinks={data.userLinks} />;
       
       }
    

@@ -8,10 +8,14 @@ import * as utils from "../../core/utils";
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.links';
 
-const UserLinks = ({ intl, links }) => {	
+const UserLinks = ({ intl, userLinks }) => {	
 	
-  const linkElems = links.links.map((link, index) => (
-    <div key={index}>{link.from} / {link.to} / {link.transport}</div>
+  const linkElems = userLinks.linkInstances.map((linkInstance, index) => (
+    <div key={index}>
+      {linkInstance.link.from.description} / 
+      {linkInstance.link.to.description} / 
+      {linkInstance.transport.slug}
+    </div>
   ));
 
 	return (

@@ -98,7 +98,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 
     let userId = null;
     if (reqUser) {
-      const user = userRepository.getByUuid(reqUser.uuid);
+      const user = await userRepository.getByUuid(reqUser.uuid);
       userId = user.id;
     }
     
@@ -184,7 +184,7 @@ export const TransitLinkMutationFields = {
       linkInstance: { type: LinkInstanceInputType }
     },
     resolve: async ({ request }, { linkInstance }) => {
-      log.info(`graphql-request=create-llink-instance user=${request.user ? request.user.id : null} from=${linkInstance.from} to=${linkInstance.to} transport=${linkInstance.transport}`);
+      log.info(`graphql-request=create-link-instance user=${request.user ? request.user.uuid : null} from=${linkInstance.from} to=${linkInstance.to} transport=${linkInstance.transport}`);
       return await createOrUpdateLink(linkInstance, request.user);
     }
   

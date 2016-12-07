@@ -7,15 +7,15 @@ import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { TransitLink, LinkInstance, TransportType, Locality, Rating } from '../models';
 
 const getInstancesByUserId = async (userId) => {
-
-  const linkInstances = await LinkInstance.find({ 
+  
+  const linkInstances = await LinkInstance.findAll({ 
     where: { userId },
     include: [
       { model: TransportType, as: 'transport' },
       { model: TransitLink, as: 'link', include: [ { all: true } ] } 
      ]
   });
-
+  
   return linkInstances.map(linkInstance => linkInstance.json());
 
 };
