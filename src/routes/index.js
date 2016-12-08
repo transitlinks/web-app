@@ -115,20 +115,31 @@ export const initEndpoints = (app) => {
     res.redirect('/');
   });
 
-  app.use('/graphql', expressGraphQL(req => ({
-    schema: app.schema,
-    graphiql: true,
-    rootValue: { request: req },
-    formatError: error => {
-      log.debug("gql error", error);
-      return {
-        message: error.message,
-        locations: error.locations,
-        stack: error.stack
-      }
-    },
-    pretty: process.env.NODE_ENV !== 'production',
-  })));
+  app.use('/graphql', expressGraphQL(req => {
+    
+    const authorization = req.get('Authorization');
+    if (authorization) {
+      req.user = {
+        uuid: authorization
+      };
+    }
+    
+    return {
+      schema: app.schema,
+      graphiql: true,
+      rootValue: { request: req },
+      formatError: error => {
+        log.debug("gql error", error);
+        return {
+          message: error.message,
+          locations: error.locations,
+          stack: error.stack
+        }
+      },
+      pretty: process.env.NODE_ENV !== 'production',
+    };
+  
+  }));
 
 
   app.get('/search', async (req, res, next) => {

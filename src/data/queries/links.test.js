@@ -1,11 +1,15 @@
 import assert from 'assert';
 import { tester } from 'graphql-tester';
+import { User } from '../models';
 import { GRAPHQL_URL } from '../../config';
- 
-const test = tester({
-  url: GRAPHQL_URL,
-  contentType: 'application/json'
-});
+
+const test = (query, authorization) => {
+  return tester({
+    url: GRAPHQL_URL,
+    contentType: 'application/json',
+    authorization
+  })(query);
+};
 
 const assertResponse = (response) => {
   assert(response.success == true, `response failure: status: ${response.status}, raw: ${response.raw}`);
@@ -36,7 +40,7 @@ const validLinkInstance = {
   awesomeRating: 3
 };
 
-const createOrUpdateLinkInstance = async (linkInstance) => {
+const createOrUpdateLinkInstance = async (linkInstance, userUuid) => {
   
   const query = JSON.stringify({
     query: `
@@ -56,7 +60,7 @@ const createOrUpdateLinkInstance = async (linkInstance) => {
     variables: { linkInstance }
   });
   
-  const response = await test(query);
+  const response = await test(query, userUuid);
   assertResponse(response);
   assert(response.data.linkInstance);
   
@@ -76,6 +80,12 @@ const createOrUpdateLinkInstance = async (linkInstance) => {
 };
 
 describe('data/queries/links', () => {
+  
+  let mockUserUuid = null;
+  before(async () => {
+    const user = await User.create({ email: 'test1@test.tt' });
+    mockUserUuid = user.uuid;
+  });
 
   it('should create new link instance', async () => {
     await createOrUpdateLinkInstance(validLinkInstance); 
@@ -223,6 +233,41 @@ describe('data/queries/links', () => {
     assert.equal(linkInstance.avgRating, 4);
     assert.equal(linkInstance.durationMinutes, (twoDaysInMinutes - 120));
 
+  });
+  
+  it('returns user links by user uuid', async () => {
+        
+    await createOrUpdateLinkInstance(validLinkInstance, mockUserUuid); 
+    await createOrUpdateLinkInstance(validLinkInstance, mockUserUuid);
+    
+    const query = JSON.stringify({
+      query: `
+        query { 
+          userLinks (uuid: "${mockUserUuid}") {
+            uuid,
+            linkInstances {
+              link {
+                from { description }, 
+                to { description }
+              },
+              transport {
+                slug
+              }
+            }
+          }
+        }
+      `,
+      variables: {}
+    });
+    
+    const response = await test(query);
+    assertResponse(response);   
+
+    const { userLinks } = response.data;
+    assert(userLinks, 'Invalid userLinks response');
+    assert.equal(userLinks.uuid, mockUserUuid);
+    assert.equal(userLinks.linkInstances.length, 2);
+  
   });
 
 });
