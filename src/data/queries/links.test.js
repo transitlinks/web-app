@@ -1,20 +1,5 @@
 import assert from 'assert';
-import { tester } from 'graphql-tester';
-import { User } from '../models';
-import { GRAPHQL_URL } from '../../config';
-
-const test = (query, authorization) => {
-  return tester({
-    url: GRAPHQL_URL,
-    contentType: 'application/json',
-    authorization
-  })(query);
-};
-
-const assertResponse = (response) => {
-  assert(response.success == true, `response failure: status: ${response.status}, raw: ${response.raw}`);
-  assert.equal(response.status, 200);
-};
+import { createTestUsers, test, assertResponse } from './utils';
 
 const date = new Date();
 const twoDaysLater = new Date(date.getTime());
@@ -80,11 +65,14 @@ const createOrUpdateLinkInstance = async (linkInstance, userUuid) => {
 };
 
 describe('data/queries/links', () => {
-  
-  let mockUserUuid = null;
+
+  let testUsers;
+
   before(async () => {
-    const user = await User.create({ email: 'test1@test.tt' });
-    mockUserUuid = user.uuid;
+    testUsers = await createTestUsers(
+      { email: 'test1@test.tt' },
+      { email: 'test2@test.tt' }
+    );
   });
 
   it('should create new link instance', async () => {
@@ -237,13 +225,13 @@ describe('data/queries/links', () => {
   
   it('returns user links by user uuid', async () => {
         
-    await createOrUpdateLinkInstance(validLinkInstance, mockUserUuid); 
-    await createOrUpdateLinkInstance(validLinkInstance, mockUserUuid);
+    await createOrUpdateLinkInstance(validLinkInstance, testUsers[0].uuid); 
+    await createOrUpdateLinkInstance(validLinkInstance, testUsers[0].uuid);
     
     const query = JSON.stringify({
       query: `
         query { 
-          userLinks (uuid: "${mockUserUuid}") {
+          userLinks (uuid: "${testUsers[0].uuid}") {
             uuid,
             linkInstances {
               link {
@@ -260,12 +248,18 @@ describe('data/queries/links', () => {
       variables: {}
     });
     
-    const response = await test(query);
-    assertResponse(response);   
+    let response = await test(query);
+    assertResponse(response, 'access-denied');
+    
+    response = await test(query, testUsers[1].uuid);
+    assertResponse(response, 'access-denied');
+    
+    response = await test(query, testUsers[0].uuid);
+    assertResponse(response);
 
     const { userLinks } = response.data;
     assert(userLinks, 'Invalid userLinks response');
-    assert.equal(userLinks.uuid, mockUserUuid);
+    assert.equal(userLinks.uuid, testUsers[0].uuid);
     assert.equal(userLinks.linkInstances.length, 2);
   
   });

@@ -118,9 +118,9 @@ export const initEndpoints = (app) => {
   app.use('/graphql', expressGraphQL(req => {
     
     const authorization = req.get('Authorization');
-    if (authorization) {
+    if (authorization && authorization.length > 5 && authorization.substring(0, 4) === 'mock') {
       req.user = {
-        uuid: authorization
+        uuid: authorization.substring(5)
       };
     }
     

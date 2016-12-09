@@ -11,7 +11,7 @@ import msg from './messages.links';
 const UserLinks = ({ intl, userLinks }) => {	
 	
   const linkElems = userLinks.linkInstances.map((linkInstance, index) => (
-    <div key={index}>
+    <div key={index} className="user-link">
       {linkInstance.link.from.description} / 
       {linkInstance.link.to.description} / 
       {linkInstance.transport.slug}

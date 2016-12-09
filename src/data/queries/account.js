@@ -2,6 +2,7 @@ import { GraphQLString, GraphQLInt } from 'graphql';
 import ProfileType from '../types/ProfileType';
 import UserLinksType from '../types/UserLinksType';
 import { userRepository, linkRepository } from '../source';
+import { requireOwnership } from './utils';
 
 export const AccountQueryFields = {
   
@@ -12,7 +13,8 @@ export const AccountQueryFields = {
     args: {
       uuid: { type: GraphQLString }
     },
-    resolve: async (root, { uuid }) => {
+    resolve: async ({ request }, { uuid }) => {
+      requireOwnership(request, uuid);
       const user = await userRepository.getByUuid(uuid);
       return { uuid: user.uuid, email: user.email, photo: user.photo };
     }
@@ -26,7 +28,8 @@ export const AccountQueryFields = {
     args: {
       uuid: { type: GraphQLString }
     },
-    resolve: async (root, { uuid }) => {
+    resolve: async ({ request }, { uuid }) => {
+      requireOwnership(request, uuid);
       const user = await userRepository.getByUuid(uuid);
       return {
         uuid,

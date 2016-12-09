@@ -1,24 +1,26 @@
 import assert from 'assert';
-import { tester } from 'graphql-tester';
-import { GRAPHQL_URL } from '../../config';
- 
-const test = tester({
-  url: GRAPHQL_URL,
-  contentType: 'application/json'
-});
- 
-describe('data/queries/localities', async () => {
+import { test, assertResponse } from './utils';
 
-  await it('returns autocomplete predictions', async () => {
+describe('data/queries/localities', () => {
+
+  it('returns autocomplete predictions', async () => {
     
     const query = JSON.stringify({
-      query: 'query {localities(input:"moscow") {apiId,description,name,lat,lng}}',
+      query: `query {
+        localities(input: "moscow") {
+          apiId,
+          description,
+          countryLong,
+          lat,
+          lng
+        }
+      }`,
       variables: {}
     });
     
     const response = await test(query);
-    
-    assert.equal(response.status, 200);
+    assertResponse(response);
+
     assert(response.data.localities.length > 0, '0 autocomplete results');
   
   });

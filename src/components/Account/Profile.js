@@ -31,7 +31,7 @@ const Profile = ({
   const emailValue = (email === null) ? profile.email : email;
 	return (
     <div>
-      <div className={s.profile}>
+      <div id="profile-fields" className={s.profile}>
         <div>
           <EmailInput id="profile-email" name="profile-email" value={emailValue} onChange={handleEmailChange} />
         </div>
@@ -48,7 +48,7 @@ const Profile = ({
           }
         </div>
       </div>
-      <div className={s.password}>
+      <div id="password-reset" className={s.password}>
         <div>
           <FormattedMessage {...msg['reset-password']} />
           <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
