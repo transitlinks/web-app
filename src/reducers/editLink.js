@@ -66,7 +66,7 @@ export default function editLink(state = null, action) {
 
         return { 
           ...state,
-          id: linkInstance.id, 
+          uuid: linkInstance.uuid, 
           from: link.from, 
           to: link.to,
           transport: linkInstance.transport.slug, 

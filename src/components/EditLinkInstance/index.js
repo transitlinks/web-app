@@ -23,7 +23,7 @@ const EditLinkInstance = ({
   intl,
   saveLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,
-  id,
+  uuid,
   from, to, transport,
   departureDate, departureTime, departurePlace,
   arrivalDate, arrivalTime, arrivalPlace,
@@ -59,7 +59,7 @@ const EditLinkInstance = ({
     saveLinkInstance({ linkInstance: mergeNonNull({ 
       from: from.apiId, to: to.apiId, transport,
     }, {
-      id,
+      uuid,
       departureDate: departureDateJson, 
       departureHour, departureMinute, departurePlace,
       arrivalDate: arrivalDateJson, 
@@ -142,11 +142,11 @@ const EditLinkInstance = ({
   
   let fromInputValue = '';
   let toInputValue = '';
-  if (id && from && to) {
+  if (uuid && from && to) {
     fromInputValue = from.description;
     toInputValue = to.description;
   }
-
+  
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -254,7 +254,7 @@ const EditLinkInstance = ({
             onChange={onChangeProperty('description')}
           />
         </div>
-        {!id &&
+        {!uuid &&
         <div className={s.ratings}>
           <div className={s.rating}>
             <div className={s.ratingLabel}>
@@ -308,7 +308,7 @@ const EditLinkInstance = ({
 
 export default injectIntl(
   connect(state => ({
-    id: state.editLink.id,
+    uuid: state.editLink.uuid,
     from: state.editLink.from,
     to: state.editLink.to,
     transport: state.editLink.transport,
