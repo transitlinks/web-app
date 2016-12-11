@@ -36,8 +36,6 @@ const Profile = ({
           <EmailInput id="profile-email" name="profile-email" value={emailValue} onChange={handleEmailChange} />
         </div>
         <div className={s.save}>
-          <RaisedButton disabled={!(emailValid)}
-            label={intl.formatMessage(msg['save-profile'])} onClick={() => saveProfile(profile.uuid, { email })} />
           { 
             saveProfileResult === 'success' &&
               <FormattedMessage {...msg['save-profile-success']} />
@@ -46,6 +44,10 @@ const Profile = ({
             saveProfileResult === 'error' &&
               <FormattedMessage {...msg['save-profile-error']} />
           }
+          <RaisedButton className={s.button} 
+            disabled={!(emailValid)}
+            label={intl.formatMessage(msg['save-profile'])} 
+            onClick={() => saveProfile(profile.uuid, { email })} />
         </div>
       </div>
       <div id="password-reset" className={s.password}>
@@ -54,8 +56,6 @@ const Profile = ({
           <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
         </div>
         <div className={s.save}>
-          <RaisedButton disabled={!(password && passwordValid)}
-            label={intl.formatMessage(msg['confirm-reset'])} onClick={() => resetPassword(profile.uuid, password)} />
           { 
             resetPasswordResult === 'success' &&
               <FormattedMessage {...msg['reset-password-success']} />
@@ -64,6 +64,10 @@ const Profile = ({
             resetPasswordResult === 'error' &&
               <FormattedMessage {...msg['reset-password-error']} />
           }
+          <RaisedButton className={s.button} 
+            disabled={!(password && passwordValid)}
+            label={intl.formatMessage(msg['confirm-reset'])} 
+            onClick={() => resetPassword(profile.uuid, password)} />
         </div>
       </div>
       <div>

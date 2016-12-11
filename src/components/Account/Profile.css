@@ -16,5 +16,10 @@
 .save {
   margin-top: 8px;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+}
+
+.save .button {
+  margin-left: 12px;
 }
