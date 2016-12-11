@@ -7,6 +7,29 @@ import s from './ViewTransitLink.css';
 import FontIcon from 'material-ui/FontIcon';
 import msgTransport from '../common/messages/transport';
 
+const formatDuration = (totalMinutes) => {
+
+  if (!totalMinutes) {
+    return null;
+  }
+
+  const minutes = totalMinutes % 60;
+  const hours = (totalMinutes - minutes) / 60;
+
+  let formatted =  '';
+  
+  if (hours > 0) {
+    formatted += `${hours}h `; 
+  }
+
+  if (minutes > 0) {
+    formatted += `${minutes}m`;
+  }
+  
+  return formatted;
+
+};
+ 
 const ViewTransitLink = ({ 
   link, navigate 
 }) => {
@@ -19,12 +42,12 @@ const ViewTransitLink = ({
           <FormattedMessage { ...msgTransport[instance.transport.slug] } />
         </span>
       </div>
-      <div className="col-1-4"></div>
+      <div className="col-1-4">{formatDuration(instance.durationMinutes)}</div>
       <div className="col-1-4">{instance.priceAmount} {instance.priceCurrency}</div>
       <div className="col-1-4">{instance.avgRating}</div>
     </div>
   ));
-
+  
   return (
     <div className={s.container}>
       <div className={s.header}>
