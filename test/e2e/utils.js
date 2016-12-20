@@ -129,8 +129,8 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     
     browser.waitForVisible('#place-from');
     
-    assert.equal(browser.getText('#place-from'), 'Helsinki, Finland');
-    assert.equal(browser.getText('#place-to'), 'Moscow, Russia');
+    assert.equal(browser.getText('#place-from'), 'Helsinki\nFinland');
+    assert.equal(browser.getText('#place-to'), 'Moscow\nRussia');
     assert.equal(browser.getText('#dept-date-value'), deptDate);
     assert.equal(browser.getText('#dept-time-value'), deptTime);
     assert.equal(browser.getText('#arr-date-value'), arrDate);
