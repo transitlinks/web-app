@@ -14,4 +14,7 @@ then
   fi
   npm install
 fi
+cd migration
+./migrate.sh
+cd ..
 npm start -- --release
