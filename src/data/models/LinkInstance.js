@@ -21,6 +21,12 @@ const LinkInstance = Model.define('LinkInstance', {
     unique: true
   },
   
+  mode: {
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'research'
+  },
+  
   departureDate: {
     type: DataType.STRING(10)
   },
