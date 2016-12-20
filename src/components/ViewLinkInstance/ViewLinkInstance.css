@@ -13,28 +13,23 @@
 .header .title {
   font-size: 24px;
   display: flex;
-  align-items: center; 
+  align-items: flex-start; 
 }
 
-@media (max-width: 768px) {
-  .header .title {
-    font-size: 22px;
-  }
-}
-
-@media (max-width: 425px) {
-  .header .title {
-    font-size: 18px;
-  }
+.header .title .area {
+  font-size: 16px;
 }
 
 .header .title .arrow {
   margin-left: 6px;
   margin-right: 6px;
+  margin-top: 6px;
 }
 
 .firstRow {
+  margin-top: 6px;
   display: flex;
+  justify-content: space-between;
 }
 
 @media (max-width: 425px) {

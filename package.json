@@ -131,6 +131,7 @@
     "redbox-react": "^1.2.6",
     "redux-logger": "^2.6.1",
     "selenium-standalone": "^5.8.0",
+    "sequelize-cli": "^2.5.1",
     "sinon": "^2.0.0-pre",
     "stylelint": "^6.6.0",
     "stylelint-config-standard": "^9.0.0",
