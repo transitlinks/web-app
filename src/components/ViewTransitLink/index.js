@@ -5,30 +5,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { FormattedMessage } from 'react-intl';
 import s from './ViewTransitLink.css';
 import FontIcon from 'material-ui/FontIcon';
+import { formatDuration } from '../utils';
 import msgTransport from '../common/messages/transport';
-
-const formatDuration = (totalMinutes) => {
-
-  if (!totalMinutes) {
-    return null;
-  }
-
-  const minutes = totalMinutes % 60;
-  const hours = (totalMinutes - minutes) / 60;
-
-  let formatted =  '';
-  
-  if (hours > 0) {
-    formatted += `${hours}h `; 
-  }
-
-  if (minutes > 0) {
-    formatted += `${minutes}m`;
-  }
-  
-  return formatted;
-
-};
  
 const ViewTransitLink = ({ 
   link, navigate 

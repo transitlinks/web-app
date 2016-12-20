@@ -4,6 +4,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import { injectIntl, FormattedMessage } from 'react-intl';
+import { formatDuration } from '../utils';
 
 const formatDate = (dateStr) => {
   
@@ -42,11 +43,12 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
     link, transport,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
+    durationMinutes,
     priceAmount, priceCurrency,
     description,
     avgRating
   } = linkInstance;
-  
+ 
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -56,29 +58,44 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
           <span id="place-to">{link.to.description}</span>
         </div>
       </div>
-      <div>
-        {transport.slug}
+      <div className={s.firstRow}>
+        <div className={s.transportAndDuration}>
+          <div className={s.transport}>
+            {transport.slug.toUpperCase()}
+          </div>
+          <div className={s.duration}>
+            {formatDuration(durationMinutes)}
+          </div>
+        </div>
+        <div className={s.times}>
+          <div className={s.time} id="departure">
+            <span className={s.timeLabel}>DEP</span>
+            <span className={s.timeDate} id="dept-date-value">
+              {formatDate(departureDate)}
+            </span>
+            <span className={s.timeTime} id="dept-time-value">
+              {formatTime(departureHour, departureMinute)}
+            </span>
+          </div>
+          <div className={s.time} id="arrival">
+            <span className={s.timeLabel}>ARR</span>
+            <span className={s.timeDate} id="arr-date-value">
+              {formatDate(arrivalDate)}
+            </span>
+            <span className={s.timeTime} id="arr-time-value">
+              {formatTime(arrivalHour, arrivalMinute)}
+            </span>
+          </div>
+        </div>
       </div>
-      <div id="departure">
-        <span>DEPARTURE: &nbsp;</span> 
-        <span id="dept-date-value">{formatDate(departureDate)}</span> /
-        <span id="dept-time-value">{formatTime(departureHour, departureMinute)}</span>
-      </div>
-      <div>
-        <span>ARRIVAL: &nbsp;</span> 
-        <span id="arr-date-value">{formatDate(arrivalDate)}</span> /
-        <span id="arr-time-value">{formatTime(arrivalHour, arrivalMinute)}</span>
-      </div>
-      <div>
-        <span>PRICE: &nbsp;</span> 
+      <div className={s.cost}>
+        <span>COST: &nbsp;</span> 
         <span id="price-value">{priceAmount} {priceCurrency}</span>
       </div>
       <div>
-        <span>DESC: &nbsp;</span> 
         <span id="desc-value">{description}</span>
       </div>
       <div>
-        <span>SCORE: &nbsp;</span> 
         <span id="avg-rating-value">{avgRating}</span>
       </div>
     </div>
