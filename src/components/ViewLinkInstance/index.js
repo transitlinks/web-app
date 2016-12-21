@@ -90,24 +90,30 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
           </div>
         </div>
         <div className={s.times}>
-          <div className={s.time} id="departure">
-            <span className={s.timeLabel}>DEP</span>
-            <span className={s.timeDate} id="dept-date-value">
-              {formatDate(departureDate)}
-            </span>
-            <span className={s.timeTime} id="dept-time-value">
-              {formatTime(departureHour, departureMinute)}
-            </span>
-          </div>
-          <div className={s.time} id="arrival">
-            <span className={s.timeLabel}>ARR</span>
-            <span className={s.timeDate} id="arr-date-value">
-              {formatDate(arrivalDate)}
-            </span>
-            <span className={s.timeTime} id="arr-time-value">
-              {formatTime(arrivalHour, arrivalMinute)}
-            </span>
-          </div>
+          { 
+            (departureDate || departureHour) && 
+            <div className={s.time} id="departure">
+              <span className={s.timeLabel}>DEP</span>
+              <span className={s.timeDate} id="dept-date-value">
+                {formatDate(departureDate)}
+              </span>
+              <span className={s.timeTime} id="dept-time-value">
+                {formatTime(departureHour, departureMinute)}
+              </span>
+            </div>
+          }
+          { 
+            (arrivalDate || arrivalHour) && 
+            <div className={s.time} id="arrival">
+              <span className={s.timeLabel}>ARR</span>
+              <span className={s.timeDate} id="arr-date-value">
+                {formatDate(arrivalDate)}
+              </span>
+              <span className={s.timeTime} id="arr-time-value">
+                {formatTime(arrivalHour, arrivalMinute)}
+              </span>
+            </div>
+          }
         </div>
       </div>
       <div className={s.cost}>
@@ -117,8 +123,30 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
       <div>
         <span id="desc-value">{description}</span>
       </div>
-      <div>
-        <span id="avg-rating-value">{avgRating}</span>
+      <div className={s.ratings}>
+        <div id="avg-rating-value" className={s.avgRating}>
+          <div className={s.avgRatingLabel}>
+            Average rating
+          </div>
+          <div className={s.avgRatingValue}>
+            {avgRating}
+          </div>
+        </div>
+        <div id="user-rating" className={s.userRating}>
+          <div className={s.userRatingLabel}>
+            Your rating
+          </div>
+          <div id="rating" className={s.rating}>
+          </div>
+        </div>
+        <div className={s.upVote}>
+          <div className={s.upVoteLabel}>
+            Vote up!
+          </div>
+          <div id="up-vote" className={s.upVoteButton}>
+            <FontIcon className="material-icons">mood</FontIcon>
+          </div>
+        </div>
       </div>
     </div>
   );

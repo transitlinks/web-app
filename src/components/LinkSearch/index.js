@@ -14,19 +14,45 @@ const LinkSearch = ({
 }) => {
 
   
-  const linkResults = (links && links.length > 0) ? links.map(link => (
-    <div key={link.uuid}
-      className={s.link} onClick={() => navigate('/link/' + link.uuid)}>
-      <div className={s.linkTitle}>
-        <span id="place-from" className="locality">{link.from.description}</span>
-        <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
-        <span id="place-to" className="locality">{link.to.description}</span>
+  const linkResults = (links && links.length > 0) ? links.map(link => {
+    
+    const fromCommaIndex = link.from.description.indexOf(',');
+    const fromCity = link.from.description.substring(0, fromCommaIndex);
+    const fromArea = link.from.description.substring(fromCommaIndex + 1);
+  
+    const toCommaIndex = link.to.description.indexOf(',');
+    const toCity = link.to.description.substring(0, toCommaIndex);
+    const toArea = link.to.description.substring(toCommaIndex + 1);
+    
+    return (
+      <div key={link.uuid}
+        className={s.link} onClick={() => navigate('/link/' + link.uuid)}>
+        <div className={s.linkTitle}>
+          <div id="place-from" className="locality">
+            <div className={s.city}>
+              {fromCity}
+            </div>
+            <div className={s.area}>
+              {fromArea}
+            </div>
+          </div>
+          <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
+          <div id="place-to" className="locality">
+            <div className={s.city}>
+              {toCity}
+            </div>
+            <div className={s.area}>
+              {toArea}
+            </div>
+          </div>
+        </div>
+        <div className={s.linkStats}>
+          ({`${link.instanceCount}`})
+        </div>
       </div>
-      <div className={s.linkStats}>
-        ({`${link.instanceCount}`})
-      </div>
-    </div>
-  )) : (
+    );
+
+  }) : (
     <div className={s.noResults}>
       <div>
         We don't have any links matching your search. If you find out how to get there, do share it with us!

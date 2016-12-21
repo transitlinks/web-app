@@ -90,3 +90,30 @@
 .cost {
   margin-top: 16px;
 }
+
+.ratings {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.avgRating {
+}
+
+.avgRating .avgRatingLabel {
+}
+
+.userRating {
+}
+
+.userRating .userRatingLabel {
+}
+
+.userRating .rating {
+}
+
+.upVote .upVoteLabel {
+}
+
+.upVote .upVoteButton {
+}

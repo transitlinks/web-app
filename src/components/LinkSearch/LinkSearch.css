@@ -33,7 +33,12 @@
 
 .linkTitle {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  font-size: 18px;
+}
+
+.linkTitle .area {
+  font-size: 14px;
 }
 
 .linkTitle .arrow { 
@@ -41,7 +46,7 @@
   margin-right: 6px;
 }
 
-.linkTitle:hover > span {
+.linkTitle:hover .city {
   color: rgb(0, 188, 212);
 }
 

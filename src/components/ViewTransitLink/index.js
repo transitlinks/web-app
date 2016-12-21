@@ -26,13 +26,35 @@ const ViewTransitLink = ({
     </div>
   ));
   
+  const fromCommaIndex = link.from.description.indexOf(',');
+  const fromCity = link.from.description.substring(0, fromCommaIndex);
+  const fromArea = link.from.description.substring(fromCommaIndex + 1);
+  
+  const toCommaIndex = link.to.description.indexOf(',');
+  const toCity = link.to.description.substring(0, toCommaIndex);
+  const toArea = link.to.description.substring(toCommaIndex + 1);
+
   return (
     <div className={s.container}>
       <div className={s.header}>
         <div className={s.title}>
-          <span id="place-from">{link.from.description}</span>
+          <div id="place-from">
+            <div>
+              {fromCity}
+            </div>
+            <div className={s.area}>
+              {fromArea}
+            </div>
+          </div>
           <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
-          <span id="place-to">{link.to.description}</span>
+          <div id="place-to">
+            <div>
+              {toCity}
+            </div>
+            <div className={s.area}>
+              {toArea}
+            </div>
+          </div>
         </div>
       </div>
       <div className={s.instances}>

@@ -11,12 +11,17 @@
 .header .title {
   font-size: 24px;
   display: flex;
-  align-items: center; 
+  align-items: flex-start; 
+}
+
+.header .title .area {
+  font-size: 16px;
 }
 
 .header .title .arrow {
   margin-left: 6px;
   margin-right: 6px;
+  margin-top: 6px;
 }
 
 .instances {
@@ -33,6 +38,6 @@
 }
 
 .selectable:hover {
-  background: #f6f6f6;
+  color: rgb(0, 188, 212);
 }
 
