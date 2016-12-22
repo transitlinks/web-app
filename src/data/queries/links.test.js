@@ -128,7 +128,7 @@ describe('data/queries/links', () => {
   
   it('returns link by id', async () => {
     
-    let response = await createOrUpdateLinkInstance(validLinkInstance); 
+    let response = await createOrUpdateLinkInstance(validLinkInstance, testUsers[0].uuid); 
     assertResponse(response);
     
     let linkInstance = response.data.linkInstance;
