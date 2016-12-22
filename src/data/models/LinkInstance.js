@@ -85,6 +85,10 @@ const LinkInstance = Model.define('LinkInstance', {
 
   description: {
     type: DataType.TEXT
+  },
+
+  votes: {
+    type: DataType.INTEGER
   }
 
 }, {

@@ -10,6 +10,7 @@ import {
   localityRepository, 
   linkRepository,
   userRepository,
+  ratingRepository,
   placesApi
 } from '../source';
 
@@ -81,6 +82,14 @@ const getLinkByInstance = async (linkInstance) => {
 
 };
 
+const saveRating = async (userId, linkInstanceId, property, rating) => {
+  if (rating) {
+    await ratingRepository.saveRating({
+      userId, linkInstanceId, property, rating
+    });
+  }
+};
+
 const createOrUpdateLink = async (linkInstance, reqUser) => {
  	
   if (!linkInstance.uuid) { // Create new link
@@ -111,38 +120,16 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
       priceAmount, priceCurrency,
       description
     });
-
-    const ratings = [];
-    if (availabilityRating) {
-      ratings.push({
-        property: 'availability',
-        rating: availabilityRating
-      });
-    }
-
-    if (departureRating) {
-      ratings.push({
-        property: 'departure',
-        rating: departureRating
-      });
-    }
     
-    if (arrivalRating) {
-      ratings.push({ 
-        property: 'arrival',
-        rating: arrivalRating
-      });
+    if (userId) {
+      
+      saveRating(userId, linkInstance.id, 'availability', availabilityRating);
+      saveRating(userId, linkInstance.id, 'departure', departureRating);
+      saveRating(userId, linkInstance.id, 'arrival', arrivalRating);
+      saveRating(userId, linkInstance.id, 'awesome', awesomeRating);
+ 
     }
 
-    if (awesomeRating) {
-      ratings.push({
-        property: 'awesome',
-        rating: awesomeRating
-      });
-    }
-    
-    await linkRepository.saveInstanceRatings(linkInstance.id, ratings);
-    
     delete linkInstance.id;
     return linkInstance;
 			

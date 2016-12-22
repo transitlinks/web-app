@@ -6,6 +6,10 @@ import LinkInstance from './LinkInstance';
 import TransportType from './TransportType';
 import Rating from './Rating';
 
+User.hasMany(Rating, {
+  foreignKey: 'userId'
+});
+
 TransitLink.belongsTo(Locality, {
   foreignKey: 'fromId',
   as: 'from'
