@@ -53,6 +53,17 @@ const getInstanceByUuid = async (uuid) => {
 
 };
 
+const getInstanceIdByUuid = async (uuid) => {
+  
+  const linkInstance = await LinkInstance.fineOne({
+    attributes: [ 'id' ],
+    where: { uuid }
+  });
+
+  return linkInstance.id;
+
+};
+
 export default {
   
   getByUuid: async (uuid) => {

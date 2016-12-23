@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { saveRating, voteUp } from '../../actions/viewLinkInstance';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
+import Ratings from '../Ratings';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration } from '../utils';
 
@@ -37,7 +39,10 @@ const formatTime = (hours, minutes) => {
 
 };
  
-const ViewLinkInstance = ({ intl, linkInstance }) => {
+const ViewLinkInstance = ({ 
+  saveRating, voteUp,
+  intl, linkInstance 
+}) => {
   
   const { 
     link, transport,
@@ -49,6 +54,13 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
     avgRating
   } = linkInstance;
 
+  const onChangeRating = (name) => {
+    return (rating) => {
+      console.log('set rating', name, rating);
+      //setProperty(`${name}Rating`, rating);
+    }
+  };
+
   const fromCommaIndex = link.from.description.indexOf(',');
   const fromCity = link.from.description.substring(0, fromCommaIndex);
   const fromArea = link.from.description.substring(fromCommaIndex + 1);
@@ -57,6 +69,7 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
   const toCity = link.to.description.substring(0, toCommaIndex);
   const toArea = link.to.description.substring(toCommaIndex + 1);
 
+  console.log("view instance", linkInstance);
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -137,6 +150,13 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
             Your rating
           </div>
           <div id="rating" className={s.rating}>
+            <Ratings 
+              availabilityRating={3}
+              departureRating={1}
+              arrivalRating={2}
+              awesomeRating={5}
+              onChangeRating={onChangeRating}
+            />
           </div>
         </div>
         <div className={s.upVote}>
@@ -155,5 +175,7 @@ const ViewLinkInstance = ({ intl, linkInstance }) => {
 export default injectIntl(
   connect(state => ({
   }), {
+    saveRating,
+    voteUp
   })(withStyles(s)(ViewLinkInstance))
 );

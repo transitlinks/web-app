@@ -1,11 +1,16 @@
 import { getLog } from '../../core/log';
 const log = getLog('data/source/ratingRepository');
 
-import { Rating } from '../models';
+import { Rating, User } from '../models';
 
 export const getInstanceRatingsByUser = async (linkInstanceId, userId) => {
-  const ratings = await Rating.findAll({ where: { linkInstanceId, userId } });
+  
+  const ratings = await Rating.findAll({ 
+    where: { linkInstanceId, userId } 
+  });
+  
   return ratings.map(rating => rating.toJSON());
+
 };
 
 export const saveRating = async (rating) => {

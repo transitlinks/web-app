@@ -1,0 +1,50 @@
+@import '../variables.css';
+
+.container {
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ratings {
+  margin-bottom: 24px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.rating .ratingLabel {
+  text-align: right;
+  margin-top: -6px;
+  padding-right: 12px;
+  width: 50%;
+}
+
+.rating .ratingValuel {
+  text-align: right;
+  margin-top: -6px;
+  padding-right: 12px;
+  width: 50%;
+}
+
+@media (max-width: 425px) {
+  
+  .rating {
+    display: block;
+    margin-bottom: 16px;
+  }
+  
+  .rating .ratingLabel {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  
+  .rating .ratingValue {
+    width: 100%;
+    text-align: center;
+  }
+
+}

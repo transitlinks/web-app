@@ -254,49 +254,50 @@ const EditLinkInstance = ({
             onChange={onChangeProperty('description')}
           />
         </div>
-        {!uuid &&
-        <div className={s.ratings}>
-          <div className={s.rating}>
-            <div className={s.ratingLabel}>
-              <label>Availability</label>
+        {
+          !uuid &&
+          <div className={s.ratings}>
+            <div className={s.rating}>
+              <div className={s.ratingLabel}>
+                <label>Availability</label>
+              </div>
+              <div className={s.ratingValue}>
+                <Rating id="availability-rating"
+                  {...ratingStyles} initialRate={availabilityRating} 
+                  onChange={onChangeRating('availability')} />
+              </div>
             </div>
-            <div className={s.ratingValue}>
-              <Rating id="availability-rating"
-                {...ratingStyles} initialRate={availabilityRating} 
-                onChange={onChangeRating('availability')} />
+            <div className={s.rating}>
+              <div className={s.ratingLabel}>
+                <label>Departure reliability</label>
+              </div>
+              <div className={s.ratingValue}>
+                <Rating id="dept-reliability-rating" 
+                  {...ratingStyles} initialRate={departureRating} 
+                  onChange={onChangeRating('departure')} />
+              </div>
+            </div>
+            <div className={s.rating}>
+              <div className={s.ratingLabel}>
+                <label>Arrival reliability</label>
+              </div>
+              <div className={s.ratingValue}>
+                <Rating id="arr-reliability-rating"
+                  {...ratingStyles} initialRate={arrivalRating} 
+                  onChange={onChangeRating('arrival')} />
+              </div>
+            </div>
+            <div className={s.rating}>
+              <div className={s.ratingLabel}>
+                <label>Awesomeness</label>
+              </div>
+              <div className={s.ratingValue}>
+                <Rating id="awesomeness-rating"
+                  {...ratingStyles} initialRate={awesomeRating}
+                  onChange={onChangeRating('awesome')} />
+              </div>
             </div>
           </div>
-          <div className={s.rating}>
-            <div className={s.ratingLabel}>
-              <label>Departure reliability</label>
-            </div>
-            <div className={s.ratingValue}>
-              <Rating id="dept-reliability-rating" 
-                {...ratingStyles} initialRate={departureRating} 
-                onChange={onChangeRating('departure')} />
-            </div>
-          </div>
-          <div className={s.rating}>
-            <div className={s.ratingLabel}>
-              <label>Arrival reliability</label>
-            </div>
-            <div className={s.ratingValue}>
-              <Rating id="arr-reliability-rating"
-                {...ratingStyles} initialRate={arrivalRating} 
-                onChange={onChangeRating('arrival')} />
-            </div>
-          </div>
-          <div className={s.rating}>
-            <div className={s.ratingLabel}>
-              <label>Awesomeness</label>
-            </div>
-            <div className={s.ratingValue}>
-              <Rating id="awesomeness-rating"
-                {...ratingStyles} initialRate={awesomeRating}
-                onChange={onChangeRating('awesome')} />
-            </div>
-          </div>
-        </div>
         }
       </div>
       <div className={s.save}>

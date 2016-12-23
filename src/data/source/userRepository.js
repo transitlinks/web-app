@@ -3,6 +3,17 @@ const log = getLog('data/source/userRepository');
 
 import { User } from '../models';
 
+export const getUserIdByUuid = async (uuid) => {
+  
+  const user = await User.fineOne({
+    attributes: [ 'id' ],
+    where: { uuid }
+  });
+
+  return user.id;
+
+};
+
 export const getByUuid = async (uuid) => {
   const user = await User.findOne({ where: { uuid } });
   return user.toJSON();
