@@ -7,7 +7,7 @@ import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import Rating from 'react-rating';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { formatDuration } from '../utils';
+import { formatDuration, truncate } from '../utils';
 
 const formatDate = (dateStr) => {
   
@@ -171,7 +171,7 @@ const ViewLinkInstance = ({
               <label>Availability</label>
             </div>
             <div className={s.avgRatingValue}>
-              {avgAvailabilityRating}
+              {truncate(avgAvailabilityRating, 4)}
             </div>
           </div>
           <div className={s.rating}>
@@ -187,7 +187,7 @@ const ViewLinkInstance = ({
               <label>Departure reliability</label>
             </div>
             <div className={s.avgRatingValue}>
-              {avgDepartureRating}
+              {truncate(avgDepartureRating, 4)}
             </div>
           </div>
           <div className={s.rating}>
@@ -203,7 +203,7 @@ const ViewLinkInstance = ({
               <label>Arrival reliability</label>
             </div>
             <div className={s.avgRatingValue}>
-              {avgArrivalRating}
+              {truncate(avgArrivalRating, 4)}
             </div>
           </div>
           <div className={s.rating}>
@@ -219,7 +219,7 @@ const ViewLinkInstance = ({
               <label>Awesomeness</label>
             </div>
             <div className={s.avgRatingValue}>
-              {avgAwesomeRating}
+              {truncate(avgAwesomeRating, 4)}
             </div>
           </div>
         </div>
@@ -228,7 +228,7 @@ const ViewLinkInstance = ({
             SCORE
           </div>
           <div id="total-average-value" className={s.totalAverageValue}>
-            {avgRating}
+            {truncate(avgRating, 4)}
           </div>
         </div>
         <div className={s.vote}>

@@ -34,3 +34,17 @@ export const formatDuration = (totalMinutes) => {
   return formatted;
 
 };
+
+export const truncate = (value, maxLength) => {
+  
+  if (!value) return null;
+
+  const strValue = '' + value;
+
+  if (strValue.length > maxLength) {
+    return strValue.substring(0, maxLength);
+  }
+
+  return strValue;
+
+};

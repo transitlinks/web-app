@@ -102,6 +102,12 @@
   align-items: center;
 }
 
+@media (max-width: 570px) {
+  .ratingsAndVotes {
+    display: block;
+  }
+}
+
 .ratings {
 }
 
@@ -124,6 +130,25 @@
 
 .rating .ratingValue {
   margin-right: 16px;
+}
+
+@media (max-width: 380px) {
+  .ratings .rating {
+    flex-direction: column-reverse;
+  }
+  .ratings .rating .ratingLabel {
+    margin-right: initial;
+    display: flex;
+    justify-content: center;
+  }
+  .rating .ratingValue {
+    margin-right: initial;
+    display: flex;
+    justify-content: center;
+  }
+  .rating .avgRatingValue {
+    display: none;
+  }
 }
 
 .totalAverage {

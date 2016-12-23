@@ -15,7 +15,7 @@ const getRatingsMap = async ({ linkInstanceUuid, linkInstanceId, userUuid, userI
   
   const avgRatings = await ratingRepository.getAverages([linkInstanceId]);
   const avgRatingsMap = createRatingsMap(avgRatings);
-  const instanceRating = calcInstanceRating(avgRatingsMap[linkInstanceId]);
+  const instanceRating = calcInstanceRating(avgRatingsMap[linkInstanceId] || {});
   
   let userRatingsMap = {};
   
