@@ -2,9 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { saveRating, voteUp } from '../../actions/viewLinkInstance';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import cx from 'classnames';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
-import Ratings from '../Ratings';
+import Rating from 'react-rating';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration } from '../utils';
 
@@ -39,24 +40,36 @@ const formatTime = (hours, minutes) => {
 
 };
  
-const ViewLinkInstance = ({ 
+const ViewLinkInstance = ({
+  user,
   saveRating, voteUp,
-  intl, linkInstance 
+  intl, linkInstance, initialRatings, ratings
 }) => {
   
   const { 
+    uuid,
     link, transport,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
     durationMinutes,
     priceAmount, priceCurrency,
-    description,
-    avgRating
+    description
   } = linkInstance;
 
-  const onChangeRating = (name) => {
+  const {
+    avgRating,
+    avgAvailabilityRating, avgDepartureRating, avgArrivalRating, avgAwesomeRating,
+    userAvailabilityRating, userDepartureRating, userArrivalRating, userAwesomeRating
+  } = (ratings || initialRatings || {});
+
+  const onChangeRating = (property) => {
     return (rating) => {
-      console.log('set rating', name, rating);
+      console.log('set rating', property, rating);
+      saveRating({
+        linkInstanceUuid: uuid,
+        property,
+        rating
+      });
       //setProperty(`${name}Rating`, rating);
     }
   };
@@ -69,7 +82,11 @@ const ViewLinkInstance = ({
   const toCity = link.to.description.substring(0, toCommaIndex);
   const toArea = link.to.description.substring(toCommaIndex + 1);
 
-  console.log("view instance", linkInstance);
+  const ratingProps = {
+    empty: <FontIcon className={cx(s.star, "material-icons")}>star_border</FontIcon>,
+    full: <FontIcon className={cx(s.star, "material-icons")}>star</FontIcon>
+  };
+  
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -129,42 +146,98 @@ const ViewLinkInstance = ({
           }
         </div>
       </div>
-      <div className={s.cost}>
-        <span>COST: &nbsp;</span> 
-        <span id="price-value">{priceAmount} {priceCurrency}</span>
-      </div>
+      {
+        priceAmount &&
+        <div className={s.cost}>
+          <span>COST: &nbsp;</span> 
+          <span id="price-value">{priceAmount} {priceCurrency}</span>
+        </div>
+      }
       <div>
         <span id="desc-value">{description}</span>
       </div>
-      <div className={s.ratings}>
-        <div id="avg-rating-value" className={s.avgRating}>
-          <div className={s.avgRatingLabel}>
-            Average rating
+      <div className={s.ratingsAndVotes}>
+        <div className={s.ratings}>
+          <div className={s.rating}>
+            { 
+              user &&
+              <div className={s.ratingValue}>
+                <Rating id="availability-rating"
+                  {...ratingProps} initialRate={userAvailabilityRating} 
+                  onChange={onChangeRating('availability')} />
+              </div>
+            }
+            <div className={s.ratingLabel}>
+              <label>Availability</label>
+            </div>
+            <div className={s.avgRatingValue}>
+              {avgAvailabilityRating}
+            </div>
           </div>
-          <div className={s.avgRatingValue}>
+          <div className={s.rating}>
+            { 
+              user &&
+              <div className={s.ratingValue}>
+                <Rating id="dept-reliability-rating" 
+                  {...ratingProps} initialRate={userDepartureRating} 
+                  onChange={onChangeRating('departure')} />
+              </div>
+            }
+            <div className={s.ratingLabel}>
+              <label>Departure reliability</label>
+            </div>
+            <div className={s.avgRatingValue}>
+              {avgDepartureRating}
+            </div>
+          </div>
+          <div className={s.rating}>
+            { 
+              user &&
+              <div className={s.ratingValue}>
+                <Rating id="arr-reliability-rating"
+                  {...ratingProps} initialRate={userArrivalRating} 
+                  onChange={onChangeRating('arrival')} />
+              </div>
+            }
+            <div className={s.ratingLabel}>
+              <label>Arrival reliability</label>
+            </div>
+            <div className={s.avgRatingValue}>
+              {avgArrivalRating}
+            </div>
+          </div>
+          <div className={s.rating}>
+            { 
+              user &&
+              <div className={s.ratingValue}>
+                <Rating id="awesomeness-rating"
+                  {...ratingProps} initialRate={userAwesomeRating}
+                  onChange={onChangeRating('awesome')} />
+              </div>
+            }
+            <div className={s.ratingLabel}>
+              <label>Awesomeness</label>
+            </div>
+            <div className={s.avgRatingValue}>
+              {avgAwesomeRating}
+            </div>
+          </div>
+        </div>
+        <div id="total-average" className={s.totalAverage}>
+          <div className={s.totalAverageLabel}>
+            SCORE
+          </div>
+          <div id="total-average-value" className={s.totalAverageValue}>
             {avgRating}
           </div>
         </div>
-        <div id="user-rating" className={s.userRating}>
-          <div className={s.userRatingLabel}>
-            Your rating
+        <div className={s.vote}>
+          <div className={s.voteLabel}>
+            Hot or Not?
           </div>
-          <div id="rating" className={s.rating}>
-            <Ratings 
-              availabilityRating={3}
-              departureRating={1}
-              arrivalRating={2}
-              awesomeRating={5}
-              onChangeRating={onChangeRating}
-            />
-          </div>
-        </div>
-        <div className={s.upVote}>
-          <div className={s.upVoteLabel}>
-            Vote up!
-          </div>
-          <div id="up-vote" className={s.upVoteButton}>
-            <FontIcon className="material-icons">mood</FontIcon>
+          <div id="up-vote" className={s.voteButtons}>
+            <FontIcon className={cx(s.voteButton, "material-icons")} style={{ fontSize: '32px' }}>sentiment_very_satisfied</FontIcon>
+            <FontIcon className={cx(s.voteButton, "material-icons")} style={{ fontSize: '32px' }}>sentiment_very_dissatisfied</FontIcon>
           </div>
         </div>
       </div>
@@ -174,6 +247,8 @@ const ViewLinkInstance = ({
 
 export default injectIntl(
   connect(state => ({
+    user: state.auth.auth.user,
+    ratings: state.viewLinkInstance.ratings
   }), {
     saveRating,
     voteUp

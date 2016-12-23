@@ -139,7 +139,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     assert.equal(browser.getText('#desc-value'), description);
     
     if (ratings) {
-      assert.equal(browser.getText('#avg-rating-value'), 'Average rating\n2.5');
+      assert.equal(browser.getText('#total-average-value'), '2.5');
     }
 
 };

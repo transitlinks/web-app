@@ -8,7 +8,7 @@ import {
   VOTE_ERROR
 } from '../constants';
 
-export default (state = null, action) => {
+export default (state = {}, action) => {
   
   const endState = { ...state };
 
@@ -17,14 +17,15 @@ export default (state = null, action) => {
     case SAVE_RATING_START:
     case SAVE_RATING_SUCCESS:
     case SAVE_RATING_ERROR:
+      console.log("action", action);
       return graphqlReduce(
         state, action,
         { 
-          start: () => ({ rating: null }), 
+          start: () => ({}), 
           success: () => ({ 
-            rating: action.payload.rating
+            ratings: action.payload.rating
           }), 
-          error: () => ({ rating: null })
+          error: () => ({ ratings: null })
         },
         SAVE_RATING_START,
         SAVE_RATING_SUCCESS,

@@ -1,8 +1,10 @@
 @import '../variables.css';
 
 .container {
-  display: inline-block;
-  height: 48px;
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
   padding: 6px;
 }
 
@@ -91,29 +93,65 @@
   margin-top: 16px;
 }
 
+.ratingsAndVotes {
+  background-color: #f0f0f0;
+  margin-top: 16px;
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .ratings {
-  margin-top: 8px;
+}
+
+.ratings .rating {
   display: flex;
   justify-content: space-between;
 }
 
-.avgRating {
+.ratings .rating .ratingLabel {
+  margin-right: 16px;
 }
 
-.avgRating .avgRatingLabel {
+.rating .ratingValues {
+  display: flex;
 }
 
-.userRating {
+.rating .avgRatingValue {
+  min-width: 30px;
 }
 
-.userRating .userRatingLabel {
+.rating .ratingValue {
+  margin-right: 16px;
 }
 
-.userRating .rating {
+.totalAverage {
 }
 
-.upVote .upVoteLabel {
+.totalAverage .totalAverageLabel {
+  text-align: center;
 }
 
-.upVote .upVoteButton {
+.totalAverage .totalAverageValue {
+  font-size: 24px;
+  text-align: center;
 }
+
+.vote {
+}
+
+.vote .voteLabel {
+  text-align: center;
+}
+
+.vote .voteButtons {
+  display: flex;
+  justify-content: center;
+}
+
+.vote .voteButtons .voteButton {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+

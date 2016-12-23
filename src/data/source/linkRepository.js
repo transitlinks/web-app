@@ -33,29 +33,14 @@ const getInstanceByUuid = async (uuid) => {
   if (!linkInstance) {
     return null;
   }
-
-  const ratingResults = await Rating.findAll({
-    attributes: [
-      'property',
-      [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
-    ],
-    where: { linkInstanceId: linkInstance.id, rating: { $ne: null } },
-    group: [ 'property' ]
-  });
-  
-  const ratings = {};
-  ratingResults.forEach(result => {
-    const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
-    ratings[`avg${propertyName}Rating`] = result.get('avgRating');
-  });
-  
-  return { ...linkInstance.json(), ...ratings };
+ 
+  return linkInstance.toJSON();
 
 };
 
 const getInstanceIdByUuid = async (uuid) => {
   
-  const linkInstance = await LinkInstance.fineOne({
+  const linkInstance = await LinkInstance.findOne({
     attributes: [ 'id' ],
     where: { uuid }
   });
@@ -83,34 +68,12 @@ export default {
 				{ model: TransportType, as: 'transport' }
 			]
 		});
-
-    const ratingResults = await Rating.findAll({
-      attributes: [
-        'property',
-        'linkInstanceId',
-        [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
-      ],
-      where: { linkInstanceId: { $in: instances.map(instance => instance.id) }, rating: { $ne: null } },
-      group: [ 'linkInstanceId', 'property' ]
-    });
-    
-    const ratings = {};
-    ratingResults.forEach(result => {
-      const linkInstanceId = result.get('linkInstanceId');
-      if (!ratings[linkInstanceId]) {
-        ratings[linkInstanceId] = {};
-      }
-      const propertyName = result.get('property').charAt(0).toUpperCase() + result.get('property').slice(1);
-      ratings[linkInstanceId][`avg${propertyName}Rating`] = result.get('avgRating');
-    });
-     
-		link = link.toJSON();
-		
-    return Object.assign(link, {
-			instances: instances.map(instance => ({ ...instance.toJSON(), ...ratings[instance.id] }))
-		});
-  	
+ 
+    return { ...link.toJSON(), instances: instances.map(instance => instance.toJSON()) };
+	  	
 	},
+  
+  getInstanceIdByUuid: getInstanceIdByUuid,
   
   getInstanceByUuid: getInstanceByUuid,
   

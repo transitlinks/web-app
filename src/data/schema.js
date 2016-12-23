@@ -11,7 +11,7 @@ import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
 import { UserMutationFields, UserQueryFields } from './queries/users';
-import { RatingMutationFields, VoteMutationFields } from './queries/ratings';
+import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './queries/ratings';
 import * as links from './queries/links';
 
 const schema = new Schema({
@@ -28,6 +28,7 @@ const schema = new Schema({
       linkInstance: TransitLinkQueryFields.linkInstance,
       links: TransitLinkQueryFields.links,
       user: UserQueryFields.user,
+      ratings: RatingQueryFields.ratings,
       intl
     }
   }),

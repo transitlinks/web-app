@@ -1,7 +1,25 @@
 import { getLog } from '../../core/log';
 const log = getLog('data/source/ratingRepository');
 
+import Sequelize from 'sequelize';
+
 import { Rating, User } from '../models';
+
+export const getAverages = async (instanceIds) => {
+  
+  const ratingResults = await Rating.findAll({
+    attributes: [
+      'property',
+      'linkInstanceId',
+      [Sequelize.fn('AVG', Sequelize.col('rating')), 'avgRating']
+    ],
+    where: { linkInstanceId: { $in: instanceIds }, rating: { $ne: null } },
+    group: [ 'linkInstanceId', 'property' ]
+  });
+
+  return ratingResults.map(result => result.toJSON());
+
+};
 
 export const getInstanceRatingsByUser = async (linkInstanceId, userId) => {
   
@@ -14,7 +32,7 @@ export const getInstanceRatingsByUser = async (linkInstanceId, userId) => {
 };
 
 export const saveRating = async (rating) => {
-  
+
   const existing = await Rating.findOne({ 
     where: { 
       userId: rating.userId, 
@@ -27,7 +45,7 @@ export const saveRating = async (rating) => {
   if (existing) {
     await Rating.update(
       { rating: rating.rating }, 
-      { where: { id: rating.id } }
+      { where: { id: existing.id } }
     );
     saved = await Rating.findOne({ id: rating.id });
   } else {

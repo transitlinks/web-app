@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import cx from 'classnames';
 import s from './Ratings.css';
-import cc from 'currency-codes';
 import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 import Rating from 'react-rating';
@@ -22,8 +22,8 @@ const Ratings = ({
     'display': 'inline-block',
     'borderRadius': '50%',
     'border': '5px double white',
-    'width': '20px',
-    'height': '20px',
+    'width': '16px',
+    'height': '16px',
   };
   
   const ratingEmptyCss = Object.assign({
@@ -33,6 +33,10 @@ const Ratings = ({
     'backgroundColor': 'black'
   }, ratingCss);
   
+  const ratingProps = {
+    empty: <FontIcon className={cx(s.star, "material-icons")}>star_border</FontIcon>,
+    full: <FontIcon className={cx(s.star, "material-icons")}>star</FontIcon>
+  };
 
   const ratingStyles = {
     empty: ratingEmptyCss,
@@ -47,7 +51,7 @@ const Ratings = ({
         </div>
         <div className={s.ratingValue}>
           <Rating id="availability-rating"
-            {...ratingStyles} initialRate={availabilityRating} 
+            {...ratingProps} initialRate={availabilityRating} 
             onChange={onChangeRating('availability')} />
         </div>
       </div>
@@ -57,7 +61,7 @@ const Ratings = ({
         </div>
         <div className={s.ratingValue}>
           <Rating id="dept-reliability-rating" 
-            {...ratingStyles} initialRate={departureRating} 
+            {...ratingProps} initialRate={departureRating} 
             onChange={onChangeRating('departure')} />
         </div>
       </div>
@@ -67,7 +71,7 @@ const Ratings = ({
         </div>
         <div className={s.ratingValue}>
           <Rating id="arr-reliability-rating"
-            {...ratingStyles} initialRate={arrivalRating} 
+            {...ratingProps} initialRate={arrivalRating} 
             onChange={onChangeRating('arrival')} />
         </div>
       </div>
@@ -77,7 +81,7 @@ const Ratings = ({
         </div>
         <div className={s.ratingValue}>
           <Rating id="awesomeness-rating"
-            {...ratingStyles} initialRate={awesomeRating}
+            {...ratingProps} initialRate={awesomeRating}
             onChange={onChangeRating('awesome')} />
         </div>
       </div>

@@ -5,7 +5,7 @@ import { User } from '../models';
 
 export const getUserIdByUuid = async (uuid) => {
   
-  const user = await User.fineOne({
+  const user = await User.findOne({
     attributes: [ 'id' ],
     where: { uuid }
   });

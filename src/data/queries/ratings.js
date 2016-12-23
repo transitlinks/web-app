@@ -1,26 +1,89 @@
-import { 
+import { getLog } from '../../core/log';
+const log = getLog('data/queries/ratings');
+
+import {
   GraphQLInt, 
   GraphQLString,
   GraphQLList 
 } from 'graphql';
-import { RatingType, RatingInputType } from '../types/RatingType';
+import { RatingType, LinkInstanceRatingsType, RatingInputType } from '../types/RatingType';
 import { VotesType, VoteInputType } from '../types/VoteType';
+import { createRatingsMap, calcInstanceRating } from '../../services/linkService';
 import { ratingRepository, linkRepository, userRepository } from '../source';
+
+const getRatingsMap = async ({ linkInstanceUuid, linkInstanceId, userUuid, userId }) => {
+  
+  const avgRatings = await ratingRepository.getAverages([linkInstanceId]);
+  const avgRatingsMap = createRatingsMap(avgRatings);
+  const instanceRating = calcInstanceRating(avgRatingsMap[linkInstanceId]);
+  
+  let userRatingsMap = {};
+  
+  if (userId) { 
+    const userRatings = await ratingRepository.getInstanceRatingsByUser(linkInstanceId, userId);
+    userRatings.forEach(rating => {
+      const propertyName = rating.property.charAt(0).toUpperCase() + rating.property.slice(1);
+      userRatingsMap[`user${propertyName}Rating`] = rating.rating;
+    });
+  };
+
+  return {
+    userUuid,
+    linkInstanceUuid,
+    ...avgRatingsMap[linkInstanceId],
+    ...userRatingsMap,
+    avgRating: instanceRating 
+  };
+
+};
+
+export const RatingQueryFields = {
+  
+  ratings: {
+    
+    type: LinkInstanceRatingsType,
+    description: 'Get ratings by link instance and user',
+    args: {
+      userUuid: { type: GraphQLString },
+      linkInstanceUuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { userUuid, linkInstanceUuid }) => {
+      
+      log.info("query=get-ratings", `user=${request.user ? request.user.uuid : null}`, `userUuid=${userUuid}`, `linkInstanceUuid=${linkInstanceUuid}`);
+     
+      const userId = !userUuid ? null : await userRepository.getUserIdByUuid(userUuid);
+      const linkInstanceId = 
+        await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
+        
+      return await getRatingsMap({ linkInstanceUuid, linkInstanceId, userUuid, userId });
+    
+    }
+  
+  }
+
+};
 
 export const RatingMutationFields = {
   
   rating: {
     
-    type: new GraphQLList(RatingType),
+    type: LinkInstanceRatingsType,
     description: 'Save a rating',
     args: {
       rating: { type: RatingInputType }
     },
     resolve: async ({ request }, { rating }) => {
+      
+      log.info("query=save-rating", `user=${request.user ? request.user.uuid : null}`, "rating:", rating);
+      
+      if (!request.user) {
+        throw new Error('not-authorized');
+      }
 
-      const userId = userRepository.getUserIdByUuid(rating.userUuid);
+      const { linkInstanceUuid, userUuid } = rating;
+      const userId = await userRepository.getUserIdByUuid(userUuid || request.user.uuid);
       const linkInstanceId = 
-        linkRepository.getInstanceIdByUuid(rating.linkInstanceUuid);
+        await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
 
       await ratingRepository.saveRating({
         userId,
@@ -29,17 +92,7 @@ export const RatingMutationFields = {
         rating: rating.rating
       });
 
-      const ratings = await ratingRepository.getInstanceRatingsByUser(
-        linkInstanceId,
-        userId
-      );
-
-      return ratings.map(r => ({
-        userUuid: rating.userUuid,
-        linkInstanceUuid: rating.linkInstanceUuid,
-        property: r.property,
-        rating: r.rating
-      }));
+      return await getRatingsMap({ linkInstanceUuid, linkInstanceId, userUuid, userId });
     
     }
   

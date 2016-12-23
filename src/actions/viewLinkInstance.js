@@ -16,9 +16,17 @@ export const saveRating = (rating) => {
     const query = `
       mutation saveRating {
         rating(rating:${toGraphQLObject(rating)}) {
+          userUuid,
           linkInstanceUuid,
-          property,
-          rating
+          avgRating,
+          avgAvailabilityRating,
+          avgDepartureRating,
+          avgArrivalRating,
+          avgAwesomeRating,
+          userAvailabilityRating,
+          userDepartureRating,
+          userArrivalRating,
+          userAwesomeRating
         }
       }
     `;

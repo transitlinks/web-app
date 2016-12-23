@@ -1,3 +1,19 @@
+export const createRatingsMap = (ratings) => {
+  
+  const ratingsMap = {};
+  ratings.forEach(rating => {
+    const linkInstanceId = rating.linkInstanceId;
+    if (!ratingsMap[linkInstanceId]) {
+      ratingsMap[linkInstanceId] = {};
+    }
+    const propertyName = rating.property.charAt(0).toUpperCase() + rating.property.slice(1);
+    ratingsMap[linkInstanceId][`avg${propertyName}Rating`] = rating.avgRating;
+  });
+
+  return ratingsMap;
+
+};
+
 export const calcInstanceRating = (instance) => {
   
   const {

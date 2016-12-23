@@ -71,7 +71,8 @@ describe('data/queries/links', () => {
   before(async () => {
     testUsers = await createTestUsers(
       { email: 'test1@test.tt' },
-      { email: 'test2@test.tt' }
+      { email: 'test2@test.tt' },
+      { email: 'test3@test.tt' }
     );
   });
 
@@ -143,7 +144,6 @@ describe('data/queries/links', () => {
             instances {
               uuid,
               transport { slug },
-              avgRating,
               durationMinutes
             }
           }
@@ -162,7 +162,6 @@ describe('data/queries/links', () => {
 
     const { instances } = link;
     assert(instances && instances.length > 0, 'missing or empty property: link.instances');
-    assert.equal(instances[0].avgRating, 4);
     assert.equal(instances[0].durationMinutes, (twoDaysInMinutes - 120));
 
   });
@@ -189,7 +188,6 @@ describe('data/queries/links', () => {
             arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
             priceAmount, priceCurrency,
             description,
-            avgRating,
             durationMinutes
           }
         }
@@ -218,20 +216,19 @@ describe('data/queries/links', () => {
     assert(linkInstance.priceAmount, 'missing property: linkInstance.priceAmount');
     assert(linkInstance.priceCurrency, 'missing property: linkInstance.priceCurrency');
     assert(linkInstance.description, 'missing property: linkInstance.description');
-    assert.equal(linkInstance.avgRating, 4);
     assert.equal(linkInstance.durationMinutes, (twoDaysInMinutes - 120));
 
   });
   
   it('returns user links by user uuid', async () => {
         
-    await createOrUpdateLinkInstance(validLinkInstance, testUsers[0].uuid); 
-    await createOrUpdateLinkInstance(validLinkInstance, testUsers[0].uuid);
+    await createOrUpdateLinkInstance(validLinkInstance, testUsers[2].uuid); 
+    await createOrUpdateLinkInstance(validLinkInstance, testUsers[2].uuid);
     
     const query = JSON.stringify({
       query: `
         query { 
-          userLinks (uuid: "${testUsers[0].uuid}") {
+          userLinks (uuid: "${testUsers[2].uuid}") {
             uuid,
             linkInstances {
               link {
@@ -254,12 +251,12 @@ describe('data/queries/links', () => {
     response = await test(query, testUsers[1].uuid);
     assertResponse(response, 'access-denied');
     
-    response = await test(query, testUsers[0].uuid);
+    response = await test(query, testUsers[2].uuid);
     assertResponse(response);
 
     const { userLinks } = response.data;
     assert(userLinks, 'Invalid userLinks response');
-    assert.equal(userLinks.uuid, testUsers[0].uuid);
+    assert.equal(userLinks.uuid, testUsers[2].uuid);
     assert.equal(userLinks.linkInstances.length, 2);
   
   });

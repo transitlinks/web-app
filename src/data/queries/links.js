@@ -2,6 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
 import {
+  createRatingsMap,
   calcInstanceRating,
   calcTransitDuration
 } from '../../services/linkService';
@@ -194,12 +195,16 @@ export const TransitLinkQueryFields = {
       if (!link) {
         throw new Error(`Link (uuid ${uuid}) not found`);
       }
-      
-      link.instances.forEach(instance => {
+
+      const avgRatings = await ratingRepository.getAverages(link.instances.map(instance => instance.id));
+      const avgRatingsMap = createRatingsMap(avgRatings);
+      link.instances.forEach(instance => { 
+        Object.assign(instance, avgRatingsMap[instance.id]);
         instance.avgRating = calcInstanceRating(instance);
         instance.durationMinutes = calcTransitDuration(instance);
+        delete instance.id;
       });
-      
+       
       return link;
     
     }
@@ -215,13 +220,24 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, { uuid }) => {
       
+      log.info(`graphql-request=get-link-instance uuid=${uuid} user=${request.user ? request.user.uuid : null}`);
+      
       const linkInstance = await linkRepository.getInstanceByUuid(uuid);
       if (!linkInstance) {
         throw new Error(`Link instance (uuid ${uuid}) not found`);
       }
       
+      const avgRatings = await ratingRepository.getAverages([linkInstance.id]); 
+      log.debug("avgRatings", avgRatings);
+      const avgRatingsMap = createRatingsMap(avgRatings);
+      log.debug("avgRatingsMap", avgRatingsMap);
+      Object.assign(linkInstance, avgRatingsMap[linkInstance.id]);
+
+
       linkInstance.avgRating = calcInstanceRating(linkInstance);
       linkInstance.durationMinutes = calcTransitDuration(linkInstance);
+      delete linkInstance.id;
+
       return linkInstance;
     
     }
