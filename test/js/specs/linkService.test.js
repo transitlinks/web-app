@@ -2,7 +2,7 @@ import assert from 'assert';
 import {
   calcInstanceRating,
   calcTransitDuration
-} from './linkService';
+} from '../../../src/services/linkService';
 
 describe('services/linkService', () => {
 

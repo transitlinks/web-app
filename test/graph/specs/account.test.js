@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { createTestUsers, test, assertResponse } from './utils';
+import { createTestUsers, test, assertResponse } from '../utils';
 
 describe('data/queries/account', () => {
   

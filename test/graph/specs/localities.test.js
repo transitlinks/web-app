@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { test, assertResponse } from './utils';
+import { test, assertResponse } from '../utils';
 
 describe('data/queries/localities', () => {
 

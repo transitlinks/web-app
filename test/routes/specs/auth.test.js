@@ -1,6 +1,6 @@
 import assert from 'assert';
 import fetch from 'node-fetch';
-import { APP_URL } from '../config';
+import { APP_URL } from '../../../src/config';
 
 const assertResponse = async (response) => {
   const contentType = response.headers.get('content-type');

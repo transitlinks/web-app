@@ -1,68 +1,13 @@
 import assert from 'assert';
-import { createTestUsers, test, assertResponse } from './utils';
+import { 
+  createTestUsers, validLinkInstance, createOrUpdateLinkInstance, 
+  test, assertResponse 
+} from '../utils';
 
 const date = new Date();
 const twoDaysLater = new Date(date.getTime());
 twoDaysLater.setDate(date.getDate() + 2);
 const twoDaysInMinutes = (twoDaysLater.getTime() - date.getTime()) / 1000 / 60;
-
-const validLinkInstance = { 
-  from: 'moscow', 
-  to: 'helsinki',
-  transport: 'bus',
-  departureDate: date.toJSON(),
-  departureHour: 15,
-  departureMinute: 30,
-  departurePlace: 'leningradsky vokzal',
-  arrivalDate: twoDaysLater.toJSON(),
-  arrivalHour: 13,
-  arrivalMinute: 30,
-  arrivalPlace: 'central railway station',
-  priceAmount: 120.50,
-  priceCurrency: 'USD',
-  description: 'this is description',
-  availabilityRating: 5,
-  awesomeRating: 3
-};
-
-const createOrUpdateLinkInstance = async (linkInstance, userUuid) => {
-  
-  const query = JSON.stringify({
-    query: `
-      mutation ($linkInstance:LinkInstanceInput!) {
-        linkInstance(linkInstance:$linkInstance) {
-          uuid,
-          link {
-            uuid,
-            from { name, description, countryLong, countryShort, lat, lng }, 
-            to { name, description, countryLong, countryShort, lat, lng }
-          },
-          transport { slug },
-          description
-        }
-      }
-    `,
-    variables: { linkInstance }
-  });
-  
-  const response = await test(query, userUuid);
-  assertResponse(response);
-  assert(response.data.linkInstance);
-  
-  const { link } = response.data.linkInstance;
-  assert(link);
-  assert(link.from);
-  assert(link.to);
-  assert(link.from.name);
-  assert(link.from.description);
-  assert(link.from.countryLong);
-  assert(link.from.countryShort);
-  assert(link.from.lat);
-  assert(link.from.lng);
-  
-  return response;
-
-};
 
 describe('data/queries/links', () => {
 
@@ -77,18 +22,18 @@ describe('data/queries/links', () => {
   });
 
   it('should create new link instance', async () => {
-    await createOrUpdateLinkInstance(validLinkInstance); 
+    await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater)); 
   });
   
   it('should update existing link instance', async () => {
     
-    let response = await createOrUpdateLinkInstance(validLinkInstance); 
+    let response = await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater)); 
     assertResponse(response);
     
     let linkInstance = response.data.linkInstance;
     assert(linkInstance);
     
-    linkInstance = { ...validLinkInstance, uuid: linkInstance.uuid, description: 'this is not description' };
+    linkInstance = { ...validLinkInstance(date, twoDaysLater), uuid: linkInstance.uuid, description: 'this is not description' };
     response = await createOrUpdateLinkInstance(linkInstance)
     assertResponse(response);
     linkInstance = response.data.linkInstance;
@@ -100,7 +45,7 @@ describe('data/queries/links', () => {
   
   it('returns links by locality name', async () => {
         
-    await createOrUpdateLinkInstance(validLinkInstance); 
+    await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater)); 
     
     const query = JSON.stringify({
       query: `
@@ -129,7 +74,7 @@ describe('data/queries/links', () => {
   
   it('returns link by id', async () => {
     
-    let response = await createOrUpdateLinkInstance(validLinkInstance, testUsers[0].uuid); 
+    let response = await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater), testUsers[0].uuid); 
     assertResponse(response);
     
     let linkInstance = response.data.linkInstance;
@@ -168,7 +113,7 @@ describe('data/queries/links', () => {
   
   it('returns link instance by id', async () => {
     
-    let response = await createOrUpdateLinkInstance(validLinkInstance); 
+    let response = await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater)); 
     assertResponse(response);
     
     let linkInstance = response.data.linkInstance;
@@ -222,8 +167,8 @@ describe('data/queries/links', () => {
   
   it('returns user links by user uuid', async () => {
         
-    await createOrUpdateLinkInstance(validLinkInstance, testUsers[2].uuid); 
-    await createOrUpdateLinkInstance(validLinkInstance, testUsers[2].uuid);
+    await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater), testUsers[2].uuid); 
+    await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater), testUsers[2].uuid);
     
     const query = JSON.stringify({
       query: `

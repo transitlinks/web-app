@@ -5,6 +5,7 @@ const env = process.env || {};
 //export const AUTH_FB_SECRET = 'jdhajdhkjahk';
 
 export const {
+  APP_ENV,
 	APP_URL,
   HTTP_PORT,
   HTTP_HOST,

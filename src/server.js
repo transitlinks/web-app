@@ -24,11 +24,18 @@ import { loadFixtures } from './data/sequelize';
 import routes from './routes';
 import { initEndpoints } from './routes';
 
-import { HTTP_HOST, HTTP_PORT, locales } from './config';
+import { APP_ENV, HTTP_HOST, HTTP_PORT, locales } from './config';
 
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 
 //import { HTTP_HOST, HTTP_PORT, locales } from './config';
+
+if (process.env.TEST_ENV === 'test' && APP_ENV !== 'test') {
+  console.log("Not allowed to run in test mode with wrong environment settings");
+  console.log("TEST_ENV", process.env.TEST_ENV);
+  console.log("APP_ENV", APP_ENV);
+  process.exit(1);
+}
 
 const app = express();
 app.schema = schema;

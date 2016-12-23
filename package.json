@@ -195,7 +195,7 @@
     "eslint": "eslint src tools",
     "stylelint": "stylelint \"src/**/*.css\"",
     "lint": "npm run eslint && npm run stylelint",
-    "test": "mocha \"src/**/*.test.js\" --require test/setup.js --compilers js:babel-register",
+    "test": "mocha \"test/graph/specs/**/*.test.js\" \"test/js/specs/**/*.test.js\" \"test/routes/specs/**/*.js\" --require test/setup.js --compilers js:babel-register",
     "e2e": "./node_modules/.bin/wdio test/e2e/wdio.browserstack.conf.js",
     "e2e-local": "./node_modules/.bin/wdio test/e2e/wdio.local.conf.js",
     "test:watch": "npm run test -- --reporter min --watch",
