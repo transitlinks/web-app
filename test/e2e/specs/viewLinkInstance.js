@@ -36,7 +36,7 @@ describe('View link instance', () => {
     browser.click('#awesomeness-rating span:nth-child(3)');
 
     browser.pause(1000);
-    assert.equal(browser.getText('#total-average-value'), '3');
+    assert.equal(browser.getText('#bottom-score-value'), '3');
   
   });
 
