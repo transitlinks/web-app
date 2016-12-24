@@ -59,6 +59,7 @@ const LocalityAutocomplete = ({
     floatingLabelStyle: { top: '20px' },
     floatingLabelFocusStyle: { transform: 'scale(0.75) translate(0px, -20px)' }
   } : {
+    fullWidth: true
   };
   
   return (

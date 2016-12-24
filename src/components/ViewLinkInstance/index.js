@@ -51,6 +51,7 @@ const ViewLinkInstance = ({
     link, transport,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
+    departurePlace, arrivalPlace,
     durationMinutes,
     priceAmount, priceCurrency,
     description
@@ -64,13 +65,11 @@ const ViewLinkInstance = ({
 
   const onChangeRating = (property) => {
     return (rating) => {
-      console.log('set rating', property, rating);
       saveRating({
         linkInstanceUuid: uuid,
         property,
         rating
       });
-      //setProperty(`${name}Rating`, rating);
     }
   };
 
@@ -87,8 +86,33 @@ const ViewLinkInstance = ({
     full: <FontIcon className={cx(s.star, "material-icons")}>star</FontIcon>
   };
   
+  console.log("instance", linkInstance);
+
   return (
     <div className={s.container}>
+      <div className={s.topScore}>
+        <div id="hidden-score" className={s.score}>
+          <div className={s.scoreLabel}>
+            <i className="material-icons">stars</i>
+          </div>
+          <div id="hidden-score-value" className={s.scoreValue}>
+            {truncate(avgRating, 4)}
+          </div>
+        </div>
+        <div className={s.vote}>
+          <div className={s.voteLabel}>
+            VOTE!
+          </div>
+          <div id="hidden-up-vote" className={s.voteButtons}>
+            <i className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}>
+              sentiment_very_satisfied
+            </i>
+            <i className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}>
+              sentiment_very_dissatisfied
+            </i>
+          </div>
+        </div>
+      </div>
       <div className={s.header}>
         <div className={s.title}>
           <div id="place-from">
@@ -146,6 +170,30 @@ const ViewLinkInstance = ({
           }
         </div>
       </div>
+      <div className={s.terminals}>
+        {
+          departurePlace &&
+          <div className={s.terminal}>
+            <div className={cx(s.terminalLabel, s.departure)}>
+              Departure
+            </div>
+            <div className={s.terminalDescription}>
+              {departurePlace}
+            </div>
+          </div>
+        }
+        {
+          arrivalPlace &&
+          <div className={s.terminal}>
+            <div className={cx(s.terminalLabel, s.arrival)}>
+              Arrival
+            </div>
+            <div className={s.terminalDescription}>
+              {arrivalPlace}
+            </div>
+          </div>
+        }
+      </div>
       {
         priceAmount &&
         <div className={s.cost}>
@@ -169,6 +217,7 @@ const ViewLinkInstance = ({
             }
             <div className={s.ratingLabel}>
               <label>Availability</label>
+              <span>{truncate(avgAvailabilityRating, 4)}</span>
             </div>
             <div className={s.avgRatingValue}>
               {truncate(avgAvailabilityRating, 4)}
@@ -185,6 +234,7 @@ const ViewLinkInstance = ({
             }
             <div className={s.ratingLabel}>
               <label>Departure reliability</label>
+              <span>{truncate(avgDepartureRating, 4)}</span>
             </div>
             <div className={s.avgRatingValue}>
               {truncate(avgDepartureRating, 4)}
@@ -201,6 +251,7 @@ const ViewLinkInstance = ({
             }
             <div className={s.ratingLabel}>
               <label>Arrival reliability</label>
+              <span>{truncate(avgArrivalRating, 4)}</span>
             </div>
             <div className={s.avgRatingValue}>
               {truncate(avgArrivalRating, 4)}
@@ -217,27 +268,34 @@ const ViewLinkInstance = ({
             }
             <div className={s.ratingLabel}>
               <label>Awesomeness</label>
+              <span>{truncate(avgAwesomeRating, 4)}</span>
             </div>
             <div className={s.avgRatingValue}>
               {truncate(avgAwesomeRating, 4)}
             </div>
           </div>
         </div>
-        <div id="total-average" className={s.totalAverage}>
-          <div className={s.totalAverageLabel}>
-            SCORE
+        <div className={s.bottomScore}>
+          <div id="hidden-score" className={s.score}>
+            <div className={s.scoreLabel}>
+              <i className="material-icons">stars</i>
+            </div>
+            <div id="hidden-score-value" className={s.scoreValue}>
+              {truncate(avgRating, 4)}
+            </div>
           </div>
-          <div id="total-average-value" className={s.totalAverageValue}>
-            {truncate(avgRating, 4)}
-          </div>
-        </div>
-        <div className={s.vote}>
-          <div className={s.voteLabel}>
-            Hot or Not?
-          </div>
-          <div id="up-vote" className={s.voteButtons}>
-            <FontIcon className={cx(s.voteButton, "material-icons")} style={{ fontSize: '32px' }}>sentiment_very_satisfied</FontIcon>
-            <FontIcon className={cx(s.voteButton, "material-icons")} style={{ fontSize: '32px' }}>sentiment_very_dissatisfied</FontIcon>
+          <div className={s.vote}>
+            <div className={s.voteLabel}>
+              VOTE!
+            </div>
+            <div id="hidden-up-vote" className={s.voteButtons}>
+              <i className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}>
+                sentiment_very_satisfied
+              </i>
+              <i className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}>
+                sentiment_very_dissatisfied
+              </i>
+            </div>
           </div>
         </div>
       </div>

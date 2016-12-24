@@ -89,6 +89,43 @@
   }
 }
 
+.terminals {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.terminal .terminal {
+}
+
+.terminal .terminalLabel {
+}
+
+.terminalLabel.departure {
+}
+
+.terminalLabel.arrival {
+  text-align: right;
+}
+
+.terminal .terminalDescription {
+}
+
+@media (max-width: 425px) {
+  
+  .terminals {
+    display: block;
+  }
+  
+  .terminalLabel.departure {
+    text-align: center;
+  }
+
+  .terminalLabel.arrival {
+    text-align: center;
+  }
+}
+
 .cost {
   margin-top: 16px;
 }
@@ -100,11 +137,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  align-content: stretch;
 }
 
 @media (max-width: 570px) {
   .ratingsAndVotes {
-    display: block;
+    flex-direction: column-reverse;
+  }
+  .bottomScore {
+    width: 100%;
   }
 }
 
@@ -118,6 +159,10 @@
 
 .ratings .rating .ratingLabel {
   margin-right: 16px;
+}
+
+.rating .ratingLabel span {
+  display: none;
 }
 
 .rating .ratingValues {
@@ -139,7 +184,11 @@
   .ratings .rating .ratingLabel {
     margin-right: initial;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+  }
+  .rating .ratingLabel span {
+    display: inline;
+    margin-left: 12px;
   }
   .rating .ratingValue {
     margin-right: initial;
@@ -151,32 +200,118 @@
   }
 }
 
-.totalAverage {
+.topScore {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.totalAverage .totalAverageLabel {
-  text-align: center;
+.bottomScore {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.totalAverage .totalAverageValue {
-  font-size: 24px;
-  text-align: center;
+.score {
+  display: flex;
+  align-items: center;
+}
+
+.score .scoreLabel {
+  margin-right: 6px;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+}
+
+.score .scoreValue {
+  font-size: 26px;
 }
 
 .vote {
+  display: flex;
 }
 
 .vote .voteLabel {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
 }
 
 .vote .voteButtons {
   display: flex;
-  justify-content: center;
+  align-items: center;
 }
 
-.vote .voteButtons .voteButton {
-  margin-left: 4px;
-  margin-right: 4px;
+.voteButton {
+  font-size: 30px;
+  cursor: pointer;
 }
 
+@media (min-width: 426px) {
+  .topScore {
+    display: none;
+  }
+}
+
+@media (min-width: 571px) {
+  .bottomScore {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-around;
+  }
+  .score {
+  }
+  .vote {
+    flex-direction: column;
+  }
+  .vote .voteLabel {
+    margin-right: initial;
+    justify-content: center;
+  }
+}
+
+.voteUp {
+  color: #22aa22;
+}
+
+.voteDown {
+  color: #aa2222;
+}
+
+@keyframes pulsate1 {
+  0%  { transform: scale(1); }
+  10%  { transform: scale(1); }
+  20%  { transform: scale(1); }
+  30%  { transform: scale(1); }
+  40%  { transform: scale(1.2); }
+  50%  { transform: scale(1); }
+  60%  { transform: scale(1); }
+  70%  { transform: scale(1); }
+  80%  { transform: scale(1); }
+  90%  { transform: scale(1); }
+  100%  { transform: scale(1); }
+}
+
+@keyframes pulsate2 {
+  0%  { transform: scale(1); }
+  10%  { transform: scale(1); }
+  20%  { transform: scale(1); }
+  30%  { transform: scale(1); }
+  40%  { transform: scale(1); }
+  50%  { transform: scale(1); }
+  60%  { transform: scale(1.2); }
+  70%  { transform: scale(1); }
+  80%  { transform: scale(1); }
+  90%  { transform: scale(1); }
+  100%  { transform: scale(1); }
+}
+
+.pulsar1 {
+  animation: pulsate1 3s infinite 3s;
+}
+
+.pulsar2 {
+  animation: pulsate2 3s infinite 3s;
+}

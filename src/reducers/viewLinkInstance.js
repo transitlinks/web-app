@@ -17,7 +17,6 @@ export default (state = {}, action) => {
     case SAVE_RATING_START:
     case SAVE_RATING_SUCCESS:
     case SAVE_RATING_ERROR:
-      console.log("action", action);
       return graphqlReduce(
         state, action,
         { 
