@@ -74,6 +74,7 @@ export default {
               arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
               priceAmount, priceCurrency,
               description,
+              upVotes, downVotes,
               durationMinutes
             }
           }`

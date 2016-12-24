@@ -21,6 +21,9 @@ import {
 	LinkInstanceType, 
 	LinkInstanceInputType, 
 } from '../types/TransitLinkType';
+
+import { VotesType } from '../types/VoteType';
+
 import {
   GraphQLObjectType,
   GraphQLString,
@@ -176,6 +179,26 @@ export const TransitLinkMutationFields = {
       return await createOrUpdateLink(linkInstance, request.user);
     }
   
+  },
+  
+  votes: {
+    
+    type: VotesType,
+    description: 'Cast a vote on link instance',
+    args: {
+      uuid: { type: GraphQLString },
+      voteType: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid, voteType }) => {
+      log.info(`graphql-request=save-vote user=${request.user ? request.user.uuid : null} uuid=${uuid} vote-type=${voteType}`);
+      const votesCount = await linkRepository.saveVote(uuid, voteType);
+      return {
+        linkInstanceUuid: uuid,
+        voteType,
+        votesCount
+      };
+    }
+  
   }
 
 };
@@ -237,7 +260,7 @@ export const TransitLinkQueryFields = {
       linkInstance.avgRating = calcInstanceRating(linkInstance);
       linkInstance.durationMinutes = calcTransitDuration(linkInstance);
       delete linkInstance.id;
-
+      
       return linkInstance;
     
     }

@@ -10,7 +10,8 @@ export const VotesType = new GraphQLObjectType({
   name: 'Votes',
   fields: {
     linkInstanceUuid: { type: GraphQLString },
-    votes: { type: GraphQLInt }
+    voteType: { type: GraphQLString },
+    votesCount: { type: GraphQLInt }
   }
 });
 

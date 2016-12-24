@@ -33,6 +33,8 @@ export const LinkInstanceType = new GraphQLObjectType({
     avgArrivalRating: { type: GraphQLFloat },
     avgAwesomeRating: { type: GraphQLFloat },
     avgRating: { type: GraphQLFloat },
+    upVotes: { type: GraphQLInt },
+    downVotes: { type: GraphQLInt },
     durationMinutes: { type: GraphQLInt }
   })
 });

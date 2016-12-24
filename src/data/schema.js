@@ -15,6 +15,7 @@ import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './q
 import * as links from './queries/links';
 
 const schema = new Schema({
+  
   query: new ObjectType({
     name: 'Query',
     fields: {
@@ -32,15 +33,17 @@ const schema = new Schema({
       intl
     }
   }),
+
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
       linkInstance: TransitLinkMutationFields.linkInstance,
+      votes: TransitLinkMutationFields.votes,
       user: UserMutationFields.user,
-      rating: RatingMutationFields.rating,
-      vote: VoteMutationFields.vote
+      rating: RatingMutationFields.rating
     },
   })
+
 });
 
 export default schema;

@@ -88,11 +88,15 @@ const LinkInstance = Model.define('LinkInstance', {
   },
 
   upVotes: {
-    type: DataType.INTEGER
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   },
   
   downVotes: {
-    type: DataType.INTEGER
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   }
 
 }, {

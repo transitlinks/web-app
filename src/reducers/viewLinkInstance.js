@@ -36,10 +36,12 @@ export default (state = {}, action) => {
       return graphqlReduce(
         state, action,
         { 
-          start: () => ({ votes: null }), 
-          success: () => ({ 
-            votes: action.payload.votes
-          }), 
+          start: () => ({}), 
+          success: () => {
+            const votes = {};
+            votes[action.payload.votes.voteType] = action.payload.votes.votesCount;
+            return votes;
+          }, 
           error: () => ({ votes: null })
         },
         VOTE_START,

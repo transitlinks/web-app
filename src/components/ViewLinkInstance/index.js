@@ -43,7 +43,8 @@ const formatTime = (hours, minutes) => {
 const ViewLinkInstance = ({
   user,
   saveRating, voteUp,
-  intl, linkInstance, initialRatings, ratings
+  intl, 
+  linkInstance, initialRatings, ratings
 }) => {
   
   const { 

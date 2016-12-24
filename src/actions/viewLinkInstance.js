@@ -44,13 +44,13 @@ export const saveRating = (rating) => {
 };
 
 
-export const vote = (linkInstanceUuid, value) => {
+export const vote = (linkInstanceUuid, voteType) => {
   
   return async (...args) => {
     
     const query = `
       mutation saveVote {
-        vote(linkInstanceUuid: "${linkInstanceUuid}", value: ${value}) {
+        votes(uuid: "${linkInstanceUuid}", voteType: ${voteType}) {
           linkInstanceUuid,
           votes
         }
@@ -58,7 +58,7 @@ export const vote = (linkInstanceUuid, value) => {
     `;
     
     return graphqlAction(
-      ...args, 
+      ...args,
       { query }, [ 'votes' ],
       VOTE_START,
       VOTE_SUCCESS,

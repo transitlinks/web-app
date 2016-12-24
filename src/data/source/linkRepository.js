@@ -49,6 +49,20 @@ const getInstanceIdByUuid = async (uuid) => {
 
 };
 
+const saveVote = async (uuid, voteType) => {
+
+  const linkInstance = await LinkInstance.fndOne({ uuid });
+  if (!linkInstance.get(voteType)) {
+    linkInstance.set(voteType, 0);
+  }
+  linkInstance.increment(voteType);
+  log.debug("savving vote", linkInstance);
+  await linkInstance.save();
+  log.debug("saved vote", linkInstance);
+  return linkInstance.get(voteType);
+
+};
+
 export default {
   
   getByUuid: async (uuid) => {
@@ -78,7 +92,9 @@ export default {
   getInstanceByUuid: getInstanceByUuid,
   
   getInstancesByUserId: getInstancesByUserId,
-   
+
+  saveVote: saveVote,
+
   getByLocalityId: async (localityId) => {
   
     const links = await TransitLink.findAll({ 
