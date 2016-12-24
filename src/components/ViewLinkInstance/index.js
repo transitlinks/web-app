@@ -86,16 +86,14 @@ const ViewLinkInstance = ({
     full: <FontIcon className={cx(s.star, "material-icons")}>star</FontIcon>
   };
   
-  console.log("instance", linkInstance);
-
   return (
     <div className={s.container}>
       <div className={s.topScore}>
-        <div id="hidden-score" className={s.score}>
+        <div id="top-score" className={s.score}>
           <div className={s.scoreLabel}>
             <i className="material-icons">stars</i>
           </div>
-          <div id="hidden-score-value" className={s.scoreValue}>
+          <div id="top-score-value" className={s.scoreValue}>
             {truncate(avgRating, 4)}
           </div>
         </div>
@@ -103,7 +101,7 @@ const ViewLinkInstance = ({
           <div className={s.voteLabel}>
             VOTE!
           </div>
-          <div id="hidden-up-vote" className={s.voteButtons}>
+          <div id="top-up-vote" className={s.voteButtons}>
             <i className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}>
               sentiment_very_satisfied
             </i>
@@ -276,11 +274,11 @@ const ViewLinkInstance = ({
           </div>
         </div>
         <div className={s.bottomScore}>
-          <div id="hidden-score" className={s.score}>
+          <div id="bottom-score" className={s.score}>
             <div className={s.scoreLabel}>
               <i className="material-icons">stars</i>
             </div>
-            <div id="hidden-score-value" className={s.scoreValue}>
+            <div id="bottom-score-value" className={s.scoreValue}>
               {truncate(avgRating, 4)}
             </div>
           </div>
@@ -288,7 +286,7 @@ const ViewLinkInstance = ({
             <div className={s.voteLabel}>
               VOTE!
             </div>
-            <div id="hidden-up-vote" className={s.voteButtons}>
+            <div id="bottom-up-vote" className={s.voteButtons}>
               <i className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}>
                 sentiment_very_satisfied
               </i>
