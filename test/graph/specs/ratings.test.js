@@ -71,6 +71,29 @@ const getRatings = async (userUuid, linkInstanceUuid) => {
 
 };
 
+const saveVote = async (linkInstanceUuid, voteType) => {
+  
+  const query = JSON.stringify({
+    query: `
+      mutation {
+        votes(uuid: "${linkInstanceUuid}", voteType: "${voteType}") {,
+          linkInstanceUuid,
+          voteType,
+          votesCount
+        }
+      }
+    `,
+    variables: {}
+  });
+  
+  const response = await test(query);
+  assertResponse(response);
+  assert(response.data.votes);
+  
+  return response.data.votes;
+
+};
+
 describe('data/queries/rating', () => {
 
   let testUsers;
@@ -136,6 +159,25 @@ describe('data/queries/rating', () => {
     assert.equal(ratings.userAwesomeRating, 5);
     assert.equal(ratings.avgAwesomeRating, 4);
 
+  });
+  
+  it('should save votes', async () => {
+    
+    const response = 
+      await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater), testUsers[0].uuid);
+
+    const linkInstance = response.data.linkInstance;
+
+    let upVotes = await saveVote(linkInstance.uuid, 'upVotes');
+    upVotes = await saveVote(linkInstance.uuid, 'upVotes');
+    
+    let downVotes = await saveVote(linkInstance.uuid, 'downVotes');
+    downVotes = await saveVote(linkInstance.uuid, 'downVotes');
+    downVotes = await saveVote(linkInstance.uuid, 'downVotes');
+    
+    assert.equal(upVotes.votesCount, 2);
+    assert.equal(downVotes.votesCount, 3);
+    
   });
 
 });
