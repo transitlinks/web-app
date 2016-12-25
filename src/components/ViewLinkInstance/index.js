@@ -301,22 +301,22 @@ const ViewLinkInstance = ({
               VOTE!
             </div>
             <div id="bottom-up-vote" className={s.voteButtons}>
-              <i 
+              <i id="bottom-upvotes-button"
                 className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
-                onClick={() => vote(uuid, 'upVotes')}
-              >
+                onClick={() => vote(uuid, 'upVotes')}>
                 sentiment_very_satisfied
               </i>
-              <span className={cx(s.voteValue, s.voteUp)}>
+              <span id="bottom-upvotes-value"
+                className={cx(s.voteValue, s.voteUp)}>
                 { upVotes || linkInstance.upVotes }
               </span>
-              <i 
+              <i id="bottom-downvotes-button"
                 className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
-                onClick={() => vote(uuid, 'downVotes')}
-              >
+                onClick={() => vote(uuid, 'downVotes')}>
                 sentiment_very_dissatisfied
               </i>
-              <span className={cx(s.voteValue, s.voteDown)}>
+              <span id="bottom-downvotes-value" 
+                className={cx(s.voteValue, s.voteDown)}>
                 { downVotes || linkInstance.downVotes }
               </span>
             </div>

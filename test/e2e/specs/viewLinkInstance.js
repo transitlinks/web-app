@@ -37,7 +37,21 @@ describe('View link instance', () => {
 
     browser.pause(1000);
     assert.equal(browser.getText('#bottom-score-value'), '3');
-  
+
+    browser.click('#bottom-upvotes-button');
+    browser.pause(200);
+    browser.click('#bottom-upvotes-button');
+    browser.pause(200);
+    browser.click('#bottom-upvotes-button');
+    browser.pause(200);
+    browser.click('#bottom-downvotes-button');
+    browser.pause(200);
+    browser.click('#bottom-downvotes-button');
+    browser.pause(200);
+
+    assert.equal(browser.getText('#bottom-upvotes-value'), '3');
+    assert.equal(browser.getText('#bottom-downvotes-value'), '2');
+
   });
 
 });
