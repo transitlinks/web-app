@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { saveRating, voteUp } from '../../actions/viewLinkInstance';
+import { saveRating, vote } from '../../actions/viewLinkInstance';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './ViewLinkInstance.css';
@@ -42,9 +42,10 @@ const formatTime = (hours, minutes) => {
  
 const ViewLinkInstance = ({
   user,
-  saveRating, voteUp,
+  saveRating, vote,
   intl, 
-  linkInstance, initialRatings, ratings
+  linkInstance, initialRatings, ratings,
+  upVotes, downVotes
 }) => {
   
   const { 
@@ -103,12 +104,24 @@ const ViewLinkInstance = ({
             VOTE!
           </div>
           <div id="top-up-vote" className={s.voteButtons}>
-            <i className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}>
+            <i 
+              className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
+              onClick={() => vote(uuid, 'upVotes')}
+            >
               sentiment_very_satisfied
             </i>
-            <i className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}>
+            <span className={cx(s.voteValue, s.voteUp)}>
+              { upVotes || linkInstance.upVotes }
+            </span>
+            <i 
+              className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
+              onClick={() => vote(uuid, 'downVotes')}
+            >
               sentiment_very_dissatisfied
             </i>
+            <span className={cx(s.voteValue, s.voteDown)}>
+              { downVotes || linkInstance.downVotes }
+            </span>
           </div>
         </div>
       </div>
@@ -288,12 +301,24 @@ const ViewLinkInstance = ({
               VOTE!
             </div>
             <div id="bottom-up-vote" className={s.voteButtons}>
-              <i className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}>
+              <i 
+                className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
+                onClick={() => vote(uuid, 'upVotes')}
+              >
                 sentiment_very_satisfied
               </i>
-              <i className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}>
+              <span className={cx(s.voteValue, s.voteUp)}>
+                { upVotes || linkInstance.upVotes }
+              </span>
+              <i 
+                className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
+                onClick={() => vote(uuid, 'downVotes')}
+              >
                 sentiment_very_dissatisfied
               </i>
+              <span className={cx(s.voteValue, s.voteDown)}>
+                { downVotes || linkInstance.downVotes }
+              </span>
             </div>
           </div>
         </div>
@@ -305,9 +330,11 @@ const ViewLinkInstance = ({
 export default injectIntl(
   connect(state => ({
     user: state.auth.auth.user,
-    ratings: state.viewLinkInstance.ratings
+    ratings: state.viewLinkInstance.ratings,
+    upVotes: state.viewLinkInstance.upVotes,
+    downVotes: state.viewLinkInstance.downVotes
   }), {
     saveRating,
-    voteUp
+    vote
   })(withStyles(s)(ViewLinkInstance))
 );

@@ -50,9 +50,10 @@ export const vote = (linkInstanceUuid, voteType) => {
     
     const query = `
       mutation saveVote {
-        votes(uuid: "${linkInstanceUuid}", voteType: ${voteType}) {
+        votes(uuid: "${linkInstanceUuid}", voteType: "${voteType}") {
           linkInstanceUuid,
-          votes
+          voteType,
+          votesCount
         }
       }
     `;

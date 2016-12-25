@@ -280,6 +280,11 @@
   color: #aa2222;
 }
 
+.voteValue {
+  margin-right: 8px;
+  margin-left: 2px;
+}
+
 @keyframes pulsate1 {
   0%  { transform: scale(1); }
   10%  { transform: scale(1); }

@@ -51,15 +51,18 @@ const getInstanceIdByUuid = async (uuid) => {
 
 const saveVote = async (uuid, voteType) => {
 
-  const linkInstance = await LinkInstance.fndOne({ uuid });
-  if (!linkInstance.get(voteType)) {
-    linkInstance.set(voteType, 0);
+  const linkInstance = await LinkInstance.findOne({ where: { uuid } });
+  const update = {};
+
+  const count = linkInstance.get(voteType);
+  if (count === null || count === undefined) {
+    update[voteType] = 1;
+  } else {
+    update[voteType] = count + 1;
   }
-  linkInstance.increment(voteType);
-  log.debug("savving vote", linkInstance);
-  await linkInstance.save();
-  log.debug("saved vote", linkInstance);
-  return linkInstance.get(voteType);
+  
+  await LinkInstance.update({ ...update }, { where: { uuid } });
+  return update[voteType];;
 
 };
 
