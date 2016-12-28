@@ -10,7 +10,7 @@ const Terminal = ({
   date, time,
   place,
   onChangeTime,
-  onChangePlace
+  onChangeDescription, onChangeLocation, onChangeAddress
 }) => {
   
   const labels = {
@@ -52,7 +52,7 @@ const Terminal = ({
           hintText="Place description"
           multiLine={true}
           rows={1}
-          onChange={onChangePlace(`${terminal}Place`)} />
+          onChange={onChangeDescription(`${terminal}Description`)} />
       </div>
     </div>
   );

@@ -25,8 +25,8 @@ const EditLinkInstance = ({
   linkInstance, transportTypes,
   uuid,
   from, to, transport,
-  departureDate, departureTime, departurePlace,
-  arrivalDate, arrivalTime, arrivalPlace,
+  departureDate, departureTime, departureDescription,
+  arrivalDate, arrivalTime, arrivalDescription,
   priceAmount, priceCurrency,
   description,
   availabilityRating, departureRating, arrivalRating, awesomeRating
@@ -61,9 +61,9 @@ const EditLinkInstance = ({
     }, {
       uuid,
       departureDate: departureDateJson, 
-      departureHour, departureMinute, departurePlace,
+      departureHour, departureMinute, departureDescription,
       arrivalDate: arrivalDateJson, 
-      arrivalHour, arrivalMinute, arrivalPlace,
+      arrivalHour, arrivalMinute, arrivalDescription,
       priceAmount: parseFloat(priceAmount), priceCurrency,
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
@@ -195,9 +195,9 @@ const EditLinkInstance = ({
               terminal: 'departure', 
               date: departureDate, 
               time: departureTime, 
-              place: departurePlace || '', 
+              place: departureDescription || '', 
               onChangeTime: onChangeProperty,
-              onChangePlace: onChangeProperty
+              onChangeDescription: onChangeProperty
             }} />
           </div>
           <div className={s.arrival}>
@@ -208,9 +208,9 @@ const EditLinkInstance = ({
               terminal: 'arrival', 
               date: arrivalDate, 
               time: arrivalTime,
-              place: arrivalPlace || '', 
+              place: arrivalDescription || '', 
               onChangeTime: onChangeProperty,
-              onChangePlace: onChangeProperty
+              onChangeDescription: onChangeProperty
             }} />
           </div>
         </div>
@@ -315,10 +315,10 @@ export default injectIntl(
     transport: state.editLink.transport,
     departureDate: state.editLink.departureDate,
     departureTime: state.editLink.departureTime,
-    departurePlace: state.editLink.departurePlace,
+    departureDescription: state.editLink.departureDescription,
     arrivalDate: state.editLink.arrivalDate,
     arrivalTime: state.editLink.arrivalTime,
-    arrivalPlace: state.editLink.arrivalPlace,
+    arrivalDescription: state.editLink.arrivalDescription,
     priceAmount: state.editLink.priceAmount,
     priceCurrency: state.editLink.priceCurrency,
     description: state.editLink.description,

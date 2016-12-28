@@ -70,8 +70,8 @@ export default {
                 to { apiId, name, description, countryLong, lat, lng} 
               },
               transport { slug },
-              departureDate, departureHour, departureMinute, departurePlace,
-              arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+              departureDate, departureHour, departureMinute, departureDescription,
+              arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
               priceAmount, priceCurrency,
               description,
               upVotes, downVotes,

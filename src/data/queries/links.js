@@ -102,8 +102,8 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
 	  
     let {
-      departureDate, departureHour, departureMinute, departurePlace,
-      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+      departureDate, departureHour, departureMinute, departureDescription,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
       priceAmount, priceCurrency,
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
@@ -119,8 +119,8 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
       userId, 
 			linkId: link.id,
 			transportId: transport.id,
-      departureDate, departureHour, departureMinute, departurePlace,
-      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+      departureDate, departureHour, departureMinute, departureDescription,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
       priceAmount, priceCurrency,
       description
     });
@@ -143,8 +143,8 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
     
     let {
-      departureDate, departureHour, departureMinute, departurePlace,
-      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+      departureDate, departureHour, departureMinute, departureDescription,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
       priceAmount, priceCurrency,
       description
     } = linkInstance;
@@ -153,8 +153,8 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
       uuid: linkInstance.uuid,
 			linkId: link.id,
 			transportId: transport.id,
-      departureDate, departureHour, departureMinute, departurePlace,
-      arrivalDate, arrivalHour, arrivalMinute, arrivalPlace,
+      departureDate, departureHour, departureMinute, departureDescription,
+      arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
       priceAmount, priceCurrency,
       description
     };
