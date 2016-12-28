@@ -39,7 +39,19 @@ const LinkInstance = Model.define('LinkInstance', {
     type: DataType.INTEGER
   },
   
-  departurePlace: {
+  departureDescription: {
+    type: DataType.STRING
+  },
+  
+  departureLat: {
+    type: DataType.FLOAT
+  },
+  
+  departureLng: {
+    type: DataType.FLOAT
+  },
+  
+  departureAddress: {
     type: DataType.STRING
   },
 
@@ -55,7 +67,19 @@ const LinkInstance = Model.define('LinkInstance', {
     type: DataType.INTEGER
   },
 
-  arrivalPlace: {
+  arrivalDescription: {
+    type: DataType.STRING
+  },
+  
+  arrivalLat: {
+    type: DataType.FLOAT
+  },
+  
+  arrivalLng: {
+    type: DataType.FLOAT
+  },
+  
+  arrivalAddress: {
     type: DataType.STRING
   },
   

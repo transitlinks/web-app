@@ -71,9 +71,9 @@ export default function editLink(state = null, action) {
           to: link.to,
           transport: linkInstance.transport.slug, 
           departureDate: departureDate, departureTime: departureDate, 
-          departurePlace: linkInstance.departurePlace,
+          departureDescription: linkInstance.departureDescription,
           arrivalDate: arrivalDate, arrivalTime: arrivalDate, 
-          arrivalPlace: linkInstance.arrivalPlace || '',
+          arrivalDescription: linkInstance.arrivalDescription || '',
           priceAmount: linkInstance.priceAmount || '', priceCurrency: linkInstance.priceCurrency,
           description: linkInstance.description || ''
         };
@@ -84,8 +84,8 @@ export default function editLink(state = null, action) {
           ...state, 
           to: null, from: null, 
           transport: null, 
-          departureDate: null, departureTime: null, departurePlace: '',
-          arrivalDate: null, arrivalTime: null, arrivalPlace: '',
+          departureDate: null, departureTime: null, departureDescription: '',
+          arrivalDate: null, arrivalTime: null, arrivalDescription: '',
           priceAmount: '', priceCurrency: null,
           description: '',
           availabilityRating: null, departureRating: null, arrivalRating: null, awesomeRating: null

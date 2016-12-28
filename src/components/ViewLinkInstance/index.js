@@ -53,7 +53,7 @@ const ViewLinkInstance = ({
     link, transport,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
-    departurePlace, arrivalPlace,
+    departureDescription, arrivalDescription,
     durationMinutes,
     priceAmount, priceCurrency,
     description
@@ -91,7 +91,7 @@ const ViewLinkInstance = ({
   return (
     <div className={s.container}>
       <div className={s.topScore}>
-        <div id="top-score" className={s.score}>
+        <div id="top-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
           <div className={s.scoreLabel}>
             <i className="material-icons">stars</i>
           </div>
@@ -184,24 +184,24 @@ const ViewLinkInstance = ({
       </div>
       <div className={s.terminals}>
         {
-          departurePlace &&
+          departureDescription &&
           <div className={s.terminal}>
             <div className={cx(s.terminalLabel, s.departure)}>
               Departure
             </div>
             <div className={s.terminalDescription}>
-              {departurePlace}
+              {departureDescription}
             </div>
           </div>
         }
         {
-          arrivalPlace &&
+          arrivalDescription &&
           <div className={s.terminal}>
             <div className={cx(s.terminalLabel, s.arrival)}>
               Arrival
             </div>
             <div className={s.terminalDescription}>
-              {arrivalPlace}
+              {arrivalDescription}
             </div>
           </div>
         }
@@ -288,7 +288,7 @@ const ViewLinkInstance = ({
           </div>
         </div>
         <div className={s.bottomScore}>
-          <div id="bottom-score" className={s.score}>
+          <div id="bottom-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
             <div className={s.scoreLabel}>
               <i className="material-icons">stars</i>
             </div>

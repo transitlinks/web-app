@@ -320,3 +320,7 @@
 .pulsar2 {
   animation: pulsate2 3s infinite 3s;
 }
+
+.hidden {
+  visibility: hidden;
+}

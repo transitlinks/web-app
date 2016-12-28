@@ -42,11 +42,11 @@ export const validLinkInstance = (departureDate, arrivalDate) => {
     departureDate: departureDate.toJSON(),
     departureHour: 15,
     departureMinute: 30,
-    departurePlace: 'leningradsky vokzal',
+    departureDescription: 'leningradsky vokzal',
     arrivalDate: arrivalDate.toJSON(),
     arrivalHour: 13,
     arrivalMinute: 30,
-    arrivalPlace: 'central railway station',
+    arrivalDescription: 'central railway station',
     priceAmount: 120.50,
     priceCurrency: 'USD',
     description: 'this is description'
