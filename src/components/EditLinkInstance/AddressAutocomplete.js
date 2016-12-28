@@ -1,11 +1,11 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './LocalityAutocomplete.css';
+import s from './AddressAutocomplete.css';
 import cx from 'classnames';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
-import { searchLocalities } from '../../actions/autocomplete';
-import { selectLocality } from '../../actions/editLink';
+import { searchAddresses } from '../../actions/autocomplete';
+import { selectAddress } from '../../actions/editLink';
 import AutoComplete from 'material-ui/AutoComplete';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
@@ -17,20 +17,20 @@ const searchTriggered = (input) => {
   return input && input.length > 2;
 };
 
-const LocalityAutocomplete = ({ 
-  endpoint, className, compact,
-  initialInput, predictions, input, id,
-  setProperty, searchLocalities, selectLocality
+const AddressAutocomplete = ({
+  endpoint, location, className, compact,
+  initialValue, predictions, input, id,
+  setProperty, searchAddresses, selectAddress
 }) => {
   
-  const onSelect = (locality) => {
-    selectLocality({ endpoint, locality: locality.value });
+  const onSelect = (address) => {
+    selectAddress({ endpoint, locality: address.value });
   };
 
   const onUpdateInput = (input) => { 
-    setProperty('localityInput', input);
+    setProperty('addressInput', input);
     if (searchTriggered(input)) {
-      searchLocalities(input);
+      searchAddresses(input, location);
     }
   };
 
@@ -40,14 +40,14 @@ const LocalityAutocomplete = ({
       return [];
     }
 
-    return (predictions || []).map(locality => {
+    return (predictions || []).map(place => {
       return {
-        id: locality.apiId,
-        text: locality.description,
-        value: locality,
+        id: place.apiId,
+        text: place.description,
+        value: place,
         elem: (
-          <MenuItem id={locality.apiId} style={{ "WebkitAppearance": "initial" }}
-            primaryText={locality.description} />
+          <MenuItem id={place.apiId} style={{ "WebkitAppearance": "initial" }}
+            primaryText={place.description} />
         )
       };
     });
@@ -66,9 +66,9 @@ const LocalityAutocomplete = ({
     <div className={cx(className, s.container)}>
       <AutoComplete id={id}
         {...props}
-        searchText={initialInput}
-        hintText="Search place"
-        floatingLabelText={endpoint === 'from' ? 'Origin' : 'Destination'}
+        searchText={initialValue ? initialValue.description : ''}
+        hintText="Search location"
+        floatingLabelText="Location"
         filter={AutoComplete.noFilter}
         dataSource={dataSource()}
         dataSourceConfig={{ text: 'text', value: 'elem' }}
@@ -80,15 +80,15 @@ const LocalityAutocomplete = ({
 
 }
 
-LocalityAutocomplete.propTypes = {
+AddressAutocomplete.propTypes = {
   predictions: React.PropTypes.array
 };
 
 export default connect(state => ({
-  predictions: state.autocomplete.localities,
-  input: state.autocomplete.localityInput
+  input: state.autocomplete.addressInput,
+  predictions: state.autocomplete.localities
 }), {
   setProperty,
-  searchLocalities,
-  selectLocality
-})(withStyles(s)(LocalityAutocomplete));
+  searchAddresses,
+  selectAddress
+})(withStyles(s)(AddressAutocomplete));

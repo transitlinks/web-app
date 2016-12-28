@@ -1,0 +1,13 @@
+@import '../variables.css';
+
+.container {
+  display: inline-block;
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+@media (max-width: 425px) {
+  .container {
+    width: 100%;
+  }
+}

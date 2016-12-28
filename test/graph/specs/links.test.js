@@ -130,7 +130,9 @@ describe('data/queries/links', () => {
               to { name, lat, lng }
             },
             departureDate, departureHour, departureMinute, departureDescription,
+            departureLat, departureLng, departureAddress,
             arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
+            arrivalLat, arrivalLng, arrivalAddress,
             priceAmount, priceCurrency,
             description,
             durationMinutes
@@ -154,10 +156,16 @@ describe('data/queries/links', () => {
     assert(linkInstance.departureHour, 'missing property: linkInstance.departureHour');
     assert(linkInstance.departureMinute, 'missing property: linkInstance.departureMinute');
     assert(linkInstance.departureDescription, 'missing property: linkInstance.departureDescription');
+    assert(linkInstance.departureLat, 'missing property: linkInstance.departureLat');
+    assert(linkInstance.departureLng, 'missing property: linkInstance.departureLng');
+    assert(linkInstance.departureAddress, 'missing property: linkInstance.departureAddress');
     assert(linkInstance.arrivalDate, 'missing property: linkInstance.arrivalDate');
     assert(linkInstance.arrivalHour, 'missing property: linkInstance.arrivalHour');
     assert(linkInstance.arrivalMinute, 'missing property: linkInstance.arrivalMinute');
     assert(linkInstance.arrivalDescription, 'missing property: linkInstance.arrivalDescription');
+    assert(linkInstance.arrivalLat, 'missing property: linkInstance.arrivalLat');
+    assert(linkInstance.arrivalLng, 'missing property: linkInstance.arrivalLng');
+    assert(linkInstance.arrivalAddress, 'missing property: linkInstance.arrivalAddress');
     assert(linkInstance.priceAmount, 'missing property: linkInstance.priceAmount');
     assert(linkInstance.priceCurrency, 'missing property: linkInstance.priceCurrency');
     assert(linkInstance.description, 'missing property: linkInstance.description');

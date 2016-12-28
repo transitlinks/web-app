@@ -1,13 +1,23 @@
+import { getLog } from '../../core/log';
+const log = getLog('data/sources/placesApi');
+
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 
 export default {
   
-  autocomplete: async (input) => {
+  autocomplete: async (input, types, location, radius) => {
     
-    const url = `${PLACES_API_URL}/autocomplete/json` +
-      `?input=${input}&types=(cities)&key=${PLACES_API_KEY}`;
-
+    let url = `${PLACES_API_URL}/autocomplete/json` +
+      `?input=${input}`;
+    
+    if (types) url += `&types=${types}`;
+    if (location) url += `&location=${location}`;
+    if (radius) url += `&radius=${radius}`;
+    
+    url += `&key=${PLACES_API_KEY}`;
+    
+    log.debug("SEARCH PLACES API", input, types, location, radius, url);
     const response = await fetch(url);
     if (response.status !== 'OK') {
       const status = response.status || response.statusCode;

@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-const testTerminal = (terminal) => {
+const testTerminal = (terminal, location) => {
     
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
@@ -14,6 +14,23 @@ const testTerminal = (terminal) => {
     browser.click('button=OK'); 
     const time = browser.getValue(`#${terminal}-time-picker`);
     assert(time.indexOf(':') === 2, `Invalid ${terminal} time value selected`);
+    
+    browser.pause(2000);
+    console.log("XXXXXXXX", browser.isVisible(`#${terminal}-address-full`));
+    if (browser.isVisible(`#${terminal}-address-full`)) {
+      browser.click(`#${terminal}-address-full`); 
+    } else {
+      browser.click(`#${terminal}-address-compact`); 
+    }
+
+    browser.keys('ma'); 
+    browser.pause(500); 
+    browser.keys('nn'); 
+    browser.pause(500); 
+    browser.waitForExist(`#address-${location}`);
+    browser.moveToObject(`#address-${location}`, 2, 2);
+    browser.click(`#address-${location}`);
+
     browser.setValue(`#${terminal}-terminal-place-input`, `${terminal} desc`);
 
 };
@@ -95,8 +112,8 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     
     browser.pause(500); 
 
-    testTerminal('departure');
-    testTerminal('arrival');
+    testTerminal('departure', 'helsinki');
+    testTerminal('arrival', 'moscow');
     
     browser.setValue('#price-amount-input', priceAmount);    
     browser.click('#currency-select');
