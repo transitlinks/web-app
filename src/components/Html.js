@@ -3,7 +3,6 @@ import { PLACES_API_KEY, GA_TRACKING_ID } from '../config';
 
 function Html({ title, description, style, script, children, lang, state }) {
   
-  console.log("PLACES API", PLACES_API_KEY);
   return (
     <html className="no-js" lang={lang}>
       <head>
@@ -40,7 +39,7 @@ function Html({ title, description, style, script, children, lang, state }) {
           <script src="https://www.google-analytics.com/analytics.js" async defer />
         }
         <script async defer
-          src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyDN0saXvrK_5d8CwiTwxa1JgKxwJH2yoYI`}>
+          src={`https://maps.googleapis.com/maps/api/js?key=${PLACES_API_KEY}`}>
         </script>
       </body>
     </html>

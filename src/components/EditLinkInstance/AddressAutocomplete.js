@@ -187,12 +187,13 @@ const AddressAutocomplete = ({
   return (
     <div className={cx(className, s.container)}>
 			<Dialog
+				contentStyle={{ maxWidth: '600px' }}
 				title={`Set ${endpoint} location`}
 				actions={dialogActions}
 				modal={false}
 				open={mapDialog === endpoint || mapDialog === endpoint + 'Loaded'}
 				onRequestClose={toggleMap}>
-      	<div>
+      	<div className={s.mapContainer}>
         	<div id="terminal-map" className={s.map}>
 						{renderMap(getMarkers())}
 						{geocodeAddress}
