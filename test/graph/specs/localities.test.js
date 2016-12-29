@@ -7,7 +7,7 @@ describe('data/queries/localities', () => {
     
     const query = JSON.stringify({
       query: `query {
-        localities(input: "moscow") {
+        localities(input: "moscow", types: "(cities)", location: "45.50,65.50", radius: 10000) {
           apiId,
           description,
           countryLong,

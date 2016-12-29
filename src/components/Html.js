@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
-import { GA_TRACKING_ID } from '../config';
+import { PLACES_API_KEY, GA_TRACKING_ID } from '../config';
 
 function Html({ title, description, style, script, children, lang, state }) {
+  
   return (
     <html className="no-js" lang={lang}>
       <head>
@@ -17,23 +18,29 @@ function Html({ title, description, style, script, children, lang, state }) {
       </head>
       <body>
         <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
-        {script && (
+        {
+          script && (
           <script
             id="source"
             src={script}
             data-initial-state={JSON.stringify(state)}
           />
         )}
-        {GA_TRACKING_ID &&
+        {
+          GA_TRACKING_ID &&
           <script
             dangerouslySetInnerHTML={{ __html:
             'window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;' +
             `ga('create','${GA_TRACKING_ID}','auto');ga('send','pageview')` }}
           />
         }
-        {GA_TRACKING_ID &&
+        {
+          GA_TRACKING_ID &&
           <script src="https://www.google-analytics.com/analytics.js" async defer />
         }
+        <script async defer
+          src={`https://maps.googleapis.com/maps/api/js?key=${PLACES_API_KEY}`}>
+        </script>
       </body>
     </html>
   );

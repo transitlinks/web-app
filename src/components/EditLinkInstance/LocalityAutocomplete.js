@@ -4,7 +4,7 @@ import s from './LocalityAutocomplete.css';
 import cx from 'classnames';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
-import { autocomplete } from '../../actions/autocomplete';
+import { searchLocalities } from '../../actions/autocomplete';
 import { selectLocality } from '../../actions/editLink';
 import AutoComplete from 'material-ui/AutoComplete';
 import TextField from 'material-ui/TextField';
@@ -12,6 +12,7 @@ import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import FontIcon from 'material-ui/FontIcon';
+import { reverseGeocode } from '../../services/linkService';
 
 const searchTriggered = (input) => {
   return input && input.length > 2;
@@ -20,17 +21,30 @@ const searchTriggered = (input) => {
 const LocalityAutocomplete = ({ 
   endpoint, className, compact,
   initialInput, predictions, input, id,
-  setProperty, autocomplete, selectLocality
+  setProperty, searchLocalities, selectLocality
 }) => {
   
+  const setPlace = (placeId) => {
+    reverseGeocode(placeId, (result) => {
+      const terminal = endpoint === 'from' ? 'departure' : 'arrival';
+      const location = result.geometry.location;
+      setProperty(terminal, {
+        lat: location.lat(),
+        lng: location.lng(),
+        description: result.formatted_address
+      });
+    });
+  };
+
   const onSelect = (locality) => {
+    setPlace(locality.id);
     selectLocality({ endpoint, locality: locality.value });
   };
 
   const onUpdateInput = (input) => { 
     setProperty('localityInput', input);
     if (searchTriggered(input)) {
-      autocomplete(input);
+      searchLocalities(input);
     }
   };
 
@@ -86,9 +100,9 @@ LocalityAutocomplete.propTypes = {
 
 export default connect(state => ({
   predictions: state.autocomplete.localities,
-  input: state.autocomplete.input
+  input: state.autocomplete.localityInput
 }), {
   setProperty,
-  autocomplete,
+  searchLocalities,
   selectLocality
 })(withStyles(s)(LocalityAutocomplete));

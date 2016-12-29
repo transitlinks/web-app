@@ -24,14 +24,35 @@ const EditLinkInstance = ({
   saveLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,
   uuid,
-  from, to, transport,
+  from, to, 
+  transport,
+  departure, 
   departureDate, departureTime, departureDescription,
+  arrival,
   arrivalDate, arrivalTime, arrivalDescription,
   priceAmount, priceCurrency,
   description,
   availabilityRating, departureRating, arrivalRating, awesomeRating
 }) => {
   
+  let departureValue = {};
+  let arrivalValue = {};
+  if ((uuid && linkInstance) || (departure && arrival)) {
+     
+    departureValue = departure || {
+      lat: linkInstance.departureLat,
+      lng: linkInstance.departureLng,
+      description: linkInstance.departureAddress
+    };
+
+    arrivalValue = arrival || {
+      lat: linkInstance.arrivalLat,
+      lng: linkInstance.arrivalLng,
+      description: linkInstance.arrivalAddress
+    };
+
+  }
+
   const toLocalDate = (date) => {
     const addZ = n => (n < 10 ? '0' : '') + n;
     return date.getFullYear() + '-' + 
@@ -57,13 +78,18 @@ const EditLinkInstance = ({
     const arrivalMinute = arrivalTime ? arrivalTime.getMinutes() : null;
 
     saveLinkInstance({ linkInstance: mergeNonNull({ 
-      from: from.apiId, to: to.apiId, transport,
+      from: from.apiId, to: to.apiId,
+      transport,
     }, {
       uuid,
       departureDate: departureDateJson, 
       departureHour, departureMinute, departureDescription,
+      departureAddress: departureValue.description,
+      departureLat: departureValue.lat, departureLng: departureValue.lng,
       arrivalDate: arrivalDateJson, 
       arrivalHour, arrivalMinute, arrivalDescription,
+      arrivalAddress: arrivalValue.description,
+      arrivalLat: arrivalValue.lat, arrivalLng: arrivalValue.lng,  
       priceAmount: parseFloat(priceAmount), priceCurrency,
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
@@ -146,7 +172,8 @@ const EditLinkInstance = ({
     fromInputValue = from.description;
     toInputValue = to.description;
   }
-  
+   
+  console.log("link instance", linkInstance, departure, arrival, departureValue, arrivalValue);  
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -158,17 +185,25 @@ const EditLinkInstance = ({
         </div>
       </div>
       <div className={s.endpoints}>
-        <LocalityAutocomplete id="from-autocomplete-compact" initialInput={fromInputValue}
-          className={s.compact} compact={true} endpoint="from" items={[]} />
-        <LocalityAutocomplete id="from-autocomplete-full" initialInput={fromInputValue}
-          className={s.full} compact={false} endpoint="from" items={[]} />
+        <LocalityAutocomplete id="from-autocomplete-compact" 
+          initialInput={fromInputValue}
+          terminal={from} endpoint="from"
+          className={s.compact} compact={true} items={[]} />
+        <LocalityAutocomplete id="from-autocomplete-full"
+          initialInput={fromInputValue}
+          terminal={from} endpoint="from"
+          className={s.full} compact={false} items={[]} />
         <span className={s.arrow}>
           <FontIcon className="material-icons">arrow_forward</FontIcon>
         </span>
-        <LocalityAutocomplete id="to-autocomplete-compact" initialInput={toInputValue} 
-          className={s.compact} compact={true} endpoint="to" items={[]} />
-        <LocalityAutocomplete id="to-autocomplete-full" initialInput={toInputValue}
-          className={s.full} compact={false} endpoint="to" items={[]} />
+        <LocalityAutocomplete id="to-autocomplete-compact"
+          initialInput={toInputValue}
+          terminal={to} endpoint="to"
+          className={s.compact} compact={true} items={[]} />
+        <LocalityAutocomplete id="to-autocomplete-full"
+          initialInput={toInputValue}
+          terminal={to} endpoint="to"
+          className={s.full} compact={false} items={[]} />
       </div>
       <div className={s.transport}>
         <div>
@@ -192,10 +227,12 @@ const EditLinkInstance = ({
               Departure
             </div>
             <Terminal id="departure-terminal" {...{
-              terminal: 'departure', 
+              terminal: departureValue,
+              endpoint: 'departure', 
               date: departureDate, 
               time: departureTime, 
-              place: departureDescription || '', 
+              place: departureValue, 
+              description: departureDescription || '', 
               onChangeTime: onChangeProperty,
               onChangeDescription: onChangeProperty
             }} />
@@ -205,10 +242,12 @@ const EditLinkInstance = ({
               Arrival
             </div>
             <Terminal id="arrival-terminal" {...{
-              terminal: 'arrival', 
+              terminal: arrivalValue,
+              endpoint: 'arrival',
               date: arrivalDate, 
               time: arrivalTime,
-              place: arrivalDescription || '', 
+              place: arrivalValue,
+              description: arrivalDescription || '', 
               onChangeTime: onChangeProperty,
               onChangeDescription: onChangeProperty
             }} />
@@ -312,6 +351,8 @@ export default injectIntl(
     uuid: state.editLink.uuid,
     from: state.editLink.from,
     to: state.editLink.to,
+    departure: state.editLink.departure,
+    arrival: state.editLink.arrival,
     transport: state.editLink.transport,
     departureDate: state.editLink.departureDate,
     departureTime: state.editLink.departureTime,
@@ -326,7 +367,6 @@ export default injectIntl(
     departureRating: state.editLink.departureRating, 
     arrivalRating: state.editLink.arrivalRating, 
     awesomeRating: state.editLink.awesomeRating,
-    linkInstance: state.editLink.linkInstance
   }), {
     saveLinkInstance,
     setTransport,

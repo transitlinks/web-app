@@ -2,6 +2,7 @@ import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import {
   SELECTED_LOCALITY,
+  SELECTED_ADDRESS,
   SET_TRANSPORT,
   SET_PROPERTY,
   SAVE_LINK_START,
@@ -16,6 +17,24 @@ export function selectLocality({ endpoint, locality }) {
     
     dispatch({
       type: SELECTED_LOCALITY,
+      payload: {
+        endpoint,
+        locality
+      },
+    });
+
+    return true;
+  
+  };
+
+}
+
+export function selectAddress({ endpoint, locality }) {
+  
+  return async (dispatch, getState) => {
+    
+    dispatch({
+      type: SELECTED_ADDRESS,
       payload: {
         endpoint,
         locality

@@ -4,11 +4,13 @@ import s from './EditLinkInstance.css';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import TextField from 'material-ui/TextField';
+import AddressAutocomplete from './AddressAutocomplete';
 
 const Terminal = ({
-  terminal,
+  endpoint, terminal,
   date, time,
   place,
+  description,
   onChangeTime,
   onChangeDescription, onChangeLocation, onChangeAddress
 }) => {
@@ -17,42 +19,59 @@ const Terminal = ({
     departure: {
       dateInputTitle: 'Departure date',
       timeInputTitle: 'Departure time',
-      placeInputTitle: 'Departure place'
+      placeInputTitle: 'Departure description'
     },
     arrival: {
       dateInputTitle: 'Arrival date',
       timeInputTitle: 'Arrival time',
-      placeInputTitle: 'Arrival place'
+      placeInputTitle: 'Arrival description'
     }
   };
+  
+  let location = '';
+  if (place) {
+    location = place.lat + ',' + place.lng;
+  }
 
   return (
     <div className={s.terminal}>
       <div className={s.dateTime}>
         <div className={s.date}>
-          <DatePicker id={`${terminal}-date-picker`}
-            hintText={labels[terminal].dateInputTitle}
+          <DatePicker id={`${endpoint}-date-picker`}
+            hintText={labels[endpoint].dateInputTitle}
             value={date}
-            onChange={onChangeTime(`${terminal}Date`)}
+            onChange={onChangeTime(`${endpoint}Date`)}
           />
         </div>
         <div className={s.time}>
-          <TimePicker id={`${terminal}-time-picker`}
+          <TimePicker id={`${endpoint}-time-picker`}
             format="24hr"
-            hintText={labels[terminal].timeInputTitle}
+            hintText={labels[endpoint].timeInputTitle}
             value={time}
-            onChange={onChangeTime(`${terminal}Time`)}
+            onChange={onChangeTime(`${endpoint}Time`)}
           />
         </div>
       </div>
+      <div className={s.address}>
+        <AddressAutocomplete id={`${endpoint}-address-compact`}
+          initialValue={terminal}
+          endpoint={endpoint}
+          location={location} 
+          className={s.compact} compact={true} />
+        <AddressAutocomplete id={`${endpoint}-address-full`} 
+          initialValue={terminal}
+          endpoint={endpoint}
+          location={location} 
+          className={s.full} compact={false} />
+      </div>
       <div className={s.place}>
-        <TextField id={`${terminal}-terminal-place-input`}
-          value={place}
-          floatingLabelText={labels[terminal].placeInputTitle}
-          hintText="Place description"
+        <TextField id={`${endpoint}-terminal-place-input`}
+          value={description}
+          floatingLabelText={labels[endpoint].placeInputTitle}
+          hintText={`Any details about ${endpoint}`}
           multiLine={true}
           rows={1}
-          onChange={onChangeDescription(`${terminal}Description`)} />
+          onChange={onChangeDescription(`${endpoint}Description`)} />
       </div>
     </div>
   );

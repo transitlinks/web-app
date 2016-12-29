@@ -7,7 +7,7 @@ exports.config = {
   port: 4444, 
   specs: [
     //'./test/e2e/specs/**/*.js'
-    './test/e2e/specs/viewLinkInstance.js'
+    './test/e2e/specs/editLinkInstance.js'
   ],
   
   // Patterns to exclude.
@@ -35,7 +35,7 @@ exports.config = {
     
   mochaOpts: {
     compilers: ['js:babel-register'],
-    timeout: 60000,
+    timeout: 120000,
     ui: 'bdd'
   },
 

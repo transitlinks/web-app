@@ -103,7 +103,9 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 	  
     let {
       departureDate, departureHour, departureMinute, departureDescription,
+      departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
+      arrivalLat, arrivalLng, arrivalAddress,
       priceAmount, priceCurrency,
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
@@ -120,7 +122,9 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departureDescription,
+      departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
+      arrivalLat, arrivalLng, arrivalAddress,
       priceAmount, priceCurrency,
       description
     });
@@ -144,7 +148,9 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
     
     let {
       departureDate, departureHour, departureMinute, departureDescription,
+      departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
+      arrivalLat, arrivalLng, arrivalAddress,
       priceAmount, priceCurrency,
       description
     } = linkInstance;
@@ -154,7 +160,9 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departureDescription,
+      departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
+      arrivalLat, arrivalLng, arrivalAddress,
       priceAmount, priceCurrency,
       description
     };
