@@ -22,7 +22,11 @@ const AddressAutocomplete = ({
   initialValue, predictions, input, id,
   setProperty, searchAddresses, selectAddress
 }) => {
-  
+
+  const openMap = () => {
+    console.log("open map");
+  };
+
   const onSelect = (address) => {
     selectAddress({ endpoint, locality: address.value });
   };
@@ -64,17 +68,22 @@ const AddressAutocomplete = ({
   
   return (
     <div className={cx(className, s.container)}>
-      <AutoComplete id={id}
-        {...props}
-        searchText={initialValue ? initialValue.description : ''}
-        hintText="Search location"
-        floatingLabelText="Location"
-        filter={AutoComplete.noFilter}
-        dataSource={dataSource()}
-        dataSourceConfig={{ text: 'text', value: 'elem' }}
-        onUpdateInput={onUpdateInput}
-        onNewRequest={onSelect}
-      />
+      <div className={s.addressInput}>
+        <AutoComplete id={id}
+          {...props}
+          searchText={initialValue ? (initialValue.description || '') : ''}
+          hintText="Search location"
+          floatingLabelText="Location"
+          filter={AutoComplete.noFilter}
+          dataSource={dataSource()}
+          dataSourceConfig={{ text: 'text', value: 'elem' }}
+          onUpdateInput={onUpdateInput}
+          onNewRequest={onSelect}
+        />
+      </div>
+      <div className={s.mapButton} onClick={() => openMap(endpoint)}>
+        <i className="material-icons">map</i>
+      </div>
     </div>
   );
 

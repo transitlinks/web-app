@@ -1,8 +1,10 @@
 @import '../variables.css';
 
 .container {
-  display: inline-block;
+  position: relative;
+  display: flex;
   margin-bottom: 12px;
+  align-items: flex-end;
   flex-grow: 1;
 }
 
@@ -10,4 +12,16 @@
   .container {
     width: 100%;
   }
+}
+
+.addressInput {
+  display: flex;
+  flex-grow: 1;
+  margin-right: 6px;
+}
+
+.mapButton {
+  display: flex;
+  margin-bottom: 10px;
+  cursor: pointer;
 }
