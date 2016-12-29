@@ -6,6 +6,7 @@ import cx from 'classnames';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import Rating from 'react-rating';
+import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate } from '../utils';
 
@@ -40,6 +41,24 @@ const formatTime = (hours, minutes) => {
 
 };
  
+const InstanceMap = withGoogleMap(props => (
+	<GoogleMap
+    options={{
+      disableDoubleClickZoom: true,
+      draggable: false,
+      scrollwheel: false,
+      disableDefaultUI: true,
+      zoopControl: false,
+      streetViewControl: false,
+      scaleControl: false
+    }}
+		ref={props.onMapLoad}
+		defaultZoom={12}
+    defaultCenter={{...props.latLng}}>
+		{props.polyLine}
+	</GoogleMap>
+));
+
 const ViewLinkInstance = ({
   user,
   saveRating, vote,
@@ -87,7 +106,43 @@ const ViewLinkInstance = ({
     empty: <FontIcon className={cx(s.star, "material-icons")}>star_border</FontIcon>,
     full: <FontIcon className={cx(s.star, "material-icons")}>star</FontIcon>
   };
+
+  const mapLoaded = (map) => {
+    
+    if (!map) return;
+
+    const fromLatLng = new google.maps.LatLng(link.from.lat, link.from.lng);
+    const toLatLng = new google.maps.LatLng(link.to.lat, link.to.lng);
+    const bounds = new google.maps.LatLngBounds();
+    bounds.extend(fromLatLng);
+    bounds.extend(toLatLng);
+    map.fitBounds(bounds);
   
+  };
+
+	const renderMap = () => {
+			
+		return  (
+      <InstanceMap
+    		containerElement={
+      		<div style={{ height: `100%` }} />
+    		}
+    		mapElement={
+      		<div style={{ height: `100%` }} />
+    		}
+				latLng={{ lat: link.from.lat, lng: link.from.lng }}
+        polyLine={
+          <Polyline path={[
+            { lat: link.from.lat, lng: link.from.lng },
+            { lat: link.to.lat, lng: link.to.lng }
+          ]}/>
+        }
+    		onMapLoad={mapLoaded}
+  		/>
+		);
+  
+  };
+
   return (
     <div className={s.container}>
       <div className={s.topScore}>
@@ -206,15 +261,22 @@ const ViewLinkInstance = ({
           </div>
         }
       </div>
-      {
-        priceAmount &&
-        <div className={s.cost}>
-          <span>COST: &nbsp;</span> 
-          <span id="price-value">{priceAmount} {priceCurrency}</span>
+      <div className={s.bottomSection}>
+        <div className={s.costAndDesc}>
+          {
+            priceAmount &&
+            <div className={s.cost}>
+              <span>COST: &nbsp;</span> 
+              <span id="price-value">{priceAmount} {priceCurrency}</span>
+            </div>
+          }
+          <div>
+            <span id="desc-value">{description}</span>
+          </div>
         </div>
-      }
-      <div>
-        <span id="desc-value">{description}</span>
+        <div className={s.instanceMap}>
+          {renderMap()}
+        </div>
       </div>
       <div className={s.ratingsAndVotes}>
         <div className={s.ratings}>

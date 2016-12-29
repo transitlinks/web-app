@@ -126,8 +126,22 @@
   }
 }
 
+.bottomSection {
+  display: flex;
+  justify-content: space-between;
+}
+
+.costAndDesc {
+}
+
 .cost {
   margin-top: 16px;
+}
+
+.instanceMap {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
 }
 
 .ratingsAndVotes {
