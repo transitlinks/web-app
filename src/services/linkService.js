@@ -96,3 +96,37 @@ export const calcTransitDuration = (instance) => {
 
 };
 
+export const reverseGeocode = (placeId, callback) => {
+    
+  const geocoder = new google.maps.Geocoder;
+  geocoder.geocode({ placeId }, (results, status) => {
+    if (status === 'OK') {
+      if (results[0]) {
+        callback(results[0]);
+      } else {
+        console.error('No geocoding results');
+      }
+    } else {
+      console.error('Geocoder error', status);
+    }
+  });
+
+};
+
+export const geocode = (latLng, callback) => {
+
+  const geocoder = new google.maps.Geocoder;
+  geocoder.geocode({ location: latLng }, (results, status) => {
+    
+    if (status === 'OK') {
+      if (results[0]) {
+        callback(results[0]);
+      } else {
+        console.error('No geocoding results');
+      }
+    } else {
+      console.error('Geocoder error', status);
+    }
+  });
+
+};

@@ -6,29 +6,86 @@ import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
 import { searchAddresses } from '../../actions/autocomplete';
 import { selectAddress } from '../../actions/editLink';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
 import TextField from 'material-ui/TextField';
 import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import FontIcon from 'material-ui/FontIcon';
+import { Marker, GoogleMap, withGoogleMap } from 'react-google-maps';
+import { geocode, reverseGeocode } from '../../services/linkService';
 
 const searchTriggered = (input) => {
   return input && input.length > 2;
 };
 
+const parseLocation = (location) => {
+	const latLng = location.split(',');
+	const lat = parseFloat(latLng[0]);
+	const lng = parseFloat(latLng[1]);
+	return { lat, lng };	
+};
+
+const TerminalMap = withGoogleMap(props => (
+	<GoogleMap
+		ref={props.onMapLoad}
+		defaultZoom={12}
+		defaultCenter={{...props.latLng}}
+		onClick={props.onMapClick}>
+		{
+			props.markers.map((marker, index) => (
+				<Marker
+					key={index}
+					{...marker}
+					onRightClick={() => props.onMarkerRightClick(index)}
+				/>
+			))
+		}
+	</GoogleMap>
+));
+
 const AddressAutocomplete = ({
   endpoint, location, className, compact,
   initialValue, predictions, input, id,
+  mapDialog, geocodeAddress, geocodeLatLng,
   setProperty, searchAddresses, selectAddress
 }) => {
 
-  const openMap = () => {
-    console.log("open map");
+  const toggleMap = () => {
+    if (mapDialog) {
+      setProperty('mapDialog', null);
+    } else {
+      setProperty('mapDialog', endpoint);
+    }
+  };
+  
+	const selectLocation = () => {
+		setProperty(endpoint, {
+			...parseLocation(geocodeLatLng),
+			description: geocodeAddress
+		});
+		setProperty('mapDialog', null);
   };
 
+	const setCoords = (place) => {
+		
+    reverseGeocode(place.id, (result) => {
+      const location = result.geometry.location;
+      setProperty(endpoint, {
+        lat: location.lat(),
+        lng: location.lng(),
+        description: place.text
+      });
+    });
+	
+	};
+
   const onSelect = (address) => {
+		console.log("address", address);
     selectAddress({ endpoint, locality: address.value });
+		setCoords(address);
   };
 
   const onUpdateInput = (input) => { 
@@ -59,15 +116,89 @@ const AddressAutocomplete = ({
   
   const props = compact ? {
     fullWidth: true,
-    style: { height: '52px' },
     floatingLabelStyle: { top: '20px' },
     floatingLabelFocusStyle: { transform: 'scale(0.75) translate(0px, -20px)' }
   } : {
     fullWidth: true
   };
-  
+ 	
+	const dialogActions = [
+		<FlatButton key="cancel"
+			label="Cancel"
+			primary={true}
+			onTouchTap={toggleMap} />,
+		<FlatButton key="ok"
+			disabled={!geocodeLatLng}
+			label="OK"
+			primary={true}
+			onTouchTap={selectLocation}
+		/>
+	];
+	
+	const setPlace = (latLng) => {
+		
+		geocode(latLng, (result) => {
+			setProperty('geocodeAddress', result.formatted_address);
+			setProperty('geocodeLatLng', latLng.lat + ',' + latLng.lng);
+		});
+	
+	};
+
+	const mapLoaded = () => {
+	};
+	
+	const mapClicked = (loc) => {
+		const lat = loc.latLng.lat();
+		const lng = loc.latLng.lng();
+		setPlace({ lat, lng });
+	};
+	
+	const renderMap = (markers) => {
+			
+		return  (
+			<TerminalMap
+    		containerElement={
+      		<div style={{ height: `100%` }} />
+    		}
+    		mapElement={
+      		<div style={{ height: `100%` }} />
+    		}
+				latLng={parseLocation(location)}
+    		onMapLoad={mapLoaded}
+    		onMapClick={mapClicked}
+    		markers={markers}
+  		/>
+		);
+	};
+	
+	const getMarkers = () => {
+		
+		const latLngStr = geocodeLatLng || location;
+		if (!latLngStr) {
+			return [];
+		}
+
+		return [{
+			position: parseLocation(latLngStr)
+		}];
+
+	};
+	 
   return (
     <div className={cx(className, s.container)}>
+			<Dialog
+				title={`Set ${endpoint} location`}
+				actions={dialogActions}
+				modal={false}
+				open={mapDialog === endpoint || mapDialog === endpoint + 'Loaded'}
+				onRequestClose={toggleMap}>
+      	<div>
+        	<div id="terminal-map" className={s.map}>
+						{renderMap(getMarkers())}
+						{geocodeAddress}
+					</div>
+				</div>
+			</Dialog>
       <div className={s.addressInput}>
         <AutoComplete id={id}
           {...props}
@@ -81,7 +212,7 @@ const AddressAutocomplete = ({
           onNewRequest={onSelect}
         />
       </div>
-      <div className={s.mapButton} onClick={() => openMap(endpoint)}>
+      <div className={s.mapButton} onClick={() => toggleMap()}>
         <i className="material-icons">map</i>
       </div>
     </div>
@@ -95,7 +226,10 @@ AddressAutocomplete.propTypes = {
 
 export default connect(state => ({
   input: state.autocomplete.addressInput,
-  predictions: state.autocomplete.localities
+  predictions: state.autocomplete.localities,
+  mapDialog: state.editLink.mapDialog,
+	geocodeAddress: state.editLink.geocodeAddress,
+	geocodeLatLng: state.editLink.geocodeLatLng
 }), {
   setProperty,
   searchAddresses,

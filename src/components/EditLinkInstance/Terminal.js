@@ -19,12 +19,12 @@ const Terminal = ({
     departure: {
       dateInputTitle: 'Departure date',
       timeInputTitle: 'Departure time',
-      placeInputTitle: 'Departure place'
+      placeInputTitle: 'Departure description'
     },
     arrival: {
       dateInputTitle: 'Arrival date',
       timeInputTitle: 'Arrival time',
-      placeInputTitle: 'Arrival place'
+      placeInputTitle: 'Arrival description'
     }
   };
   
@@ -68,7 +68,7 @@ const Terminal = ({
         <TextField id={`${endpoint}-terminal-place-input`}
           value={description}
           floatingLabelText={labels[endpoint].placeInputTitle}
-          hintText="Place description"
+          hintText={`Any details about ${endpoint}`}
           multiLine={true}
           rows={1}
           onChange={onChangeDescription(`${endpoint}Description`)} />

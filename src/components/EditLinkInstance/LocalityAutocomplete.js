@@ -12,6 +12,7 @@ import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import FontIcon from 'material-ui/FontIcon';
+import { reverseGeocode } from '../../services/linkService';
 
 const searchTriggered = (input) => {
   return input && input.length > 2;
@@ -23,7 +24,20 @@ const LocalityAutocomplete = ({
   setProperty, searchLocalities, selectLocality
 }) => {
   
+  const setPlace = (placeId) => {
+    reverseGeocode(placeId, (result) => {
+      const terminal = endpoint === 'from' ? 'departure' : 'arrival';
+      const location = result.geometry.location;
+      setProperty(terminal, {
+        lat: location.lat(),
+        lng: location.lng(),
+        description: result.formatted_address
+      });
+    });
+  };
+
   const onSelect = (locality) => {
+    setPlace(locality.id);
     selectLocality({ endpoint, locality: locality.value });
   };
 

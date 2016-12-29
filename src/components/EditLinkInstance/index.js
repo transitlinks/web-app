@@ -37,8 +37,8 @@ const EditLinkInstance = ({
   
   let departureValue = {};
   let arrivalValue = {};
-  if (uuid && linkInstance) {
-    
+  if ((uuid && linkInstance) || (departure && arrival)) {
+     
     departureValue = departure || {
       lat: linkInstance.departureLat,
       lng: linkInstance.departureLng,
@@ -173,7 +173,7 @@ const EditLinkInstance = ({
     toInputValue = to.description;
   }
    
-  console.log("link instance", linkInstance);  
+  console.log("link instance", linkInstance, departure, arrival, departureValue, arrivalValue);  
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -231,7 +231,7 @@ const EditLinkInstance = ({
               endpoint: 'departure', 
               date: departureDate, 
               time: departureTime, 
-              place: from, 
+              place: departureValue, 
               description: departureDescription || '', 
               onChangeTime: onChangeProperty,
               onChangeDescription: onChangeProperty
@@ -246,7 +246,7 @@ const EditLinkInstance = ({
               endpoint: 'arrival',
               date: arrivalDate, 
               time: arrivalTime,
-              place: to,
+              place: arrivalValue,
               description: arrivalDescription || '', 
               onChangeTime: onChangeProperty,
               onChangeDescription: onChangeProperty
