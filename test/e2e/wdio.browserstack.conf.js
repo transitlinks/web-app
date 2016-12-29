@@ -32,7 +32,7 @@ exports.config = {
     
     mochaOpts: {
       compilers: ['js:babel-register'],
-      timeout: 120000,
+      timeout: 180000,
 			ui: 'bdd'
     },
 
