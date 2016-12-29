@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { PLACES_API_KEY, GA_TRACKING_ID } from '../config';
+import { MAPS_JS_API_KEY, GA_TRACKING_ID } from '../config';
 
 function Html({ title, description, style, script, children, lang, state }) {
   
@@ -39,7 +39,7 @@ function Html({ title, description, style, script, children, lang, state }) {
           <script src="https://www.google-analytics.com/analytics.js" async defer />
         }
         <script async defer
-          src={`https://maps.googleapis.com/maps/api/js?key=${PLACES_API_KEY}`}>
+          src={`https://maps.googleapis.com/maps/api/js?key=${MAPS_JS_API_KEY}`}>
         </script>
       </body>
     </html>
