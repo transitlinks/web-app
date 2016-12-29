@@ -72,7 +72,8 @@ const ViewLinkInstance = ({
     link, transport,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
-    departureDescription, arrivalDescription,
+    departureDescription, departureAddress, departureLat, departureLng,
+    arrivalDescription, arrivalAddress, arrivalLat, arrivalLng,
     durationMinutes,
     priceAmount, priceCurrency,
     description
@@ -211,38 +212,28 @@ const ViewLinkInstance = ({
           </div>
         </div>
         <div className={s.times}>
-          { 
-            (departureDate || departureHour) && 
-            <div className={s.time} id="departure">
-              <span className={s.timeLabel}>DEP</span>
-              <span className={s.timeDate} id="dept-date-value">
-                {formatDate(departureDate)}
-              </span>
-              <span className={s.timeTime} id="dept-time-value">
-                {formatTime(departureHour, departureMinute)}
-              </span>
-            </div>
-          }
-          { 
-            (arrivalDate || arrivalHour) && 
-            <div className={s.time} id="arrival">
-              <span className={s.timeLabel}>ARR</span>
-              <span className={s.timeDate} id="arr-date-value">
-                {formatDate(arrivalDate)}
-              </span>
-              <span className={s.timeTime} id="arr-time-value">
-                {formatTime(arrivalHour, arrivalMinute)}
-              </span>
-            </div>
-          }
         </div>
       </div>
       <div className={s.terminals}>
         {
           departureDescription &&
-          <div className={s.terminal}>
+          <div className={cx(s.terminal, s.departure)}>
             <div className={cx(s.terminalLabel, s.departure)}>
-              Departure
+              <span>Departure</span>
+              { 
+                (departureDate || departureHour) && 
+                <div className={s.time} id="departure">
+                  <span className={s.timeDate} id="dept-date-value">
+                    {formatDate(departureDate)}
+                  </span>
+                  <span className={s.timeTime} id="dept-time-value">
+                    {formatTime(departureHour, departureMinute)}
+                  </span>
+                </div>
+              }
+            </div>
+            <div className={s.terminalAddress}>
+              {departureAddress}
             </div>
             <div className={s.terminalDescription}>
               {departureDescription}
@@ -251,9 +242,23 @@ const ViewLinkInstance = ({
         }
         {
           arrivalDescription &&
-          <div className={s.terminal}>
+          <div className={cx(s.terminal, s.arrival)}>
             <div className={cx(s.terminalLabel, s.arrival)}>
-              Arrival
+              <span>Arrival</span>
+              { 
+                (arrivalDate || arrivalHour) && 
+                <div className={s.time} id="arrival">
+                  <span className={s.timeDate} id="arr-date-value">
+                    {formatDate(arrivalDate)}
+                  </span>
+                  <span className={s.timeTime} id="arr-time-value">
+                    {formatTime(arrivalHour, arrivalMinute)}
+                  </span>
+                </div>
+              }
+            </div>
+            <div className={s.terminalAddress}>
+              {arrivalAddress}
             </div>
             <div className={s.terminalDescription}>
               {arrivalDescription}
@@ -273,116 +278,116 @@ const ViewLinkInstance = ({
           <div>
             <span id="desc-value">{description}</span>
           </div>
+          <div className={s.ratingsAndVotes}>
+            <div className={s.ratings}>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="availability-rating"
+                      {...ratingProps} initialRate={userAvailabilityRating} 
+                      onChange={onChangeRating('availability')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Availability</label>
+                  <span>{truncate(avgAvailabilityRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgAvailabilityRating, 4)}
+                </div>
+              </div>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="dept-reliability-rating" 
+                      {...ratingProps} initialRate={userDepartureRating} 
+                      onChange={onChangeRating('departure')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Departure reliability</label>
+                  <span>{truncate(avgDepartureRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgDepartureRating, 4)}
+                </div>
+              </div>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="arr-reliability-rating"
+                      {...ratingProps} initialRate={userArrivalRating} 
+                      onChange={onChangeRating('arrival')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Arrival reliability</label>
+                  <span>{truncate(avgArrivalRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgArrivalRating, 4)}
+                </div>
+              </div>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="awesomeness-rating"
+                      {...ratingProps} initialRate={userAwesomeRating}
+                      onChange={onChangeRating('awesome')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Awesomeness</label>
+                  <span>{truncate(avgAwesomeRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgAwesomeRating, 4)}
+                </div>
+              </div>
+            </div>
+            <div className={s.bottomScore}>
+              <div id="bottom-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
+                <div className={s.scoreLabel}>
+                  <i className="material-icons">stars</i>
+                </div>
+                <div id="bottom-score-value" className={s.scoreValue}>
+                  {truncate(avgRating, 4)}
+                </div>
+              </div>
+              <div className={s.vote}>
+                <div className={s.voteLabel}>
+                  VOTE!
+                </div>
+                <div id="bottom-up-vote" className={s.voteButtons}>
+                  <i id="bottom-upvotes-button"
+                    className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
+                    onClick={() => vote(uuid, 'upVotes')}>
+                    sentiment_very_satisfied
+                  </i>
+                  <span id="bottom-upvotes-value"
+                    className={cx(s.voteValue, s.voteUp)}>
+                    { upVotes || linkInstance.upVotes }
+                  </span>
+                  <i id="bottom-downvotes-button"
+                    className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
+                    onClick={() => vote(uuid, 'downVotes')}>
+                    sentiment_very_dissatisfied
+                  </i>
+                  <span id="bottom-downvotes-value" 
+                    className={cx(s.voteValue, s.voteDown)}>
+                    { downVotes || linkInstance.downVotes }
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div className={s.instanceMap}>
           {renderMap()}
-        </div>
-      </div>
-      <div className={s.ratingsAndVotes}>
-        <div className={s.ratings}>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="availability-rating"
-                  {...ratingProps} initialRate={userAvailabilityRating} 
-                  onChange={onChangeRating('availability')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Availability</label>
-              <span>{truncate(avgAvailabilityRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgAvailabilityRating, 4)}
-            </div>
-          </div>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="dept-reliability-rating" 
-                  {...ratingProps} initialRate={userDepartureRating} 
-                  onChange={onChangeRating('departure')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Departure reliability</label>
-              <span>{truncate(avgDepartureRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgDepartureRating, 4)}
-            </div>
-          </div>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="arr-reliability-rating"
-                  {...ratingProps} initialRate={userArrivalRating} 
-                  onChange={onChangeRating('arrival')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Arrival reliability</label>
-              <span>{truncate(avgArrivalRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgArrivalRating, 4)}
-            </div>
-          </div>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="awesomeness-rating"
-                  {...ratingProps} initialRate={userAwesomeRating}
-                  onChange={onChangeRating('awesome')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Awesomeness</label>
-              <span>{truncate(avgAwesomeRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgAwesomeRating, 4)}
-            </div>
-          </div>
-        </div>
-        <div className={s.bottomScore}>
-          <div id="bottom-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
-            <div className={s.scoreLabel}>
-              <i className="material-icons">stars</i>
-            </div>
-            <div id="bottom-score-value" className={s.scoreValue}>
-              {truncate(avgRating, 4)}
-            </div>
-          </div>
-          <div className={s.vote}>
-            <div className={s.voteLabel}>
-              VOTE!
-            </div>
-            <div id="bottom-up-vote" className={s.voteButtons}>
-              <i id="bottom-upvotes-button"
-                className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
-                onClick={() => vote(uuid, 'upVotes')}>
-                sentiment_very_satisfied
-              </i>
-              <span id="bottom-upvotes-value"
-                className={cx(s.voteValue, s.voteUp)}>
-                { upVotes || linkInstance.upVotes }
-              </span>
-              <i id="bottom-downvotes-button"
-                className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
-                onClick={() => vote(uuid, 'downVotes')}>
-                sentiment_very_dissatisfied
-              </i>
-              <span id="bottom-downvotes-value" 
-                className={cx(s.voteValue, s.voteDown)}>
-                { downVotes || linkInstance.downVotes }
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
