@@ -1,34 +1,10 @@
-import log from '../../core/log';
+import { getLog } from '../../core/log';
+const log = getLog('routes/linkInstance');
+
 import React from 'react';
 import LinkInstance from './LinkInstance';
 import ErrorPage from '../../components/common/ErrorPage';
 import fetch from '../../core/fetch';
-
-const getRatings = async (graphqlRequest, linkInstanceUuid, userUuid) => {
-
-  const { data } = await graphqlRequest(
-    `query {
-      ratings(userUuid: "${userUuid || ''}", linkInstanceUuid: "${linkInstanceUuid}") {
-        userUuid,
-        linkInstanceUuid,
-        avgRating,
-        avgAvailabilityRating,
-        avgDepartureRating,
-        avgArrivalRating,
-        avgAwesomeRating,
-        userAvailabilityRating,
-        userDepartureRating,
-        userArrivalRating,
-        userAwesomeRating
-      }
-    }`
-  );
-
-  log.info("event=received-link-instance-ratings", "data:", data);
-
-  return data.ratings;
-
-};
 
 export default {
 
@@ -44,19 +20,7 @@ export default {
     if (auth.loggedIn) {
       userUuid = auth.user.uuid;
     }
-    
-    const getTransportTypes = async () => {
-
-      const { data } = await graphqlRequest(
-        `query {
-          transportTypes { slug }
-        }`
-      );
-
-      return data.transportTypes;
-
-    };
-    
+     
     try { 
     
       if (params.uuid) {
@@ -79,32 +43,55 @@ export default {
               description,
               upVotes, downVotes,
               durationMinutes
+            },
+            transportTypes { slug },
+            ratings(userUuid: "${userUuid || ''}", linkInstanceUuid: "${params.uuid}") {
+              userUuid,
+              linkInstanceUuid,
+              avgRating,
+              avgAvailabilityRating,
+              avgDepartureRating,
+              avgArrivalRating,
+              avgAwesomeRating,
+              userAvailabilityRating,
+              userDepartureRating,
+              userArrivalRating,
+              userAwesomeRating
             }
           }`
         );
         
         log.info("event=received-link-instance", "data:", data);
         
-        const ratings = await getRatings(graphqlRequest, params.uuid, userUuid); 
-        
         const edit = params.action === 'edit';
-        const props = { edit, linkInstance: data.linkInstance, ratings };
+        const props = { 
+          edit, 
+          linkInstance: data.linkInstance,
+          ratings: data.ratings 
+        };
         
         if (edit) {
-          props.transportTypes = await getTransportTypes();
+          props.transportTypes = data.transportTypes;
         }
         
         return <LinkInstance {...props} />;
     
       } else {
         
+        const { data } = await graphqlRequest(
+          `query {
+            transportTypes { slug },
+          }`
+        );
+        
         return <LinkInstance edit={true} 
           linkInstance={{}} 
-          transportTypes={await getTransportTypes()} />;
+          transportTypes={data.transportTypes} />;
       
       }
 
     } catch (error) {
+      log.error(error);
       return <ErrorPage errors={error.errors} />
     }
   
