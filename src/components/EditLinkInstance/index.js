@@ -26,6 +26,8 @@ const EditLinkInstance = ({
   uuid,
   from, to, 
   transport,
+  identifier,
+  mode,
   departure, 
   departureDate, departureTime, departureDescription,
   arrival,
@@ -78,8 +80,9 @@ const EditLinkInstance = ({
     const arrivalMinute = arrivalTime ? arrivalTime.getMinutes() : null;
 
     saveLinkInstance({ linkInstance: mergeNonNull({ 
+      mode,
       from: from.apiId, to: to.apiId,
-      transport,
+      transport, identifier
     }, {
       uuid,
       departureDate: departureDateJson, 
@@ -116,6 +119,15 @@ const EditLinkInstance = ({
     <MenuItem id={type.slug} key={type.slug} style={{ "WebkitAppearance": "initial" }} 
       value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
+  
+  const modeOptions = [
+    <MenuItem id="mode-research" key="mode-research" 
+      style={{ "WebkitAppearance": "initial" }}
+      value={'research'} primaryText={intl.formatMessage(msg['research'])} />,
+    <MenuItem id="mode-experience" key="mode-experience"
+      style={{ "WebkitAppearance": "initial" }}
+      value={'experience'} primaryText={intl.formatMessage(msg['experience'])} />
+  ];
   
   const currencyCodes = {
   };
@@ -178,7 +190,19 @@ const EditLinkInstance = ({
     <div className={s.container}>
       <div className={s.header}>
         <div className={s.title}>
-          <FormattedMessage {...msg.addLink} />
+          <div className={s.titleText}>
+            <FormattedMessage {...msg.addLink} />
+          </div>
+          <div className={s.mode}>
+            <SelectField id="mode-select"
+              value={mode || 'research'} 
+              fullWidth={true}
+              onChange={onChangeProperty('mode')}
+              floatingLabelText="Mode"
+              floatingLabelFixed={true}>
+              {modeOptions}
+            </SelectField>
+          </div>
         </div>
         <div id="save-top" className={s.save}>
           <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
@@ -205,8 +229,8 @@ const EditLinkInstance = ({
           terminal={to} endpoint="to"
           className={s.full} compact={false} items={[]} />
       </div>
-      <div className={s.transport}>
-        <div>
+      <div className={s.transportAndId}>
+        <div className={s.transport}>
           <SelectField id="transport-select"
             value={transport} 
             onChange={onChangeTransport.bind(this)}
@@ -215,6 +239,15 @@ const EditLinkInstance = ({
             hintText="Select transport type">
             {transportOptions}
           </SelectField>
+        </div>
+        <div className={s.identifier}>
+          <TextField id="identifier-input"
+            style={ { width: '100%'} }
+            value={identifier || ''}
+            floatingLabelText="Identifier"
+            hintText="Name, number etc."
+            onChange={onChangeProperty('identifier')} 
+          />
         </div>
       </div>
       <div className={s.additionalInfo} style={additionalHidden}>
@@ -349,11 +382,13 @@ const EditLinkInstance = ({
 export default injectIntl(
   connect(state => ({
     uuid: state.editLink.uuid,
+    mode: state.editLink.mode,
     from: state.editLink.from,
     to: state.editLink.to,
     departure: state.editLink.departure,
     arrival: state.editLink.arrival,
     transport: state.editLink.transport,
+    identifier: state.editLink.identifier,
     departureDate: state.editLink.departureDate,
     departureTime: state.editLink.departureTime,
     departureDescription: state.editLink.departureDescription,

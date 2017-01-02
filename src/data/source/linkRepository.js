@@ -85,7 +85,7 @@ export default {
 				{ model: TransportType, as: 'transport' }
 			]
 		});
- 
+    
     return { ...link.toJSON(), instances: instances.map(instance => instance.toJSON()) };
 	  	
 	},

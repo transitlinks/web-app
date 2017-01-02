@@ -16,6 +16,9 @@ const ViewTransitLink = ({
     <div key={instance.uuid} className={"table-row " +s.selectable}
       onClick={() => navigate('/link-instance/' + instance.uuid)}>
       <div className="col-1-4">
+        <span className={s.mode}>
+          [{instance.mode === 'research' ? 'R' : 'E'}]
+        </span>
         <span className={s.transport}>
           <FormattedMessage { ...msgTransport[instance.transport.slug] } />
         </span>

@@ -124,7 +124,8 @@ describe('data/queries/links', () => {
         query {
           linkInstance(uuid:"${linkInstance.uuid}") {
             uuid,
-            transport { slug }
+            transport { slug },
+            mode, identifier,
             link {
               from { name, lat, lng },
               to { name, lat, lng }
@@ -149,6 +150,8 @@ describe('data/queries/links', () => {
 
     linkInstance = response.data.linkInstance;
     assert(linkInstance.transport, 'missing property: linkInstance.transport');
+    assert(linkInstance.mode, 'missing property: linkInstance.transport');
+    assert(linkInstance.identifier, 'missing property: linkInstance.transport');
     assert(linkInstance.link, 'missing property: linkInstance.link');
     assert(linkInstance.link.from, 'missing property: linkInstance.link.from');
     assert(linkInstance.link.to, 'missing property: linkInstance.link.to');

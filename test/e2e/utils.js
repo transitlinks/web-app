@@ -7,16 +7,16 @@ const testTerminal = (terminal, location) => {
     browser.click('button svg');
     browser.pause(500); 
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
-    browser.click('button=OK'); 
     browser.pause(500);
+    browser.moveToObject(`#${terminal}-time-picker`, 10, 10);
     browser.click(`#${terminal}-time-picker`);
+    browser.pause(1000);
+    browser.click('button=OK');
     browser.pause(500);
-    browser.click('button=OK'); 
     const time = browser.getValue(`#${terminal}-time-picker`);
     assert(time.indexOf(':') === 2, `Invalid ${terminal} time value selected`);
     
     browser.pause(2000);
-    console.log("XXXXXXXX", browser.isVisible(`#${terminal}-address-full`));
     if (browser.isVisible(`#${terminal}-address-full`)) {
       browser.click(`#${terminal}-address-full`); 
     } else {
@@ -71,6 +71,12 @@ export const editAndSaveLinkInstanceMinimal = (transport) => {
     browser
       .click('#transport-select')
       .click(`#${transport}`);
+    
+    browser.moveToObject('#mode-select', 10, 24);
+    browser.click('#mode-select');
+    browser.click(`#mode-experience`);
+      
+    browser.setValue(`#identifier-input`, `123`);
     
     browser.pause(500);
 

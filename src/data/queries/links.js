@@ -102,6 +102,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
 	  
     let {
+      mode, identifier,
       departureDate, departureHour, departureMinute, departureDescription,
       departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
@@ -118,7 +119,8 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
     }
     
     linkInstance = await linkRepository.createInstance({
-      userId, 
+      userId,
+      mode, identifier,
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departureDescription,
@@ -147,6 +149,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
     
     let {
+      mode, identifier,
       departureDate, departureHour, departureMinute, departureDescription,
       departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
@@ -157,6 +160,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 
     linkInstance = {
       uuid: linkInstance.uuid,
+      mode, identifier,
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departureDescription,

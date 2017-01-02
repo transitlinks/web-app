@@ -70,6 +70,7 @@ const ViewLinkInstance = ({
   const { 
     uuid,
     link, transport,
+    mode, identifier,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
     departureDescription, departureAddress, departureLat, departureLng,
@@ -182,6 +183,9 @@ const ViewLinkInstance = ({
         </div>
       </div>
       <div className={s.header}>
+        <div>
+          {mode} / {identifier}
+        </div>
         <div className={s.title}>
           <div id="place-from">
             <div>

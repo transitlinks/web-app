@@ -39,6 +39,8 @@ export const validLinkInstance = (departureDate, arrivalDate) => {
     from: 'moscow', 
     to: 'helsinki',
     transport: 'bus',
+    mode: 'experience',
+    identifier: '123',
     departureDate: departureDate.toJSON(),
     departureHour: 15,
     departureMinute: 30,

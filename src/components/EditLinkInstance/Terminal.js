@@ -40,6 +40,7 @@ const Terminal = ({
           <DatePicker id={`${endpoint}-date-picker`}
             hintText={labels[endpoint].dateInputTitle}
             value={date}
+            autoOk={true}
             onChange={onChangeTime(`${endpoint}Date`)}
           />
         </div>
@@ -48,6 +49,7 @@ const Terminal = ({
             format="24hr"
             hintText={labels[endpoint].timeInputTitle}
             value={time}
+            autoOk={true}
             onChange={onChangeTime(`${endpoint}Time`)}
           />
         </div>

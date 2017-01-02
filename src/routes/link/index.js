@@ -26,6 +26,7 @@ export default {
             instances {
               uuid,
               transport { slug },
+              mode,
               priceAmount, priceCurrency,
               avgRating,
               durationMinutes
