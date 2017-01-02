@@ -6,6 +6,7 @@ import cx from 'classnames';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import Rating from 'react-rating';
+import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate } from '../utils';
 
@@ -40,6 +41,24 @@ const formatTime = (hours, minutes) => {
 
 };
  
+const InstanceMap = withGoogleMap(props => (
+	<GoogleMap
+    options={{
+      disableDoubleClickZoom: true,
+      draggable: false,
+      scrollwheel: false,
+      disableDefaultUI: true,
+      zoopControl: false,
+      streetViewControl: false,
+      scaleControl: false
+    }}
+		ref={props.onMapLoad}
+		defaultZoom={12}
+    defaultCenter={{...props.latLng}}>
+		{props.polyLine}
+	</GoogleMap>
+));
+
 const ViewLinkInstance = ({
   user,
   saveRating, vote,
@@ -53,7 +72,8 @@ const ViewLinkInstance = ({
     link, transport,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
-    departureDescription, arrivalDescription,
+    departureDescription, departureAddress, departureLat, departureLng,
+    arrivalDescription, arrivalAddress, arrivalLat, arrivalLng,
     durationMinutes,
     priceAmount, priceCurrency,
     description
@@ -87,7 +107,43 @@ const ViewLinkInstance = ({
     empty: <FontIcon className={cx(s.star, "material-icons")}>star_border</FontIcon>,
     full: <FontIcon className={cx(s.star, "material-icons")}>star</FontIcon>
   };
+
+  const mapLoaded = (map) => {
+    
+    if (!map) return;
+
+    const fromLatLng = new google.maps.LatLng(link.from.lat, link.from.lng);
+    const toLatLng = new google.maps.LatLng(link.to.lat, link.to.lng);
+    const bounds = new google.maps.LatLngBounds();
+    bounds.extend(fromLatLng);
+    bounds.extend(toLatLng);
+    map.fitBounds(bounds);
   
+  };
+
+	const renderMap = () => {
+			
+		return  (
+      <InstanceMap
+    		containerElement={
+      		<div style={{ height: `100%` }} />
+    		}
+    		mapElement={
+      		<div style={{ height: `100%` }} />
+    		}
+				latLng={{ lat: link.from.lat, lng: link.from.lng }}
+        polyLine={
+          <Polyline path={[
+            { lat: link.from.lat, lng: link.from.lng },
+            { lat: link.to.lat, lng: link.to.lng }
+          ]}/>
+        }
+    		onMapLoad={mapLoaded}
+  		/>
+		);
+  
+  };
+
   return (
     <div className={s.container}>
       <div className={s.topScore}>
@@ -156,38 +212,28 @@ const ViewLinkInstance = ({
           </div>
         </div>
         <div className={s.times}>
-          { 
-            (departureDate || departureHour) && 
-            <div className={s.time} id="departure">
-              <span className={s.timeLabel}>DEP</span>
-              <span className={s.timeDate} id="dept-date-value">
-                {formatDate(departureDate)}
-              </span>
-              <span className={s.timeTime} id="dept-time-value">
-                {formatTime(departureHour, departureMinute)}
-              </span>
-            </div>
-          }
-          { 
-            (arrivalDate || arrivalHour) && 
-            <div className={s.time} id="arrival">
-              <span className={s.timeLabel}>ARR</span>
-              <span className={s.timeDate} id="arr-date-value">
-                {formatDate(arrivalDate)}
-              </span>
-              <span className={s.timeTime} id="arr-time-value">
-                {formatTime(arrivalHour, arrivalMinute)}
-              </span>
-            </div>
-          }
         </div>
       </div>
       <div className={s.terminals}>
         {
           departureDescription &&
-          <div className={s.terminal}>
+          <div className={cx(s.terminal, s.departure)}>
             <div className={cx(s.terminalLabel, s.departure)}>
-              Departure
+              <span>Departure</span>
+              { 
+                (departureDate || departureHour) && 
+                <div className={s.time} id="departure">
+                  <span className={s.timeDate} id="dept-date-value">
+                    {formatDate(departureDate)}
+                  </span>
+                  <span className={s.timeTime} id="dept-time-value">
+                    {formatTime(departureHour, departureMinute)}
+                  </span>
+                </div>
+              }
+            </div>
+            <div className={s.terminalAddress}>
+              {departureAddress}
             </div>
             <div className={s.terminalDescription}>
               {departureDescription}
@@ -196,9 +242,23 @@ const ViewLinkInstance = ({
         }
         {
           arrivalDescription &&
-          <div className={s.terminal}>
+          <div className={cx(s.terminal, s.arrival)}>
             <div className={cx(s.terminalLabel, s.arrival)}>
-              Arrival
+              <span>Arrival</span>
+              { 
+                (arrivalDate || arrivalHour) && 
+                <div className={s.time} id="arrival">
+                  <span className={s.timeDate} id="arr-date-value">
+                    {formatDate(arrivalDate)}
+                  </span>
+                  <span className={s.timeTime} id="arr-time-value">
+                    {formatTime(arrivalHour, arrivalMinute)}
+                  </span>
+                </div>
+              }
+            </div>
+            <div className={s.terminalAddress}>
+              {arrivalAddress}
             </div>
             <div className={s.terminalDescription}>
               {arrivalDescription}
@@ -206,121 +266,128 @@ const ViewLinkInstance = ({
           </div>
         }
       </div>
-      {
-        priceAmount &&
-        <div className={s.cost}>
-          <span>COST: &nbsp;</span> 
-          <span id="price-value">{priceAmount} {priceCurrency}</span>
+      <div className={s.bottomSection}>
+        <div className={s.costAndDesc}>
+          {
+            priceAmount &&
+            <div className={s.cost}>
+              <span>COST: &nbsp;</span> 
+              <span id="price-value">{priceAmount} {priceCurrency}</span>
+            </div>
+          }
+          <div>
+            <span id="desc-value">{description}</span>
+          </div>
+          <div className={s.ratingsAndVotes}>
+            <div className={s.ratings}>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="availability-rating"
+                      {...ratingProps} initialRate={userAvailabilityRating} 
+                      onChange={onChangeRating('availability')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Availability</label>
+                  <span>{truncate(avgAvailabilityRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgAvailabilityRating, 4)}
+                </div>
+              </div>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="dept-reliability-rating" 
+                      {...ratingProps} initialRate={userDepartureRating} 
+                      onChange={onChangeRating('departure')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Departure reliability</label>
+                  <span>{truncate(avgDepartureRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgDepartureRating, 4)}
+                </div>
+              </div>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="arr-reliability-rating"
+                      {...ratingProps} initialRate={userArrivalRating} 
+                      onChange={onChangeRating('arrival')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Arrival reliability</label>
+                  <span>{truncate(avgArrivalRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgArrivalRating, 4)}
+                </div>
+              </div>
+              <div className={s.rating}>
+                { 
+                  user &&
+                  <div className={s.ratingValue}>
+                    <Rating id="awesomeness-rating"
+                      {...ratingProps} initialRate={userAwesomeRating}
+                      onChange={onChangeRating('awesome')} />
+                  </div>
+                }
+                <div className={s.ratingLabel}>
+                  <label>Awesomeness</label>
+                  <span>{truncate(avgAwesomeRating, 4)}</span>
+                </div>
+                <div className={s.avgRatingValue}>
+                  {truncate(avgAwesomeRating, 4)}
+                </div>
+              </div>
+            </div>
+            <div className={s.bottomScore}>
+              <div id="bottom-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
+                <div className={s.scoreLabel}>
+                  <i className="material-icons">stars</i>
+                </div>
+                <div id="bottom-score-value" className={s.scoreValue}>
+                  {truncate(avgRating, 4)}
+                </div>
+              </div>
+              <div className={s.vote}>
+                <div className={s.voteLabel}>
+                  VOTE!
+                </div>
+                <div id="bottom-up-vote" className={s.voteButtons}>
+                  <i id="bottom-upvotes-button"
+                    className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
+                    onClick={() => vote(uuid, 'upVotes')}>
+                    sentiment_very_satisfied
+                  </i>
+                  <span id="bottom-upvotes-value"
+                    className={cx(s.voteValue, s.voteUp)}>
+                    { upVotes || linkInstance.upVotes }
+                  </span>
+                  <i id="bottom-downvotes-button"
+                    className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
+                    onClick={() => vote(uuid, 'downVotes')}>
+                    sentiment_very_dissatisfied
+                  </i>
+                  <span id="bottom-downvotes-value" 
+                    className={cx(s.voteValue, s.voteDown)}>
+                    { downVotes || linkInstance.downVotes }
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      }
-      <div>
-        <span id="desc-value">{description}</span>
-      </div>
-      <div className={s.ratingsAndVotes}>
-        <div className={s.ratings}>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="availability-rating"
-                  {...ratingProps} initialRate={userAvailabilityRating} 
-                  onChange={onChangeRating('availability')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Availability</label>
-              <span>{truncate(avgAvailabilityRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgAvailabilityRating, 4)}
-            </div>
-          </div>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="dept-reliability-rating" 
-                  {...ratingProps} initialRate={userDepartureRating} 
-                  onChange={onChangeRating('departure')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Departure reliability</label>
-              <span>{truncate(avgDepartureRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgDepartureRating, 4)}
-            </div>
-          </div>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="arr-reliability-rating"
-                  {...ratingProps} initialRate={userArrivalRating} 
-                  onChange={onChangeRating('arrival')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Arrival reliability</label>
-              <span>{truncate(avgArrivalRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgArrivalRating, 4)}
-            </div>
-          </div>
-          <div className={s.rating}>
-            { 
-              user &&
-              <div className={s.ratingValue}>
-                <Rating id="awesomeness-rating"
-                  {...ratingProps} initialRate={userAwesomeRating}
-                  onChange={onChangeRating('awesome')} />
-              </div>
-            }
-            <div className={s.ratingLabel}>
-              <label>Awesomeness</label>
-              <span>{truncate(avgAwesomeRating, 4)}</span>
-            </div>
-            <div className={s.avgRatingValue}>
-              {truncate(avgAwesomeRating, 4)}
-            </div>
-          </div>
-        </div>
-        <div className={s.bottomScore}>
-          <div id="bottom-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
-            <div className={s.scoreLabel}>
-              <i className="material-icons">stars</i>
-            </div>
-            <div id="bottom-score-value" className={s.scoreValue}>
-              {truncate(avgRating, 4)}
-            </div>
-          </div>
-          <div className={s.vote}>
-            <div className={s.voteLabel}>
-              VOTE!
-            </div>
-            <div id="bottom-up-vote" className={s.voteButtons}>
-              <i id="bottom-upvotes-button"
-                className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
-                onClick={() => vote(uuid, 'upVotes')}>
-                sentiment_very_satisfied
-              </i>
-              <span id="bottom-upvotes-value"
-                className={cx(s.voteValue, s.voteUp)}>
-                { upVotes || linkInstance.upVotes }
-              </span>
-              <i id="bottom-downvotes-button"
-                className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
-                onClick={() => vote(uuid, 'downVotes')}>
-                sentiment_very_dissatisfied
-              </i>
-              <span id="bottom-downvotes-value" 
-                className={cx(s.voteValue, s.voteDown)}>
-                { downVotes || linkInstance.downVotes }
-              </span>
-            </div>
-          </div>
+        <div className={s.instanceMap}>
+          {renderMap()}
         </div>
       </div>
     </div>

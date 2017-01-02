@@ -77,8 +77,18 @@ export default function editLink(state = null, action) {
           transport: linkInstance.transport.slug, 
           departureDate: departureDate, departureTime: departureDate, 
           departureDescription: linkInstance.departureDescription,
+          departureAddress: linkInstance.departureAddress,
+          departureLat: linkInstance.departureLat,
+          departureLng: linkInstance.departureLng,
+          availabilityRating: linkInstance.availabilityRating,
+          departureRating: linkInstance.departureRating,
+          arrivalRating: linkInstance.arrivalRating,
+          awesomeRating: linkInstance.awesomeRating,
           arrivalDate: arrivalDate, arrivalTime: arrivalDate, 
           arrivalDescription: linkInstance.arrivalDescription || '',
+          arrivalAddress: linkInstance.arrivalAddress,
+          arrivalLat: linkInstance.arrivalLat,
+          arrivalLng: linkInstance.arrivalLng,
           priceAmount: linkInstance.priceAmount || '', priceCurrency: linkInstance.priceCurrency,
           description: linkInstance.description || ''
         };
@@ -90,7 +100,9 @@ export default function editLink(state = null, action) {
           to: null, from: null, 
           transport: null, 
           departureDate: null, departureTime: null, departureDescription: '',
+          departureAddress: '', departureLat: null, departureLng: null,
           arrivalDate: null, arrivalTime: null, arrivalDescription: '',
+          arrivalAddress: '', arrivalLat: null, arrivalLng: null,
           priceAmount: '', priceCurrency: null,
           description: '',
           availabilityRating: null, departureRating: null, arrivalRating: null, awesomeRating: null

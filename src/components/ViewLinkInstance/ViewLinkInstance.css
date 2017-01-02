@@ -3,7 +3,7 @@
 .container {
   display: block;
   width: 100%;
-  max-width: 600px;
+  max-width: 720px;
   margin: auto;
   padding: 6px;
 }
@@ -52,41 +52,26 @@
   min-width: 60px;
 }
 
-.times {
-  margin-left: 12px;
-  display: flex;
-}
-
-.times .time {
+.time {
   margin-left: 6px;
   margin-right: 6px;
 }
 
 @media (max-width: 425px) {
   
-  .times {
-    margin-left: initial;
-  }
-
-  .times .time {
+  .time {
     margin-right: initial;
     margin-left: initial;
   }
 
 }
 
-.times .time .timeLabel {
+.time .timeLabel {
   margin-right: 6px;
 }
 
-.times .time .timeDate {
+.time .timeDate {
   margin-right: 6px;
-}
-
-@media (max-width: 768px) {
-  .times {
-    display: block;
-  }
 }
 
 .terminals {
@@ -95,17 +80,28 @@
   justify-content: space-between;
 }
 
-.terminal .terminal {
+.terminal {
+  flex-grow: 1;
+}
+
+.terminal.departure {
+  margin-right: 8px;
+}
+
+.terminal.arrival {
+  margin-left: 8px;
 }
 
 .terminal .terminalLabel {
+  display: flex;
 }
 
 .terminalLabel.departure {
+  justify-content: flex-start;
 }
 
 .terminalLabel.arrival {
-  text-align: right;
+  justify-content: flex-end;
 }
 
 .terminal .terminalDescription {
@@ -117,27 +113,59 @@
     display: block;
   }
   
+  .terminal {
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
   .terminalLabel.departure {
-    text-align: center;
+    justify-content: space-around;
   }
 
   .terminalLabel.arrival {
-    text-align: center;
+    justify-content: space-around;
   }
 }
 
-.cost {
+.bottomSection {
   margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.costAndDesc {
+  flex-grow: 1;
+}
+
+.cost {
+}
+
+.instanceMap {
+  margin-left: 16px;
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
 }
 
 .ratingsAndVotes {
-  background-color: #f0f0f0;
-  margin-top: 16px;
+  margin-top: 12px;
   padding: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  align-content: stretch;
+  flex-direction: column-reverse;
+}
+
+@media (max-width: 720px) {
+  
+  .ratingsAndVotes {
+    background-color: #f0f0f0;
+  }
+
+  .instanceMap {
+    display: none;
+  }
+
 }
 
 @media (max-width: 570px) {
@@ -150,6 +178,9 @@
 }
 
 .ratings {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .ratings .rating {
@@ -158,7 +189,6 @@
 }
 
 .ratings .rating .ratingLabel {
-  margin-right: 16px;
 }
 
 .rating .ratingLabel span {
@@ -174,7 +204,6 @@
 }
 
 .rating .ratingValue {
-  margin-right: 16px;
 }
 
 @media (max-width: 380px) {
@@ -211,6 +240,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .score {
@@ -252,23 +282,6 @@
 @media (min-width: 426px) {
   .topScore {
     display: none;
-  }
-}
-
-@media (min-width: 571px) {
-  .bottomScore {
-    display: flex;
-    flex-grow: 1;
-    justify-content: space-around;
-  }
-  .score {
-  }
-  .vote {
-    flex-direction: column;
-  }
-  .vote .voteLabel {
-    margin-right: initial;
-    justify-content: center;
   }
 }
 
