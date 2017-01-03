@@ -7,7 +7,8 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLInt,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLBoolean
 } from 'graphql';
 
 export const LinkInstanceType = new GraphQLObjectType({
@@ -15,6 +16,7 @@ export const LinkInstanceType = new GraphQLObjectType({
   description: 'An instance of travel between places in the link.',
   fields: () => ({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
+    privateUuid: { type: GraphQLString },
     link: { type: TransitLinkType },
     transport: { type: TransportTypeType },
     mode: { type: GraphQLString },
@@ -43,7 +45,8 @@ export const LinkInstanceType = new GraphQLObjectType({
     avgRating: { type: GraphQLFloat },
     upVotes: { type: GraphQLInt },
     downVotes: { type: GraphQLInt },
-    durationMinutes: { type: GraphQLInt }
+    durationMinutes: { type: GraphQLInt },
+    isPrivate: { type: GraphQLBoolean } 
   })
 });
 

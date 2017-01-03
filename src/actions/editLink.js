@@ -101,6 +101,7 @@ export function saveLinkInstance({ linkInstance }) {
       mutation saveLinkInstance {
         linkInstance(linkInstance:${toGraphQLObject(linkInstance)}) {
           uuid,
+          privateUuid,
           link {
             uuid,
             from { apiId, name, description, lat, lng },

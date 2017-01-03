@@ -9,6 +9,7 @@ import Rating from 'react-rating';
 import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate } from '../utils';
+import Link from '../Link';
 
 const formatDate = (dateStr) => {
   
@@ -185,6 +186,12 @@ const ViewLinkInstance = ({
       <div className={s.header}>
         <div>
           {mode} / {identifier}
+        </div>
+        <div>
+          {
+            linkInstance.privateUuid &&
+            <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
+          }
         </div>
         <div className={s.title}>
           <div id="place-from">

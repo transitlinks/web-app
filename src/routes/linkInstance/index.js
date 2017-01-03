@@ -29,6 +29,7 @@ export default {
           `query {
             linkInstance(uuid: "${params.uuid}") {
               uuid,
+              privateUuid,
               link {
                 from { apiId, name, description, countryLong, lat, lng },
                 to { apiId, name, description, countryLong, lat, lng} 
@@ -42,7 +43,8 @@ export default {
               priceAmount, priceCurrency,
               description,
               upVotes, downVotes,
-              durationMinutes
+              durationMinutes,
+              isPrivate
             },
             transportTypes { slug },
             ratings(userUuid: "${userUuid || ''}", linkInstanceUuid: "${params.uuid}") {

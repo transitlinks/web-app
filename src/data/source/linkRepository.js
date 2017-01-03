@@ -22,28 +22,47 @@ const getInstancesByUserId = async (userId) => {
 
 const getInstanceByUuid = async (uuid) => {
 
-  const linkInstance = await LinkInstance.findOne({ 
-    where: { uuid },
-    include: [
-      { model: TransportType, as: 'transport' },
-      { model: TransitLink, as: 'link', include: [ { all: true } ] } 
-     ] 
+  const include = [
+    { model: TransportType, as: 'transport' },
+    { model: TransitLink, as: 'link', include: [ { all: true } ] } 
+  ];
+
+  let linkInstance = await LinkInstance.findOne({ 
+    where: { privateUuid: uuid }, 
+    include
   });
-  
+
+  let isPrivate = false; 
+  if (!linkInstance) {
+    linkInstance = await LinkInstance.findOne({ 
+      where: { uuid }, 
+      include
+    });
+  } else {
+    isPrivate = true;
+  }
+
   if (!linkInstance) {
     return null;
   }
  
-  return linkInstance.toJSON();
+  return { ...linkInstance.toJSON(), isPrivate };
 
 };
 
 const getInstanceIdByUuid = async (uuid) => {
   
-  const linkInstance = await LinkInstance.findOne({
+  let linkInstance = await LinkInstance.findOne({
     attributes: [ 'id' ],
-    where: { uuid }
+    where: { privateUuid: uuid }
   });
+
+  if (!linkInstance) {
+    linkInstance = await LinkInstance.findOne({
+      attributes: [ 'id' ],
+      where: { uuid }
+    });
+  }
 
   return linkInstance.id;
 

@@ -67,6 +67,7 @@ export const createOrUpdateLinkInstance = async (linkInstance, userUuid) => {
     query: `
       mutation ($linkInstance:LinkInstanceInput!) {
         linkInstance(linkInstance:$linkInstance) {
+          privateUuid,
           uuid,
           link {
             uuid,

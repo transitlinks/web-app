@@ -37,7 +37,7 @@ class LinkInstance extends React.Component {
       
     if (propUpdated > stateUpdated) {
       props.resetLink();
-      props.navigate(`/link-instance/${props.saved.uuid}`);
+      props.navigate(`/link-instance/${props.saved.privateUuid}`);
       return;
     }
     
