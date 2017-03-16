@@ -10,6 +10,8 @@
 
 .header {
   margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .header .title {
@@ -26,6 +28,20 @@
   margin-left: 6px;
   margin-right: 6px;
   margin-top: 6px;
+}
+
+.header .mode {
+  margin-top: 6px;
+}
+
+.header .edit {
+  margin-top: 6px;
+}
+
+@media (max-width: 450px) {
+  .header {
+    display: block;
+  }
 }
 
 .firstRow {
@@ -45,6 +61,14 @@
 }
 
 .transportAndDuration .transport {
+  display: flex;
+}
+
+.transport .transportType {
+  margin-right: 10px;
+}
+
+.transport .identifier {
 }
 
 .transportAndDuration .duration {
@@ -82,6 +106,7 @@
 
 .terminal {
   flex-grow: 1;
+  border: 1px solid #dddddd;
 }
 
 .terminal.departure {
@@ -94,6 +119,8 @@
 
 .terminal .terminalLabel {
   display: flex;
+  background-color: #dddddd;
+  padding: 2px;
 }
 
 .terminalLabel.departure {
@@ -104,10 +131,20 @@
   justify-content: flex-end;
 }
 
-.terminal .terminalDescription {
+.terminal .terminalAddress {
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  margin-top: 4px;
 }
 
-@media (max-width: 425px) {
+.terminal .terminalDescription {
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+}
+
+@media (max-width: 585px) {
   
   .terminals {
     display: block;
@@ -125,6 +162,12 @@
   .terminalLabel.arrival {
     justify-content: space-around;
   }
+
+  .terminal.arrival {
+    margin-left: initial;
+    margin-right: 8px;
+  }
+
 }
 
 .bottomSection {

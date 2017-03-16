@@ -185,7 +185,7 @@ const EditLinkInstance = ({
     toInputValue = to.description;
   }
    
-  console.log("link instance", linkInstance, departure, arrival, departureValue, arrivalValue);  
+  console.log("link instance", uuid, from, to, fromInputValue, linkInstance, departure, arrival, departureValue, arrivalValue);  
   return (
     <div className={s.container}>
       <div className={s.header}>

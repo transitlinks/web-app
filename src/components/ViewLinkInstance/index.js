@@ -184,15 +184,6 @@ const ViewLinkInstance = ({
         </div>
       </div>
       <div className={s.header}>
-        <div>
-          {mode} / {identifier}
-        </div>
-        <div>
-          {
-            linkInstance.privateUuid &&
-            <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
-          }
-        </div>
         <div className={s.title}>
           <div id="place-from">
             <div>
@@ -212,11 +203,25 @@ const ViewLinkInstance = ({
             </div>
           </div>
         </div>
+        <div className={s.mode}>
+          {mode}
+        </div>
+        <div className={s.edit}>
+          {
+            linkInstance.privateUuid &&
+            <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
+          }
+        </div>
       </div>
       <div className={s.firstRow}>
         <div className={s.transportAndDuration}>
           <div className={s.transport}>
-            {transport.slug.toUpperCase()}
+            <div className={s.transportType}>
+              {transport.slug.toUpperCase()}
+            </div>
+            <div className={s.identifier}>
+              {identifier}
+            </div>
           </div>
           <div className={s.duration}>
             {formatDuration(durationMinutes)}
