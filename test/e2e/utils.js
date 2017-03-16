@@ -4,7 +4,7 @@ const testTerminal = (terminal, location) => {
     
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
-    browser.click('button svg');
+    browser.click('button=15');
     browser.pause(500); 
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
     browser.pause(500);
