@@ -4,8 +4,6 @@ const testTerminal = (terminal, location) => {
     
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
-    browser.click('button=15');
-    browser.pause(500); 
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
     browser.pause(500);
     browser.moveToObject(`#${terminal}-time-picker`, 10, 10);
@@ -37,10 +35,17 @@ const testTerminal = (terminal, location) => {
 
 export const editAndSaveLinkInstanceMinimal = (transport) => {
   
+    console.log("AAAAAAAAAAAAAAAAAAA", "set mode");
+    //browser.moveToObject('#mode-select', 40, 40);
+    browser.click('#mode-select button');
+    browser.click(`#mode-experience`);
+    browser.pause(500);
+     
     browser.waitForExist('#from-autocomplete-full');
     browser.waitForExist('#from-autocomplete-compact');
     browser.waitForExist('#to-autocomplete-compact');
     browser.waitForExist('#to-autocomplete-full');
+    browser.waitForExist('#identifier-input');
     
     if (browser.isVisible('#from-autocomplete-full')) {
       browser.click('#from-autocomplete-full'); 
@@ -72,11 +77,9 @@ export const editAndSaveLinkInstanceMinimal = (transport) => {
       .click('#transport-select')
       .click(`#${transport}`);
     
-    browser.moveToObject('#mode-select', 10, 24);
-    browser.click('#mode-select');
-    browser.click(`#mode-experience`);
-      
-    browser.setValue(`#identifier-input`, `123`);
+    browser.pause(500); 
+    browser.click(`#identifier-input`);
+    browser.keys(`123`);
     
     browser.pause(500);
 
@@ -117,8 +120,10 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
       .click(`#${transport}`);
     
     browser.pause(500); 
-
+    
+    console.log("YYYYYYYYY", "test dept terminal");
     testTerminal('departure', 'helsinki');
+    console.log("ZZZZZZZZZ", "test arr terminal");
     testTerminal('arrival', 'moscow');
     
     browser.setValue('#price-amount-input', priceAmount);    
