@@ -2,6 +2,16 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  'research': {
+    id: 'mode.research',
+    defaultMessage: 'Research',
+    description: 'Research'
+  },
+  'experience': {
+    id: 'mode.experience',
+    defaultMessage: 'Experience',
+    description: 'Experience'
+  },
   'addLink': {
     id: 'editLinkInstance.addLink',
     defaultMessage: 'Add link',

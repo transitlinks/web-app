@@ -122,9 +122,11 @@ describe('data/queries/links', () => {
     const query = JSON.stringify({
       query: `
         query {
-          linkInstance(uuid:"${linkInstance.uuid}") {
+          linkInstance(uuid:"${linkInstance.privateUuid}") {
             uuid,
-            transport { slug }
+            privateUuid,
+            transport { slug },
+            mode, identifier,
             link {
               from { name, lat, lng },
               to { name, lat, lng }
@@ -148,7 +150,10 @@ describe('data/queries/links', () => {
     assert(response.data.linkInstance);
 
     linkInstance = response.data.linkInstance;
+    assert(linkInstance.privateUuid, 'missing property: linkInstance.privateUuid');
     assert(linkInstance.transport, 'missing property: linkInstance.transport');
+    assert(linkInstance.mode, 'missing property: linkInstance.mode');
+    assert(linkInstance.identifier, 'missing property: linkInstance.identifier');
     assert(linkInstance.link, 'missing property: linkInstance.link');
     assert(linkInstance.link.from, 'missing property: linkInstance.link.from');
     assert(linkInstance.link.to, 'missing property: linkInstance.link.to');

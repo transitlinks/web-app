@@ -27,6 +27,10 @@ const LinkInstance = Model.define('LinkInstance', {
     defaultValue: 'research'
   },
   
+  identifier: {
+    type: DataType.STRING
+  },
+  
   departureDate: {
     type: DataType.STRING(10)
   },

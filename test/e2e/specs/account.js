@@ -62,10 +62,10 @@ describe('Test Account', () => {
 
     browser.url('/link-instance');
     browser.pause(1000);
-    editAndSaveLinkInstance('train', '120.5', 'RUB', 'general desc', []);
+    editAndSaveLinkInstance('train', 'experience', '123', '120.5', 'RUB', 'general desc', []);
     browser.url('/link-instance');
     browser.pause(1000);
-    editAndSaveLinkInstance('bus', '120.5', 'RUB', 'general desc', []);
+    editAndSaveLinkInstance('bus', 'experience', '123', '120.5', 'RUB', 'general desc', []);
     
     browser.click('#logout-link a[href="/account"]');
     browser.waitForExist('a[href="/account/links"]');

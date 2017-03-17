@@ -17,7 +17,7 @@ describe('View link instance', () => {
     
     browser.url('/link-instance');
     browser.pause(1000);       
-    editAndSaveLinkInstance('train', '120.5', 'RUB', 'general desc', []);
+    editAndSaveLinkInstance('train', 'experience', '123', '120.5', 'RUB', 'general desc', []);
     
     const url = browser.getUrl();
     const urlParts = url.split('/');

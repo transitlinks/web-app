@@ -4,19 +4,17 @@ const testTerminal = (terminal, location) => {
     
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
-    browser.click('button svg');
-    browser.pause(500); 
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
-    browser.click('button=OK'); 
     browser.pause(500);
+    browser.moveToObject(`#${terminal}-time-picker`, 10, 10);
     browser.click(`#${terminal}-time-picker`);
+    browser.pause(1000);
+    browser.click('button=OK');
     browser.pause(500);
-    browser.click('button=OK'); 
     const time = browser.getValue(`#${terminal}-time-picker`);
     assert(time.indexOf(':') === 2, `Invalid ${terminal} time value selected`);
     
     browser.pause(2000);
-    console.log("XXXXXXXX", browser.isVisible(`#${terminal}-address-full`));
     if (browser.isVisible(`#${terminal}-address-full`)) {
       browser.click(`#${terminal}-address-full`); 
     } else {
@@ -35,12 +33,18 @@ const testTerminal = (terminal, location) => {
 
 };
 
-export const editAndSaveLinkInstanceMinimal = (transport) => {
+export const editAndSaveLinkInstanceMinimal = (transport, mode, identifier) => {
   
+    //browser.moveToObject('#mode-select', 40, 40);
+    browser.click('#mode-select button');
+    browser.click(`#mode-${mode}`);
+    browser.pause(500);
+     
     browser.waitForExist('#from-autocomplete-full');
     browser.waitForExist('#from-autocomplete-compact');
     browser.waitForExist('#to-autocomplete-compact');
     browser.waitForExist('#to-autocomplete-full');
+    browser.waitForExist('#identifier-input');
     
     if (browser.isVisible('#from-autocomplete-full')) {
       browser.click('#from-autocomplete-full'); 
@@ -71,14 +75,19 @@ export const editAndSaveLinkInstanceMinimal = (transport) => {
     browser
       .click('#transport-select')
       .click(`#${transport}`);
+    
+    browser.pause(500); 
+    browser.click(`#identifier-input`);
+    browser.setValue('#identifier-input', '');
+    browser.keys(identifier);
     
     browser.pause(500);
 
 };
   
-export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, description, ratings) => {
+export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount, priceCurrency, description, ratings) => {
     
-    editAndSaveLinkInstanceMinimal(transport);
+    editAndSaveLinkInstanceMinimal(transport, mode, identifier);
 
     if (browser.isVisible('#from-autocomplete-full')) {
       browser.click('#from-autocomplete-full'); 
@@ -89,6 +98,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     browser.keys('he'); 
     browser.pause(500); 
     browser.keys('ls'); 
+    browser.pause(500); 
     browser.waitForExist('#helsinki');
     browser.click('#helsinki');
     
@@ -103,6 +113,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     browser.keys('mo'); 
     browser.pause(500); 
     browser.keys('sc'); 
+    browser.pause(500); 
     browser.waitForExist('#moscow');
     browser.click('#moscow');
     
@@ -111,7 +122,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
       .click(`#${transport}`);
     
     browser.pause(500); 
-
+    
     testTerminal('departure', 'helsinki');
     testTerminal('arrival', 'moscow');
     
@@ -154,6 +165,8 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     assert.equal(browser.getText('#arr-time-value'), arrTime);
     assert.equal(browser.getText('#price-value'), `${priceAmount} ${priceCurrency}`);
     assert.equal(browser.getText('#desc-value'), description);
+    assert.equal(browser.getText('#mode-value'), mode);
+    assert.equal(browser.getText('#identifier-value'), identifier);
     
     if (ratings) {
       assert.equal(browser.getText('#bottom-score-value'), '2.5');

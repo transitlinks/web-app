@@ -7,7 +7,8 @@ exports.config = {
   port: 4444, 
   specs: [
     //'./test/e2e/specs/**/*.js'
-    './test/e2e/specs/editLinkInstance.js'
+    //'./test/e2e/specs/editLinkInstance.js'
+    './test/e2e/specs/account.js'
   ],
   
   // Patterns to exclude.

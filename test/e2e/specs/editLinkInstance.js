@@ -17,7 +17,7 @@ describe('Edit link instance', () => {
     
     browser.url('/link-instance');
     browser.pause(1000);       
-    editAndSaveLinkInstance('train', '120.5', 'RUB', 'general desc', []);
+    editAndSaveLinkInstance('train', 'research', '321', '120.5', 'RUB', 'general desc', []);
     
     const url = browser.getUrl();
     const urlParts = url.split('/');
@@ -25,7 +25,7 @@ describe('Edit link instance', () => {
  
     browser.url(`/link-instance/${uuid}/edit`);
     browser.pause(1000);       
-    editAndSaveLinkInstance('bus', '110', 'EUR', 'other desc');
+    editAndSaveLinkInstance('bus', 'experience', '123', '110', 'EUR', 'other desc');
   
   });
 

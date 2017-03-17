@@ -102,6 +102,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
 	  
     let {
+      mode, identifier,
       departureDate, departureHour, departureMinute, departureDescription,
       departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
@@ -118,7 +119,8 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
     }
     
     linkInstance = await linkRepository.createInstance({
-      userId, 
+      userId,
+      mode, identifier,
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departureDescription,
@@ -147,6 +149,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 		const transport = await linkRepository.getTransportBySlug(linkInstance.transport);
     
     let {
+      mode, identifier,
       departureDate, departureHour, departureMinute, departureDescription,
       departureLat, departureLng, departureAddress,
       arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
@@ -157,6 +160,7 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 
     linkInstance = {
       uuid: linkInstance.uuid,
+      mode, identifier,
 			linkId: link.id,
 			transportId: transport.id,
       departureDate, departureHour, departureMinute, departureDescription,
@@ -234,6 +238,7 @@ export const TransitLinkQueryFields = {
         instance.avgRating = calcInstanceRating(instance);
         instance.durationMinutes = calcTransitDuration(instance);
         delete instance.id;
+        delete instance.privateUuid;
       });
        
       return link;
@@ -251,7 +256,14 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, { uuid }) => {
       
-      log.info(`graphql-request=get-link-instance uuid=${uuid} user=${request.user ? request.user.uuid : null}`);
+      const userUuid = request.user ? request.user.uuid : null;
+      
+      let userId = null;
+      if (userUuid) {
+        userId = await userRepository.getUserIdByUuid(userUuid);
+      }
+
+      log.info(`graphql-request=get-link-instance uuid=${uuid} user=${userUuid}`);
       
       const linkInstance = await linkRepository.getInstanceByUuid(uuid);
       if (!linkInstance) {
@@ -268,7 +280,12 @@ export const TransitLinkQueryFields = {
       linkInstance.avgRating = calcInstanceRating(linkInstance);
       linkInstance.durationMinutes = calcTransitDuration(linkInstance);
       delete linkInstance.id;
-      
+      if (!linkInstance.isPrivate && !(userId && (userId === linkInstance.userId))) {
+        delete linkInstance.privateUuid;
+      }
+
+      delete linkInstance.userId;
+
       return linkInstance;
     
     }

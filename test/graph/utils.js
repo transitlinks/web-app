@@ -39,6 +39,8 @@ export const validLinkInstance = (departureDate, arrivalDate) => {
     from: 'moscow', 
     to: 'helsinki',
     transport: 'bus',
+    mode: 'experience',
+    identifier: '123',
     departureDate: departureDate.toJSON(),
     departureHour: 15,
     departureMinute: 30,
@@ -65,6 +67,7 @@ export const createOrUpdateLinkInstance = async (linkInstance, userUuid) => {
     query: `
       mutation ($linkInstance:LinkInstanceInput!) {
         linkInstance(linkInstance:$linkInstance) {
+          privateUuid,
           uuid,
           link {
             uuid,

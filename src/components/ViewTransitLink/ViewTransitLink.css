@@ -30,6 +30,16 @@
   max-width: 640px;
 }
 
+.instance {
+}
+
+.mode {
+  margin-right: 12px;
+}
+
+.transport {
+}
+
 .instanceHeader {
 }
 

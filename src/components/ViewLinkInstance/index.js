@@ -5,10 +5,13 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
+import Chip from 'material-ui/Chip';
+import { orange600, green600 } from 'material-ui/styles/colors';
 import Rating from 'react-rating';
 import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate } from '../utils';
+import Link from '../Link';
 
 const formatDate = (dateStr) => {
   
@@ -70,6 +73,7 @@ const ViewLinkInstance = ({
   const { 
     uuid,
     link, transport,
+    mode, identifier,
     departureDate, departureHour, departureMinute,
     arrivalDate, arrivalHour, arrivalMinute,
     departureDescription, departureAddress, departureLat, departureLng,
@@ -144,6 +148,11 @@ const ViewLinkInstance = ({
   
   };
 
+  const modeBackgrounds = {
+    'research': orange600,
+    'experience': green600
+  };
+  
   return (
     <div className={s.container}>
       <div className={s.topScore}>
@@ -201,11 +210,27 @@ const ViewLinkInstance = ({
             </div>
           </div>
         </div>
+        <div className={s.mode} id="mode-value">
+          <Chip backgroundColor={modeBackgrounds[mode]}>
+            {mode}
+          </Chip>
+        </div>
+        <div className={s.edit}>
+          {
+            linkInstance.privateUuid &&
+            <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
+          }
+        </div>
       </div>
       <div className={s.firstRow}>
         <div className={s.transportAndDuration}>
           <div className={s.transport}>
-            {transport.slug.toUpperCase()}
+            <div className={s.transportType}>
+              {transport.slug.toUpperCase()}
+            </div>
+            <div className={s.identifier} id="identifier-value">
+              {identifier}
+            </div>
           </div>
           <div className={s.duration}>
             {formatDuration(durationMinutes)}

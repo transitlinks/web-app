@@ -23,9 +23,18 @@ class LinkInstance extends React.Component {
     };
   
   }
-  
+
   componentWillReceiveProps(props) {
+    this.updateComponent(props);
+  }
+  
+  componentDidMount() {
+    this.updateComponent(this.props);
+  }
+
+  updateComponent(props) {
     
+    console.log("linkInstanmce will receive props", props);
     // Transition to link when save is detected    
     const stateUpdated = this.state.updated;
     const propUpdated = props.saved ? props.saved.saved : stateUpdated;
@@ -37,7 +46,7 @@ class LinkInstance extends React.Component {
       
     if (propUpdated > stateUpdated) {
       props.resetLink();
-      props.navigate(`/link-instance/${props.saved.uuid}`);
+      props.navigate(`/link-instance/${props.saved.privateUuid}`);
       return;
     }
     
@@ -56,6 +65,8 @@ class LinkInstance extends React.Component {
       transportTypes
     }  = this.props;
     
+    console.log("link instance state", this.state, this.props);
+
     return (
       <div className={s.root}>
         <div className={s.container}>
