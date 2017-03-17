@@ -33,12 +33,11 @@ const testTerminal = (terminal, location) => {
 
 };
 
-export const editAndSaveLinkInstanceMinimal = (transport) => {
+export const editAndSaveLinkInstanceMinimal = (transport, mode, identifier) => {
   
-    console.log("AAAAAAAAAAAAAAAAAAA", "set mode");
     //browser.moveToObject('#mode-select', 40, 40);
     browser.click('#mode-select button');
-    browser.click(`#mode-experience`);
+    browser.click(`#mode-${mode}`);
     browser.pause(500);
      
     browser.waitForExist('#from-autocomplete-full');
@@ -79,15 +78,16 @@ export const editAndSaveLinkInstanceMinimal = (transport) => {
     
     browser.pause(500); 
     browser.click(`#identifier-input`);
-    browser.keys(`123`);
+    browser.setValue('#identifier-input', '');
+    browser.keys(identifier);
     
     browser.pause(500);
 
 };
   
-export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, description, ratings) => {
+export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount, priceCurrency, description, ratings) => {
     
-    editAndSaveLinkInstanceMinimal(transport);
+    editAndSaveLinkInstanceMinimal(transport, mode, identifier);
 
     if (browser.isVisible('#from-autocomplete-full')) {
       browser.click('#from-autocomplete-full'); 
@@ -98,6 +98,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     browser.keys('he'); 
     browser.pause(500); 
     browser.keys('ls'); 
+    browser.pause(500); 
     browser.waitForExist('#helsinki');
     browser.click('#helsinki');
     
@@ -112,6 +113,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     browser.keys('mo'); 
     browser.pause(500); 
     browser.keys('sc'); 
+    browser.pause(500); 
     browser.waitForExist('#moscow');
     browser.click('#moscow');
     
@@ -121,9 +123,7 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     
     browser.pause(500); 
     
-    console.log("YYYYYYYYY", "test dept terminal");
     testTerminal('departure', 'helsinki');
-    console.log("ZZZZZZZZZ", "test arr terminal");
     testTerminal('arrival', 'moscow');
     
     browser.setValue('#price-amount-input', priceAmount);    
@@ -165,6 +165,8 @@ export const editAndSaveLinkInstance = (transport, priceAmount, priceCurrency, d
     assert.equal(browser.getText('#arr-time-value'), arrTime);
     assert.equal(browser.getText('#price-value'), `${priceAmount} ${priceCurrency}`);
     assert.equal(browser.getText('#desc-value'), description);
+    assert.equal(browser.getText('#mode-value'), mode);
+    assert.equal(browser.getText('#identifier-value'), identifier);
     
     if (ratings) {
       assert.equal(browser.getText('#bottom-score-value'), '2.5');

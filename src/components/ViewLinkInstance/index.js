@@ -5,6 +5,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
+import Chip from 'material-ui/Chip';
+import { orange600, green600 } from 'material-ui/styles/colors';
 import Rating from 'react-rating';
 import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
@@ -146,6 +148,11 @@ const ViewLinkInstance = ({
   
   };
 
+  const modeBackgrounds = {
+    'research': orange600,
+    'experience': green600
+  };
+  
   return (
     <div className={s.container}>
       <div className={s.topScore}>
@@ -203,8 +210,10 @@ const ViewLinkInstance = ({
             </div>
           </div>
         </div>
-        <div className={s.mode}>
-          {mode}
+        <div className={s.mode} id="mode-value">
+          <Chip backgroundColor={modeBackgrounds[mode]}>
+            {mode}
+          </Chip>
         </div>
         <div className={s.edit}>
           {
@@ -219,7 +228,7 @@ const ViewLinkInstance = ({
             <div className={s.transportType}>
               {transport.slug.toUpperCase()}
             </div>
-            <div className={s.identifier}>
+            <div className={s.identifier} id="identifier-value">
               {identifier}
             </div>
           </div>

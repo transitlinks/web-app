@@ -75,6 +75,8 @@ export default function editLink(state = null, action) {
           from: link.from, 
           to: link.to,
           transport: linkInstance.transport.slug, 
+          identifier: linkInstance.identifier, 
+          mode: linkInstance.mode, 
           departureDate: departureDate, departureTime: departureDate, 
           departureDescription: linkInstance.departureDescription,
           departureAddress: linkInstance.departureAddress,
