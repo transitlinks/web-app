@@ -439,5 +439,68 @@
     "files": [
       "src/components/EditLinkInstance/messages.js"
     ]
+  },
+  {
+    "id": "transport.boat",
+    "description": "Ship or boat",
+    "defaultMessage": "Ship or boat",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.car",
+    "description": "Car",
+    "defaultMessage": "Car",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.taxi",
+    "description": "Taxi",
+    "defaultMessage": "Taxi",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.helicopter",
+    "description": "Helicopter",
+    "defaultMessage": "Helicopter",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.plane",
+    "description": "Airplane",
+    "defaultMessage": "Airplane",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.run",
+    "description": "Running",
+    "defaultMessage": "Running",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
+  },
+  {
+    "id": "transport.swim",
+    "description": "Swimming",
+    "defaultMessage": "Swimming",
+    "message": "",
+    "files": [
+      "src/components/EditLinkInstance/messages.js"
+    ]
   }
 ]

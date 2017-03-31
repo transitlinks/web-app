@@ -22,13 +22,20 @@ export const loadFixtures = () => {
 
 	const models = require('./models');
 	const data = [
-	  createTransport('train'),
 	  createTransport('bus'),
+	  createTransport('train'),
+	  createTransport('car'),
+	  createTransport('taxi'),
+	  createTransport('hitch-hike'),
 	  createTransport('van'),
 	  createTransport('shared-taxi'),
-	  createTransport('hitch-hike'),
+	  createTransport('bike'),
 	  createTransport('walk'),
-	  createTransport('bike')
+	  createTransport('run'),
+	  createTransport('swim'),
+	  createTransport('boat'),
+	  createTransport('plane'),
+	  createTransport('helicopter')
   ];
 	
 	console.log(models);	

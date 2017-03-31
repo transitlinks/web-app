@@ -71,11 +71,6 @@
 .transport .identifier {
 }
 
-.transportAndDuration .duration {
-  margin-left: 8px;
-  min-width: 60px;
-}
-
 .time {
   margin-left: 6px;
   margin-right: 6px;
@@ -96,6 +91,7 @@
 
 .time .timeDate {
   margin-right: 6px;
+  white-space: nowrap;
 }
 
 .terminals {
@@ -177,10 +173,28 @@
 }
 
 .costAndDesc {
-  flex-grow: 1;
+  width: 75%;
+}
+
+.costAndDuration {
+  display: flex;
 }
 
 .cost {
+  display: flex;
+  align-items: center;
+  margin-left: 6px;
+}
+
+.duration {
+  margin-left: 8px;
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.duration i {
+  margin-right: 6px;
 }
 
 .instanceMap {
@@ -207,6 +221,10 @@
 
   .instanceMap {
     display: none;
+  }
+
+  .costAndDesc {
+    width: 100%;
   }
 
 }
