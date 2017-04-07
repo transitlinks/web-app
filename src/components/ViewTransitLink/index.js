@@ -5,6 +5,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { FormattedMessage } from 'react-intl';
 import s from './ViewTransitLink.css';
 import FontIcon from 'material-ui/FontIcon';
+import Chip from 'material-ui/Chip';
+import { orange600, green600 } from 'material-ui/styles/colors';
 import { formatDuration } from '../utils';
 import msgTransport from '../common/messages/transport';
  
@@ -12,16 +14,23 @@ const ViewTransitLink = ({
   link, navigate 
 }) => {
 
+  const modeBackgrounds = {
+    'research': orange600,
+    'experience': green600
+  };
+
   const instances = link.instances.map(instance => (
-    <div key={instance.uuid} className={"table-row " +s.selectable}
+    <div key={instance.uuid} className={"table-row " + s.selectable + " " + s.instance}
       onClick={() => navigate('/link-instance/' + instance.uuid)}>
       <div className="col-1-4">
-        <span className={s.mode}>
-          [{instance.mode === 'research' ? 'R' : 'E'}]
-        </span>
-        <span className={s.transport}>
+        <div className={s.mode}>
+          <Chip backgroundColor={modeBackgrounds[instance.mode]}>
+            {instance.mode === 'research' ? 'R' : 'E'}
+          </Chip>
+        </div>
+        <div className={s.transport}>
           <FormattedMessage { ...msgTransport[instance.transport.slug] } />
-        </span>
+        </div>
       </div>
       <div className="col-1-4">{formatDuration(instance.durationMinutes)}</div>
       <div className="col-1-4">{instance.priceAmount} {instance.priceCurrency}</div>
