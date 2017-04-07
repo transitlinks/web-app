@@ -153,20 +153,36 @@ const ViewLinkInstance = ({
     'experience': green600
   };
   
+  const editLink = (
+    <div className={s.edit}>
+      {
+        linkInstance.privateUuid &&
+        <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
+      }
+    </div>
+  );
+
   return (
     <div className={s.container}>
       <div className={s.topScore}>
-        <div id="top-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
-          <div className={s.scoreLabel}>
-            <i className="material-icons">stars</i>
+        <div className={s.modeAndEdit}>
+          <div className={s.mode} id="mode-value">
+            <Chip backgroundColor={modeBackgrounds[mode]}>
+              {mode}
+            </Chip>
           </div>
-          <div id="top-score-value" className={s.scoreValue}>
-            {truncate(avgRating, 4)}
+          <div id="top-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
+            <div className={s.scoreLabel}>
+              <i className="material-icons">stars</i>
+            </div>
+            <div id="top-score-value" className={s.scoreValue}>
+              {truncate(avgRating, 4)}
+            </div>
           </div>
+          {editLink}
         </div>
         <div className={s.vote}>
           <div className={s.voteLabel}>
-            VOTE!
           </div>
           <div id="top-up-vote" className={s.voteButtons}>
             <i 
@@ -190,6 +206,12 @@ const ViewLinkInstance = ({
           </div>
         </div>
       </div>
+      {
+        linkInstance.privateUuid &&
+        <div className={s.narrow}>
+          {editLink}
+        </div>
+      }
       <div className={s.header}>
         <div className={s.title}>
           <div id="place-from">
@@ -209,17 +231,6 @@ const ViewLinkInstance = ({
               {toArea}
             </div>
           </div>
-        </div>
-        <div className={s.mode} id="mode-value">
-          <Chip backgroundColor={modeBackgrounds[mode]}>
-            {mode}
-          </Chip>
-        </div>
-        <div className={s.edit}>
-          {
-            linkInstance.privateUuid &&
-            <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
-          }
         </div>
       </div>
       <div className={s.firstRow}>
@@ -246,7 +257,7 @@ const ViewLinkInstance = ({
                 priceAmount &&
                 <div className={s.cost}>
                   <i className="material-icons">attach_money</i>
-                  {priceAmount}&nbsp;{priceCurrency}
+                  <span id="price-value">{priceAmount}&nbsp;{priceCurrency}</span>
                 </div>
               }
             
@@ -310,11 +321,11 @@ const ViewLinkInstance = ({
       </div>
       <div className={s.bottomSection}>
         <div className={s.costAndDesc}>
-          <div>
-            <span id="desc-value">{description}</span>
-          </div>
           <div className={s.ratingsAndVotes}>
             <div className={s.ratings}>
+              <div className={s.ratingsHeader}>
+                Ratings
+              </div>
               { 
                 (user || avgAvailabilityRating) &&
                 <div className={s.rating}>
@@ -431,6 +442,9 @@ const ViewLinkInstance = ({
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <span id="desc-value">{description}</span>
           </div>
         </div>
         <div className={s.instanceMap}>

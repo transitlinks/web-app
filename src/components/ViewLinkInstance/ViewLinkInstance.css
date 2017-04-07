@@ -5,12 +5,12 @@
   width: 100%;
   max-width: 720px;
   margin: auto;
-  padding: 6px;
 }
 
 .header {
-  margin-top: 6px;
+  margin-top: 12px;
   display: block;
+  margin-bottom: 24px;
 }
 
 .header .title {
@@ -30,16 +30,42 @@
   margin-top: 6px;
 }
 
-.header .mode {
-  margin-top: 6px;
-  display: inline-block;
+.modeAndEdit {
+  display: flex;
+  align-items: center;
 }
 
-.header .edit {
-  margin-top: 6px;
-  display: inline-block;
-  float: right;
-  margin-right: 10px;
+.modeAndEdit .mode {
+}
+
+.modeAndEdit .edit {
+  margin-left: 12px;
+}
+
+.narrow {
+  display: none;
+}
+
+.marrow .edit {
+}
+
+.ratingsHeader {
+  font-weight: bold;
+  text-align: center;
+}
+
+@media (max-width: 425px) {
+  .narrow {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+    padding: 6px;
+    border: 1px solid #e0e0e0;
+    width: 100%;
+  }
+  .modeAndEdit .edit {
+    display: none;
+  }
 }
 
 .firstRow {
@@ -66,9 +92,13 @@
 
 .transport .transportType {
   margin-right: 10px;
+  border: 2px solid black;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .transport .identifier {
+  border-bottom: 1px solid black;
 }
 
 .time {
@@ -161,7 +191,12 @@
 
   .terminal.arrival {
     margin-left: initial;
-    margin-right: 8px;
+    margin-right: initial;
+  }
+
+  .terminal.departure {
+    margin-left: initial;
+    margin-right: initial;
   }
 
 }
@@ -205,18 +240,17 @@
 }
 
 .ratingsAndVotes {
-  margin-top: 12px;
   padding: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: column-reverse;
+  margin-bottom: 12px;
 }
 
 @media (max-width: 720px) {
   
   .ratingsAndVotes {
-    background-color: #f0f0f0;
   }
 
   .instanceMap {
@@ -291,13 +325,14 @@
 }
 
 .topScore {
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .bottomScore {
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
@@ -307,17 +342,17 @@
 .score {
   display: flex;
   align-items: center;
+  margin-left: 8px;
 }
 
 .score .scoreLabel {
-  margin-right: 6px;
-  font-size: 26px;
   display: flex;
   align-items: center;
 }
 
 .score .scoreValue {
   font-size: 26px;
+  margin-left: 4px;
 }
 
 .vote {
@@ -342,7 +377,6 @@
 
 @media (min-width: 426px) {
   .topScore {
-    display: none;
   }
 }
 
@@ -396,5 +430,5 @@
 }
 
 .hidden {
-  visibility: hidden;
+  display: none;
 }

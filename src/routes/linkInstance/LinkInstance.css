@@ -5,6 +5,13 @@
   padding-right: 20px;
 }
 
+@media (max-width: 450px) {
+  .root {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}
+
 .container {
   margin: 0 auto;
   padding: 0 0 40px;
