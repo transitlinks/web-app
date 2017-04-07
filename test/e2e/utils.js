@@ -169,7 +169,7 @@ export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount
     assert.equal(browser.getText('#identifier-value'), identifier);
     
     if (ratings) {
-      assert.equal(browser.getText('#bottom-score-value'), '2.5');
+      assert.equal(browser.getText('#top-score-value'), '2.5');
     }
 
 };

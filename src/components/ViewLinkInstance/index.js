@@ -153,20 +153,36 @@ const ViewLinkInstance = ({
     'experience': green600
   };
   
+  const editLink = (
+    <div className={s.edit}>
+      {
+        linkInstance.privateUuid &&
+        <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
+      }
+    </div>
+  );
+
   return (
     <div className={s.container}>
       <div className={s.topScore}>
-        <div id="top-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
-          <div className={s.scoreLabel}>
-            <i className="material-icons">stars</i>
+        <div className={s.modeAndEdit}>
+          <div className={s.mode} id="mode-value">
+            <Chip backgroundColor={modeBackgrounds[mode]}>
+              {mode}
+            </Chip>
           </div>
-          <div id="top-score-value" className={s.scoreValue}>
-            {truncate(avgRating, 4)}
+          <div id="top-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
+            <div className={s.scoreLabel}>
+              <i className="material-icons">stars</i>
+            </div>
+            <div id="top-score-value" className={s.scoreValue}>
+              {truncate(avgRating, 4)}
+            </div>
           </div>
+          {editLink}
         </div>
         <div className={s.vote}>
           <div className={s.voteLabel}>
-            VOTE!
           </div>
           <div id="top-up-vote" className={s.voteButtons}>
             <i 
@@ -190,6 +206,12 @@ const ViewLinkInstance = ({
           </div>
         </div>
       </div>
+      {
+        linkInstance.privateUuid &&
+        <div className={s.narrow}>
+          {editLink}
+        </div>
+      }
       <div className={s.header}>
         <div className={s.title}>
           <div id="place-from">
@@ -210,17 +232,6 @@ const ViewLinkInstance = ({
             </div>
           </div>
         </div>
-        <div className={s.mode} id="mode-value">
-          <Chip backgroundColor={modeBackgrounds[mode]}>
-            {mode}
-          </Chip>
-        </div>
-        <div className={s.edit}>
-          {
-            linkInstance.privateUuid &&
-            <Link to={`/link-instance/${linkInstance.privateUuid}/edit`}>Edit</Link>
-          }
-        </div>
       </div>
       <div className={s.firstRow}>
         <div className={s.transportAndDuration}>
@@ -232,9 +243,26 @@ const ViewLinkInstance = ({
               {identifier}
             </div>
           </div>
-          <div className={s.duration}>
-            {formatDuration(durationMinutes)}
-          </div>
+          {
+            (durationMinutes || priceAmount) &&
+            <div className={s.costAndDuration}>
+              { 
+                durationMinutes &&
+                <div className={s.duration}>
+                  <i className="material-icons">schedule</i> 
+                  {formatDuration(durationMinutes)}
+                </div>
+              }
+              {
+                priceAmount &&
+                <div className={s.cost}>
+                  <i className="material-icons">attach_money</i>
+                  <span id="price-value">{priceAmount}&nbsp;{priceCurrency}</span>
+                </div>
+              }
+            
+            </div>
+          }
         </div>
         <div className={s.times}>
         </div>
@@ -293,86 +321,91 @@ const ViewLinkInstance = ({
       </div>
       <div className={s.bottomSection}>
         <div className={s.costAndDesc}>
-          {
-            priceAmount &&
-            <div className={s.cost}>
-              <span>COST: &nbsp;</span> 
-              <span id="price-value">{priceAmount} {priceCurrency}</span>
-            </div>
-          }
-          <div>
-            <span id="desc-value">{description}</span>
-          </div>
           <div className={s.ratingsAndVotes}>
             <div className={s.ratings}>
-              <div className={s.rating}>
-                { 
-                  user &&
-                  <div className={s.ratingValue}>
-                    <Rating id="availability-rating"
-                      {...ratingProps} initialRate={userAvailabilityRating} 
-                      onChange={onChangeRating('availability')} />
-                  </div>
-                }
-                <div className={s.ratingLabel}>
-                  <label>Availability</label>
-                  <span>{truncate(avgAvailabilityRating, 4)}</span>
-                </div>
-                <div className={s.avgRatingValue}>
-                  {truncate(avgAvailabilityRating, 4)}
-                </div>
+              <div className={s.ratingsHeader}>
+                Ratings
               </div>
-              <div className={s.rating}>
-                { 
-                  user &&
-                  <div className={s.ratingValue}>
-                    <Rating id="dept-reliability-rating" 
-                      {...ratingProps} initialRate={userDepartureRating} 
-                      onChange={onChangeRating('departure')} />
+              { 
+                (user || avgAvailabilityRating) &&
+                <div className={s.rating}>
+                  { 
+                    user &&
+                    <div className={s.ratingValue}>
+                      <Rating id="availability-rating"
+                        {...ratingProps} initialRate={userAvailabilityRating} 
+                        onChange={onChangeRating('availability')} />
+                    </div>
+                  }
+                  <div className={s.ratingLabel}>
+                    <label>Availability</label>
+                    <span>{truncate(avgAvailabilityRating, 4)}</span>
                   </div>
-                }
-                <div className={s.ratingLabel}>
-                  <label>Departure reliability</label>
-                  <span>{truncate(avgDepartureRating, 4)}</span>
-                </div>
-                <div className={s.avgRatingValue}>
-                  {truncate(avgDepartureRating, 4)}
-                </div>
-              </div>
-              <div className={s.rating}>
-                { 
-                  user &&
-                  <div className={s.ratingValue}>
-                    <Rating id="arr-reliability-rating"
-                      {...ratingProps} initialRate={userArrivalRating} 
-                      onChange={onChangeRating('arrival')} />
+                  <div className={s.avgRatingValue}>
+                    {truncate(avgAvailabilityRating, 4)}
                   </div>
-                }
-                <div className={s.ratingLabel}>
-                  <label>Arrival reliability</label>
-                  <span>{truncate(avgArrivalRating, 4)}</span>
                 </div>
-                <div className={s.avgRatingValue}>
-                  {truncate(avgArrivalRating, 4)}
-                </div>
-              </div>
-              <div className={s.rating}>
-                { 
-                  user &&
-                  <div className={s.ratingValue}>
-                    <Rating id="awesomeness-rating"
-                      {...ratingProps} initialRate={userAwesomeRating}
-                      onChange={onChangeRating('awesome')} />
+              }
+              {
+                (user || avgDepartureRating) &&
+                <div className={s.rating}>
+                  { 
+                    user &&
+                    <div className={s.ratingValue}>
+                      <Rating id="dept-reliability-rating" 
+                        {...ratingProps} initialRate={userDepartureRating} 
+                        onChange={onChangeRating('departure')} />
+                    </div>
+                  }
+                  <div className={s.ratingLabel}>
+                    <label>Departure reliability</label>
+                    <span>{truncate(avgDepartureRating, 4)}</span>
                   </div>
-                }
-                <div className={s.ratingLabel}>
-                  <label>Awesomeness</label>
-                  <span>{truncate(avgAwesomeRating, 4)}</span>
+                  <div className={s.avgRatingValue}>
+                    {truncate(avgDepartureRating, 4)}
+                  </div>
                 </div>
-                <div className={s.avgRatingValue}>
-                  {truncate(avgAwesomeRating, 4)}
+              }
+              {
+                (user || avgArrivalRating) &&
+                <div className={s.rating}>
+                  { 
+                    user &&
+                    <div className={s.ratingValue}>
+                      <Rating id="arr-reliability-rating"
+                        {...ratingProps} initialRate={userArrivalRating} 
+                        onChange={onChangeRating('arrival')} />
+                    </div>
+                  }
+                  <div className={s.ratingLabel}>
+                    <label>Arrival reliability</label>
+                    <span>{truncate(avgArrivalRating, 4)}</span>
+                  </div>
+                  <div className={s.avgRatingValue}>
+                    {truncate(avgArrivalRating, 4)}
+                  </div>
                 </div>
-              </div>
+              }
+              {
+                (user || avgAwesomeRating) &&
+                <div className={s.rating}>
+                  { 
+                    user &&
+                    <div className={s.ratingValue}>
+                      <Rating id="awesomeness-rating"
+                        {...ratingProps} initialRate={userAwesomeRating}
+                        onChange={onChangeRating('awesome')} />
+                    </div>
+                  }
+                  <div className={s.ratingLabel}>
+                    <label>Awesomeness</label>
+                    <span>{truncate(avgAwesomeRating, 4)}</span>
+                  </div>
+                  <div className={s.avgRatingValue}>
+                    {truncate(avgAwesomeRating, 4)}
+                  </div>
+                </div>
+              }
             </div>
             <div className={s.bottomScore}>
               <div id="bottom-score" className={cx(s.score, !avgRating ? s.hidden : '')}>
@@ -409,6 +442,9 @@ const ViewLinkInstance = ({
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <span id="desc-value">{description}</span>
           </div>
         </div>
         <div className={s.instanceMap}>

@@ -31,13 +31,17 @@
 }
 
 .instance {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .mode {
   margin-right: 12px;
+  display: inline-block;
 }
 
 .transport {
+  display: inline-block;
 }
 
 .instanceHeader {

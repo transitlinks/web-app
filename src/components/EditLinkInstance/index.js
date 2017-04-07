@@ -198,7 +198,7 @@ const EditLinkInstance = ({
               value={mode || 'research'} 
               fullWidth={true}
               onChange={onChangeProperty('mode')}
-              floatingLabelText="Mode"
+              floatingLabelText="Info type"
               floatingLabelFixed={true}>
               {modeOptions}
             </SelectField>
