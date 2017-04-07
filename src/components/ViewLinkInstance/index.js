@@ -185,22 +185,22 @@ const ViewLinkInstance = ({
           <div className={s.voteLabel}>
           </div>
           <div id="top-up-vote" className={s.voteButtons}>
-            <i 
+            <i id="top-upvotes-button" 
               className={cx(s.voteButton, s.voteUp, s.pulsar1, "material-icons")}
               onClick={() => vote(uuid, 'upVotes')}
             >
               sentiment_very_satisfied
             </i>
-            <span className={cx(s.voteValue, s.voteUp)}>
+            <span id="top-upvotes-value" className={cx(s.voteValue, s.voteUp)}>
               { upVotes || linkInstance.upVotes }
             </span>
-            <i 
+            <i id="top-downvotes-button"
               className={cx(s.voteButton, s.voteDown, s.pulsar2, "material-icons")}
               onClick={() => vote(uuid, 'downVotes')}
             >
               sentiment_very_dissatisfied
             </i>
-            <span className={cx(s.voteValue, s.voteDown)}>
+            <span id="top-downvotes-value" className={cx(s.voteValue, s.voteDown)}>
               { downVotes || linkInstance.downVotes }
             </span>
           </div>
