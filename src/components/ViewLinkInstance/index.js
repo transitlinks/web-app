@@ -454,6 +454,52 @@ const ViewLinkInstance = ({
           </div>
         </div>
       </div>
+      <div className={s.instanceMedia}>
+        <div className={s.mediaHeader}>
+          Gallery
+        </div>
+        <div className={s.mediaContent}>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+          </div>
+          { 
+            user &&
+            <div className={cx(s.mediaItem, s.addMedia)}>
+              <div className="material-icons">add</div>
+            </div>
+          }
+        </div>
+      </div>
     </div>
   );
 }
