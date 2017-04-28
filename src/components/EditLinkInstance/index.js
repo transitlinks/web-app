@@ -24,6 +24,7 @@ const EditLinkInstance = ({
   saveLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,
   uuid,
+  user,
   from, to, 
   transport,
   identifier,
@@ -327,7 +328,7 @@ const EditLinkInstance = ({
           />
         </div>
         {
-          !uuid &&
+          (!uuid && user) &&
           <div className={s.ratings}>
             <div className={s.rating}>
               <div className={s.ratingLabel}>
@@ -381,6 +382,7 @@ const EditLinkInstance = ({
 
 export default injectIntl(
   connect(state => ({
+    user: state.auth.auth.user,
     uuid: state.editLink.uuid,
     mode: state.editLink.mode,
     from: state.editLink.from,

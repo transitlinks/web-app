@@ -99,8 +99,9 @@ export default function editLink(state = null, action) {
 
         return { 
           ...state, 
+          mode: 'research',
           to: null, from: null, 
-          transport: null, 
+          transport: null, identifier: '', 
           departureDate: null, departureTime: null, departureDescription: '',
           departureAddress: '', departureLat: null, departureLng: null,
           arrivalDate: null, arrivalTime: null, arrivalDescription: '',

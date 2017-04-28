@@ -446,6 +446,7 @@
     "defaultMessage": "Ship or boat",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -455,6 +456,7 @@
     "defaultMessage": "Car",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -464,6 +466,7 @@
     "defaultMessage": "Taxi",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -473,6 +476,7 @@
     "defaultMessage": "Helicopter",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -482,6 +486,7 @@
     "defaultMessage": "Airplane",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -491,6 +496,7 @@
     "defaultMessage": "Running",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   },
@@ -500,6 +506,7 @@
     "defaultMessage": "Swimming",
     "message": "",
     "files": [
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js"
     ]
   }

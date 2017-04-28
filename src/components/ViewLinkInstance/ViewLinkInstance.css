@@ -52,6 +52,7 @@
 .ratingsHeader {
   font-weight: bold;
   text-align: center;
+  margin-bottom: 8px;
 }
 
 @media (max-width: 425px) {
@@ -203,12 +204,10 @@
 
 .bottomSection {
   margin-top: 16px;
-  display: flex;
-  justify-content: space-between;
+  min-height: 300px;
 }
 
 .costAndDesc {
-  width: 75%;
 }
 
 .costAndDuration {
@@ -234,9 +233,11 @@
 
 .instanceMap {
   margin-left: 16px;
+  margin-bottom: 16px;
   width: 100%;
   max-width: 300px;
   height: 300px;
+  float: right;
 }
 
 .ratingsAndVotes {
