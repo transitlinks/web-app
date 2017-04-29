@@ -11,6 +11,7 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressSession from 'express-session';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import Html from './components/Html';
@@ -67,6 +68,9 @@ app.use(requestLanguage({
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const storage = multer.memoryStorage();
+app.use(multer({ storage }).single('file'));
 
 // Authentication
 /*

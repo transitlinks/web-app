@@ -2,21 +2,30 @@ import fetch from '../core/fetch';
 
 function createGraphqlRequest(fetchKnowingCookie) {
   
-  return async function graphqlRequest(query, variables = {}) {
+  return async function graphqlRequest(query, variables = {}, files) {
     
-    const body = JSON.stringify({ query, variables });
     const fetchConfig = {
       method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body,
-      credentials: 'include',
+      credentials: 'include'
     };
      
+    if (files) {
+      const form = new FormData();
+      form.append('query', query);
+      form.append('file', files[0]);
+      fetchConfig.body = form;
+    } else {
+      const body = JSON.stringify({ query, variables });
+      fetchConfig.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      };
+      fetchConfig.body = body;
+    }
+
     let response = {};
     try {
+      console.log('fetchConfig', fetchConfig);
       response = await fetchKnowingCookie('/graphql', fetchConfig);
     } catch (error) {
       response.errors = [ error ];

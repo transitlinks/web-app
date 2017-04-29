@@ -1,13 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { saveRating, vote } from '../../actions/viewLinkInstance';
+import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './ViewLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import Chip from 'material-ui/Chip';
 import { orange600, green600 } from 'material-ui/styles/colors';
 import Rating from 'react-rating';
+import LinkInstanceMedia from './LinkInstanceMedia';
 import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate } from '../utils';
@@ -64,7 +68,7 @@ const InstanceMap = withGoogleMap(props => (
 
 const ViewLinkInstance = ({
   user,
-  saveRating, vote,
+  setProperty, saveRating, vote,
   intl, 
   linkInstance, initialRatings, ratings,
   upVotes, downVotes
@@ -161,7 +165,7 @@ const ViewLinkInstance = ({
       }
     </div>
   );
-
+  
   return (
     <div className={s.container}>
       <div className={s.topScore}>
@@ -454,51 +458,8 @@ const ViewLinkInstance = ({
           </div>
         </div>
       </div>
-      <div className={s.instanceMedia}>
-        <div className={s.mediaHeader}>
-          Gallery
-        </div>
-        <div className={s.mediaContent}>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          <div className={cx(s.mediaItem, s.mediaThumbnail)}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
-          </div>
-          { 
-            user &&
-            <div className={cx(s.mediaItem, s.addMedia)}>
-              <div className="material-icons">add</div>
-            </div>
-          }
-        </div>
+      <div className={s.instanceMediaSection}>
+        <LinkInstanceMedia linkInstance={linkInstance} />
       </div>
     </div>
   );
@@ -512,6 +473,7 @@ export default injectIntl(
     downVotes: state.viewLinkInstance.downVotes
   }), {
     saveRating,
+    setProperty,
     vote
   })(withStyles(s)(ViewLinkInstance))
 );

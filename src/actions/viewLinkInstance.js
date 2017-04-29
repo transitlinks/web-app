@@ -6,7 +6,10 @@ import {
   VOTE_ERROR,
   SAVE_RATING_START,
   SAVE_RATING_SUCCESS,
-  SAVE_RATING_ERROR
+  SAVE_RATING_ERROR,
+  INSTANCE_FILE_UPLOAD_START,
+  INSTANCE_FILE_UPLOAD_SUCCESS,
+  INSTANCE_FILE_UPLOAD_ERROR
 } from '../constants';
 
 export const saveRating = (rating) => {
@@ -64,6 +67,30 @@ export const vote = (linkInstanceUuid, voteType) => {
       VOTE_START,
       VOTE_SUCCESS,
       VOTE_ERROR
+    );
+  
+  };
+
+};
+
+export const uploadFiles = (files) => {
+  
+  return async (...args) => {
+  
+    const query = `
+      mutation uploadInstanceFiles {
+        instanceFiles {
+          filesCount
+        }
+      }
+    `;
+  
+    return graphqlAction(
+      ...args,
+      { query, files }, [ 'instanceFiles' ],
+      INSTANCE_FILE_UPLOAD_START,
+      INSTANCE_FILE_UPLOAD_SUCCESS,
+      INSTANCE_FILE_UPLOAD_ERROR
     );
   
   };

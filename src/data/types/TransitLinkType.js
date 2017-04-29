@@ -109,4 +109,12 @@ export const TransitLinkInputType = new GraphQLInputObjectType({
   })
 });
 
+export const UploadedFilesType = new GraphQLObjectType({
+  name: 'UploadedFiles',
+  description: 'File upload summary.',
+  fields: () => ({
+    filesCount: { type: GraphQLInt }
+  })
+});
+
 export default TransitLinkType;

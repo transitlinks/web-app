@@ -140,8 +140,7 @@ export const initEndpoints = (app) => {
     };
   
   }));
-
-
+  
   app.get('/search', async (req, res, next) => {
     next(); 
   });

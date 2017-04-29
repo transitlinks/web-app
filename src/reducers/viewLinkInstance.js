@@ -1,5 +1,6 @@
 import { graphqlReduce } from './utils';
 import {
+  SET_PROPERTY,
   SAVE_RATING_START,
   SAVE_RATING_SUCCESS,
   SAVE_RATING_ERROR,
@@ -14,6 +15,9 @@ export default (state = {}, action) => {
 
   switch (action.type) {
     
+    case SET_PROPERTY:
+      endState[action.payload.name] = action.payload.value;
+      return endState;
     case SAVE_RATING_START:
     case SAVE_RATING_SUCCESS:
     case SAVE_RATING_ERROR:

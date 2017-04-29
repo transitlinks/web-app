@@ -1,3 +1,4 @@
+import Busboy from 'busboy';
 import { getLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
@@ -20,6 +21,7 @@ import {
 	TransitLinkInputType,
 	LinkInstanceType, 
 	LinkInstanceInputType, 
+	UploadedFilesType 
 } from '../types/TransitLinkType';
 
 import { VotesType } from '../types/VoteType';
@@ -209,6 +211,30 @@ export const TransitLinkMutationFields = {
         voteType,
         votesCount
       };
+    }
+  
+  },
+  
+  instanceFiles: {
+    
+    type: UploadedFilesType,
+    description: 'Upload media files for link instance',
+    resolve: async ({ request }) => {
+      
+      log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null}`);
+      
+      log.info('req headers', request.file);
+      /* 
+      const busboy = new Busboy({ headers: request.headers });
+      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        log.info('upload request', fieldname, file, filename, encoding, mimetype);
+      });
+      */
+
+      return {
+        filesCount: 1
+      };
+
     }
   
   }

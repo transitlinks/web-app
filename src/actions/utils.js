@@ -2,7 +2,7 @@ import { getLog } from '../core/log';
 
 export const graphqlAction = async (
   dispatch, getState, { graphqlRequest },
-  { query, variables }, responseKeys,
+  { query, variables, files }, responseKeys,
   START_CODE, SUCCESS_CODE, ERROR_CODE
 ) => {
    
@@ -18,7 +18,7 @@ export const graphqlAction = async (
 
   try {
 
-    const response = await graphqlRequest(query, variables);
+    const response = await graphqlRequest(query, variables, files);
     logger.debug('GQL response', response);
 
     if (!response.data) {
