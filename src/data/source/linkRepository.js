@@ -225,6 +225,11 @@ export default {
     }));
   
   },
+  
+  saveInstanceMedia: async (linkInstanceId, mediaItem) => {
+    const created = await MediaItem.create({ linkInstanceId, ...mediaItem });
+    return created.json();
+  },
 
   update: async (link) => {
     const updated = await TransitLink.update(link, { where: { id: link.id } });

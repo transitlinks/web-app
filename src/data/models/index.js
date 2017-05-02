@@ -5,6 +5,7 @@ import TransitLink from './TransitLink';
 import LinkInstance from './LinkInstance';
 import TransportType from './TransportType';
 import Rating from './Rating';
+import MediaItem from './MediaItem';
 
 User.hasMany(Rating, {
   foreignKey: 'userId'
@@ -31,6 +32,10 @@ LinkInstance.belongsTo(TransportType, {
 });
 
 LinkInstance.hasMany(Rating, {
+  foreignKey: 'linkInstanceId'
+});
+
+LinkInstance.hasMany(MediaItem, {
   foreignKey: 'linkInstanceId'
 });
 
