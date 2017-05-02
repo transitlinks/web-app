@@ -69,7 +69,15 @@ app.use(requestLanguage({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const storage = multer.memoryStorage();
+const instanceMediaPath = path.join(__dirname, 'public');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, instanceMediaPath)
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now())
+  }
+});
 app.use(multer({ storage }).single('file'));
 
 // Authentication

@@ -113,7 +113,8 @@ export const UploadedFilesType = new GraphQLObjectType({
   name: 'UploadedFiles',
   description: 'File upload summary.',
   fields: () => ({
-    filesCount: { type: GraphQLInt }
+    fileName: { type: GraphQLString },
+    linkInstanceUuid: { type: GraphQLString }
   })
 });
 

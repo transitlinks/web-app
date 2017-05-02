@@ -73,14 +73,15 @@ export const vote = (linkInstanceUuid, voteType) => {
 
 };
 
-export const uploadFiles = (files) => {
+export const uploadFiles = (linkInstanceUuid, files) => {
   
   return async (...args) => {
   
     const query = `
       mutation uploadInstanceFiles {
-        instanceFiles {
-          filesCount
+        instanceFiles(linkInstanceUuid: "${linkInstanceUuid}") {
+          fileName,
+          linkInstanceUuid
         }
       }
     `;

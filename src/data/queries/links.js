@@ -1,4 +1,5 @@
-import Busboy from 'busboy';
+import fs from 'fs';
+import path from 'path';
 import { getLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
@@ -219,21 +220,47 @@ export const TransitLinkMutationFields = {
     
     type: UploadedFilesType,
     description: 'Upload media files for link instance',
-    resolve: async ({ request }) => {
+    args: {
+      linkInstanceUuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { linkInstanceUuid }) => {
       
       log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null}`);
+       
+      const { file } = request;
       
-      log.info('req headers', request.file);
-      /* 
-      const busboy = new Busboy({ headers: request.headers });
-      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        log.info('upload request', fieldname, file, filename, encoding, mimetype);
-      });
-      */
+      const nameParts = file.originalname.split('.');
+      const extension = nameParts[nameParts.length - 1];
+      const savePath = path.join(__dirname, 'public');
+      const filePath = path.join(savePath, file.filename);
 
-      return {
-        filesCount: 1
-      };
+      const mediaBasePath = 'instance-media';
+      const mediaPath = path.join(__dirname, 'public', mediaBasePath);
+      const instancePath = path.join(mediaPath, linkInstanceUuid);
+      
+      if (fs.existsSync(filePath)) {
+        
+        if (!fs.existsSync(mediaPath)) {
+          fs.mkdirSync(mediaPath);
+        }
+        if (!fs.existsSync(instancePath)) {
+          fs.mkdirSync(instancePath);
+        }
+
+        const now = (new Date()).getTime();
+        const instanceFileName = `${now}.${extension}`;
+        const instanceFilePath = path.join(instancePath, instanceFileName);
+        fs.renameSync(filePath, instanceFilePath);
+        
+        return {
+          fileName: `/${mediaBasePath}/${linkInstanceUuid}/${instanceFileName}`,
+          linkInstanceUuid
+        };
+
+      } else {
+        throw new Error(`Did not find media file ${filePath})`);
+      }
+
 
     }
   

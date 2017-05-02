@@ -13,6 +13,7 @@ import FontIcon from 'material-ui/FontIcon';
 const LinkInstanceMedia = ({
   setProperty, 
   uploadFiles,
+  linkInstance,
   user, mediaDialogOpen 
 }) => {
   
@@ -26,7 +27,7 @@ const LinkInstanceMedia = ({
 
   const onFileInputChange = (event) => {
     console.log("file input", event.target.files);
-    uploadFiles(event.target.files);
+    uploadFiles(linkInstance.uuid, event.target.files);
   };
 
 	const mediaDialogActions = [
