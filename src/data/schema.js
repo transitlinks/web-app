@@ -28,6 +28,7 @@ const schema = new Schema({
       link: TransitLinkQueryFields.link,
       linkInstance: TransitLinkQueryFields.linkInstance,
       links: TransitLinkQueryFields.links,
+      linkInstanceMedia: TransitLinkQueryFields.linkInstanceMedia,
       user: UserQueryFields.user,
       ratings: RatingQueryFields.ratings,
       intl

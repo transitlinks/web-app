@@ -24,7 +24,7 @@ import account from './account';
 import content from './content';
 import error from './error';
 
-import { locales } from '../config';
+import { locales, MEDIA_URL } from '../config';
 
 const routes = {
 
@@ -175,12 +175,17 @@ export const initEndpoints = (app) => {
         }
       }
     });
+    
+    const env = {
+      MEDIA_URL
+    };
 
     try {
 
       const store = configureStore({
-					auth: { auth }
-				}, {
+        auth: { auth },
+        env
+      }, {
         cookie: req.headers.cookie,
         history,
       });

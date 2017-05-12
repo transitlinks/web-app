@@ -9,6 +9,12 @@ cp .env .env.test
 - Edit environment variables in .env.dev to reflect local development environment
 - Edit environment variables in .env.test to reflect local test environment
 
+### Starting up background systems
+```
+sudo ./deploy-postgress.sh
+sudo ./deploy-image-server.sh
+```
+
 ### Running (development mode)
 ```
 source .env.dev

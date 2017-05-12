@@ -1,0 +1,39 @@
+@import '../../components/variables.css';
+
+.container {
+  margin: 0 auto;
+  padding: 0 0 40px;
+  width: 100%;
+  padding-top: 24px;
+  max-width: var(--max-content-width);
+}
+
+.brand {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand .appName {
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.brand .appShortDescription {
+  font-size: 18px;
+  text-align: center;
+}
+
+.about {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  margin-top: 24px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 33px;
+  font-weight: lighter;
+}

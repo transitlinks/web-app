@@ -6,7 +6,13 @@ import {
   SAVE_RATING_ERROR,
   VOTE_START,
   VOTE_SUCCESS,
-  VOTE_ERROR
+  VOTE_ERROR,
+  SEARCH_MEDIA_START,
+  SEARCH_MEDIA_SUCCESS,
+  SEARCH_MEDIA_ERROR,
+  INSTANCE_FILE_UPLOAD_START,
+  INSTANCE_FILE_UPLOAD_SUCCESS,
+  INSTANCE_FILE_UPLOAD_ERROR
 } from '../constants';
 
 export default (state = {}, action) => {
@@ -52,6 +58,29 @@ export default (state = {}, action) => {
         VOTE_SUCCESS,
         VOTE_ERROR
       );
+
+    case SEARCH_MEDIA_START:
+    case SEARCH_MEDIA_SUCCESS:
+    case SEARCH_MEDIA_ERROR:
+      return graphqlReduce(
+        state, action,
+        { 
+          start: () => ({ linkInstanceMedia: [] }), 
+          success: () => ({ linkInstanceMedia: action.payload.mediaItems }), 
+          error: () => ({ linkInstanceMedia: [] })
+        },
+        SEARCH_MEDIA_START,
+        SEARCH_MEDIA_SUCCESS,
+        SEARCH_MEDIA_ERROR
+      );
+    case INSTANCE_FILE_UPLOAD_SUCCESS:
+      if (!endState.addedMedia) {
+        endState.addedMedia = [];
+      }
+      endState.addedMedia.push(action.payload.instanceFiles);
+      endState.mediaDialogOpen = false;
+      return endState;
+    
     default:
       return state;
       

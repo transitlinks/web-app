@@ -25,7 +25,7 @@ import { loadFixtures } from './data/sequelize';
 import routes from './routes';
 import { initEndpoints } from './routes';
 
-import { APP_ENV, HTTP_HOST, HTTP_PORT, locales } from './config';
+import { APP_ENV, HTTP_HOST, HTTP_PORT, STORAGE_PATH, locales } from './config';
 
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 
@@ -69,7 +69,7 @@ app.use(requestLanguage({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const instanceMediaPath = path.join(__dirname, 'public');
+const instanceMediaPath = STORAGE_PATH || path.join(__dirname, 'public');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, instanceMediaPath)

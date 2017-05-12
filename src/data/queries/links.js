@@ -22,7 +22,7 @@ import {
 	TransitLinkInputType,
 	LinkInstanceType, 
 	LinkInstanceInputType, 
-	UploadedFilesType 
+	MediaItemType 
 } from '../types/TransitLinkType';
 
 import { VotesType } from '../types/VoteType';
@@ -34,6 +34,8 @@ import {
   GraphQLList,
   GraphQLNonNull
 } from 'graphql';
+
+import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
 const getOrCreateLocality = async (apiId) => {
   
@@ -218,7 +220,7 @@ export const TransitLinkMutationFields = {
   
   instanceFiles: {
     
-    type: UploadedFilesType,
+    type: MediaItemType,
     description: 'Upload media files for link instance',
     args: {
       linkInstanceUuid: { type: GraphQLString }
@@ -226,16 +228,15 @@ export const TransitLinkMutationFields = {
     resolve: async ({ request }, { linkInstanceUuid }) => {
       
       log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null}`);
-       
+          
       const { file } = request;
       
       const nameParts = file.originalname.split('.');
       const extension = nameParts[nameParts.length - 1];
-      const savePath = path.join(__dirname, 'public');
+      const savePath = STORAGE_PATH || path.join(__dirname, 'public');
       const filePath = path.join(savePath, file.filename);
 
-      const mediaBasePath = 'instance-media';
-      const mediaPath = path.join(__dirname, 'public', mediaBasePath);
+      const mediaPath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), 'instance-media');
       const instancePath = path.join(mediaPath, linkInstanceUuid);
       
       if (fs.existsSync(filePath)) {
@@ -252,10 +253,14 @@ export const TransitLinkMutationFields = {
         const instanceFilePath = path.join(instancePath, instanceFileName);
         fs.renameSync(filePath, instanceFilePath);
         
-        return {
-          fileName: `/${mediaBasePath}/${linkInstanceUuid}/${instanceFileName}`,
-          linkInstanceUuid
-        };
+        const linkInstanceId = await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
+        const mediaItem = await linkRepository.saveInstanceMedia(linkInstanceId, {
+          type: 'image',
+          flag: false,
+          url: `/instance-media/${linkInstanceUuid}/${instanceFileName}`
+        });
+
+        return mediaItem;
 
       } else {
         throw new Error(`Did not find media file ${filePath})`);
@@ -367,6 +372,20 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, { input }) => {
       return linkRepository.getByLocalityName(input); 
+    }
+  
+  },
+
+  linkInstanceMedia: {
+    
+    type: new GraphQLList(MediaItemType),
+    description: 'Get media associated to a link instance',
+    args: {
+      linkInstanceUuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { linkInstanceUuid }) => {
+      const linkInstanceId = await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
+      return linkRepository.getMediaItems({ linkInstanceId }); 
     }
   
   }

@@ -62,17 +62,16 @@ class LinkInstance extends React.Component {
     const {
       linkInstance,
       ratings,
+      linkInstanceMedia,
       transportTypes
     }  = this.props;
     
-    console.log("link instance state", this.state, this.props);
-
     return (
       <div className={s.root}>
         <div className={s.container}>
           { 
             !this.state.edit ?
-              <ViewLinkInstance linkInstance={linkInstance} initialRatings={ratings} /> :
+              <ViewLinkInstance linkInstance={linkInstance} initialRatings={ratings} linkInstanceMedia={linkInstanceMedia} /> :
               <EditLinkInstance 
                 transportTypes={transportTypes}
                 linkInstance={linkInstance} />

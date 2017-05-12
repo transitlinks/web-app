@@ -109,12 +109,13 @@ export const TransitLinkInputType = new GraphQLInputObjectType({
   })
 });
 
-export const UploadedFilesType = new GraphQLObjectType({
-  name: 'UploadedFiles',
+export const MediaItemType = new GraphQLObjectType({
+  name: 'MediaItem',
   description: 'File upload summary.',
   fields: () => ({
-    fileName: { type: GraphQLString },
-    linkInstanceUuid: { type: GraphQLString }
+    uuid: { type: GraphQLString },
+    type: { type: GraphQLString },
+    url: { type: GraphQLString }
   })
 });
 

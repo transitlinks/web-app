@@ -49,4 +49,4 @@ function sync(...args) {
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType, Rating };
+export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem };

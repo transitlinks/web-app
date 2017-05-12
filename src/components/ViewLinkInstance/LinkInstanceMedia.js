@@ -4,7 +4,7 @@ import s from './LinkInstanceMedia.css';
 import cx from 'classnames';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
-import { uploadFiles } from '../../actions/viewLinkInstance';
+import { uploadFiles, getMediaItems } from '../../actions/viewLinkInstance';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
@@ -12,9 +12,10 @@ import FontIcon from 'material-ui/FontIcon';
 
 const LinkInstanceMedia = ({
   setProperty, 
-  uploadFiles,
+  uploadFiles, getMediaItems,
   linkInstance,
-  user, mediaDialogOpen 
+  media, newMedia, addedMedia,
+  env, user, mediaDialogOpen 
 }) => {
   
   const toggleMediaDialog = () => {
@@ -26,7 +27,6 @@ const LinkInstanceMedia = ({
   };
 
   const onFileInputChange = (event) => {
-    console.log("file input", event.target.files);
     uploadFiles(linkInstance.uuid, event.target.files);
   };
 
@@ -37,16 +37,21 @@ const LinkInstanceMedia = ({
 			onTouchTap={toggleMediaDialog} />
   ];
   
-  const mediaItemElems = [0,1,2,3,4,5,6,7,8,9,10].map((item) => (
-    <div key={item} className={cx(s.mediaItem, s.mediaThumbnail)}>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Tennispalatsi.jpg/250px-Tennispalatsi.jpg" />
+  let instanceMedia = media || [];
+  if (addedMedia) {
+    instanceMedia = instanceMedia.concat(addedMedia);
+  }
+
+  const mediaItemElems = instanceMedia.map((item) => (
+    <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}>
+      <img src={env.MEDIA_URL + item.url} />
     </div>
   ));
 
   return (
     <div className={s.instanceMedia}>
       <div className={s.mediaHeader}>
-        Gallery
+        Media
       </div>
       <div className={s.mediaContent}>
         {mediaItemElems}
@@ -77,9 +82,22 @@ const LinkInstanceMedia = ({
 
 }
 
-export default connect(state => ({
-  user: state.auth.auth.user,
-  mediaDialogOpen: state.viewLinkInstance.mediaDialogOpen
-}), {
-  setProperty, uploadFiles
+export default connect((state) => {
+  
+  const endState = {
+    user: state.auth.auth.user,
+    mediaDialogOpen: state.viewLinkInstance.mediaDialogOpen,
+    newMedia: state.viewLinkInstance.newMedia,
+    addedMedia: state.viewLinkInstance.addedMedia,
+    env: state.env
+  };
+
+  if (state.viewLinkInstance.linkInstanceMedia) {
+    endState.media = state.viewLinkInstance.linkInstanceMedia;
+  }
+
+  return endState;
+
+}, {
+  setProperty, uploadFiles, getMediaItems
 })(withStyles(s)(LinkInstanceMedia));

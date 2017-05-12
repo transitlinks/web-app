@@ -4,7 +4,7 @@ const log = getLog('data/source/linkRepository');
 import Sequelize from 'sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
-import { TransitLink, LinkInstance, TransportType, Locality, Rating } from '../models';
+import { TransitLink, LinkInstance, TransportType, Locality, Rating, MediaItem } from '../models';
 
 const getInstancesByUserId = async (userId) => {
   
@@ -229,6 +229,11 @@ export default {
   saveInstanceMedia: async (linkInstanceId, mediaItem) => {
     const created = await MediaItem.create({ linkInstanceId, ...mediaItem });
     return created.json();
+  },
+  
+  getMediaItems: async (params) => {
+    const mediaItems = await MediaItem.findAll({ where: params });
+    return mediaItems.map(item => item.json());
   },
 
   update: async (link) => {

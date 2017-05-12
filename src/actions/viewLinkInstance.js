@@ -9,7 +9,10 @@ import {
   SAVE_RATING_ERROR,
   INSTANCE_FILE_UPLOAD_START,
   INSTANCE_FILE_UPLOAD_SUCCESS,
-  INSTANCE_FILE_UPLOAD_ERROR
+  INSTANCE_FILE_UPLOAD_ERROR,
+  SEARCH_MEDIA_START,
+  SEARCH_MEDIA_SUCCESS,
+  SEARCH_MEDIA_ERROR
 } from '../constants';
 
 export const saveRating = (rating) => {
@@ -80,8 +83,9 @@ export const uploadFiles = (linkInstanceUuid, files) => {
     const query = `
       mutation uploadInstanceFiles {
         instanceFiles(linkInstanceUuid: "${linkInstanceUuid}") {
-          fileName,
-          linkInstanceUuid
+          uuid,
+          type,
+          url
         }
       }
     `;
@@ -92,6 +96,32 @@ export const uploadFiles = (linkInstanceUuid, files) => {
       INSTANCE_FILE_UPLOAD_START,
       INSTANCE_FILE_UPLOAD_SUCCESS,
       INSTANCE_FILE_UPLOAD_ERROR
+    );
+  
+  };
+
+};
+
+export const getMediaItems = (linkInstanceUuid) => {
+  
+  return async (...args) => {
+  
+    const query = `
+      query {
+        linkInstanceMedia (linkInstanceUuid: "${linkInstanceUuid}") {
+          uuid,
+          type,
+          url
+        }
+      }
+    `;
+  
+    return graphqlAction(
+      ...args, 
+      { query }, [ 'linkInstanceMedia' ],
+      SEARCH_MEDIA_START,
+      SEARCH_MEDIA_SUCCESS,
+      SEARCH_MEDIA_ERROR
     );
   
   };

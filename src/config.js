@@ -6,7 +6,10 @@ const env = process.env || {};
 
 export const {
   APP_ENV,
-	APP_URL,
+  APP_URL,
+  STORAGE_PATH,
+  MEDIA_PATH,
+  MEDIA_URL,
   HTTP_PORT,
   HTTP_HOST,
   DB_USER,

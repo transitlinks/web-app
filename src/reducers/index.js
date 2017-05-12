@@ -3,6 +3,7 @@ import { routerReducer } from 'react-router-redux';
 import runtime from './runtime';
 import intl from './intl';
 import auth from './auth';
+import env from './env';
 import login from './login';
 import autocomplete from './autocomplete';
 import editLink from './editLink';
@@ -14,6 +15,7 @@ export default combineReducers({
   runtime,
   intl,
   auth,
+  env,
   routing: routerReducer,
   login,
   autocomplete,

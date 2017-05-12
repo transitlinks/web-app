@@ -59,6 +59,11 @@ export default {
               userDepartureRating,
               userArrivalRating,
               userAwesomeRating
+            },
+            linkInstanceMedia(linkInstanceUuid: "${params.uuid}") {
+              uuid,
+              type,
+              url
             }
           }`
         );
@@ -69,7 +74,8 @@ export default {
         const props = { 
           edit, 
           linkInstance: data.linkInstance,
-          ratings: data.ratings 
+          ratings: data.ratings,
+          linkInstanceMedia: data.linkInstanceMedia
         };
         
         if (edit) {

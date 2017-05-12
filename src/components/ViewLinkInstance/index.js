@@ -70,7 +70,7 @@ const ViewLinkInstance = ({
   user,
   setProperty, saveRating, vote,
   intl, 
-  linkInstance, initialRatings, ratings,
+  linkInstance, initialRatings, ratings, linkInstanceMedia,
   upVotes, downVotes
 }) => {
   
@@ -459,7 +459,7 @@ const ViewLinkInstance = ({
         </div>
       </div>
       <div className={s.instanceMediaSection}>
-        <LinkInstanceMedia linkInstance={linkInstance} />
+        <LinkInstanceMedia linkInstance={linkInstance} media={linkInstanceMedia} />
       </div>
     </div>
   );
