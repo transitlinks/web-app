@@ -32,8 +32,38 @@
   max-width: 600px;
   text-align: center;
   margin-top: 24px;
+  margin-bottom: 42px;
   margin-left: auto;
   margin-right: auto;
   font-size: 33px;
   font-weight: lighter;
+}
+
+@media(max-width: 600px) {
+  .about {
+    display: none;
+  }
+}
+
+.breakdown {
+  margin-top: 24px;
+  justify-content: space-around;
+  display: flex;
+}
+
+.breakdown .item {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.breakdown .item .header {
+}
+
+.breakdown .item .header .title {
+  font-weight: bold;
+}
+
+.breakdown .item .body {
+
 }

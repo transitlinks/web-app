@@ -17,6 +17,44 @@ const HomeView = ({ intl }) => {
         <div className={s.appShortDescription}>Universal transit resource</div>
       </div>
       <div className={s.about}>Find transit connections anywhere in the world by any mode of transport.</div>
+      <div className={s.breakdown}>
+        <div className={s.item}>
+          <div className={s.header}>
+            <div className={s.title}>
+              Find
+            </div>
+          </div>
+          <div className={s.body}>
+          </div>
+        </div>
+        <div className={s.item}>
+          <div className={s.header}>
+            <div className={s.title}>
+              Contribute
+            </div>
+          </div>
+          <div className={s.body}>
+          </div>
+        </div>
+        <div className={s.item}>
+          <div className={s.header}>
+            <div className={s.title}>
+              Plan
+            </div>
+          </div>
+          <div className={s.body}>
+          </div>
+        </div>
+        <div className={s.item}>
+          <div className={s.header}>
+            <div className={s.title}>
+              Share
+            </div>
+          </div>
+          <div className={s.body}>
+          </div>
+        </div>
+      </div>
     </div>
   );
 

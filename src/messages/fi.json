@@ -5,7 +5,8 @@
     "defaultMessage": "Links",
     "message": "",
     "files": [
-      "src/components/Account/messages.js"
+      "src/components/Account/messages.js",
+      "src/components/Home/messages.js"
     ]
   },
   {
@@ -14,7 +15,8 @@
     "defaultMessage": "Profile",
     "message": "",
     "files": [
-      "src/components/Account/messages.js"
+      "src/components/Account/messages.js",
+      "src/components/Home/messages.js"
     ]
   },
   {
@@ -129,8 +131,8 @@
     "defaultMessage": "Create",
     "message": "",
     "files": [
-      "src/components/FunctionBar/messages.js",
       "src/components/LinkSearch/messages.js",
+      "src/components/FunctionBar/messages.js",
       "src/components/Navigation/messages.js"
     ]
   },
