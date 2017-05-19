@@ -24,7 +24,7 @@ import account from './account';
 import content from './content';
 import error from './error';
 
-import { locales, MEDIA_URL } from '../config';
+import { locales, MEDIA_URL, ADMINS } from '../config';
 
 const routes = {
 
@@ -175,9 +175,12 @@ export const initEndpoints = (app) => {
         }
       }
     });
-    
+
+    const admins = ADMINS.split(',');
+    const isAdmin = auth.loggedIn && admins.indexOf(auth.user.email) !== -1;
     const env = {
-      MEDIA_URL
+      MEDIA_URL,
+      isAdmin
     };
 
     try {

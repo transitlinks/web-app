@@ -8,6 +8,9 @@ import {
   SAVE_LINK_START,
   SAVE_LINK_SUCCESS,
   SAVE_LINK_ERROR,
+  DELETE_LINK_START,
+  DELETE_LINK_SUCCESS,
+  DELETE_LINK_ERROR,
   LINK_RESET
 } from '../constants';
 
@@ -120,6 +123,30 @@ export function saveLinkInstance({ linkInstance }) {
       SAVE_LINK_START,
       SAVE_LINK_SUCCESS,
       SAVE_LINK_ERROR
+    );
+  
+  };
+
+}
+
+export function deleteLinkInstance(uuid) {
+  
+  return async (...args) => {
+    
+    const query = `
+      mutation deleteLinkInstance {
+        deleteLinkInstance(uuid:"${uuid}") {
+          uuid
+        }
+      }
+    `;
+    
+    return graphqlAction(
+      ...args, 
+      { query }, [ 'deleteLinkInstance' ],
+      DELETE_LINK_START,
+      DELETE_LINK_SUCCESS,
+      DELETE_LINK_ERROR
     );
   
   };

@@ -8,6 +8,9 @@ import {
   SAVE_LINK_START,
   SAVE_LINK_SUCCESS,
   SAVE_LINK_ERROR,
+  DELETE_LINK_START,
+  DELETE_LINK_SUCCESS,
+  DELETE_LINK_ERROR,
   LINK_RESET
 } from '../constants';
 
@@ -112,24 +115,48 @@ export default function editLink(state = null, action) {
         };
 
       }
+  
+    case SAVE_LINK_START:
+    case SAVE_LINK_SUCCESS:
+    case SAVE_LINK_ERROR:
+      return graphqlReduce(
+        state, action,
+        { 
+          start: () => ({ linkInstance: null }), 
+          success: () => ({ 
+            linkInstance: Object.assign(
+              action.payload.linkInstance, 
+              { saved: (new Date()).getTime() }
+            )
+          }), 
+          error: () => ({ linkInstance: null })
+        },
+        SAVE_LINK_START,
+        SAVE_LINK_SUCCESS,
+        SAVE_LINK_ERROR
+      ); 
+    
+    case DELETE_LINK_START:
+    case DELETE_LINK_SUCCESS:
+    case DELETE_LINK_ERROR:
+      return graphqlReduce(
+        state, action,
+        { 
+          start: () => ({ deleteLinkInstance: null }), 
+          success: () => ({ 
+            deleteLinkInstance: action.payload.deleteLinkInstance
+          }), 
+          error: () => ({ deleteLinkInstance: null })
+        },
+        DELETE_LINK_START,
+        DELETE_LINK_SUCCESS,
+        DELETE_LINK_ERROR
+      );
+
+    default:
+      return state;
 
   }
   
-  return graphqlReduce(
-    state, action,
-    { 
-      start: () => ({ linkInstance: null }), 
-      success: () => ({ 
-        linkInstance: Object.assign(
-          action.payload.linkInstance, 
-          { saved: (new Date()).getTime() }
-        )
-      }), 
-      error: () => ({ linkInstance: null })
-    },
-    SAVE_LINK_START,
-    SAVE_LINK_SUCCESS,
-    SAVE_LINK_ERROR
-  ); 
 
 }

@@ -182,18 +182,38 @@ const createOrUpdateLink = async (linkInstance, reqUser) => {
 
 };
 
+const deleteLinkInstance = async (uuid, reqUser) => {
+ 	
+    return await linkRepository.deleteInstance(uuid);
+
+};
+
 export const TransitLinkMutationFields = {
   
   linkInstance: {
     
     type: LinkInstanceType,
-    description: 'Create a new link instance',
+    description: 'Create or update a link instance',
     args: {
       linkInstance: { type: LinkInstanceInputType }
     },
     resolve: async ({ request }, { linkInstance }) => {
-      log.info(`graphql-request=create-link-instance user=${request.user ? request.user.uuid : null} from=${linkInstance.from} to=${linkInstance.to} transport=${linkInstance.transport}`);
+      log.info(`graphql-request=create-or-update-link-instance user=${request.user ? request.user.uuid : null} from=${linkInstance.from} to=${linkInstance.to} transport=${linkInstance.transport}`);
       return await createOrUpdateLink(linkInstance, request.user);
+    }
+  
+  },
+  
+  deleteLinkInstance: {
+    
+    type: LinkInstanceType,
+    description: 'Delete a link instance',
+    args: {
+      uuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid }) => {
+      log.info(`graphql-request=delete-link-instance user=${request.user ? request.user.uuid : null} uuid=${uuid}`);
+      return await deleteLinkInstance(uuid, request.user);
     }
   
   },

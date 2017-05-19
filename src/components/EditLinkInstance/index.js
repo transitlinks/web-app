@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { 
   saveLinkInstance, 
+  deleteLinkInstance,
   setTransport,
   setProperty 
 } from '../../actions/editLink';
@@ -21,7 +22,7 @@ import msg from './messages';
 
 const EditLinkInstance = ({
   intl,
-  saveLinkInstance, setTransport, setProperty,
+  saveLinkInstance, deleteLinkInstance, setTransport, setProperty,
   linkInstance, transportTypes,
   uuid,
   user,
@@ -98,6 +99,10 @@ const EditLinkInstance = ({
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
     })});
+  };
+
+  const onDelete = () => {
+    deleteLinkInstance(uuid);
   };
 
   const onChangeProperty = (property) => {
@@ -374,6 +379,7 @@ const EditLinkInstance = ({
         }
       </div>
       <div className={s.save}>
+        { uuid && <RaisedButton label="Delete" onClick={onDelete} /> }
         <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
       </div>
     </div>
@@ -406,6 +412,7 @@ export default injectIntl(
     awesomeRating: state.editLink.awesomeRating,
   }), {
     saveLinkInstance,
+    deleteLinkInstance,
     setTransport,
     setProperty
   })(withStyles(s)(EditLinkInstance))

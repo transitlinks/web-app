@@ -85,6 +85,7 @@ const saveVote = async (uuid, voteType) => {
 
 };
 
+
 export default {
   
   getByUuid: async (uuid) => {
@@ -99,7 +100,7 @@ export default {
 		}
 			
 		let instances = await LinkInstance.findAll({
-			where: { linkId: link.id },
+			where: { linkId: link.id, deletedAt: { $eq: null } },
 			include: [
 				{ model: TransportType, as: 'transport' }
 			]
@@ -215,6 +216,19 @@ export default {
 		});
     
     return created.toJSON();
+
+  },
+  
+  deleteInstance: async (uuid) => {
+    
+    let instance = await LinkInstance.findOne({ uuid });
+    
+    if (!instance) {
+      throw new Error('Could not find link instance with uuid ' + uuid);
+    }
+
+    await instance.destroy();
+    return instance;
 
   },
 
