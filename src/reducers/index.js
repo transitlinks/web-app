@@ -10,6 +10,7 @@ import editLink from './editLink';
 import viewLinkInstance from './viewLinkInstance';
 import searchLinks from './searchLinks';
 import profile from './profile';
+import home from './home';
 
 export default combineReducers({
   runtime,
@@ -22,5 +23,6 @@ export default combineReducers({
   editLink,
   viewLinkInstance,
   searchLinks,
-  profile
+  profile,
+  home
 });
