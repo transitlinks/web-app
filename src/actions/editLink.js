@@ -86,6 +86,7 @@ export function setTransport(transport) {
 }
 
 export function resetLink(linkInstance) {
+  console.log("resetyting link", linkInstance);
   return async (dispatch) => {
     dispatch({
       type: LINK_RESET,
