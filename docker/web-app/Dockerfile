@@ -1,5 +1,6 @@
 FROM vhalme/txlinks-base
 RUN mkdir /transitlinks
+RUN mkdir /transitlinks/images
 RUN cd /transitlinks && \
   git clone https://github.com/transitlinks/web-app.git && \
   cd web-app && \
