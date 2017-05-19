@@ -70,8 +70,7 @@ const LinkInstanceMedia = ({
           onRequestClose={toggleMediaDialog}>
           <div className={s.mapContainer}>
             <div id="media-dialog" className={s.mediaDialog}>
-              <input id="upload-input" type="file" name="uploads[]" 
-                multiple="multiple" 
+              <input id="upload-input" type="file" name="uploads[]" accept="image/*" 
                 onChange={onFileInputChange}/>
             </div>
           </div>
