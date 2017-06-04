@@ -158,7 +158,7 @@ export default {
       return Object.assign(link.toJSON(), { instanceCount });
     }));
 
-    return linkResults;
+    return linkResults.filter(linkResult => linkResult.instanceCount > 0);
   
   },
 

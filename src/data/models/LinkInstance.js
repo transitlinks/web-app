@@ -125,6 +125,12 @@ const LinkInstance = Model.define('LinkInstance', {
     type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0
+  },
+  
+  deletedAt: {
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null
   }
 
 }, {

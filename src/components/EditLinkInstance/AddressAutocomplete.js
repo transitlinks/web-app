@@ -47,6 +47,7 @@ const TerminalMap = withGoogleMap(props => (
 ));
 
 const AddressAutocomplete = ({
+  env,
   endpoint, location, className, compact,
   initialValue, predictions, input, id,
   mapDialog, geocodeAddress, geocodeLatLng,
@@ -70,6 +71,8 @@ const AddressAutocomplete = ({
   };
 
 	const setCoords = (place) => {
+
+    if (env.offline) return;
 		
     reverseGeocode(place.id, (result) => {
       const location = result.geometry.location;
@@ -83,7 +86,6 @@ const AddressAutocomplete = ({
 	};
 
   const onSelect = (address) => {
-		console.log("address", address);
     selectAddress({ endpoint, locality: address.value });
 		setCoords(address);
   };
@@ -136,7 +138,9 @@ const AddressAutocomplete = ({
 	];
 	
 	const setPlace = (latLng) => {
-		
+	  
+    if (env.offline) return;
+
 		geocode(latLng, (result) => {
 			setProperty('geocodeAddress', result.formatted_address);
 			setProperty('geocodeLatLng', latLng.lat + ',' + latLng.lng);
@@ -226,6 +230,7 @@ AddressAutocomplete.propTypes = {
 };
 
 export default connect(state => ({
+  env: state.env,
   input: state.autocomplete.addressInput,
   predictions: state.autocomplete.localities,
   mapDialog: state.editLink.mapDialog,

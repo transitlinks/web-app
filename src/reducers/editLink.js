@@ -34,7 +34,7 @@ const formatTime = (hour, minute) => {
 
 };
 
-export default function editLink(state = null, action) {
+export default function editLink(state = {}, action) {
   
   const endState = { ...state };
 

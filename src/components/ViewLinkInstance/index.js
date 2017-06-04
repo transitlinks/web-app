@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { saveRating, vote } from '../../actions/viewLinkInstance';
 import { setProperty } from '../../actions/properties';
+import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './ViewLinkInstance.css';
@@ -69,7 +70,7 @@ const InstanceMap = withGoogleMap(props => (
 const ViewLinkInstance = ({
   user,
   setProperty, saveRating, vote,
-  intl, 
+  env, intl, 
   linkInstance, initialRatings, ratings, linkInstanceMedia,
   upVotes, downVotes
 }) => {
@@ -130,7 +131,9 @@ const ViewLinkInstance = ({
   };
 
 	const renderMap = () => {
-			
+
+    if (env.offline) return null;
+
 		return  (
       <InstanceMap
     		containerElement={
@@ -468,6 +471,7 @@ const ViewLinkInstance = ({
 export default injectIntl(
   connect(state => ({
     user: state.auth.auth.user,
+    env: state.env,
     ratings: state.viewLinkInstance.ratings,
     upVotes: state.viewLinkInstance.upVotes,
     downVotes: state.viewLinkInstance.downVotes

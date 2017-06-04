@@ -19,12 +19,16 @@ const searchTriggered = (input) => {
 };
 
 const LocalityAutocomplete = ({ 
+  env,
   endpoint, className, compact,
   initialInput, predictions, input, id,
   setProperty, searchLocalities, selectLocality
 }) => {
   
   const setPlace = (placeId) => {
+    
+    if (env.offline) return;
+    
     reverseGeocode(placeId, (result) => {
       const terminal = endpoint === 'from' ? 'departure' : 'arrival';
       const location = result.geometry.location;
@@ -34,6 +38,7 @@ const LocalityAutocomplete = ({
         description: result.formatted_address
       });
     });
+
   };
 
   const onSelect = (locality) => {
@@ -99,6 +104,7 @@ LocalityAutocomplete.propTypes = {
 };
 
 export default connect(state => ({
+  env: state.env,
   predictions: state.autocomplete.localities,
   input: state.autocomplete.localityInput
 }), {

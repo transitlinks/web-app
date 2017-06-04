@@ -24,7 +24,7 @@ import account from './account';
 import content from './content';
 import error from './error';
 
-import { locales, MEDIA_URL, ADMINS } from '../config';
+import { locales, MEDIA_URL, ADMINS, DEV_MODE } from '../config';
 
 const routes = {
 
@@ -180,7 +180,8 @@ export const initEndpoints = (app) => {
     const isAdmin = auth.loggedIn && admins.indexOf(auth.user.email) !== -1;
     const env = {
       MEDIA_URL,
-      isAdmin
+      isAdmin,
+      offline: DEV_MODE === 'offline'
     };
 
     try {
