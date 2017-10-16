@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { extractLinkAreas, formatDate } from '../utils';
+import cx from 'classnames';
 import s from './UserLinkInstance.css';
 import FontIcon from 'material-ui/FontIcon';
 import msgTransport from '../common/messages/transport';
@@ -17,7 +18,7 @@ const UserLinkInstance = ({
   
   return (
     <div key={instance.uuid}
-      className={s.link} onClick={() => navigate('/link-instance/' + instance.uuid)}>
+      className={cx(s.link, ".user-link")} onClick={() => navigate('/link-instance/' + instance.uuid)}>
       <div className={s.linkDate}>
         {formatDate(date)}
       </div>
