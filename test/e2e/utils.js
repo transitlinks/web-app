@@ -38,8 +38,9 @@ const testTerminal = (terminal, location) => {
 
 export const editAndSaveLinkInstanceMinimal = (transport, mode, identifier) => {
   
-    //browser.moveToObject('#mode-select', 40, 40);
+    browser.moveToObject('#mode-select', 40, 40);
     browser.click('#mode-select button');
+    browser.pause(500);
     browser.click(`#mode-${mode}`);
     browser.pause(500);
      

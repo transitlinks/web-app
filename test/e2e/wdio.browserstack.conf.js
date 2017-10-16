@@ -1,5 +1,8 @@
 var browserstack = require('browserstack-local');
 
+const buildName = process.env.TRAVIS_BUILD_NUMBER ?
+  ('transitlinks #' + process.env.TRAVIS_BUILD_NUMBER + '.' + process.env.TRAVIS_JOB_NUMBER) : ('transitlinks local ' + (new Date()).toJSON());
+
 exports.config = {
     
     user: process.env.BROWSERSTACK_USERNAME,
@@ -18,7 +21,7 @@ exports.config = {
         browserName: 'chrome',
         project: 'transitlinks',
         version: '44.0',
-        build: 'transitlinks #' + process.env.TRAVIS_BUILD_NUMBER + '.' + process.env.TRAVIS_JOB_NUMBER,
+        build: buildName,
         'browserstack.local': 'true',
         'browserstack.debug': 'true'
     }],
@@ -42,7 +45,10 @@ exports.config = {
 
 		// Code to start browserstack local before start of test
   	onPrepare: function (config, capabilities) {
-    	console.log("Connecting local");
+      if (process.env.TRAVIS_BUILD_NUMBER) {
+        return resolve();
+      }
+      console.log("Connecting local");
     	return new Promise(function(resolve, reject){
       	exports.bs_local = new browserstack.Local();
       	exports.bs_local.start({'key': exports.config.key }, function(error) {
@@ -55,6 +61,9 @@ exports.config = {
 
   	// Code to stop browserstack local after end of test
   	onComplete: function (capabilties, specs) {
+      if (process.env.TRAVIS_BUILD_NUMBER) {
+        return resolve();
+      }
     	exports.bs_local.stop(function() {});
   	}
 }
