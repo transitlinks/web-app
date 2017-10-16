@@ -45,9 +45,6 @@ exports.config = {
 
 		// Code to start browserstack local before start of test
   	onPrepare: function (config, capabilities) {
-      if (process.env.TRAVIS_BUILD_NUMBER) {
-        return;
-      }
       console.log("Connecting local");
     	return new Promise(function(resolve, reject){
       	exports.bs_local = new browserstack.Local();
@@ -61,9 +58,6 @@ exports.config = {
 
   	// Code to stop browserstack local after end of test
   	onComplete: function (capabilties, specs) {
-      if (process.env.TRAVIS_BUILD_NUMBER) {
-        return;
-      }
     	exports.bs_local.stop(function() {});
   	}
 }
