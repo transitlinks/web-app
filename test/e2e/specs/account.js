@@ -70,7 +70,8 @@ describe('Test Account', () => {
     browser.click('#logout-link a[href="/account"]');
     browser.waitForExist('a[href="/account/links"]');
     browser.click('a[href="/account/links"]');
-    browser.waitForExist('.user-link');
+    browse.pause(1000);
+    // browser.waitForExist('.user-link');
     
     const links = browser.elements('.user-link');
     assert.equal(links.value.length, 2);

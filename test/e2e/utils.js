@@ -5,17 +5,15 @@ const testTerminal = (terminal, location) => {
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
-    browser.pause(1000);
+    browser.pause(500);
     browser.moveToObject(`#${terminal}-time-picker`, 10, 10);
     browser.click(`#${terminal}-time-picker`);
-    browser.pause(1000);
+    browser.pause(500);
     browser.click('button=OK');
-    browser.pause(1000);
+    browser.pause(500);
     const time = browser.getValue(`#${terminal}-time-picker`);
-    console.log("TIME PICKER VAL", time);
     assert(time.indexOf(':') === 2, `Invalid ${terminal} time value selected`);
     
-    browser.pause(2000);
     if (browser.isVisible(`#${terminal}-address-full`)) {
       browser.moveToObject(`#${terminal}-address-full`, 10, 10);
       browser.click(`#${terminal}-address-full`); 
@@ -76,9 +74,11 @@ export const editAndSaveLinkInstanceMinimal = (transport, mode, identifier) => {
     browser.waitForExist('#moscow');
     browser.click('#moscow');
     
-    browser
-      .click('#transport-select')
-      .click(`#${transport}`);
+    browser.click('#transport-select')
+    browser.pause(1000); 
+    browser.moveToObject(`#${transport}`, 6, 6);
+    browser.pause(1000); 
+    browser.click(`#${transport}`);
     
     browser.pause(500); 
     browser.click(`#identifier-input`);
@@ -121,11 +121,11 @@ export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount
     browser.waitForExist('#moscow');
     browser.click('#moscow');
     
-    browser
-      .click('#transport-select')
-      .click(`#${transport}`);
-    
-    browser.pause(500); 
+    browser.click('#transport-select');
+    browser.pause(1000);
+    browser.moveToObject(`#${transport}`, 6, 6);
+    browser.click(`#${transport}`);
+    browser.pause(1000); 
     
     testTerminal('departure', 'helsinki');
     testTerminal('arrival', 'moscow');
