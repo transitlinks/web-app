@@ -12,6 +12,14 @@ export const getMessages = (source) => {
 
 };
 
+export const formatDate = (value, format) => {
+  
+  const date = new Date(value);
+
+  return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+
+};
+
 export const formatDuration = (totalMinutes) => {
 
   if (!totalMinutes) {
@@ -35,6 +43,20 @@ export const formatDuration = (totalMinutes) => {
 
 };
 
+export const extractLinkAreas = (link) => {
+  
+  const fromCommaIndex = link.from.description.indexOf(',');
+  const fromCity = link.from.description.substring(0, fromCommaIndex);
+  const fromArea = link.from.description.substring(fromCommaIndex + 1);
+  
+  const toCommaIndex = link.to.description.indexOf(',');
+  const toCity = link.to.description.substring(0, toCommaIndex);
+  const toArea = link.to.description.substring(toCommaIndex + 1);
+
+  return { fromCity, fromArea, toCity, toArea };
+
+};
+
 export const truncate = (value, maxLength) => {
   
   if (!value) return null;
@@ -48,3 +70,4 @@ export const truncate = (value, maxLength) => {
   return strValue;
 
 };
+

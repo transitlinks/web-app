@@ -4,27 +4,21 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './UserLinks.css';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import UserLinkInstance from './UserLinkInstance';
+import { extractLinkAreas } from '../utils';
 import * as utils from "../../core/utils";
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.links';
 
 const UserLinks = ({ intl, userLinks }) => {	
-	
-  const linkElems = userLinks.linkInstances.map((linkInstance, index) => (
-    <div key={index} className="user-link">
-      {linkInstance.link.from.description} / 
-      {linkInstance.link.to.description} / 
-      {linkInstance.transport.slug}
-    </div>
-  ));
+  
+  console.log("user links", userLinks);  
+  const instances = userLinks.linkInstances.map(instance => <UserLinkInstance instance={instance} />);
 
 	return (
     <div>
       <div>
-        <FormattedMessage {...msg['links-title']} />
-      </div>
-      <div>
-        {linkElems}
+        {instances}
       </div>
     </div>
   );

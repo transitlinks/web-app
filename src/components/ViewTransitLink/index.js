@@ -6,45 +6,18 @@ import { FormattedMessage } from 'react-intl';
 import s from './ViewTransitLink.css';
 import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
+import LinkInstance from './LinkInstance';
 import { orange600, green600 } from 'material-ui/styles/colors';
-import { formatDuration } from '../utils';
+import { formatDuration, extractLinkAreas } from '../utils';
 import msgTransport from '../common/messages/transport';
  
 const ViewTransitLink = ({ 
   link, navigate 
 }) => {
 
-  const modeBackgrounds = {
-    'research': orange600,
-    'experience': green600
-  };
+  const instances = link.instances.map(instance => <LinkInstance instance={instance} />);
 
-  const instances = link.instances.map(instance => (
-    <div key={instance.uuid} className={"table-row " + s.selectable + " " + s.instance}
-      onClick={() => navigate('/link-instance/' + instance.uuid)}>
-      <div className="col-1-4">
-        <div className={s.mode}>
-          <Chip backgroundColor={modeBackgrounds[instance.mode]}>
-            {instance.mode === 'research' ? 'R' : 'E'}
-          </Chip>
-        </div>
-        <div className={s.transport}>
-          <FormattedMessage { ...msgTransport[instance.transport.slug] } />
-        </div>
-      </div>
-      <div className="col-1-4">{formatDuration(instance.durationMinutes)}</div>
-      <div className="col-1-4">{instance.priceAmount} {instance.priceCurrency}</div>
-      <div className="col-1-4">{instance.avgRating}</div>
-    </div>
-  ));
-  
-  const fromCommaIndex = link.from.description.indexOf(',');
-  const fromCity = link.from.description.substring(0, fromCommaIndex);
-  const fromArea = link.from.description.substring(fromCommaIndex + 1);
-  
-  const toCommaIndex = link.to.description.indexOf(',');
-  const toCity = link.to.description.substring(0, toCommaIndex);
-  const toArea = link.to.description.substring(toCommaIndex + 1);
+  const areas = extractLinkAreas(link);
 
   return (
     <div className={s.container}>
@@ -52,19 +25,19 @@ const ViewTransitLink = ({
         <div className={s.title}>
           <div id="place-from">
             <div>
-              {fromCity}
+              {areas.fromCity}
             </div>
             <div className={s.area}>
-              {fromArea}
+              {areas.fromArea}
             </div>
           </div>
           <FontIcon className={s.arrow + " material-icons"}>arrow_forward</FontIcon>
           <div id="place-to">
             <div>
-              {toCity}
+              {areas.toCity}
             </div>
             <div className={s.area}>
-              {toArea}
+              {areas.toArea}
             </div>
           </div>
         </div>

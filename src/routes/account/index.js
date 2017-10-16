@@ -49,6 +49,8 @@ export default {
               uuid,
               linkInstances { 
                 uuid,
+                departureDate,
+                createdAt,
                 link {
                   from { apiId, name, description, countryLong, lat, lng },
                   to { apiId, name, description, countryLong, lat, lng } 

@@ -46,7 +46,8 @@ export const LinkInstanceType = new GraphQLObjectType({
     upVotes: { type: GraphQLInt },
     downVotes: { type: GraphQLInt },
     durationMinutes: { type: GraphQLInt },
-    isPrivate: { type: GraphQLBoolean } 
+    isPrivate: { type: GraphQLBoolean },
+    createdAt: { type: GraphQLString }
   })
 });
 
