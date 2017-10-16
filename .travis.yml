@@ -6,6 +6,11 @@ node_js:
   - 'node'
 env:
   - ISOLATED=false
+addons:
+  browserstack:
+    username: $BROWSERSTACK_USERNAME
+    access_key: $BROWSERSTACK_ACCESS_KEY
+    forcelocal: true
 branches:
   only:
     - master
