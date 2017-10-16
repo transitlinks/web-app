@@ -21,7 +21,7 @@ describe('data/queries/account', () => {
     const departureDate = new Date();
     const arrivalDate = new Date(departureDate.getTime() + (3 * 60 * 60 * 1000));
 
-    createOrUpdateLinkInstance(validLinkInstance(departureDate, arrivalDate), testUsers[0].uuid);
+    await createOrUpdateLinkInstance(validLinkInstance(departureDate, arrivalDate), testUsers[0].uuid);
 
   });
 

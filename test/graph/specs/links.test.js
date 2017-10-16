@@ -106,8 +106,19 @@ describe('data/queries/links', () => {
     assert(link.to, 'missing property: link.to');
 
     const { instances } = link;
+
     assert(instances && instances.length > 0, 'missing or empty property: link.instances');
-    assert.equal(instances[0].durationMinutes, (twoDaysInMinutes - 120));
+
+    let foundInstance = false;
+    for (let instanceIndex in instances) {
+      if (instances[instanceIndex].uuid === linkInstance.uuid) {
+        assert.equal(instances[instanceIndex].durationMinutes, (twoDaysInMinutes - 120));
+        foundInstance = true;
+        break;
+      }
+    }
+    
+    assert(foundInstance);
 
   });
   
