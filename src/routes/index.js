@@ -63,7 +63,6 @@ export const initEndpoints = (app) => {
 	app.post('/login', (req, res, next) => { 
      
     app.passport.authenticate('login-local', (err, user, info) => {
-      console.log("LOGIN LOCAL", err, user, info);
       if (err) {
         req.session.error = err;
         res.redirect('/login');
