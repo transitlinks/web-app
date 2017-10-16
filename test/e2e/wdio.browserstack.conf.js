@@ -15,8 +15,12 @@ exports.config = {
     maxInstances: 10,
     capabilities: [{
         maxInstances: 5,
-				browser: 'chrome',
-    		'browserstack.local': true
+        browserName: 'chrome',
+        project: 'transitlinks',
+        version: '44.0',
+        build: 'transitlinks #' + process.env.TRAVIS_BUILD_NUMBER + '.' + process.env.TRAVIS_JOB_NUMBER,
+        'browserstack.local': 'true',
+        'browserstack.debug': 'true'
     }],
     sync: true,
     logLevel: 'verbose',
