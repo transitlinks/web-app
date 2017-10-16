@@ -11,7 +11,7 @@ const assertResponse = async (response) => {
 describe('routes/auth', () => {
 
   it('should respond to local login call', async () => {
-    const response = await fetch(`${APP_URL}/login`);
+    const response = await fetch(`${APP_URL}/login`, { method: 'POST' });
     console.log("local response", response);
     assertResponse(response);
   });

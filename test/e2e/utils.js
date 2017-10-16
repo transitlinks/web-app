@@ -5,19 +5,22 @@ const testTerminal = (terminal, location) => {
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
-    browser.pause(500);
+    browser.pause(1000);
     browser.moveToObject(`#${terminal}-time-picker`, 10, 10);
     browser.click(`#${terminal}-time-picker`);
     browser.pause(1000);
     browser.click('button=OK');
-    browser.pause(500);
+    browser.pause(1000);
     const time = browser.getValue(`#${terminal}-time-picker`);
+    console.log("TIME PICKER VAL", time);
     assert(time.indexOf(':') === 2, `Invalid ${terminal} time value selected`);
     
     browser.pause(2000);
     if (browser.isVisible(`#${terminal}-address-full`)) {
+      browser.moveToObject(`#${terminal}-address-full`, 10, 10);
       browser.click(`#${terminal}-address-full`); 
     } else {
+      browser.moveToObject(`#${terminal}-address-compact`, 10, 10);
       browser.click(`#${terminal}-address-compact`); 
     }
 
