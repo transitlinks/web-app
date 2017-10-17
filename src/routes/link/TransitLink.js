@@ -24,12 +24,12 @@ class TransitLink extends React.Component {
   render() {
     
     this.context.setTitle(title);
-    const link = this.props.link;
+    const { link, deleted } = this.props;
     
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <ViewTransitLink link={link} />
+          <ViewTransitLink link={link} deleted={deleted} />
         </div>
       </div>
     );

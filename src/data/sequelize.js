@@ -6,6 +6,7 @@ const dbUrl = DB_URL ||
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
   
 const sequelize = new Sequelize(dbUrl, {
+  logging: false,
   define: {
     freezeTableName: true,
   }

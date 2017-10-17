@@ -122,7 +122,7 @@ describe('data/queries/links', () => {
 
   });
   
-  it('returns link instance by id', async () => {
+  it('returns link instance by uuid', async () => {
     
     let response = await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater)); 
     assertResponse(response);
@@ -186,6 +186,62 @@ describe('data/queries/links', () => {
     assert(linkInstance.priceCurrency, 'missing property: linkInstance.priceCurrency');
     assert(linkInstance.description, 'missing property: linkInstance.description');
     assert.equal(linkInstance.durationMinutes, (twoDaysInMinutes - 120));
+
+  });
+  
+  it('deletes link instance by id', async () => {
+    
+    let response = await createOrUpdateLinkInstance(validLinkInstance(date, twoDaysLater)); 
+    assertResponse(response);
+    
+    let linkInstance = response.data.linkInstance;
+    assert(linkInstance);
+    
+    response = await test(JSON.stringify({
+      query: `
+        mutation deleteLinkInstance {
+          deleteLinkInstance(uuid:"xxx") {
+            uuid
+          }
+        }
+      `,
+      variables: {}
+    }));
+
+    assert.equal(response.status, 200);
+    assert(response.errors);
+
+    response = await test(JSON.stringify({
+      query: `
+        mutation deleteLinkInstance {
+          deleteLinkInstance(uuid:"${linkInstance.uuid}") {
+            uuid
+          }
+        }
+      `,
+      variables: {}
+    }));
+
+    assertResponse(response);
+    
+    const { data } = response;
+    assert(data);
+    assert(data.deleteLinkInstance);
+    assert.equal(data.deleteLinkInstance.uuid, linkInstance.uuid);
+    
+    response = await test(JSON.stringify({
+      query: `
+        mutation deleteLinkInstance {
+          deleteLinkInstance(uuid:"${linkInstance.uuid}") {
+            uuid
+          }
+        }
+      `,
+      variables: {}
+    }));
+
+    assert.equal(response.status, 200);
+    assert(response.errors);
 
   });
   

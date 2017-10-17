@@ -12,7 +12,7 @@ import { formatDuration, extractLinkAreas } from '../utils';
 import msgTransport from '../common/messages/transport';
  
 const ViewTransitLink = ({ 
-  link, navigate 
+  link, deleted, navigate 
 }) => {
 
   const instances = link.instances.map(instance => <LinkInstance instance={instance} />);
@@ -42,6 +42,14 @@ const ViewTransitLink = ({
           </div>
         </div>
       </div>
+      { 
+        deleted &&
+          (
+            <div className={s.deleted}>
+              <div className={s.deletedMessage}>Link deleted.</div>
+            </div>
+          )
+      }
       <div className={s.instances}>
         <div className={"table-row " + s.instanceHeader}>
           <div className="col-1-4"></div>

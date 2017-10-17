@@ -3,6 +3,21 @@
 .container {
 }
 
+.deleted {
+  
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+}
+
+.deleted .deletedMessage {
+  background: #00a000;
+  color: white;
+  border-radius: 8px;
+  padding: 8px;
+}
+
 .header {
   margin-top: 16px;
   margin-bottom: 6px;

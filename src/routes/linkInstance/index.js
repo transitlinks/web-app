@@ -31,6 +31,7 @@ export default {
               uuid,
               privateUuid,
               link {
+                uuid,
                 from { apiId, name, description, countryLong, lat, lng },
                 to { apiId, name, description, countryLong, lat, lng} 
               },

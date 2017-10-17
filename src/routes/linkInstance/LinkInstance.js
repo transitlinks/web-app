@@ -34,7 +34,12 @@ class LinkInstance extends React.Component {
 
   updateComponent(props) {
     
-    console.log("linkInstanmce will receive props", props);
+    if (props.deleted && props.deleted.uuid === props.linkInstance.uuid) {
+      props.resetLink();
+      props.navigate(`/link/${props.linkInstance.link.uuid}?deleted=1`);
+      return;
+    }
+
     // Transition to link when save is detected    
     const stateUpdated = this.state.updated;
     const propUpdated = props.saved ? props.saved.saved : stateUpdated;
@@ -93,7 +98,8 @@ LinkInstance.propTypes = {
 LinkInstance.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
-  saved: state.editLink.linkInstance
+  saved: state.editLink.linkInstance,
+  deleted: state.editLink.deleteLinkInstance
 }), {
   resetLink, navigate
 })(withStyles(s)(LinkInstance));

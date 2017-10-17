@@ -221,7 +221,7 @@ export default {
   
   deleteInstance: async (uuid) => {
     
-    let instance = await LinkInstance.findOne({ uuid });
+    let instance = await LinkInstance.findOne({ where: { uuid }});
     
     if (!instance) {
       throw new Error('Could not find link instance with uuid ' + uuid);

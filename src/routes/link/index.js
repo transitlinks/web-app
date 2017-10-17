@@ -11,8 +11,8 @@ export default {
 
   path: '/link/:uuid',
 
-  async action({ params, context }) {
-      
+  async action({ params, context, query }) {
+    
     const { graphqlRequest } = context.store.helpers;
       
     try { 
@@ -36,7 +36,7 @@ export default {
       );
       
       log.info('event=received-link-data', data);
-      return <TransitLink link={data.link} />; 
+      return <TransitLink link={data.link} deleted={query.deleted} />; 
     
     } catch (error) {
       return <ErrorPage errors={error.errors} />
