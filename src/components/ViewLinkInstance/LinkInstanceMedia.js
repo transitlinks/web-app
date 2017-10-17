@@ -10,13 +10,35 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import FontIcon from 'material-ui/FontIcon';
 
+const IMAGE_TYPES = [ 'png', 'jpg', 'jpeg', 'gif' ];
+const VIDEO_TYPES = [ 'youtube' ];
+
 const LinkInstanceMedia = ({
   setProperty, 
   uploadFiles, getMediaItems,
   linkInstance,
   media, newMedia, addedMedia,
-  env, user, mediaDialogOpen 
+  env, user, mediaDialogOpen,
+  selectedItemIndex
 }) => {
+  
+  const handleOutsideClick = (event) => {
+    if (document.getElementById('media-view').contains(event.target)) {
+      console.log("clicked inside");
+    } else {
+      console.log("clicked outside");
+      setProperty('selectedItemIndex', null);
+      setTimeout(() => removeOutsideClickListener(), 500);
+    }
+  };
+
+  const addOutsideClickListener = () => {
+    window.addEventListener('click', handleOutsideClick);
+  }
+
+  const removeOutsideClickListener = () => {
+    window.removeEventListener('click', handleOutsideClick);
+  }
   
   const toggleMediaDialog = () => {
     if (mediaDialogOpen) {
@@ -42,14 +64,39 @@ const LinkInstanceMedia = ({
     instanceMedia = instanceMedia.concat(addedMedia);
   }
 
+  const viewMedia = (item) => {
+    for (let itemIndex in instanceMedia) {
+      if (item.uuid === instanceMedia[itemIndex].uuid) {
+        setProperty('selectedItemIndex', itemIndex);
+        setTimeout(() => addOutsideClickListener(), 500);
+        return;
+      }
+    }  
+  };
+  
+  console.log("instance media", selectedItemIndex, instanceMedia);
+
+  const mediaView = selectedItemIndex ? (
+    <div id="media-view" className={s.mediaView}>
+      <div className={s.closeMediaView}>
+        Close
+      </div>
+      <div className={s.mediaContent}>
+        <img src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} />
+      </div>
+    </div>
+  ) : null;
+
   const mediaItemElems = instanceMedia.map((item) => (
-    <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}>
+    <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}
+      onClick={() => viewMedia(item)}>
       <img src={env.MEDIA_URL + item.url} />
     </div>
   ));
 
   return (
     <div className={s.instanceMedia}>
+      { mediaView }
       <div className={s.mediaHeader}>
         Media
       </div>
@@ -86,6 +133,7 @@ export default connect((state) => {
   const endState = {
     user: state.auth.auth.user,
     mediaDialogOpen: state.viewLinkInstance.mediaDialogOpen,
+    selectedItemIndex: state.viewLinkInstance.selectedItemIndex,
     newMedia: state.viewLinkInstance.newMedia,
     addedMedia: state.viewLinkInstance.addedMedia,
     env: state.env
