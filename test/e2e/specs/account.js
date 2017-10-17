@@ -75,8 +75,8 @@ describe('Test Account', () => {
     const links = browser.elements('div.user-link');
     assert.equal(links.value.length, 2);
 
-    browser.click('div.user-link a');
-    browser.waitForVisible('#place-from');
+    browser.click('div.user-link div.locality');
+    browser.waitForVisible('#mode-value');
 
 
   });

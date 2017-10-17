@@ -379,7 +379,7 @@ const EditLinkInstance = ({
         }
       </div>
       <div className={s.save}>
-        { uuid && <RaisedButton label="Delete" onClick={onDelete} /> }
+        { uuid && <RaisedButton label="Delete" id="delete-button" onClick={onDelete} /> }
         <RaisedButton label="Save" disabled={saveDisabled} onClick={onSave} />
       </div>
     </div>

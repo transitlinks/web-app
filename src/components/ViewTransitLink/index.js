@@ -4,6 +4,7 @@ import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { FormattedMessage } from 'react-intl';
 import s from './ViewTransitLink.css';
+import cx from 'classnames';
 import FontIcon from 'material-ui/FontIcon';
 import Chip from 'material-ui/Chip';
 import LinkInstance from './LinkInstance';
@@ -45,7 +46,7 @@ const ViewTransitLink = ({
       { 
         deleted &&
           (
-            <div className={s.deleted}>
+            <div className={cx(s.deleted, "deleted")}>
               <div className={s.deletedMessage}>Link deleted.</div>
             </div>
           )
