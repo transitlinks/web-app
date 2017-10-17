@@ -15,10 +15,10 @@ exports.config = {
   exclude: [
   ],
   
-  maxInstances: 10,
+  maxInstances: 1,
   capabilities: [{
-    maxInstances: 5,
-    browserName: 'chrome'
+    maxInstances: 1,
+    browserName: 'firefox'
   }],
 
   sync: true,

@@ -12,7 +12,6 @@ import msg from './messages.links';
 
 const UserLinks = ({ intl, userLinks }) => {	
   
-  console.log("user links", userLinks);  
   const instances = userLinks.linkInstances.map(instance => <UserLinkInstance instance={instance} />);
 
 	return (

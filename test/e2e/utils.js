@@ -5,28 +5,25 @@ const testTerminal = (terminal, location) => {
     browser.click(`#${terminal}-date-picker`);
     browser.pause(500);
     browser.click('button=' + (terminal === 'departure' ? '10' : '11')); 
-    browser.pause(500);
-    browser.moveToObject(`#${terminal}-time-picker`, 10, 10);
+    browser.pause(1000);
     browser.click(`#${terminal}-time-picker`);
     browser.pause(500);
     browser.click('button=OK');
-    browser.pause(500);
     const time = browser.getValue(`#${terminal}-time-picker`);
     assert(time.indexOf(':') === 2, `Invalid ${terminal} time value selected`);
     
+    browser.pause(500);
     if (browser.isVisible(`#${terminal}-address-full`)) {
-      browser.moveToObject(`#${terminal}-address-full`, 10, 10);
       browser.click(`#${terminal}-address-full`); 
     } else {
-      browser.moveToObject(`#${terminal}-address-compact`, 10, 10);
       browser.click(`#${terminal}-address-compact`); 
     }
-
+    
     browser.keys('ma'); 
-    browser.pause(500); 
+    //browser.pause(500); 
     browser.keys('nn'); 
-    browser.pause(500); 
-    browser.waitForExist(`#address-${location}`);
+    //browser.pause(500); 
+    browser.waitForVisible(`#address-${location}`);
     browser.moveToObject(`#address-${location}`, 2, 2);
     browser.click(`#address-${location}`);
 
@@ -38,10 +35,10 @@ export const editAndSaveLinkInstanceMinimal = (transport, mode, identifier) => {
   
     browser.moveToObject('#mode-select', 40, 40);
     browser.click('#mode-select button');
-    browser.pause(500);
+    browser.pause(1000);
     browser.click(`#mode-${mode}`);
     browser.pause(500);
-     
+
     browser.waitForExist('#from-autocomplete-full');
     browser.waitForExist('#from-autocomplete-compact');
     browser.waitForExist('#to-autocomplete-compact');
@@ -71,13 +68,13 @@ export const editAndSaveLinkInstanceMinimal = (transport, mode, identifier) => {
     browser.keys('mo'); 
     browser.pause(500); 
     browser.keys('sc'); 
-    browser.waitForExist('#moscow');
+    browser.pause(1000);
     browser.click('#moscow');
     
     browser.click('#transport-select')
-    browser.pause(1000); 
+    browser.pause(500); 
     browser.moveToObject(`#${transport}`, 6, 6);
-    browser.pause(1000); 
+    browser.pause(500); 
     browser.click(`#${transport}`);
     
     browser.pause(500); 
@@ -102,8 +99,7 @@ export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount
     browser.keys('he'); 
     browser.pause(500); 
     browser.keys('ls'); 
-    browser.pause(500); 
-    browser.waitForExist('#helsinki');
+    browser.pause(1000); 
     browser.click('#helsinki');
     
     if (browser.isVisible('#to-autocomplete-full')) {
@@ -117,15 +113,14 @@ export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount
     browser.keys('mo'); 
     browser.pause(500); 
     browser.keys('sc'); 
-    browser.pause(500); 
-    browser.waitForExist('#moscow');
+    browser.pause(1000); 
     browser.click('#moscow');
     
     browser.click('#transport-select');
-    browser.pause(1000);
+    browser.pause(500);
     browser.moveToObject(`#${transport}`, 6, 6);
     browser.click(`#${transport}`);
-    browser.pause(1000); 
+    browser.pause(500); 
     
     testTerminal('departure', 'helsinki');
     testTerminal('arrival', 'moscow');
@@ -139,17 +134,33 @@ export const editAndSaveLinkInstance = (transport, mode, identifier, priceAmount
     browser.setValue('#description-input', ''); 
     browser.pause(500);
     browser.keys(description);
-    browser.pause(500);    
     
     if (ratings) { 
+      
+      browser.pause(500);
+
+      browser.scroll('#availability-rating');
       browser.moveToObject('#availability-rating span:nth-child(2)', 2, 2);
       browser.click('#availability-rating span:nth-child(2)');
+      //browser.click('#availability-rating');
+      
+      browser.scroll('#dept-reliability-rating');
       browser.moveToObject('#dept-reliability-rating span:nth-child(2)', 2, 2);
       browser.click('#dept-reliability-rating span:nth-child(2)');
+      //browser.click('#dept-reliability-rating');
+
+      browser.scroll('#arr-reliability-rating');
       browser.moveToObject('#arr-reliability-rating span:nth-child(4)', 2, 2);
       browser.click('#arr-reliability-rating span:nth-child(4)');
+      //browser.click('#arr-reliability-rating');
+      
+      browser.scroll('#awesomeness-rating');
       browser.moveToObject('#awesomeness-rating span:nth-child(4)', 2, 2);
       browser.click('#awesomeness-rating span:nth-child(4)');
+      //browser.click('#awesomeness-rating');
+      
+      browser.pause(500);
+      
     }
 
     const deptDate = browser.getValue('#departure-date-picker');

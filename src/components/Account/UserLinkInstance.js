@@ -18,7 +18,7 @@ const UserLinkInstance = ({
   
   return (
     <div key={instance.uuid}
-      className={cx(s.link, ".user-link")} onClick={() => navigate('/link-instance/' + instance.uuid)}>
+      className={cx(s.link, "user-link")} onClick={() => navigate('/link-instance/' + instance.uuid)}>
       <div className={s.linkDate}>
         {formatDate(date)}
       </div>
