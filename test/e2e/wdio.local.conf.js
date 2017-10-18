@@ -8,7 +8,8 @@ exports.config = {
   specs: [
     //'./test/e2e/specs/**/*.js'
     //'./test/e2e/specs/editLinkInstance.js'
-    './test/e2e/specs/account.js'
+    //'./test/e2e/specs/account.js'
+    './test/e2e/specs/viewLinkInstance.js'
   ],
   
   // Patterns to exclude.
@@ -18,7 +19,7 @@ exports.config = {
   maxInstances: 1,
   capabilities: [{
     maxInstances: 1,
-    browserName: 'firefox'
+    browserName: 'chrome'
   }],
 
   sync: true,

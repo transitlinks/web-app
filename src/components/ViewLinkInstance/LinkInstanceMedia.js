@@ -99,7 +99,8 @@ const LinkInstanceMedia = ({
           Close
         </div>
         <div className={s.mediaContent}>
-          <img src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} />
+          <img className="mediaLarge"
+            src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} />
         </div>
       </div>
     </div>
@@ -108,7 +109,7 @@ const LinkInstanceMedia = ({
   const mediaItemElems = instanceMedia.map((item) => (
     <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}
       onClick={() => openMediaView(item)}>
-      <img src={env.MEDIA_URL + item.url} />
+      <img className="mediaThumb" src={env.MEDIA_URL + item.url} />
     </div>
   ));
 
@@ -121,7 +122,7 @@ const LinkInstanceMedia = ({
       <div className={s.mediaContent}>
         {mediaItemElems}
         { 
-          <div className={cx(s.mediaItem, s.addMedia)}
+          <div id="add-media" className={cx(s.mediaItem, s.addMedia)}
             onClick={() => toggleMediaDialog()}>
             <div className="material-icons">add</div>
           </div>
@@ -135,8 +136,11 @@ const LinkInstanceMedia = ({
           onRequestClose={toggleMediaDialog}>
           <div className={s.mapContainer}>
             <div id="media-dialog" className={s.mediaDialog}>
-              <input id="upload-input" type="file" name="uploads[]" accept="image/*" 
-                onChange={onFileInputChange}/>
+              <form id="upload-form">
+                <input id="upload-input" 
+                  type="file" name="uploads[]" accept="image/*" 
+                  onChange={onFileInputChange} />
+              </form>
             </div>
           </div>
         </Dialog>

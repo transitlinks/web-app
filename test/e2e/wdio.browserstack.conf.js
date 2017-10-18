@@ -9,6 +9,7 @@ exports.config = {
     key: process.env.BROWSERSTACK_ACCESS_KEY,
 		specs: [
         './test/e2e/specs/**/*.js'
+        //'./test/e2e/specs/viewLinkInstance.js'
     ],
     
     exclude: [

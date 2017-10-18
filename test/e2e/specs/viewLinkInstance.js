@@ -51,7 +51,17 @@ describe('View link instance', () => {
 
     assert.equal(browser.getText('#top-upvotes-value'), '3');
     assert.equal(browser.getText('#top-downvotes-value'), '2');
-
+    
+    browser.click('#add-media');
+    browser.pause(500);
+    browser.chooseFile('#upload-input', __dirname + '/data/deepdream.jpg');
+    browser.pause(500);
+    browser.submitForm('#upload-form');
+    browser.pause(1000);
+    
+    const images = browser.elements(".mediaThumb");
+    assert.equal(images.value.length, 1);
+ 
   });
 
 });
