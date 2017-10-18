@@ -23,13 +23,19 @@ const LinkInstanceMedia = ({
 }) => {
   
   const handleOutsideClick = (event) => {
-    if (document.getElementById('media-view').contains(event.target)) {
+
+    const element = document.getElementById('media-view'); 
+
+    if (!element) return;
+
+    if (element.contains(event.target)) {
+       // Click inside media view
       console.log("clicked inside");
     } else {
       console.log("clicked outside");
-      setProperty('selectedItemIndex', null);
-      setTimeout(() => removeOutsideClickListener(), 500);
+      closeMediaView();
     }
+
   };
 
   const addOutsideClickListener = () => {
@@ -64,11 +70,20 @@ const LinkInstanceMedia = ({
     instanceMedia = instanceMedia.concat(addedMedia);
   }
 
-  const viewMedia = (item) => {
+  const closeMediaView = () => {
+    removeOutsideClickListener();
+    setTimeout(() => setProperty('selectedItemIndex', null), 10);
+  };
+
+  const openMediaView = (item) => {
     for (let itemIndex in instanceMedia) {
       if (item.uuid === instanceMedia[itemIndex].uuid) {
-        setProperty('selectedItemIndex', itemIndex);
-        setTimeout(() => addOutsideClickListener(), 500);
+        removeOutsideClickListener();
+        setTimeout(() => {
+          setProperty('selectedItemIndex', itemIndex);
+          addOutsideClickListener();
+          window.scrollTo(0, 0);
+        }, 20);
         return;
       }
     }  
@@ -77,19 +92,22 @@ const LinkInstanceMedia = ({
   console.log("instance media", selectedItemIndex, instanceMedia);
 
   const mediaView = selectedItemIndex ? (
-    <div id="media-view" className={s.mediaView}>
-      <div className={s.closeMediaView}>
-        Close
-      </div>
-      <div className={s.mediaContent}>
-        <img src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} />
+    <div>
+      <div className={s.mediaViewBackground}></div>
+      <div id="media-view" className={s.mediaView}>
+        <div className={s.closeMediaView} onClick={() => closeMediaView()}>
+          Close
+        </div>
+        <div className={s.mediaContent}>
+          <img src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} />
+        </div>
       </div>
     </div>
   ) : null;
 
   const mediaItemElems = instanceMedia.map((item) => (
     <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}
-      onClick={() => viewMedia(item)}>
+      onClick={() => openMediaView(item)}>
       <img src={env.MEDIA_URL + item.url} />
     </div>
   ));
