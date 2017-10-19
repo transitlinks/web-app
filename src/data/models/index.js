@@ -6,9 +6,15 @@ import LinkInstance from './LinkInstance';
 import TransportType from './TransportType';
 import Rating from './Rating';
 import MediaItem from './MediaItem';
+import Comment from './Comment';
 
 User.hasMany(Rating, {
   foreignKey: 'userId'
+});
+
+Comment.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
 });
 
 TransitLink.belongsTo(Locality, {
@@ -39,6 +45,14 @@ LinkInstance.hasMany(MediaItem, {
   foreignKey: 'linkInstanceId'
 });
 
+LinkInstance.hasMany(Comment, {
+  foreignKey: 'linkInstanceId'
+});
+
+Comment.hasMany(Comment, {
+  foreignKey: 'replyToId'
+});
+
 LinkInstance.belongsTo(User, {
   foreignKey: 'userId',
   as: 'user'
@@ -49,4 +63,4 @@ function sync(...args) {
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem };
+export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment };

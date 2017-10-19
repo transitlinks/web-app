@@ -1,0 +1,87 @@
+@import '../variables.css';
+
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 720px;
+  margin: auto;
+}
+
+.comments {
+  margin-top: 32px;
+  max-width: 640px;
+}
+
+.newComment {
+  min-width: 320px;
+}
+
+.newComment .newCommentInput {
+  display: flex;
+  align-items: flex-start;
+}
+
+.newCommentInput .newCommentInputTitle {
+  margin-right: 8px;
+}
+
+.newComment .newCommentSubmit {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.newCommentInput .commentInput {
+  width: 100%;
+}
+
+.commentInput textarea {
+  width: 320px;
+  height: 80px;
+}
+
+.commentsList {
+  margin-top: 32px;
+}
+
+.comment {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.comment .commentText {
+}
+
+.commentText .username {
+  font-weight: bold;
+}
+
+.commentText .text {
+  margin-left: 2px;
+}
+
+.comment .commentControls {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.commentControls .commentReply {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.commentControls .commentLikes {
+  display: flex;
+}
+
+.commentLikes span {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+@media (max-width: 425px) {
+}
+

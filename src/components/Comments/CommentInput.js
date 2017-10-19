@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { 
   saveRating,
+  saveComment,
   vote 
 } from '../../actions/viewLinkInstance';
 import { setProperty } from '../../actions/properties';
@@ -16,7 +17,6 @@ import Chip from 'material-ui/Chip';
 import { orange600, green600 } from 'material-ui/styles/colors';
 import Rating from 'react-rating';
 import LinkInstanceMedia from './LinkInstanceMedia';
-import Comments from '../Comments';
 import { Marker, Polyline, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate } from '../utils';
@@ -73,11 +73,12 @@ const InstanceMap = withGoogleMap(props => (
 
 const ViewLinkInstance = ({
   user,
-  setProperty, saveRating, vote,
+  setProperty, saveRating, saveComment, vote,
+  newCommentText,
   env, intl, 
   linkInstance, initialRatings, ratings, linkInstanceMedia,
   upVotes, downVotes,
-  comments
+  comments, savedComment
 }) => {
   
   const { 
@@ -174,6 +175,28 @@ const ViewLinkInstance = ({
     </div>
   );
   
+  const handleNewCommentTextChange = (event) => {
+    setProperty('newCommentText', event.target.value);
+  };
+  
+  const submitNewComment = () => {
+    saveComment({ 
+      linkInstanceUuid: linkInstance.uuid,
+      text: newCommentText 
+    });
+    setProperty('newCommentText', '');
+  };
+  
+  const commentElems = (comments || []).map(comment => {
+    return (
+      <div>
+        <div>
+          {comment.text}
+        </div>
+      </div>
+    );
+  });
+ 
   return (
     <div className={s.container}>
       <div className={s.topScore}>
@@ -469,7 +492,24 @@ const ViewLinkInstance = ({
       <div className={s.instanceMediaSection}>
         <LinkInstanceMedia linkInstance={linkInstance} media={linkInstanceMedia} />
       </div>
-      <Comments comments={comments} linkInstance={linkInstance} />
+      <div classNames={s.comments}>
+        <div className={s.newComment}>
+          <div>
+            <textarea id="new-comment-input" 
+              value={newCommentText || ""} onChange={handleNewCommentTextChange}>
+            </textarea>
+          </div>
+          <div>
+            <button id="submit-new-comment" 
+              onClick={() => submitNewComment()}>
+              Send
+            </button>
+          </div>
+        </div>
+        <div className={s.commentsList}>
+          {commentElems}
+        </div>
+      </div>
     </div>
   );
 }
@@ -481,8 +521,10 @@ export default injectIntl(
     ratings: state.viewLinkInstance.ratings,
     upVotes: state.viewLinkInstance.upVotes,
     downVotes: state.viewLinkInstance.downVotes,
+    newCommentText: state.viewLinkInstance.newCommentText,
   }), {
     saveRating,
+    saveComment,
     setProperty,
     vote
   })(withStyles(s)(ViewLinkInstance))

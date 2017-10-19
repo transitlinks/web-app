@@ -4,6 +4,12 @@ import {
   SAVE_RATING_START,
   SAVE_RATING_SUCCESS,
   SAVE_RATING_ERROR,
+  SAVE_COMMENT_START,
+  SAVE_COMMENT_SUCCESS,
+  SAVE_COMMENT_ERROR,
+  GET_COMMENTS_START,
+  GET_COMMENTS_SUCCESS,
+  GET_COMMENTS_ERROR,
   VOTE_START,
   VOTE_SUCCESS,
   VOTE_ERROR,
@@ -39,6 +45,38 @@ export default (state = {}, action) => {
         SAVE_RATING_START,
         SAVE_RATING_SUCCESS,
         SAVE_RATING_ERROR
+      ); 
+    case SAVE_COMMENT_START:
+    case SAVE_COMMENT_SUCCESS:
+    case SAVE_COMMENT_ERROR:
+      return graphqlReduce(
+        state, action,
+        { 
+          start: () => ({}), 
+          success: () => ({ 
+            savedComment: action.payload.comment
+          }), 
+          error: () => ({ comment: null })
+        },
+        SAVE_COMMENT_START,
+        SAVE_COMMENT_SUCCESS,
+        SAVE_COMMENT_ERROR
+      ); 
+    case GET_COMMENTS_START:
+    case GET_COMMENTS_SUCCESS:
+    case GET_COMMENTS_ERROR:
+      return graphqlReduce(
+        state, action,
+        { 
+          start: () => ({}), 
+          success: () => ({ 
+            comments: action.payload.comments
+          }),
+          error: () => ({ comments: null })
+        },
+        GET_COMMENTS_START,
+        GET_COMMENTS_SUCCESS,
+        GET_COMMENTS_ERROR,
       ); 
     case VOTE_START:
     case VOTE_SUCCESS:

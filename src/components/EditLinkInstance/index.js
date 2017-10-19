@@ -324,11 +324,12 @@ const EditLinkInstance = ({
             value={description}
             hintText="Description and comments about this link..."
             floatingLabelText="Description"
+            hintStyle={ { bottom: '36px' } }
             floatingLabelStyle={ { color: '#000000' } }
-            floatingLabelFocusStyle={ { fontSize: '21px' } }
+            floatingLabelFocusStyle={ { fontSize: '21px', top: '32px' } }
             multiLine={true}
             fullWidth={true}
-            rows={3}
+            rows={2}
             onChange={onChangeProperty('description')}
           />
         </div>

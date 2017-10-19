@@ -65,6 +65,16 @@ export default {
               uuid,
               type,
               url
+            },
+            comments(linkInstanceUuid: "${params.uuid}") {
+              uuid,
+              text,
+              user {
+                uuid,
+                username,
+                firstName,
+                lastName
+              }
             }
           }`
         );
@@ -76,7 +86,8 @@ export default {
           edit, 
           linkInstance: data.linkInstance,
           ratings: data.ratings,
-          linkInstanceMedia: data.linkInstanceMedia
+          linkInstanceMedia: data.linkInstanceMedia,
+          comments: data.comments
         };
         
         if (edit) {

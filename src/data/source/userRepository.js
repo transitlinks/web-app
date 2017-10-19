@@ -14,6 +14,16 @@ export const getUserIdByUuid = async (uuid) => {
 
 };
 
+export const getById = async (id) => {
+  
+  const user = await User.findById(id);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  return user;
+
+};
+
 export const getByUuid = async (uuid) => {
   const user = await User.findOne({ where: { uuid } });
   return user.toJSON();

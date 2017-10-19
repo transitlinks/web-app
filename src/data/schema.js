@@ -10,6 +10,7 @@ import { AccountQueryFields } from './queries/account';
 import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
+import { CommentMutationFields, CommentQueryFields } from './queries/comments';
 import { UserMutationFields, UserQueryFields } from './queries/users';
 import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './queries/ratings';
 import * as links from './queries/links';
@@ -31,6 +32,7 @@ const schema = new Schema({
       linkInstanceMedia: TransitLinkQueryFields.linkInstanceMedia,
       user: UserQueryFields.user,
       ratings: RatingQueryFields.ratings,
+      comments: CommentQueryFields.comments,
       intl
     }
   }),
@@ -43,6 +45,7 @@ const schema = new Schema({
       votes: TransitLinkMutationFields.votes,
       instanceFiles: TransitLinkMutationFields.instanceFiles,
       user: UserMutationFields.user,
+      comment: CommentMutationFields.comment,
       rating: RatingMutationFields.rating
     },
   })

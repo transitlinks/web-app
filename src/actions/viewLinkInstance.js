@@ -7,6 +7,12 @@ import {
   SAVE_RATING_START,
   SAVE_RATING_SUCCESS,
   SAVE_RATING_ERROR,
+  SAVE_COMMENT_START,
+  SAVE_COMMENT_SUCCESS,
+  SAVE_COMMENT_ERROR,
+  GET_COMMENTS_START,
+  GET_COMMENTS_SUCCESS,
+  GET_COMMENTS_ERROR,
   INSTANCE_FILE_UPLOAD_START,
   INSTANCE_FILE_UPLOAD_SUCCESS,
   INSTANCE_FILE_UPLOAD_ERROR,
@@ -43,6 +49,63 @@ export const saveRating = (rating) => {
       SAVE_RATING_START,
       SAVE_RATING_SUCCESS,
       SAVE_RATING_ERROR
+    );
+  
+  };
+
+};
+
+export const saveComment = (comment) => {
+  
+  return async (...args) => {
+    
+    const query = `
+      mutation saveComment {
+        comment(comment:${toGraphQLObject(comment)}) {
+          uuid,
+          text,
+          linkInstanceUuid,
+          user {
+            uuid,
+            username,
+            firstName,
+            lastName
+          }
+        }
+      }
+    `;
+    
+    return graphqlAction(
+      ...args, 
+      { query }, [ 'comment' ],
+      SAVE_COMMENT_START,
+      SAVE_COMMENT_SUCCESS,
+      SAVE_COMMENT_ERROR
+    );
+  
+  };
+
+};
+
+export const getComments = (linkInstanceUuid) => {
+  
+  return async (...args) => {
+    
+    const query = `
+      query getComments {
+        comments(linkInstanceUuid: "${linkInstanceUuid}") {
+          uuid,
+          text
+        }
+      }
+    `;
+    
+    return graphqlAction(
+      ...args, 
+      { query }, [ 'comments' ],
+      GET_COMMENTS_START,
+      GET_COMMENTS_SUCCESS,
+      GET_COMMENTS_ERROR
     );
   
   };

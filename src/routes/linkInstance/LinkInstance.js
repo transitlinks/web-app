@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { resetLink } from '../../actions/editLink';
+import { getComments } from '../../actions/viewLinkInstance';
 import { navigate } from '../../actions/route';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './LinkInstance.css';
@@ -15,7 +16,6 @@ class LinkInstance extends React.Component {
   constructor(props) {
     
     super(props);
-    
     this.state = {
       edit: props.edit,
       linkInstance: props.linkInstance,
@@ -43,11 +43,22 @@ class LinkInstance extends React.Component {
     // Transition to link when save is detected    
     const stateUpdated = this.state.updated;
     const propUpdated = props.saved ? props.saved.saved : stateUpdated;
-    this.setState({
+    
+    const state = {
       edit: props.edit,
       linkInstance: (propUpdated > stateUpdated) ? props.saved : props.linkInstance,
       updated: propUpdated
-    });
+    };
+    
+    const { savedCommentUuid } = this.state; 
+    if (props.savedComment) {
+      if (!savedCommentUuid || savedCommentUuid !== props.savedComment.uuid) {
+        props.getComments(this.state.linkInstance.uuid);
+      }
+      state.savedCommentUuid = props.savedComment.uuid;
+    }
+
+    this.setState(state);
       
     if (propUpdated > stateUpdated) {
       props.resetLink();
@@ -68,7 +79,9 @@ class LinkInstance extends React.Component {
       linkInstance,
       ratings,
       linkInstanceMedia,
-      transportTypes
+      transportTypes,
+      comments,
+      stateComments
     }  = this.props;
     
     return (
@@ -76,7 +89,11 @@ class LinkInstance extends React.Component {
         <div className={s.container}>
           { 
             !this.state.edit ?
-              <ViewLinkInstance linkInstance={linkInstance} initialRatings={ratings} linkInstanceMedia={linkInstanceMedia} /> :
+              <ViewLinkInstance 
+                linkInstance={linkInstance} 
+                initialRatings={ratings} 
+                linkInstanceMedia={linkInstanceMedia} 
+                comments={stateComments || comments} /> :
               <EditLinkInstance 
                 transportTypes={transportTypes}
                 linkInstance={linkInstance} />
@@ -99,7 +116,9 @@ LinkInstance.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
   saved: state.editLink.linkInstance,
-  deleted: state.editLink.deleteLinkInstance
+  deleted: state.editLink.deleteLinkInstance,
+  savedComment: state.viewLinkInstance.savedComment,
+  stateComments: state.viewLinkInstance.comments,
 }), {
-  resetLink, navigate
+  resetLink, getComments, navigate
 })(withStyles(s)(LinkInstance));
