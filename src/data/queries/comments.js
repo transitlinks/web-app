@@ -2,7 +2,10 @@ import { getLog } from '../../core/log';
 const log = getLog('data/queries/comments');
 
 import { GraphQLString, GraphQLList } from 'graphql';
-import { CommentType, CommentInputType } from '../types/CommentType';
+import { 
+  CommentType, CommentInputType,
+  CommentVoteType, CommentVoteInputType
+} from '../types/CommentType';
 import { 
   commentRepository, 
   userRepository,
@@ -64,8 +67,16 @@ export const CommentMutationFields = {
           comment.userId = user.id;
         }
 
-        const linkInstanceId = await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
+        const linkInstanceId = 
+          await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
         comment.linkInstanceId = linkInstanceId;
+        
+        if (comment.replyToUuid) {
+          comment.replyToId = 
+            await commentRepository.getIdByUuid(comment.replyToUuid);
+          delete comment.replyToUuid;
+        }
+        
         const created = await commentRepository.create(comment);
         log.info(`graphql-request=save-comment created-comment-uuid=${created.uuid}`);
         return { ...created, linkInstanceUuid };
@@ -74,6 +85,33 @@ export const CommentMutationFields = {
  
     }
   
+  },
+
+  commentVote: {
+  
+    type: CommentVoteType,
+    description: 'Vote on a comment',
+    args: {
+      commentVote: { type: CommentVoteInputType }
+    },
+    resolve: async ({ request }, { commentVote }) => {
+    
+      log.info(`graphql-request=comment-vote user=${request.user ? request.user.uuid : null} comment-uuid=${commentVote.uuid}`);
+      
+      const comment = await commentRepository.getByUuid(commentVote.uuid);
+      
+      const update = 
+        commentVote.value < 0 ? 
+        { down: comment.down + 1 } :
+        { up: comment.up + 1 };
+      
+      update.uuid = commentVote.uuid;
+
+      const updated = await commentRepository.update(update);
+      return { uuid: updated.uuid, up: updated.up, down: updated.down };
+    
+    }
+
   }
 
 };

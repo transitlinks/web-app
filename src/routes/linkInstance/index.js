@@ -68,7 +68,9 @@ export default {
             },
             comments(linkInstanceUuid: "${params.uuid}") {
               uuid,
+              replyToUuid,
               text,
+              up, down,
               user {
                 uuid,
                 username,

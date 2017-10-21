@@ -17,11 +17,23 @@ const getByUuid = async (uuid) => {
   return comment;
 
 };
+  
+const getIdByUuid = async (uuid) => {
+  const comment = await Comment.findOne({ attributes: [ 'id' ], where: { uuid } });
+  return comment.id;
+};
+
+const getUuidById = async (id) => {
+  const comment = await Comment.findOne({ attributes: [ 'uuid' ], where: { id } });
+  return comment.uuid;
+};
 
 export default {  
   
   getByUuid,
-  
+  getIdByUuid,
+  getUuidById,
+ 
   getByLinkInstanceUuid: async (linkInstanceUuid) => {
     
     const linkInstance = await LinkInstance.findOne({ 
@@ -37,11 +49,17 @@ export default {
       where: { linkInstanceId: linkInstance.id },
       include: { model: User, as: 'user' }
     });
-    
-    const commentsAll = await Comment.findAll();
         
-    log.debug("repo=comments comments", comments, commentsAll); 
-    return (comments || []).map(comment => comment.json());
+    return (comments || []).map(async comment => {
+      
+      const commentJson = comment.json();
+      if (comment.get('replyToId')) {
+        commentJson.replyToUuid = await getUuidById(comment.get('replyToId'));
+      }
+
+      return commentJson;
+
+    });
 
   },
 
@@ -59,11 +77,13 @@ export default {
   update: async (comment) => {
     
     const existing = await Comment.findOne({ where: { uuid: comment.uuid } });
-    if (!exisiting) {
+    if (!existing) {
       throw new Error('could not update comment, original comment not found');
     }
     
-    await Comment.update({ text: comment.text }, { where: { id: existing.id } });
+    delete comment.uuid;
+    delete comment.linkInstanceUuid;
+    await Comment.update(comment, { where: { id: existing.id } });
     return (await Comment.findById(existing.id)).json();
   
   } 

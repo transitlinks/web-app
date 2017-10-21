@@ -10,6 +10,9 @@ import {
   GET_COMMENTS_START,
   GET_COMMENTS_SUCCESS,
   GET_COMMENTS_ERROR,
+  COMMENT_VOTE_START,
+  COMMENT_VOTE_SUCCESS,
+  COMMENT_VOTE_ERROR,
   VOTE_START,
   VOTE_SUCCESS,
   VOTE_ERROR,
@@ -77,6 +80,22 @@ export default (state = {}, action) => {
         GET_COMMENTS_START,
         GET_COMMENTS_SUCCESS,
         GET_COMMENTS_ERROR,
+      ); 
+    case COMMENT_VOTE_START:
+    case COMMENT_VOTE_SUCCESS:
+    case COMMENT_VOTE_ERROR:
+      return graphqlReduce(
+        state, action,
+        { 
+          start: () => ({}), 
+          success: () => ({ 
+            commentVote: action.payload.commentVote
+          }),
+          error: () => ({ commentVote: null })
+        },
+        COMMENT_VOTE_START,
+        COMMENT_VOTE_SUCCESS,
+        COMMENT_VOTE_ERROR
       ); 
     case VOTE_START:
     case VOTE_SUCCESS:

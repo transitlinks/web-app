@@ -15,9 +15,12 @@ export const CommentType = new GraphQLObjectType({
   description: 'User comment to a link instance.',
   fields: () => ({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
+    replyToUuid: { type: GraphQLString },
     linkInstanceUuid: { type: GraphQLString },
     text: { type: GraphQLString },
     user: { type: UserType },
+    up: { type: GraphQLInt },
+    down: { type: GraphQLInt },
     createdAt: { type: GraphQLString }
   })
 });
@@ -28,7 +31,27 @@ export const CommentInputType = new GraphQLInputObjectType({
   fields: () => ({
     uuid: { type: GraphQLString },
     linkInstanceUuid: { type: GraphQLString },
+    replyToUuid: { type: GraphQLString },
     text: { type: GraphQLString }
+  })
+});
+
+export const CommentVoteType = new GraphQLObjectType({
+  name: 'CommentVote',
+  description: 'Info on comment votes',
+  fields: () => ({
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    up: { type: GraphQLInt },
+    down: { type: GraphQLInt }
+  })
+});
+
+export const CommentVoteInputType = new GraphQLInputObjectType({
+  name: 'CommentVoteInput',
+  description: 'Input object for comment vote',
+  fields: () => ({
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    value: { type: GraphQLInt }
   })
 });
 

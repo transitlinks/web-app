@@ -13,6 +13,9 @@ import {
   GET_COMMENTS_START,
   GET_COMMENTS_SUCCESS,
   GET_COMMENTS_ERROR,
+  COMMENT_VOTE_START,
+  COMMENT_VOTE_SUCCESS,
+  COMMENT_VOTE_ERROR,
   INSTANCE_FILE_UPLOAD_START,
   INSTANCE_FILE_UPLOAD_SUCCESS,
   INSTANCE_FILE_UPLOAD_ERROR,
@@ -87,6 +90,31 @@ export const saveComment = (comment) => {
 
 };
 
+export const voteComment = (commentVote) => {
+  
+  return async (...args) => {
+    
+    const query = `
+      mutation voteComment {
+        commentVote(commentVote:${toGraphQLObject(commentVote)}) {
+          uuid,
+          up, down
+        }
+      }
+    `;
+    
+    return graphqlAction(
+      ...args, 
+      { query }, [ 'commentVote' ],
+      COMMENT_VOTE_START,
+      COMMENT_VOTE_SUCCESS,
+      COMMENT_VOTE_ERROR
+    );
+  
+  };
+
+};
+
 export const getComments = (linkInstanceUuid) => {
   
   return async (...args) => {
@@ -95,7 +123,15 @@ export const getComments = (linkInstanceUuid) => {
       query getComments {
         comments(linkInstanceUuid: "${linkInstanceUuid}") {
           uuid,
-          text
+          replyToUuid,
+          text,
+          up, down,
+          user {
+            uuid,
+            username,
+            firstName,
+            lastName
+          }
         }
       }
     `;

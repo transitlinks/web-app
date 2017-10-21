@@ -20,26 +20,35 @@ const Comment = Model.define('Comment', {
   },
   
   up: {
-    type: DataType.INTEGER
+    type: DataType.INTEGER,
+    defaultValue: 0
   },
   
   down: {
-    type: DataType.INTEGER
+    type: DataType.INTEGER,
+    defaultValue: 0
   }
 
 }, {
 
   instanceMethods: {
+
     json: function() {
+    
       const json = this.toJSON();
       delete json.id;
       delete json.userId;
+      delete json.replyToId;
+      
       const user = this.get('user');
       if (user) {
         json.user = user.json();  
       }
+
       return json;
+
     }
+
   },
 
   indexes: [

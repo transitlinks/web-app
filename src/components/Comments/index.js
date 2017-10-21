@@ -1,52 +1,68 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { 
-  saveComment
+  saveComment,
+  voteComment 
 } from '../../actions/viewLinkInstance';
 import { setProperty } from '../../actions/properties';
+import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Comments.css';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import Chip from 'material-ui/Chip';
-import { orange600, green600 } from 'material-ui/styles/colors';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { formatDuration, truncate } from '../utils';
-import Link from '../Link';
+import { formatDuration, truncate, getCookie } from '../utils';
+import CommentInput from './CommentInput';
  
 const Comments = ({
   user,
   comments, savedComment,
-  setProperty, saveComment,
-  newCommentText,
+  setProperty, saveComment, voteComment,
+  newCommentText, commentVote, replyTo,
   env, intl,
   linkInstance
 }) => {
 
-  const modeBackgrounds = {
-    'research': orange600,
-    'experience': green600
-  };
-   
-  const handleNewCommentTextChange = (event) => {
-    setProperty('newCommentText', event.target.value);
-  };
-  
   const formatCommentText = (text) => {
     return text.replace(/\n/g, '<br/>'); 
   };
- 
-  const submitNewComment = () => {
-    saveComment({ 
-      linkInstanceUuid: linkInstance.uuid,
-      text: newCommentText 
-    });
-    setProperty('newCommentText', '');
+
+  const submitCommentVote = (commentUuid, value) => {
+    voteComment({ uuid: commentUuid, value });
+    document.cookie = `txlinks-comment-vote-${commentUuid}=${value}`;
+  };
+
+  const getLikeStyle = (commentUuid, value) => {
+    
+    if (!canUseDOM) return null;
+    
+    const cookie = getCookie(`txlinks-comment-vote-${commentUuid}`);
+    if (!cookie) {
+      return { cursor: 'pointer', fontSize: '18px' };
+    }
+    
+    if (parseInt(cookie) === value) {
+      return { color: '#0074c2', fontSize: '18px' };
+    } else {
+      return { color: '#c0c0c0', fontSize: '18px' };
+    }
+  
   };
   
+  const openReplyInput = (comment) => {
+    setProperty('replyToText', '');
+    setProperty('replyTo', comment);
+  };
+
   const commentElems = (comments || []).map(comment => {
+    
+    if (commentVote && commentVote.uuid === comment.uuid) {
+      comment.up = commentVote.up;
+      comment.down = commentVote.down;
+    }
+
     return (
       <div className={s.comment}>
         <div className={s.commentText}>
@@ -59,13 +75,45 @@ const Comments = ({
         </div>
         <div className={s.commentControls}>
           <div className={s.commentReply}>
-            <span>Reply</span>
+            { 
+              (!replyTo || replyTo.uuid !== comment.uuid) &&
+              <span onClick={() => openReplyInput(comment)}>
+                Reply
+              </span>
+            }
+            { 
+              (replyTo && replyTo.uuid === comment.uuid) &&
+              <span onClick={() => setProperty('replyTo', null)}>
+                Cancel reply
+              </span>
+            }
           </div>
           <div className={s.commentLikes}>
-            <span>+</span>
-            <span>-</span>
+            <div className={s.likeBlock}>
+              <span>{comment.up}</span>
+              <FontIcon className="material-icons" 
+                onClick={() => submitCommentVote(comment.uuid, 1)}
+                style={getLikeStyle(comment.uuid, 1)}>
+                add
+              </FontIcon>
+            </div>
+            <div className={s.likeBlock}>
+              <span>{comment.down}</span>
+              <FontIcon className="material-icons" 
+                onClick={() => submitCommentVote(comment.uuid, -1)}
+                style={getLikeStyle(comment.uuid, -1)}>
+                remove
+              </FontIcon>
+            </div>
           </div>
         </div>
+        { 
+          (replyTo && replyTo.uuid === comment.uuid) &&
+          <div>
+            <CommentInput linkInstance={linkInstance} 
+              replyTo={comment} />
+          </div>
+        }
       </div>
     );
   });
@@ -73,32 +121,7 @@ const Comments = ({
   return (
     <div className={s.container}>
       <div className={s.comments}>
-        <div className={s.newComment}>
-          <div className={s.newCommentInput}>
-            <div className={s.newCommentInputTitle}>
-            </div>
-            <div className={s.commentInput}>
-              <TextField id="new-comment-input"
-                value={newCommentText || ''}
-                hintText="What do you have in mind?"
-                floatingLabelText="Post a comment"
-                hintStyle={ { bottom: '36px' } }
-                floatingLabelStyle={ { color: '#000000', fontSize: '24px' } }
-                floatingLabelFocusStyle={ { fontSize: '24px', top: '28px' } }
-                multiLine={true}
-                fullWidth={true}
-                rows={2}
-                onChange={handleNewCommentTextChange}
-              />
-            </div>
-          </div>
-          <div className={s.newCommentSubmit}>
-            <FlatButton id="submit-new-comment" 
-              onClick={() => submitNewComment()}>
-              Send
-            </FlatButton>
-          </div>
-        </div>
+        <CommentInput linkInstance={linkInstance}/>
         <div className={s.commentsList}>
           {commentElems}
         </div>
@@ -112,8 +135,11 @@ export default injectIntl(
     user: state.auth.auth.user,
     env: state.env,
     newCommentText: state.viewLinkInstance.newCommentText,
+    replyTo: state.viewLinkInstance.replyTo,
+    commentVote: state.viewLinkInstance.commentVote
   }), {
     saveComment,
+    voteComment,
     setProperty
   })(withStyles(s)(Comments))
 );
