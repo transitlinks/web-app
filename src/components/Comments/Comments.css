@@ -51,6 +51,12 @@
   padding-bottom: 6px;
 }
 
+.reply {
+  padding-left: 8px;
+  background-color: #f6f6f6;
+  border-left: 1px solid #ccc;
+}
+
 .comment .commentText {
 }
 

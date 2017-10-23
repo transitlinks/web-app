@@ -55,16 +55,36 @@ const Comments = ({
     setProperty('replyToText', '');
     setProperty('replyTo', comment);
   };
+  
+  const commentByUuid = {};
+  (comments || []).forEach(comment => {
+    commentByUuid[comment.uuid] = comment;
+    commentByUuid[comment.uuid].replys = [];
+  });
+  
+  const replyUuids = []; 
+  Object.keys(commentByUuid).forEach(commentUuid => {
+    const comment = commentByUuid[commentUuid];
+    if (comment.replyToUuid) {
+      commentByUuid[comment.replyToUuid].replys.push(comment);
+      replyUuids.push(commentUuid);
+    }
+  });
+  
+  replyUuids.forEach(replyUuid => { delete commentByUuid[replyUuid]; });
 
-  const commentElems = (comments || []).map(comment => {
+  console.log("ordered comments", commentByUuid); 
+  const renderComment = (comment) => {
     
     if (commentVote && commentVote.uuid === comment.uuid) {
       comment.up = commentVote.up;
       comment.down = commentVote.down;
     }
-
+    
+    const secondLevel = comment.replyToUuid && commentByUuid[comment.replyToUuid];
+    
     return (
-      <div className={s.comment}>
+      <div className={cx(s.comment, secondLevel ? s.reply : null)}>
         <div className={s.commentText}>
           <span className={s.username}>
             {comment.username || 'Anonymous'}&gt;
@@ -114,8 +134,15 @@ const Comments = ({
               replyTo={comment} />
           </div>
         }
+        {comment.replys.map(reply => renderComment(reply))}
       </div>
     );
+  
+  };
+ 
+  const commentElems = (Object.keys(commentByUuid)).map(commentUuid => { 
+    const comment = commentByUuid[commentUuid];
+    return renderComment(comment);
   });
  
   return (
