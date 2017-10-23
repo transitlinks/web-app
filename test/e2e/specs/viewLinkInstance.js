@@ -55,8 +55,8 @@ describe('View link instance', () => {
     browser.click('#add-media');
     browser.pause(500);
     browser.chooseFile('#upload-input', __dirname + '/data/deepdream.jpg');
-    browser.pause(500);
-    browser.submitForm('#upload-form');
+    //browser.pause(500);
+    //browser.submitForm('#upload-form');
     browser.pause(1000);
     
     const images = browser.elements(".mediaThumb");
