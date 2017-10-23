@@ -20,6 +20,18 @@ const User = Model.define('User', {
     validate: { isEmail: true },
   },
   
+  username: {
+    type: DataType.STRING
+  },
+  
+  firstName: {
+    type: DataType.STRING
+  },
+  
+  lastName: {
+    type: DataType.STRING
+  },
+    
   password: {
     type: DataType.STRING
   },
