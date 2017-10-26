@@ -99,19 +99,32 @@ const LinkInstanceMedia = ({
           Close
         </div>
         <div className={s.mediaContent}>
-          <img className="mediaLarge"
-            src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} />
+          {
+            instanceMedia[selectedItemIndex].type === 'image' ?
+              <img className="mediaLarge"
+                src={env.MEDIA_URL + instanceMedia[selectedItemIndex].url} /> :
+              <iframe width="420" height="315"
+                src={`https://www.youtube.com/embed/${instanceMedia[selectedItemIndex].url}`}>
+              </iframe>
+          }
         </div>
       </div>
     </div>
   ) : null;
 
-  const mediaItemElems = instanceMedia.map((item) => (
-    <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}
-      onClick={() => openMediaView(item)}>
-      <img className="mediaThumb" src={env.MEDIA_URL + item.url} />
-    </div>
-  ));
+  const mediaItemElems = instanceMedia.map((item) => {
+  
+    const imgSrc = item.type === 'image' ?
+      env.MEDIA_URL + item.url : item.thumbnail;
+
+    return (
+      <div key={item.uuid} className={cx(s.mediaItem, s.mediaThumbnail)}
+        onClick={() => openMediaView(item)}>
+        <img className="mediaThumb" src={imgSrc} />
+      </div>
+    );
+
+  });
 
   return (
     <div className={s.instanceMedia}>

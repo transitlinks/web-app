@@ -3,6 +3,7 @@ import path from 'path';
 import { getLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
+import { getVideos, uploadVideo } from '../../services/youtubeDataApi';
 import {
   createRatingsMap,
   calcInstanceRating,
@@ -274,11 +275,32 @@ export const TransitLinkMutationFields = {
         fs.renameSync(filePath, instanceFilePath);
         
         const linkInstanceId = await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
-        const mediaItem = await linkRepository.saveInstanceMedia(linkInstanceId, {
-          type: 'image',
-          flag: false,
-          url: `/instance-media/${linkInstanceUuid}/${instanceFileName}`
-        });
+        let mediaItem = null;
+        
+        if (file.mimetype.indexOf('image') !== -1) {
+        
+          log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${instanceFileName}`);
+
+          mediaItem = await linkRepository.saveInstanceMedia(linkInstanceId, {
+            type: 'image',
+            flag: false,
+            url: `/instance-media/${linkInstanceUuid}/${instanceFileName}`
+          });
+        
+        } else {
+          
+          const upload = await uploadVideo(linkInstanceUuid, instanceFilePath);
+          const thumbnail = upload.snippet.thumbnails.medium.url;
+          log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} video-id=${upload.id}`);
+          
+          mediaItem = await linkRepository.saveInstanceMedia(linkInstanceId, {
+            type: 'video',
+            flag: false,
+            url: upload.id,
+            thumbnail
+          });
+        
+        }
 
         return mediaItem;
 
@@ -405,7 +427,9 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, { linkInstanceUuid }) => {
       const linkInstanceId = await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
-      return linkRepository.getMediaItems({ linkInstanceId }); 
+      const mediaItems = await linkRepository.getMediaItems({ linkInstanceId });
+      return mediaItems;
+
     }
   
   }

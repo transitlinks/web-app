@@ -10,6 +10,7 @@ export const {
   APP_ENV,
   APP_URL,
   STORAGE_PATH,
+  FILE_PATH,
   MEDIA_PATH,
   MEDIA_URL,
   HTTP_PORT,

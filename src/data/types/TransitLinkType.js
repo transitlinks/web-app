@@ -116,6 +116,7 @@ export const MediaItemType = new GraphQLObjectType({
   fields: () => ({
     uuid: { type: GraphQLString },
     type: { type: GraphQLString },
+    thumbnail: { type: GraphQLString },
     url: { type: GraphQLString }
   })
 });

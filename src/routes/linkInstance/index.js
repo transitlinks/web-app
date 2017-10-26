@@ -64,6 +64,7 @@ export default {
             linkInstanceMedia(linkInstanceUuid: "${params.uuid}") {
               uuid,
               type,
+              thumbnail,
               url
             },
             comments(linkInstanceUuid: "${params.uuid}") {

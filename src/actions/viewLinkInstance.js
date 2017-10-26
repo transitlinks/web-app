@@ -184,6 +184,7 @@ export const uploadFiles = (linkInstanceUuid, files) => {
         instanceFiles(linkInstanceUuid: "${linkInstanceUuid}") {
           uuid,
           type,
+          thumbnail,
           url
         }
       }
@@ -210,6 +211,7 @@ export const getMediaItems = (linkInstanceUuid) => {
         linkInstanceMedia (linkInstanceUuid: "${linkInstanceUuid}") {
           uuid,
           type,
+          thumbnail,
           url
         }
       }
