@@ -61,6 +61,22 @@ describe('View link instance', () => {
     
     const images = browser.elements(".mediaThumb");
     assert.equal(images.value.length, 1);
+    
+    browser.click('#new-comment-input');
+    browser.setValue('#new-comment-input', ''); 
+    browser.pause(500);
+    browser.keys('abc def');
+    browser.click('#submit-new-comment');
+    browser.pause(500);
+    browser.click('#new-comment-input');
+    browser.setValue('#new-comment-input', ''); 
+    browser.pause(500);
+    browser.keys('def abc');
+    browser.click('#submit-new-comment');
+    browser.pause(500);
+    
+    const comments = browser.elements(".comment");
+    assert.equal(comments.value.length, 2);
  
   });
 

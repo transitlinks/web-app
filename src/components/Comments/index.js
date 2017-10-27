@@ -84,8 +84,8 @@ const Comments = ({
     const secondLevel = comment.replyToUuid && commentByUuid[comment.replyToUuid];
     
     return (
-      <div className={cx(s.comment, secondLevel ? s.reply : null)}>
-        <div className={s.commentText}>
+      <div className={cx("comment", s.comment, secondLevel ? s.reply : null)}>
+        <div className={cx("commentText", s.commentText)}>
           <span className={s.username}>
             {comment.username || 'Anonymous'}&gt;
           </span>

@@ -68,7 +68,7 @@ const CommentInput = ({
         <div className={s.newCommentInputTitle}>
         </div>
         <div className={s.commentInput}>
-          <TextField id="new-comment-input"
+          <TextField id={(replyTo ? "reply-comment-input" : "new-comment-input")}
             {...textFieldAttributes}
             value={(replyTo ? replyText : newCommentText) || ''}
             multiLine={true}
