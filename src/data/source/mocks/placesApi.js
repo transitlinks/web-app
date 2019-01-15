@@ -115,7 +115,7 @@ const placesData = {
 }
 
 export default {
-  
+
   autocomplete: async (input, types, location, radius) => {
 
     const data = types === '(cities)' ? localitiesData : placesData;
@@ -127,7 +127,7 @@ export default {
         value: cmp.long_name
       }))
     }));
-    
+
   },
 
   getDetails: async (apiId) => {

@@ -141,9 +141,9 @@
     "defaultMessage": "Create",
     "message": "",
     "files": [
-      "src/components/FunctionBar/messages.js",
       "src/components/LinkSearch/messages.js",
-      "src/components/Navigation/messages.js"
+      "src/components/Navigation/messages.js",
+      "src/components/FunctionBar/messages.js"
     ]
   },
   {

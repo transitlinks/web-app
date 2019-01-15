@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { 
-  saveLinkInstance, 
+import {
+  saveLinkInstance,
   deleteLinkInstance,
   setTransport,
-  setProperty 
+  setProperty
 } from '../../actions/editLink';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './EditLinkInstance.css';
@@ -26,11 +26,11 @@ const EditLinkInstance = ({
   linkInstance, transportTypes,
   uuid,
   user,
-  from, to, 
+  from, to,
   transport,
   identifier,
   mode,
-  departure, 
+  departure,
   departureDate, departureTime, departureDescription,
   arrival,
   arrivalDate, arrivalTime, arrivalDescription,
@@ -38,11 +38,11 @@ const EditLinkInstance = ({
   description,
   availabilityRating, departureRating, arrivalRating, awesomeRating
 }) => {
-  
+
   let departureValue = {};
   let arrivalValue = {};
   if ((uuid && linkInstance) || (departure && arrival)) {
-     
+
     departureValue = departure || {
       lat: linkInstance.departureLat,
       lng: linkInstance.departureLng,
@@ -59,11 +59,11 @@ const EditLinkInstance = ({
 
   const toLocalDate = (date) => {
     const addZ = n => (n < 10 ? '0' : '') + n;
-    return date.getFullYear() + '-' + 
-      addZ(date.getMonth() + 1) + '-' + 
+    return date.getFullYear() + '-' +
+      addZ(date.getMonth() + 1) + '-' +
       addZ(date.getDate());
   }
-  
+
   const mergeNonNull = (obj1, obj2) => {
     Object.keys(obj2).forEach(key => {
       if (obj2[key]) obj1[key] = obj2[key];
@@ -72,29 +72,29 @@ const EditLinkInstance = ({
   };
 
   const onSave = () => {
-    
+
     const departureDateJson = departureDate ? toLocalDate(departureDate) : null;
     const departureHour = departureTime ? departureTime.getHours() : null;
     const departureMinute = departureTime ? departureTime.getMinutes() : null;
-    
+
     const arrivalDateJson = arrivalDate ? toLocalDate(arrivalDate) : null;
     const arrivalHour = arrivalTime ? arrivalTime.getHours() : null;
     const arrivalMinute = arrivalTime ? arrivalTime.getMinutes() : null;
 
-    saveLinkInstance({ linkInstance: mergeNonNull({ 
+    saveLinkInstance({ linkInstance: mergeNonNull({
       mode,
       from: from.apiId, to: to.apiId,
       transport, identifier
     }, {
       uuid,
-      departureDate: departureDateJson, 
+      departureDate: departureDateJson,
       departureHour, departureMinute, departureDescription,
       departureAddress: departureValue.description,
       departureLat: departureValue.lat, departureLng: departureValue.lng,
-      arrivalDate: arrivalDateJson, 
+      arrivalDate: arrivalDateJson,
       arrivalHour, arrivalMinute, arrivalDescription,
       arrivalAddress: arrivalValue.description,
-      arrivalLat: arrivalValue.lat, arrivalLng: arrivalValue.lng,  
+      arrivalLat: arrivalValue.lat, arrivalLng: arrivalValue.lng,
       priceAmount: parseFloat(priceAmount), priceCurrency,
       description,
       availabilityRating, departureRating, arrivalRating, awesomeRating
@@ -110,11 +110,11 @@ const EditLinkInstance = ({
       setProperty(property, selectValue || value);
     };
   };
-   
+
   const onChangeTransport = (event, index, value) => {
     setTransport(value);
   };
-  
+
   const onChangeRating = (name) => {
     return (rating) => {
       setProperty(`${name}Rating`, rating);
@@ -122,34 +122,42 @@ const EditLinkInstance = ({
   };
 
   const transportOptions = transportTypes.map(type => (
-    <MenuItem id={type.slug} key={type.slug} style={{ "WebkitAppearance": "initial" }} 
+    <MenuItem id={type.slug} key={type.slug} style={{ "WebkitAppearance": "initial" }}
       value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
-  
+
   const modeOptions = [
-    <MenuItem id="mode-research" key="mode-research" 
+    <MenuItem id="mode-research" key="mode-research"
       style={{ "WebkitAppearance": "initial" }}
       value={'research'} primaryText={intl.formatMessage(msg['research'])} />,
     <MenuItem id="mode-experience" key="mode-experience"
       style={{ "WebkitAppearance": "initial" }}
       value={'experience'} primaryText={intl.formatMessage(msg['experience'])} />
   ];
-  
+
   const currencyCodes = {
   };
 
+  const countries = cc.countries();
+
   if (from) {
-    cc.country(from.countryLong).forEach(currency => {
-      currencyCodes[currency.code] = currency;
-    });
+    const matchingCountries = countries.filter(country => country.indexOf(from.countryLong) !== -1);
+    if (matchingCountries.length > 0) {
+      cc.country(matchingCountries[0]).forEach(currency => {
+        currencyCodes[currency.code] = currency;
+      });
+    }
   }
-  
+
   if (to) {
-    cc.country(to.countryLong).forEach(currency => {
-      currencyCodes[currency.code] = currency;
-    });
+    const matchingCountries = countries.filter(country => country.indexOf(to.countryLong) !== -1);
+    if (matchingCountries.length > 0) {
+      cc.country(matchingCountries[0]).forEach(currency => {
+        currencyCodes[currency.code] = currency;
+      });
+    }
   }
-  
+
   currencyCodes['USD'] = cc.code('USD');
   currencyCodes['EUR'] = cc.code('EUR');
   currencyCodes['GBP'] = cc.code('GBP');
@@ -157,41 +165,41 @@ const EditLinkInstance = ({
   const currencies = Object.keys(currencyCodes).map(code => (
     <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code} ${currencyCodes[code].currency}`} />
   ));
-  
-  const ratingCss = { 
+
+  const ratingCss = {
     'display': 'inline-block',
     'borderRadius': '50%',
     'border': '5px double white',
     'width': '20px',
     'height': '20px',
   };
-  
+
   const ratingEmptyCss = Object.assign({
     'backgroundColor': '#f0f0f0'
   }, ratingCss);
   const ratingFullCss = Object.assign({
     'backgroundColor': 'black'
   }, ratingCss);
-  
+
 
   const ratingStyles = {
     empty: ratingEmptyCss,
     full: ratingFullCss
   };
-  
+
   const saveDisabled = !(from && to && transport);
   const additionalHidden = {
     display: (from && to && transport) ? 'block' : 'none'
   };
-  
+
   let fromInputValue = '';
   let toInputValue = '';
   if (uuid && from && to) {
     fromInputValue = from.description;
     toInputValue = to.description;
   }
-   
-  console.log("link instance", uuid, from, to, fromInputValue, linkInstance, departure, arrival, departureValue, arrivalValue);  
+
+  console.log("link instance", uuid, from, to, fromInputValue, linkInstance, departure, arrival, departureValue, arrivalValue);
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -201,7 +209,7 @@ const EditLinkInstance = ({
           </div>
           <div className={s.mode}>
             <SelectField id="mode-select"
-              value={mode || 'research'} 
+              value={mode || 'research'}
               fullWidth={true}
               onChange={onChangeProperty('mode')}
               floatingLabelText="Info type"
@@ -215,7 +223,7 @@ const EditLinkInstance = ({
         </div>
       </div>
       <div className={s.endpoints}>
-        <LocalityAutocomplete id="from-autocomplete-compact" 
+        <LocalityAutocomplete id="from-autocomplete-compact"
           initialInput={fromInputValue}
           terminal={from} endpoint="from"
           className={s.compact} compact={true} items={[]} />
@@ -238,7 +246,7 @@ const EditLinkInstance = ({
       <div className={s.transportAndId}>
         <div className={s.transport}>
           <SelectField id="transport-select"
-            value={transport} 
+            value={transport}
             onChange={onChangeTransport.bind(this)}
             floatingLabelText="Transport"
             floatingLabelFixed={true}
@@ -252,7 +260,7 @@ const EditLinkInstance = ({
             value={identifier || ''}
             floatingLabelText="Identifier"
             hintText="Name, number etc."
-            onChange={onChangeProperty('identifier')} 
+            onChange={onChangeProperty('identifier')}
           />
         </div>
       </div>
@@ -267,11 +275,11 @@ const EditLinkInstance = ({
             </div>
             <Terminal id="departure-terminal" {...{
               terminal: departureValue,
-              endpoint: 'departure', 
-              date: departureDate, 
-              time: departureTime, 
-              place: departureValue, 
-              description: departureDescription || '', 
+              endpoint: 'departure',
+              date: departureDate,
+              time: departureTime,
+              place: departureValue,
+              description: departureDescription || '',
               onChangeTime: onChangeProperty,
               onChangeDescription: onChangeProperty
             }} />
@@ -283,10 +291,10 @@ const EditLinkInstance = ({
             <Terminal id="arrival-terminal" {...{
               terminal: arrivalValue,
               endpoint: 'arrival',
-              date: arrivalDate, 
+              date: arrivalDate,
               time: arrivalTime,
               place: arrivalValue,
-              description: arrivalDescription || '', 
+              description: arrivalDescription || '',
               onChangeTime: onChangeProperty,
               onChangeDescription: onChangeProperty
             }} />
@@ -303,7 +311,7 @@ const EditLinkInstance = ({
                 value={priceAmount || ''}
                 floatingLabelText="Price"
                 hintText="Price"
-                onChange={onChangeProperty('priceAmount')} 
+                onChange={onChangeProperty('priceAmount')}
               />
             </div>
             <div className={s.currency}>
@@ -342,7 +350,7 @@ const EditLinkInstance = ({
               </div>
               <div className={s.ratingValue}>
                 <Rating id="availability-rating"
-                  {...ratingStyles} initialRate={availabilityRating} 
+                  {...ratingStyles} initialRate={availabilityRating}
                   onChange={onChangeRating('availability')} />
               </div>
             </div>
@@ -351,8 +359,8 @@ const EditLinkInstance = ({
                 <label>Departure reliability</label>
               </div>
               <div className={s.ratingValue}>
-                <Rating id="dept-reliability-rating" 
-                  {...ratingStyles} initialRate={departureRating} 
+                <Rating id="dept-reliability-rating"
+                  {...ratingStyles} initialRate={departureRating}
                   onChange={onChangeRating('departure')} />
               </div>
             </div>
@@ -362,7 +370,7 @@ const EditLinkInstance = ({
               </div>
               <div className={s.ratingValue}>
                 <Rating id="arr-reliability-rating"
-                  {...ratingStyles} initialRate={arrivalRating} 
+                  {...ratingStyles} initialRate={arrivalRating}
                   onChange={onChangeRating('arrival')} />
               </div>
             </div>
@@ -407,9 +415,9 @@ export default injectIntl(
     priceAmount: state.editLink.priceAmount,
     priceCurrency: state.editLink.priceCurrency,
     description: state.editLink.description,
-    availabilityRating: state.editLink.availabilityRating, 
-    departureRating: state.editLink.departureRating, 
-    arrivalRating: state.editLink.arrivalRating, 
+    availabilityRating: state.editLink.availabilityRating,
+    departureRating: state.editLink.departureRating,
+    arrivalRating: state.editLink.arrivalRating,
     awesomeRating: state.editLink.awesomeRating,
   }), {
     saveLinkInstance,
