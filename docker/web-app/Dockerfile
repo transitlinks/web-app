@@ -4,7 +4,7 @@ RUN mkdir /transitlinks/images
 RUN cd /transitlinks && \
   git clone https://github.com/transitlinks/web-app.git && \
   cd web-app && \
-  npm install
+  yarn install
 ADD assets/start.sh /
 RUN chmod a+x /start.sh
 CMD /start.sh
