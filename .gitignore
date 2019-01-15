@@ -11,4 +11,6 @@ docker/web-app/deploy.sh
 test/e2e/lib
 test/e2e/screenshots
 *.swp
+.DS_Store
+.idea
 log.txt

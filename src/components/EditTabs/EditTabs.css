@@ -1,0 +1,23 @@
+@import '../variables.css';
+
+.container {
+  margin-top: 8px;
+}
+
+.tabs {
+  display: flex;
+  max-width: 600px;
+  justify-content: space-around;
+  margin: auto;
+}
+
+.tabs .tab {
+}
+
+.tabContent {
+}
+
+a {
+  text-decoration: underline;
+  cursor: pointer;
+}
