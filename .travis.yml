@@ -4,13 +4,14 @@ services:
 language: node_js
 node_js:
   - 'node'
+  - '8.7.0'
 env:
   - ISOLATED=false
 branches:
   only:
     - master
     - develop
-before_script: 
+before_script:
   - ./start.sh
 script:
   - ./test.sh
