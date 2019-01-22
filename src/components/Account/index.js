@@ -14,7 +14,7 @@ const AccountView = ({ children, section, intl }) => {
 	return (
     <div className={s.container}>
       <div className={s.logOut}>
-        <RaisedButton label={intl.formatMessage(msg['logout'])}
+        <RaisedButton id="logout-button" label={intl.formatMessage(msg['logout'])}
                       primary={true}
                       onClick={() => { location.href = "/logout" }} />
       </div>
