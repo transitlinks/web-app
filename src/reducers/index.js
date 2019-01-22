@@ -8,6 +8,8 @@ import login from './login';
 import autocomplete from './autocomplete';
 import editLink from './editLink';
 import viewLinkInstance from './viewLinkInstance';
+import editCheckIn from './editCheckIn';
+import viewCheckIn from './viewCheckIn';
 import searchLinks from './searchLinks';
 import profile from './profile';
 import home from './home';
@@ -22,6 +24,8 @@ export default combineReducers({
   autocomplete,
   editLink,
   viewLinkInstance,
+  editCheckIn,
+  viewCheckIn,
   searchLinks,
   profile,
   home

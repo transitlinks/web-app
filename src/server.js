@@ -101,9 +101,9 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  
+
   log.error(pe.render(err)); // eslint-disable-line no-console
-  
+
   const statusCode = err.status || 500;
   const html = ReactDOM.renderToStaticMarkup(
     <Html
@@ -122,8 +122,8 @@ const force = process.env.TEST_ENV === 'test';
 // Launch the server
 /* eslint-disable no-console */
 models.sync({ force, logging: console.log }).catch(err => console.error(err.stack)).then(() => {
-	
-	loadFixtures();	
+
+	loadFixtures();
   app.listen(HTTP_PORT, () => {
     log.info(`The server is running at http://${HTTP_HOST}:${HTTP_PORT}/`);
   });

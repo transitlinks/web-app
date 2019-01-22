@@ -19,6 +19,7 @@ import home from './home';
 import search from './search';
 import link from './link';
 import linkInstance from './linkInstance';
+import checkIn from './checkIn';
 import login from './login';
 import account from './account';
 import content from './content';
@@ -38,6 +39,7 @@ const routes = {
     search,
     link,
     linkInstance,
+    checkIn,
     // place new routes before...
     content,
     error,
@@ -54,14 +56,14 @@ const routes = {
 };
 
 export const initEndpoints = (app) => {
-	
-	app.get('/logout', (req, res, next) => { 
+
+	app.get('/logout', (req, res, next) => {
     req.logout();
     res.redirect('/');
   });
-	
-	app.post('/login', (req, res, next) => { 
-     
+
+	app.post('/login', (req, res, next) => {
+
     app.passport.authenticate('login-local', (err, user, info) => {
       if (err) {
         req.session.error = err;
@@ -78,11 +80,11 @@ export const initEndpoints = (app) => {
         req.session.newUser = user.isNew;
         res.redirect('/');
       });
-    
+
     })(req, res, next);
-    
+
   });
- 
+
   app.get('/login/fb',
     app.passport.authenticate(
       'login-facebook',
@@ -95,7 +97,7 @@ export const initEndpoints = (app) => {
       // Successful authentication, redirect home.
       res.redirect('/');
   });
-  
+
   app.get('/login/google',
     app.passport.authenticate(
       'login-google',
@@ -115,14 +117,14 @@ export const initEndpoints = (app) => {
   });
 
   app.use('/graphql', expressGraphQL(req => {
-    
+
     const authorization = req.get('Authorization');
     if (authorization && authorization.length > 5 && authorization.substring(0, 4) === 'mock') {
       req.user = {
         uuid: authorization.substring(5)
       };
     }
-    
+
     return {
       schema: app.schema,
       graphiql: true,
@@ -137,15 +139,15 @@ export const initEndpoints = (app) => {
       },
       pretty: process.env.NODE_ENV !== 'production',
     };
-  
+
   }));
-  
+
   app.get('/search', async (req, res, next) => {
-    next(); 
+    next();
   });
-  
+
   app.get('*', async (req, res, next) => {
-    
+
     if (req.path.indexOf('/assets') !== -1) {
       return next();
     }
@@ -197,17 +199,17 @@ export const initEndpoints = (app) => {
         name: 'initialNow',
         value: Date.now(),
       }));
-      
+
       store.dispatch(setRuntimeVariable({
         name: 'reqError',
         value: req.session.error
       }));
-      
+
       store.dispatch(setRuntimeVariable({
         name: 'userAgent',
         value: req.headers['user-agent']
       }));
-      
+
       let css = new Set();
       let statusCode = 200;
       const locale = req.language;
@@ -274,7 +276,7 @@ export const initEndpoints = (app) => {
     } finally {
       removeHistoryListener();
     }
-  
+
   });
 
 };
