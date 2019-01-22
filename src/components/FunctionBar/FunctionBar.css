@@ -26,6 +26,7 @@
 .search {
   display: flex;
   align-items: center;
+  margin: auto;
 }
 
 .search .searchIcon {

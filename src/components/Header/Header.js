@@ -5,6 +5,7 @@ import cx from 'classnames';
 import Link from '../Link';
 import Navigation from '../Navigation';
 import LanguageSwitcher from '../LanguageSwitcher';
+import FunctionBar from '../FunctionBar';
 import logoUrl from './logo-small.png';
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
@@ -18,13 +19,10 @@ function Header() {
       <div className={s.container}>
         <div className={s.logo}>
           <Link className={s.brand} to="/">
-            <FontIcon className="material-icons">shuffle</FontIcon>
-            <span className={s.brandTxt}>
-              <FormattedMessage {...msg['logo-text']} />
-            </span>
+            <FontIcon className="material-icons" style={{ fontSize: '40px' }}>public</FontIcon>
           </Link>
-          <div className={s.languages}>
-            <LanguageSwitcher />
+          <div className={s.functionBar}>
+            <FunctionBar />
           </div>
         </div>
         <div className={s.navigation}>

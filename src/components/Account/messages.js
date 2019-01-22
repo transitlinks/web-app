@@ -11,5 +11,10 @@ export default defineMessages({
     id: 'account.linksLink',
     defaultMessage: 'Links',
     description: 'Links'
+  },
+  'logout': {
+    id: 'account.logout',
+    defaultMessage: 'Log out',
+    description: 'Log out'
   }
 });

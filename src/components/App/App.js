@@ -49,26 +49,28 @@ class App extends Component {
   }
 
   render() {
-    
+
     if (this.props.error) {
       return this.props.children;
     }
-  
+
     const store = this.props.context.store;
     const userAgent = store ?
       store.getState().runtime.userAgent : 'all';
-    
+
     return (
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
           <Header />
-          <FunctionBar />
+          <div className={s.functionBar}>
+            <FunctionBar />
+          </div>
           {this.props.children}
           <Footer />
         </div>
       </MuiThemeProvider>
     );
-  
+
   }
 
 }

@@ -1,6 +1,30 @@
 .root {
 }
 
+.content {
+  display: flex;
+  align-items: center;
+}
+
+.add {
+  margin-right: 8px;
+}
+
+.add .addIcon {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #999999;
+  border-radius: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add .addIcon a {
+  display: flex;
+  text-decoration: none;
+}
+
 .link {
   display: inline-block;
   padding: 3px 8px;

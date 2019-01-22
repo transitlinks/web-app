@@ -6,19 +6,17 @@ import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
 import Avatar from 'material-ui/Avatar';
+import FontIcon from 'material-ui/FontIcon';
 import Link from '../Link';
 import msg from './messages';
 
 const Navigation = ({ setAuth, auth, className }) => {
-  
+
   const loginElem = auth.loggedIn ? (
     <div id="logout-link">
       <Link to="/account">
-        <Avatar src={auth.user.photo} size={40} /> 
+        <Avatar src={auth.user.photo} size={40} />
       </Link>
-      <a className={s.link} href="/logout">
-        <FormattedMessage {...msg.logout} />
-      </a>
     </div>
   ) : (
     <Link className={s.link} id="login-link" to="/login">
@@ -28,7 +26,16 @@ const Navigation = ({ setAuth, auth, className }) => {
 
   return (
     <div className={cx(s.root, className)} role="navigation">
-      {loginElem}
+      <div className={s.content}>
+        <div className={s.add}>
+          <div className={s.addIcon}>
+            <Link to="/link-instance">
+              <FontIcon className="material-icons" color="#999999" style={{ fontSize: '38px' }}>add_circle</FontIcon>
+            </Link>
+          </div>
+        </div>
+        {loginElem}
+      </div>
     </div>
   );
 };

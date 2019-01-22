@@ -177,3 +177,15 @@ textarea {
     page-break-after: avoid;
   }
 }
+
+.functionBar {
+  display: none;
+}
+
+@media (max-width: 425px) {
+
+  .functionBar {
+    display: block;
+  }
+
+}

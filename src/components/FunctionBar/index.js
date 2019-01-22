@@ -21,11 +21,6 @@ const FunctionBar = ({
           <LinkSearchInput />
         </div>
       </div>
-      <div className={s.createLink}>
-        <Link to="/link-instance">
-          <FormattedMessage {...msg.newLink} />
-        </Link>
-      </div>
     </div>
   );
 

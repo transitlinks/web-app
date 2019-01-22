@@ -18,18 +18,29 @@
   justify-content: space-between;
 }
 
+.functionBar {
+
+}
+
 @media (max-width: 425px) {
+
   .container {
     padding-top: 6px;
     padding-left: 6px;
     padding-right: 6px;
     padding-bottom: 9px;
   }
+
+  .functionBar {
+    display: none;
+  }
+
 }
 
 .logo {
   display: flex;
   align-items: center;
+  margin-top: -4px;
 }
 
 .brand {
@@ -38,6 +49,11 @@
   font-size: 1.75em;
   display: flex;
   align-items: center;
+  margin-right: 2px;
+}
+
+.brand span {
+  margin-top: 4px;
 }
 
 .brandTxt {
