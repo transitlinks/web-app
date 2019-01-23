@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Add.css';
-import AccountView from '../../components/Account';
-import Profile from '../../components/Account/Profile';
-import UserLinks from '../../components/Account/UserLinks';
+import AddView from '../../components/Add';
+import Place from '../../components/Add/Place';
+import Link from '../../components/Add/Link';
 
 const title = 'Transitlinks - Add';
 
@@ -17,17 +17,17 @@ class Add extends React.Component {
 
     const errorElem = null;
 
-    let section = null;
-    let sectionName = null;
-    if (props.profile) {
-      sectionName = 'profile';
-      section = (
-        <Profile profile={props.profile} />
+    let content = null;
+    let typeName = null;
+    if (props.place) {
+      typeName = 'place';
+      content = (
+        <Place place={props.profile} />
       );
-    } else if (props.userLinks) {
-      sectionName = 'links';
-      section = (
-        <UserLinks userLinks={props.userLinks} />
+    } else if (props.link) {
+      typeName = 'link';
+      content = (
+        <Link link={props.userLinks} />
       );
     }
 
@@ -36,9 +36,9 @@ class Add extends React.Component {
       <div>
         <div className={s.root}>
           <div className={s.container}>
-            <AccountView section={sectionName}>
-              {section}
-            </AccountView>
+            <AddView type={typeName}>
+              {content}
+            </AddView>
           </div>
         </div>
       </div>

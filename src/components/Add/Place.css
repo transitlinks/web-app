@@ -1,0 +1,25 @@
+@import '../../components/variables.css';
+
+.root {  
+}
+
+.container {
+}
+
+.email {
+}
+
+.password {
+  margin-top: 36px;
+}
+
+.save {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.save .button {
+  margin-left: 12px;
+}

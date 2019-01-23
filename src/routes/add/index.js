@@ -24,10 +24,11 @@ export default {
 
     try {
 
-      const type = params.section || 'place';
+      const type = params.type || 'place';
 
       if (type === 'place') {
 
+        /*
         const { data } = await graphqlRequest(
           `query {
             profile (uuid: "${uuid}") {
@@ -39,21 +40,25 @@ export default {
         );
 
         log.info("event=received-profile-data", data);
-        return <Add profile={data.profile} />;
+        return <Add place={data.profile} />;
+        */
 
-      } else if (link === 'link') {
+        return <Add place={{}} />;
 
+      } else if (type === 'link') {
+
+        /*
         const { data } = await graphqlRequest(
           `query {
             userLinks (uuid: "${uuid}") {
               uuid,
-              linkInstances { 
+              linkInstances {
                 uuid,
                 departureDate,
                 createdAt,
                 link {
                   from { apiId, name, description, countryLong, lat, lng },
-                  to { apiId, name, description, countryLong, lat, lng } 
+                  to { apiId, name, description, countryLong, lat, lng }
                 },
                 transport { slug }
               }
@@ -62,11 +67,14 @@ export default {
         );
 
         log.info("event=received-user-links-data", data);
-        return <Add userLinks={data.userLinks} />;
+        return <Add link={data.userLinks} />;
+        */
+
+        return <Add link={{}} />;
 
       }
 
-      throw new Error('Unknown section');
+      throw new Error('Unknown content type');
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

@@ -27,7 +27,8 @@
     "defaultMessage": "User links",
     "message": "",
     "files": [
-      "src/components/Account/messages.links.js"
+      "src/components/Account/messages.links.js",
+      "src/components/Add/messages.links.js"
     ]
   },
   {
@@ -36,7 +37,8 @@
     "defaultMessage": "E-mail",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -45,7 +47,8 @@
     "defaultMessage": "User photo",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -54,8 +57,8 @@
     "defaultMessage": "Biking",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -66,8 +69,8 @@
     "defaultMessage": "Bus",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -78,8 +81,8 @@
     "defaultMessage": "Hitch-hiking (autostop)",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -90,8 +93,8 @@
     "defaultMessage": "Shared taxi",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -102,8 +105,8 @@
     "defaultMessage": "Train",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -114,8 +117,8 @@
     "defaultMessage": "Van (mini bus, marshrutka)",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -126,8 +129,8 @@
     "defaultMessage": "Walking",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -376,7 +379,8 @@
     "defaultMessage": "New password",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -385,7 +389,8 @@
     "defaultMessage": "CHANGE",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -394,7 +399,8 @@
     "defaultMessage": "Save",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -412,7 +418,8 @@
     "defaultMessage": "Error! Failed saving new password :(",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -421,7 +428,8 @@
     "defaultMessage": "Password changed",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -430,7 +438,8 @@
     "defaultMessage": "Error! Failed saving profile :(",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -439,7 +448,8 @@
     "defaultMessage": "Profile saved",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js"
+      "src/components/Account/messages.profile.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -470,8 +480,8 @@
     "defaultMessage": "Ship or boat",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -482,8 +492,8 @@
     "defaultMessage": "Car",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -494,8 +504,8 @@
     "defaultMessage": "Taxi",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -506,8 +516,8 @@
     "defaultMessage": "Helicopter",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -518,8 +528,8 @@
     "defaultMessage": "Airplane",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -530,8 +540,8 @@
     "defaultMessage": "Running",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -542,8 +552,8 @@
     "defaultMessage": "Swimming",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/common/messages/transport.js",
+      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -554,7 +564,26 @@
     "defaultMessage": "Log out",
     "message": "",
     "files": [
-      "src/components/Account/messages.js"
+      "src/components/Account/messages.js",
+      "src/components/Add/messages.js"
+    ]
+  },
+  {
+    "id": "add.linkLink",
+    "description": "Link",
+    "defaultMessage": "Link",
+    "message": "",
+    "files": [
+      "src/components/Add/messages.js"
+    ]
+  },
+  {
+    "id": "add.placeLink",
+    "description": "Place",
+    "defaultMessage": "Place",
+    "message": "",
+    "files": [
+      "src/components/Add/messages.js"
     ]
   }
 ]
