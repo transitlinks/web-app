@@ -22,6 +22,7 @@ import linkInstance from './linkInstance';
 import checkIn from './checkIn';
 import login from './login';
 import account from './account';
+import add from './add';
 import content from './content';
 import error from './error';
 
@@ -36,6 +37,7 @@ const routes = {
     home,
     login,
     account,
+    add,
     search,
     link,
     linkInstance,

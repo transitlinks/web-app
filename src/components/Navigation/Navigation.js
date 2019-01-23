@@ -29,7 +29,7 @@ const Navigation = ({ setAuth, auth, className }) => {
       <div className={s.content}>
         <div className={s.add}>
           <div className={s.addIcon}>
-            <Link to="/link-instance">
+            <Link to="/add">
               <FontIcon className="material-icons" color="#999999" style={{ fontSize: '38px' }}>add_circle</FontIcon>
             </Link>
           </div>

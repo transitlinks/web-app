@@ -54,8 +54,8 @@
     "defaultMessage": "Biking",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -66,8 +66,8 @@
     "defaultMessage": "Bus",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -78,8 +78,8 @@
     "defaultMessage": "Hitch-hiking (autostop)",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -90,8 +90,8 @@
     "defaultMessage": "Shared taxi",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -102,8 +102,8 @@
     "defaultMessage": "Train",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -114,8 +114,8 @@
     "defaultMessage": "Van (mini bus, marshrutka)",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -126,8 +126,8 @@
     "defaultMessage": "Walking",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -470,8 +470,8 @@
     "defaultMessage": "Ship or boat",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -482,8 +482,8 @@
     "defaultMessage": "Car",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -494,8 +494,8 @@
     "defaultMessage": "Taxi",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -506,8 +506,8 @@
     "defaultMessage": "Helicopter",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -518,8 +518,8 @@
     "defaultMessage": "Airplane",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -530,8 +530,8 @@
     "defaultMessage": "Running",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -542,8 +542,8 @@
     "defaultMessage": "Swimming",
     "message": "",
     "files": [
-      "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/common/messages/transport.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
