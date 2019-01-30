@@ -4,10 +4,16 @@ import s from './Add.css';
 import AddView from '../../components/Add';
 import Place from '../../components/Add/Place';
 import Link from '../../components/Add/Link';
+import { getGeolocation } from '../../actions/global';
+import {connect} from "react-redux";
 
 const title = 'Transitlinks - Add';
 
 class Add extends React.Component {
+
+  componentDidMount(props) {
+    this.props.getGeolocation();
+  }
 
   render() {
 
@@ -51,4 +57,7 @@ class Add extends React.Component {
 
 Add.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(s)(Add);
+export default connect(state => ({
+}), {
+  getGeolocation
+})(withStyles(s)(Add));

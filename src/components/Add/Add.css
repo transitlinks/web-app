@@ -1,0 +1,24 @@
+@import '../../components/variables.css';
+
+.root {
+
+}
+
+.container {
+  max-width: 760px;
+  margin: auto;
+  padding-right: 12px;
+  padding-left: 12px;
+}
+
+.placeSelector {
+}
+
+.postContent {
+}
+
+.postContent .contentTypeContainer {
+}
+
+.postContent .contentEditor {
+}

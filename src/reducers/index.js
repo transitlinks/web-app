@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import runtime from './runtime';
+import global from './global';
 import intl from './intl';
 import auth from './auth';
 import env from './env';
@@ -16,6 +17,7 @@ import home from './home';
 
 export default combineReducers({
   runtime,
+  global,
   intl,
   auth,
   env,
