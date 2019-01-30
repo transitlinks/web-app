@@ -9,6 +9,11 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
+const formatCoords = (coords) => {
+  const { latitude, longitude } = coords;
+  return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
+};
+
 const AddView = ({ children, type, intl, geolocation }) => {
 
   let positionElem = null;
@@ -17,7 +22,19 @@ const AddView = ({ children, type, intl, geolocation }) => {
       const { position } = geolocation;
       positionElem = (
         <div>
-          { position.coords.latitude } / { position.coords.longitude }
+          { formatCoords(position.coords) }
+        </div>
+      );
+    } else if (geolocation.status === 'locating') {
+      positionElem = (
+        <div>
+          Locating...
+        </div>
+      );
+    } else if (geolocation.status === 'error') {
+      positionElem = (
+        <div>
+          { geolocation.error }
         </div>
       );
     }
@@ -26,7 +43,6 @@ const AddView = ({ children, type, intl, geolocation }) => {
 	return (
     <div className={s.container}>
       <div className={s.placeSelector}>
-        Place selector
         { positionElem }
       </div>
       <div className={s.postContent}>
