@@ -115,6 +115,7 @@
     "mkdirp": "^0.5.1",
     "mocha": "^2.5.3",
     "ncp": "^2.0.0",
+    "opn": "^5.4.0",
     "pixrem": "^3.0.1",
     "pleeease-filters": "^3.0.0",
     "postcss": "^5.0.21",

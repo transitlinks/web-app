@@ -18,6 +18,7 @@ import clean from './clean';
 import bundle from './bundle';
 import extractMessages from './extractMessages';
 import copy from './copy';
+import opn from 'opn';
 
 const DEBUG = !process.argv.includes('--release');
 
@@ -33,9 +34,9 @@ async function start() {
   }
   await run(copy.bind(undefined, { watch: true }));
   await new Promise(resolve => {
-    
+
     if (DEBUG) {
-    
+
       // Patch the client-side bundle configurations
       // to enable Hot Module Replacement (HMR) and React Transform
       webpackConfig.filter(x => x.target !== 'node').forEach(config => {
@@ -97,17 +98,28 @@ async function start() {
     let handleServerBundleComplete = () => {
       runServer((err, host) => {
         if (!err) {
-          
+
           if (!DEBUG) {
             return;
           }
           const bs = Browsersync.create();
           bs.init({
-            ...(DEBUG ? {} : { notify: false, ui: false }),
+            ...(DEBUG ? { https: true } : { notify: false, ui: false, https: true }),
+
+            https: {
+              key: "server.key",
+              cert: "server.crt"
+            },
 
             proxy: {
               target: host,
               middleware: [wpMiddleware, ...hotMiddlewares],
+            },
+
+            open: false,
+
+            callbacks: {
+              ready: () => opn("https://local.transitlinks.net")
             },
 
             // no need to watch '*.js' here, webpack will take care of it for us,
