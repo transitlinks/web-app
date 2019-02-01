@@ -13,6 +13,7 @@ import editCheckIn from './editCheckIn';
 import viewCheckIn from './viewCheckIn';
 import searchLinks from './searchLinks';
 import profile from './profile';
+import add from './add';
 import home from './home';
 
 export default combineReducers({
@@ -30,5 +31,6 @@ export default combineReducers({
   viewCheckIn,
   searchLinks,
   profile,
+  add,
   home
 });

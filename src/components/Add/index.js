@@ -1,11 +1,14 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Add.css';
 import Link from '../Link';
-
+import { getGeolocation } from '../../actions/global';
+import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
@@ -14,7 +17,17 @@ const formatCoords = (coords) => {
   return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
 };
 
-const AddView = ({ children, type, intl, geolocation }) => {
+const typeSelector = (iconName, isSelected) => {
+  return (
+    <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})}>
+      <div>
+        <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{iconName}</FontIcon>
+      </div>
+    </div>
+  );
+};
+
+const AddView = ({ children, type, intl, geolocation, postText, setProperty, getGeolocation }) => {
 
   let positionElem = null;
   if (geolocation) {
@@ -43,14 +56,39 @@ const AddView = ({ children, type, intl, geolocation }) => {
 	return (
     <div className={s.container}>
       <div className={s.placeSelector}>
-        { positionElem }
+        <div className={s.positionContainer}>
+          <div className={s.positionButton} onClick={() => getGeolocation()}>
+            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
+          </div>
+          { positionElem }
+          <div className={s.editPositionButton}>
+            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>edit_location</FontIcon>
+          </div>
+        </div>
       </div>
       <div className={s.postContent}>
         <div className={s.contentTypeContainer}>
-          Content type
+          <div className={s.contentTypeSelectors}>
+            { typeSelector('call_received', true) }
+            { typeSelector('call_made', false) }
+            { typeSelector('hotel', false) }
+            { typeSelector('grade', false) }
+            { typeSelector('directions_run', false) }
+            { typeSelector('tag_faces', false) }
+          </div>
         </div>
         <div className={s.contentEditor}>
-          Edit content
+          <div className={s.commentContainer}>
+            <TextField id="post-text"
+                       value={postText}
+                       multiLine={true}
+                       fullWidth={true}
+                       rows={2}
+                       onChange={(e) => setProperty('add.postText', e.target.value)}
+                       hintText={(!postText) ? "What's up?" : null}
+                       hintStyle={{ bottom: '36px'}}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -66,7 +104,10 @@ export default injectIntl(
       status: state.global['geolocation.status'],
       position: state.global['geolocation.position'],
       error: state.global['geolocation.error']
-    }
+    },
+    postText: state.add.postText
   }), {
+    setProperty,
+    getGeolocation
   })(withStyles(s)(AddView))
 );

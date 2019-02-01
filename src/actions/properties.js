@@ -3,12 +3,12 @@ import {
 } from '../constants';
 
 
-export function setProperty(name, value) {
-  
+export function setProperty(name, value, command) {
+
   return async (dispatch) => {
-    
+
     dispatch({
-      type: SET_PROPERTY,
+      type: command || SET_PROPERTY,
       payload: {
         name,
         value
@@ -16,7 +16,7 @@ export function setProperty(name, value) {
     });
 
     return true;
-  
+
   };
 
 }

@@ -5,13 +5,32 @@
 }
 
 .container {
-  max-width: 760px;
+  max-width: 460px;
   margin: auto;
   padding-right: 12px;
   padding-left: 12px;
 }
 
 .placeSelector {
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.placeSelector .positionContainer {
+  display: flex;
+  align-items: center;
+}
+
+.placeSelector .positionContainer .positionButton {
+  display: flex;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.placeSelector .positionContainer .editPositionButton {
+  display: flex;
+  position: absolute;
+  right: 2px;
 }
 
 .postContent {
@@ -22,3 +41,36 @@
 
 .postContent .contentEditor {
 }
+
+.contentEditor .commentContainer {
+
+}
+
+.contentTypeSelectors {
+  display: flex;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.contentTypeSelectors .contentTypeSelector {
+  margin-right: 6px;
+  border: 1px solid #888888;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 5px;
+  padding-right: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  flex-grow: 1;
+}
+
+.contentTypeSelectors .typeSelected {
+  background-color: #888888;
+}
+
+.contentTypeSelectors .contentTypeSelector > div {
+  display: contents;
+}
+
