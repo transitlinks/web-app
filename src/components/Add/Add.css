@@ -42,6 +42,10 @@
 .postContent .contentEditor {
 }
 
+.contentEditor .commentContainer {
+
+}
+
 .contentTypeSelectors {
   display: flex;
   margin-top: 4px;

@@ -1,12 +1,14 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Add.css';
 import Link from '../Link';
 import { getGeolocation } from '../../actions/global';
+import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
@@ -25,7 +27,7 @@ const typeSelector = (iconName, isSelected) => {
   );
 };
 
-const AddView = ({ children, type, intl, geolocation, getGeolocation }) => {
+const AddView = ({ children, type, intl, geolocation, postText, setProperty, getGeolocation }) => {
 
   let positionElem = null;
   if (geolocation) {
@@ -76,7 +78,17 @@ const AddView = ({ children, type, intl, geolocation, getGeolocation }) => {
           </div>
         </div>
         <div className={s.contentEditor}>
-          Edit content
+          <div className={s.commentContainer}>
+            <TextField id="post-text"
+                       value={postText}
+                       multiLine={true}
+                       fullWidth={true}
+                       rows={2}
+                       onChange={(e) => setProperty('add.postText', e.target.value)}
+                       hintText={(!postText) ? "What's up?" : null}
+                       hintStyle={{ bottom: '36px'}}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -92,8 +104,10 @@ export default injectIntl(
       status: state.global['geolocation.status'],
       position: state.global['geolocation.position'],
       error: state.global['geolocation.error']
-    }
+    },
+    postText: state.add.postText
   }), {
+    setProperty,
     getGeolocation
   })(withStyles(s)(AddView))
 );
