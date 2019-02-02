@@ -1,5 +1,6 @@
 import localityRepositoryReal from './localityRepository';
 import linkRepositoryReal from './linkRepository';
+import postRepositoryReal from './postRepository';
 import * as ratingRepositoryReal from './ratingRepository';
 import * as userRepositoryReal from './userRepository';
 import commentRepositoryReal from './commentRepository';
@@ -10,6 +11,7 @@ import placesApiMock from './mocks/placesApi';
 
 let localityRepository;
 let linkRepository;
+let postRepository;
 let userRepository;
 let ratingRepository;
 let commentRepository;
@@ -19,6 +21,7 @@ let placesApi;
 if (process.env.TEST_ENV === 'test') {
   localityRepository = localityRepositoryReal;
   linkRepository = linkRepositoryReal;
+  postRepository = postRepositoryReal;
   userRepository = userRepositoryReal;
   ratingRepository = ratingRepositoryReal;
   commentRepository = commentRepositoryReal;
@@ -27,6 +30,7 @@ if (process.env.TEST_ENV === 'test') {
 } else {
   localityRepository = localityRepositoryReal;
   linkRepository = linkRepositoryReal;
+  postRepository = postRepositoryReal;
   userRepository = userRepositoryReal;
   ratingRepository = ratingRepositoryReal;
   commentRepository = commentRepositoryReal;
@@ -36,6 +40,6 @@ if (process.env.TEST_ENV === 'test') {
 
 export { 
   localityRepository, linkRepository, userRepository, ratingRepository,
-  commentRepository,
+  postRepository, commentRepository,
   files, placesApi 
 };

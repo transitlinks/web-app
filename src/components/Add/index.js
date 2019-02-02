@@ -8,6 +8,7 @@ import cx from 'classnames';
 import s from './Add.css';
 import Link from '../Link';
 import { getGeolocation } from '../../actions/global';
+import { savePost } from '../../actions/add';
 import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
@@ -27,7 +28,7 @@ const typeSelector = (iconName, isSelected) => {
   );
 };
 
-const AddView = ({ children, type, intl, geolocation, postText, setProperty, getGeolocation }) => {
+const AddView = ({ children, type, intl, geolocation, postText, setProperty, getGeolocation, savePost }) => {
 
   let positionElem = null;
   if (geolocation) {
@@ -97,6 +98,7 @@ const AddView = ({ children, type, intl, geolocation, postText, setProperty, get
                          hintText={(!postText) ? "What's up?" : null}
                          hintStyle={{ bottom: '36px'}}
               />
+              <RaisedButton label="Post" disabled={false} onClick={() => savePost({ post: { text: postText } })} />
             </div>
           </div>
         </div>
@@ -115,9 +117,11 @@ export default injectIntl(
       position: state.global['geolocation.position'],
       error: state.global['geolocation.error']
     },
-    postText: state.add.postText
+    postText: state.add.postText,
+    savedPost: state.add.post
   }), {
     setProperty,
-    getGeolocation
+    getGeolocation,
+    savePost
   })(withStyles(s)(AddView))
 );

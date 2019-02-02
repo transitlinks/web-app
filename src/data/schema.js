@@ -10,6 +10,7 @@ import { AccountQueryFields } from './queries/account';
 import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
+import { PostMutationFields, PostQueryFields } from './queries/posts';
 import { CommentMutationFields, CommentQueryFields } from './queries/comments';
 import { UserMutationFields, UserQueryFields } from './queries/users';
 import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './queries/ratings';
@@ -33,6 +34,7 @@ const schema = new Schema({
       user: UserQueryFields.user,
       ratings: RatingQueryFields.ratings,
       comments: CommentQueryFields.comments,
+      posts: PostQueryFields.posts,
       intl
     }
   }),
@@ -47,7 +49,8 @@ const schema = new Schema({
       user: UserMutationFields.user,
       comment: CommentMutationFields.comment,
       commentVote: CommentMutationFields.commentVote,
-      rating: RatingMutationFields.rating
+      rating: RatingMutationFields.rating,
+      post: PostMutationFields.post
     },
   })
 

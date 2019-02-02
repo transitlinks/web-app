@@ -41,6 +41,14 @@ export default {
 
   },
 
+  getFeedPosts: async (userId) => {
+
+    const posts = await Post.findAll();
+
+    return posts.map(post => post.toJSON());
+
+  },
+
   getCheckInsByUserUuid: async (uuid) => {
 
     const user = await User.findOne( { where: { uuid }});
