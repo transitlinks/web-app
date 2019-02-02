@@ -78,16 +78,26 @@ const AddView = ({ children, type, intl, geolocation, postText, setProperty, get
           </div>
         </div>
         <div className={s.contentEditor}>
-          <div className={s.commentContainer}>
-            <TextField id="post-text"
-                       value={postText}
-                       multiLine={true}
-                       fullWidth={true}
-                       rows={2}
-                       onChange={(e) => setProperty('add.postText', e.target.value)}
-                       hintText={(!postText) ? "What's up?" : null}
-                       hintStyle={{ bottom: '36px'}}
-            />
+          <div className={s.contentHorizontal}>
+            <div className={s.addMediaContainer}>
+              <div className={s.addMediaButton}>
+                <input type="file" name="file" id="file" className={s.fileInput} />
+                <label htmlFor="file">
+                  <FontIcon className="material-icons" style={{ fontSize: '36px' }}>add_a_photo</FontIcon>
+                </label>
+              </div>
+            </div>
+            <div className={s.commentContainer}>
+              <TextField id="post-text"
+                         value={postText}
+                         multiLine={true}
+                         fullWidth={true}
+                         rows={2}
+                         onChange={(e) => setProperty('add.postText', e.target.value)}
+                         hintText={(!postText) ? "What's up?" : null}
+                         hintStyle={{ bottom: '36px'}}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -7,6 +7,8 @@ import TransportType from './TransportType';
 import Rating from './Rating';
 import MediaItem from './MediaItem';
 import Comment from './Comment';
+import Post from './Post';
+import CheckIn from './CheckIn';
 
 User.hasMany(Rating, {
   foreignKey: 'userId'
@@ -58,9 +60,18 @@ LinkInstance.belongsTo(User, {
   as: 'user'
 });
 
+CheckIn.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
+Post.hasOne(CheckIn, {
+  foreignKey: 'checkInId'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment };
+export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment, Post, CheckIn };

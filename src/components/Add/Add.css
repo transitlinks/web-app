@@ -42,8 +42,37 @@
 .postContent .contentEditor {
 }
 
-.contentEditor .commentContainer {
+.contentEditor .contentHorizontal {
+  display: flex;
+}
 
+.contentHorizontal .addMediaContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.addMediaContainer .addMediaButton {
+  display: flex;
+  cursor: pointer;
+}
+
+.fileInput {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.fileInput + label {
+  cursor: pointer;
+}
+
+.contentHorizontal .commentContainer {
+  flex-grow: 1;
 }
 
 .contentTypeSelectors {
