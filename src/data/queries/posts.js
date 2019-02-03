@@ -80,7 +80,7 @@ export const PostQueryFields = {
       log.info(`graphql-request=find-posts user=${request.user ? request.user.uuid : null}`);
       const posts = await postRepository.getFeedPosts(request.user ? request.user.id : null);
       return { posts };
-      
+
     }
 
   }

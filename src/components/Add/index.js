@@ -98,8 +98,10 @@ const AddView = ({ children, type, intl, geolocation, postText, setProperty, get
                          hintText={(!postText) ? "What's up?" : null}
                          hintStyle={{ bottom: '36px'}}
               />
-              <RaisedButton label="Post" disabled={false} onClick={() => savePost({ post: { text: postText } })} />
             </div>
+          </div>
+          <div className={s.contentControls}>
+            <RaisedButton label="Post" disabled={false} onClick={() => savePost({ post: { text: postText } })} />
           </div>
         </div>
       </div>

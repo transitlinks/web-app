@@ -103,3 +103,7 @@
   display: contents;
 }
 
+.contentEditor .contentControls {
+  display: flex;
+  justify-content: flex-end;
+}
