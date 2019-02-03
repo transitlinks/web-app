@@ -50,12 +50,13 @@ export const PostQueryFields = {
   post: {
 
     type: PostType,
-    description: 'Find a post by id',
+    description: 'Find a post by uuid',
     args: {
       uuid: { type: GraphQLString }
     },
     resolve: async ({ request }, { uuid }) => {
 
+      log.info(`graphql-request=find-post-by-uuid user=${request.user ? request.user.uuid : null} post-uuid=${uuid}`);
       const post = await postRepository.getPostByUuid(uuid);
       if (!post) {
         throw new Error(`Post (uuid ${uuid}) not found`);
@@ -75,9 +76,11 @@ export const PostQueryFields = {
       input: { type: GraphQLString }
     },
     resolve: async ({ request }, { input }) => {
+
+      log.info(`graphql-request=find-posts user=${request.user ? request.user.uuid : null}`);
       const posts = await postRepository.getFeedPosts(request.user ? request.user.id : null);
-      console.log("returning posts", posts);
       return { posts };
+      
     }
 
   }
