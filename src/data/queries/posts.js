@@ -13,9 +13,8 @@ import {
 
 import {
 	PostType,
-	PostInputType,
-	CheckInType,
-	CheckInInputType
+  PostsType,
+	PostInputType
 } from '../types/PostType';
 
 import {
@@ -70,13 +69,15 @@ export const PostQueryFields = {
 
   posts: {
 
-    type: new GraphQLList(PostType),
+    type: PostsType,
     description: 'Find posts',
     args: {
       input: { type: GraphQLString }
     },
     resolve: async ({ request }, { input }) => {
-      return postRepository.getFeedPosts(request.user ? request.user.id : null);
+      const posts = await postRepository.getFeedPosts(request.user ? request.user.id : null);
+      console.log("returning posts", posts);
+      return { posts };
     }
 
   }

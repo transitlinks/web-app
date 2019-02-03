@@ -8,7 +8,7 @@ import cx from 'classnames';
 import s from './Add.css';
 import Link from '../Link';
 import { getGeolocation } from '../../actions/global';
-import { savePost } from '../../actions/add';
+import { savePost } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
@@ -117,8 +117,8 @@ export default injectIntl(
       position: state.global['geolocation.position'],
       error: state.global['geolocation.error']
     },
-    postText: state.add.postText,
-    savedPost: state.add.post
+    postText: state.posts.postText,
+    savedPost: state.posts.post
   }), {
     setProperty,
     getGeolocation,

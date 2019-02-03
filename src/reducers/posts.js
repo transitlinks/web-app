@@ -2,7 +2,10 @@ import { graphqlReduce, propToState } from "./utils";
 import {
   SAVE_POST_ERROR,
   SAVE_POST_START,
-  SAVE_POST_SUCCESS
+  SAVE_POST_SUCCESS,
+  GET_POSTS_ERROR,
+  GET_POSTS_START,
+  GET_POSTS_SUCCESS
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -27,6 +30,22 @@ export default function reduce(state = {}, action) {
         SAVE_POST_START,
         SAVE_POST_SUCCESS,
         SAVE_POST_ERROR
+      );
+    case GET_POSTS_START:
+    case GET_POSTS_SUCCESS:
+    case GET_POSTS_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({ posts: null }),
+          success: () => ({
+            posts: action.payload.posts
+          }),
+          error: () => ({ posts: null })
+        },
+        GET_POSTS_START,
+        GET_POSTS_SUCCESS,
+        GET_POSTS_ERROR
       );
 
   }

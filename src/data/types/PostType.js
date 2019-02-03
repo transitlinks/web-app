@@ -2,17 +2,27 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLFloat,
-  GraphQLNonNull, GraphQLInputObjectType, GraphQLInt,
+  GraphQLNonNull, GraphQLInputObjectType, GraphQLInt, GraphQLList,
 } from 'graphql';
+import {CommentType} from "./CommentType";
 
 export const PostType = new GraphQLObjectType({
   name: 'Post',
   description: 'Transitlinks Post object',
   fields: {
     uuid: { type: new GraphQLNonNull(GraphQLString) },
-    text: { type: new GraphQLNonNull(GraphQLString) }
+    text: { type: GraphQLString }
   },
 });
+
+export const PostsType = new GraphQLObjectType({
+  name: 'Posts',
+  description: 'Transitlinks Posts query result object',
+  fields: {
+    posts: { type: new GraphQLList(PostType) }
+  },
+});
+
 
 export const PostInputType = new GraphQLInputObjectType({
   name: 'PostInput',

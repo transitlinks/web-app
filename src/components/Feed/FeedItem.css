@@ -1,0 +1,30 @@
+@import '../variables.css';
+
+.link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.linkTitle {
+  display: flex;
+  align-items: flex-start;
+  font-size: 18px;
+}
+
+.linkTitle .area {
+  font-size: 14px;
+}
+
+.linkTitle .arrow { 
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.linkTitle:hover .city {
+  color: rgb(0, 188, 212);
+}
+
+.linkStats {
+  margin-left: 12px;
+}
