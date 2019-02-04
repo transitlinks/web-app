@@ -7,20 +7,20 @@ import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { Post, CheckIn, User } from '../models';
 
 export default {
-  
+
   getPostByUuid: async (uuid) => {
-    
+
 		let post = await Post.findOne({
       where: { uuid },
-      include: [ { all: true } ] 
+      include: [ { all: true } ]
     });
-    
+
 		if (post === null) {
 			return null;
 		}
-    
+
     return post.toJSON();
-	  	
+
 	},
 
   getPostsByUserUuid: async (uuid) => {
@@ -57,7 +57,15 @@ export default {
     return checkIns.map(post => checkIn.toJSON());
 
   },
-  
+
+  getFeedCheckIns: async (userId) => {
+
+    const checkIns = await CheckIn.findAll();
+
+    return checkIns.map(checkIn => checkIn.toJSON());
+
+  },
+
 	savePost: async (post) => {
 
     if (post.uuid) {
@@ -75,7 +83,7 @@ export default {
     }
 
     const created = await Post.create(post);
-    
+
     if (!created) {
       throw new Error('Failed to create a post (null result)');
     }
@@ -84,7 +92,7 @@ export default {
 
   },
 
-  createCheckIn: async (checkIn) => {
+  saveCheckIn: async (checkIn) => {
 
     if (checkIn.uuid) {
 
@@ -109,11 +117,11 @@ export default {
     return created.toJSON();
 
   },
-  
+
   deletePost: async (uuid) => {
-    
+
     let post = await Post.findOne({ where: { uuid }});
-    
+
     if (!post) {
       throw new Error('Could not find post with uuid ' + uuid);
     }

@@ -14,7 +14,10 @@ import {
 import {
 	PostType,
   PostsType,
-	PostInputType
+	PostInputType,
+  CheckInType,
+  CheckInsType,
+  CheckInInputType
 } from '../types/PostType';
 
 import {
@@ -39,6 +42,20 @@ export const PostMutationFields = {
     resolve: async ({ request }, { post }) => {
       log.info(`graphql-request=create-or-update-post user=${request.user ? request.user.uuid : null}`);
       return await postRepository.savePost({ ...post, userId: request.user ? request.user.id : null });
+    }
+
+  },
+
+  checkIn: {
+
+    type: CheckInType,
+    description: 'Create or update a check-in',
+    args: {
+      checkIn: { type: CheckInInputType }
+    },
+    resolve: async ({ request }, { checkIn }) => {
+      log.info(`graphql-request=create-or-update-check-in user=${request.user ? request.user.uuid : null}`);
+      return await postRepository.saveCheckIn({ ...checkIn, userId: request.user ? request.user.id : null });
     }
 
   }
@@ -80,6 +97,23 @@ export const PostQueryFields = {
       log.info(`graphql-request=find-posts user=${request.user ? request.user.uuid : null}`);
       const posts = await postRepository.getFeedPosts(request.user ? request.user.id : null);
       return { posts };
+
+    }
+
+  },
+
+  checkIns: {
+
+    type: CheckInsType,
+    description: 'Find check-ins',
+    args: {
+      input: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { input }) => {
+
+      log.info(`graphql-request=find-check-ins user=${request.user ? request.user.uuid : null}`);
+      const checkIns = await postRepository.getFeedCheckIns(request.user ? request.user.id : null);
+      return { checkIns };
 
     }
 

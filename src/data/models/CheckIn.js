@@ -8,13 +8,17 @@ const CheckIn = Model.define('CheckIn', {
     autoIncrement: true,
     primaryKey: true
   },
-  
+
   uuid: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
     unique: true,
   },
-    
+
+  clientId: {
+    type: DataType.STRING
+  },
+
   latitude: {
     type: DataType.FLOAT
   },
@@ -22,7 +26,7 @@ const CheckIn = Model.define('CheckIn', {
   longitude: {
     type: DataType.FLOAT
   }
-  
+
 }, {
 
   instanceMethods: {

@@ -5,7 +5,13 @@ import {
   SAVE_POST_SUCCESS,
   GET_POSTS_ERROR,
   GET_POSTS_START,
-  GET_POSTS_SUCCESS
+  GET_POSTS_SUCCESS,
+  SAVE_CHECKIN_START,
+  SAVE_CHECKIN_SUCCESS,
+  SAVE_CHECKIN_ERROR,
+  GET_CHECKINS_START,
+  GET_CHECKINS_SUCCESS,
+  GET_CHECKINS_ERROR
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -46,6 +52,41 @@ export default function reduce(state = {}, action) {
         GET_POSTS_START,
         GET_POSTS_SUCCESS,
         GET_POSTS_ERROR
+      );
+    case SAVE_CHECKIN_START:
+    case SAVE_CHECKIN_SUCCESS:
+    case SAVE_CHECKIN_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({ checkIn: null }),
+          success: () => ({
+            checkIn: Object.assign(
+              action.payload.checkIn,
+              { saved: (new Date()).getTime() }
+            )
+          }),
+          error: () => ({ checkIn: null })
+        },
+        SAVE_CHECKIN_START,
+        SAVE_CHECKIN_SUCCESS,
+        SAVE_CHECKIN_ERROR
+      );
+    case GET_CHECKINS_START:
+    case GET_CHECKINS_SUCCESS:
+    case GET_CHECKINS_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({ checkIns: null }),
+          success: () => ({
+            checkIns: action.payload.checkIns.checkIns
+          }),
+          error: () => ({ checkIns: null })
+        },
+        GET_CHECKINS_START,
+        GET_CHECKINS_SUCCESS,
+        GET_CHECKINS_ERROR
       );
 
   }

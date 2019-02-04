@@ -4,31 +4,34 @@ import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Home.css';
+import Add from '../Add';
+import CheckIn from '../CheckIn';
+import Feed from '../Feed';
 import Link from '../Link';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const HomeView = ({ intl, setProperty, breakdownSelected }) => {	
+const HomeView = ({ intl, setProperty, breakdownSelected, checkIns }) => {
 
   const select = (section) => {
     setProperty('breakdownSelected', section);
   }
 
   const selection = breakdownSelected || 'find';
-  
+
   const findText = `
     Search transit links contributed by fellow travellers. 
     If someone has travelled or knows of a transit connection, you will find it 
     no matter how remote the place is and how exotic the mode of transportation. 
     Weather it is England, Estonia or Ethiopia, by bus, by boat or by bicycle - we have it!
   `;
-  
+
   const contributeText = `
     Transitlinks is a collaborative resource. By contributing your experience or research, you are
     making the world a better place by building something great that can make difference in the world.
   `;
-  
+
   const shareText = `
     The trips you save in Transitlinks are your precious memories and experiences complete with media you choose to
     add to them and you can share them with your friends and other Transitlinks users. Transitlinks is a community
@@ -45,9 +48,18 @@ const HomeView = ({ intl, setProperty, breakdownSelected }) => {
 
 	return (
     <div className={s.container}>
-      <div className={s.brand}>
-        <div className={s.appName}>Transitlinks</div>
-        <div className={s.appShortDescription}>Universal transit resource</div>
+      {
+        false &&
+        <div className={s.brand}>
+          <div className={s.appName}>Transitlinks</div>
+          <div className={s.appShortDescription}>Universal transit resource</div>
+        </div>
+      }
+      <div>
+        <CheckIn />
+      </div>
+      <div>
+        <Feed checkIns={checkIns} />
       </div>
       <div className={s.about}>Find transit connections anywhere in the world by any mode of transport.</div>
       <div className={s.breakdown}>
@@ -96,7 +108,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected }) => {
     </div>
   );
 
-}; 
+};
 
 HomeView.contextTypes = { setTitle: PropTypes.func.isRequired };
 

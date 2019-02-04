@@ -8,7 +8,7 @@ import cx from 'classnames';
 import s from './Add.css';
 import Link from '../Link';
 import { getGeolocation } from '../../actions/global';
-import { savePost } from '../../actions/posts';
+import { savePost, saveCheckIn } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
@@ -28,7 +28,19 @@ const typeSelector = (iconName, isSelected) => {
   );
 };
 
-const AddView = ({ children, type, intl, geolocation, postText, setProperty, getGeolocation, savePost }) => {
+const getCheckIn = (geolocation) => {
+
+  const { position } = geolocation;
+  if (position) {
+    const { coords: { latitude, longitude } } = position;
+    return { latitude, longitude };
+  }
+
+  return null;
+
+};
+
+const AddView = ({ type, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn }) => {
 
   let positionElem = null;
   if (geolocation) {
@@ -61,9 +73,11 @@ const AddView = ({ children, type, intl, geolocation, postText, setProperty, get
           <div className={s.positionButton} onClick={() => getGeolocation()}>
             <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
           </div>
-          { positionElem }
-          <div className={s.editPositionButton}>
-            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>edit_location</FontIcon>
+          <div className={s.positionSelector}>
+            { positionElem }
+            <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: getCheckIn(geolocation) })}>
+              <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
+            </div>
           </div>
         </div>
       </div>
@@ -120,10 +134,12 @@ export default injectIntl(
       error: state.global['geolocation.error']
     },
     postText: state.posts.postText,
-    savedPost: state.posts.post
+    savedPost: state.posts.post,
+    savedCheckIn: state.posts.checkIn
   }), {
     setProperty,
     getGeolocation,
-    savePost
+    savePost,
+    saveCheckIn
   })(withStyles(s)(AddView))
 );

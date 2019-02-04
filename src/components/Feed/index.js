@@ -10,17 +10,17 @@ import FeedItem from './FeedItem';
 import msg from './messages';
 
 const FeedView = ({
-  posts, navigate
+  checkIns, loadedCheckIns, navigate
 }) => {
-  
+
   return (
     <div className={s.container}>
       <div className={s.header}>
       </div>
       <div className={s.results}>
         {
-          (posts || []).map(post => {
-            return <FeedItem post={post} />
+          ((loadedCheckIns || checkIns) || []).map(checkIn => {
+            return <FeedItem checkIn={checkIn} key={checkIn.uuid} />
           })
         }
       </div>
@@ -29,6 +29,7 @@ const FeedView = ({
 };
 
 export default connect(state => ({
+  loadedCheckIns: state.posts.checkIns
 }), {
   navigate
 })(withStyles(s)(FeedView));

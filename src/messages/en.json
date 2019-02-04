@@ -37,8 +37,8 @@
     "defaultMessage": "E-mail",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -47,8 +47,8 @@
     "defaultMessage": "User photo",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -380,8 +380,8 @@
     "defaultMessage": "New password",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -390,8 +390,8 @@
     "defaultMessage": "CHANGE",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -400,8 +400,8 @@
     "defaultMessage": "Save",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -419,8 +419,8 @@
     "defaultMessage": "Error! Failed saving new password :(",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -429,8 +429,8 @@
     "defaultMessage": "Password changed",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -439,8 +439,8 @@
     "defaultMessage": "Error! Failed saving profile :(",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -449,8 +449,8 @@
     "defaultMessage": "Profile saved",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js"
+      "src/components/Add/messages.profile.js",
+      "src/components/Account/messages.profile.js"
     ]
   },
   {
@@ -566,7 +566,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.js",
-      "src/components/Add/messages.js"
+      "src/components/Add/messages.js",
+      "src/components/CheckIn/messages.js"
     ]
   },
   {
@@ -575,7 +576,8 @@
     "defaultMessage": "Link",
     "message": "",
     "files": [
-      "src/components/Add/messages.js"
+      "src/components/Add/messages.js",
+      "src/components/CheckIn/messages.js"
     ]
   },
   {
@@ -584,7 +586,8 @@
     "defaultMessage": "Place",
     "message": "",
     "files": [
-      "src/components/Add/messages.js"
+      "src/components/Add/messages.js",
+      "src/components/CheckIn/messages.js"
     ]
   }
 ]

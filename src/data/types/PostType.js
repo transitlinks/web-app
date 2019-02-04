@@ -4,7 +4,6 @@ import {
   GraphQLFloat,
   GraphQLNonNull, GraphQLInputObjectType, GraphQLInt, GraphQLList,
 } from 'graphql';
-import {CommentType} from "./CommentType";
 
 export const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -29,6 +28,36 @@ export const PostInputType = new GraphQLInputObjectType({
   description: 'Input properties of Transitlinks Post object',
   fields: {
     text: { type: GraphQLString }
+  }
+});
+
+export const CheckInType = new GraphQLObjectType({
+  name: 'CheckIn',
+  description: 'Transitlinks CheckIn object',
+  fields: {
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    clientId: { type: GraphQLString },
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat }
+  },
+});
+
+export const CheckInsType = new GraphQLObjectType({
+  name: 'CheckIns',
+  description: 'Transitlinks CheckIns query result object',
+  fields: {
+    checkIns: { type: new GraphQLList(CheckInType) }
+  },
+});
+
+
+export const CheckInInputType = new GraphQLInputObjectType({
+  name: 'CheckInInput',
+  description: 'Input properties of Transitlinks CheckIn object',
+  fields: {
+    clientId: { type: GraphQLString },
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat }
   }
 });
 

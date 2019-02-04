@@ -17,7 +17,7 @@ import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './q
 import * as links from './queries/links';
 
 const schema = new Schema({
-  
+
   query: new ObjectType({
     name: 'Query',
     fields: {
@@ -35,6 +35,7 @@ const schema = new Schema({
       ratings: RatingQueryFields.ratings,
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
+      checkIns: PostQueryFields.checkIns,
       intl
     }
   }),
@@ -50,7 +51,8 @@ const schema = new Schema({
       comment: CommentMutationFields.comment,
       commentVote: CommentMutationFields.commentVote,
       rating: RatingMutationFields.rating,
-      post: PostMutationFields.post
+      post: PostMutationFields.post,
+      checkIn: PostMutationFields.checkIn
     },
   })
 

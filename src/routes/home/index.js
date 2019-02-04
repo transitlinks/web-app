@@ -19,17 +19,18 @@ export default {
 
       const { data } = await graphqlRequest(
         `query {
-          posts(input: "${'test'}") {
-            posts {
+          checkIns(input: "${'test'}") {
+            checkIns {
               uuid,
-              text
+              latitude,
+              longitude
             }
           }
         }`
       );
 
-      log.info('event=received-link-data', data);
-      return <Home posts={data.posts} />;
+      log.info('event=received-feed-data', data);
+      return <Home checkIns={data.checkIns} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />
