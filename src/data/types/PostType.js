@@ -27,6 +27,7 @@ export const PostInputType = new GraphQLInputObjectType({
   name: 'PostInput',
   description: 'Input properties of Transitlinks Post object',
   fields: {
+    checkInUuid: { type: GraphQLString },
     text: { type: GraphQLString }
   }
 });
@@ -35,10 +36,13 @@ export const CheckInType = new GraphQLObjectType({
   name: 'CheckIn',
   description: 'Transitlinks CheckIn object',
   fields: {
-    uuid: { type: new GraphQLNonNull(GraphQLString) },
-    clientId: { type: GraphQLString },
-    latitude: { type: GraphQLFloat },
-    longitude: { type: GraphQLFloat }
+    checkIn: {
+      uuid: {type: new GraphQLNonNull(GraphQLString)},
+      clientId: {type: GraphQLString},
+      latitude: {type: GraphQLFloat},
+      longitude: {type: GraphQLFloat}
+    },
+    posts: { type: new GraphQLList(PostType) }
   },
 });
 

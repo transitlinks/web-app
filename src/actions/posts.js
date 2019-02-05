@@ -22,9 +22,11 @@ export const saveCheckIn = ({ checkIn }) => {
     const query = `
       mutation saveCheckIn {
         checkIn(checkIn:${toGraphQLObject(checkIn)}) {
-          uuid,
-          latitude,
-          longitude
+          checkIn {
+            uuid,
+            latitude,
+            longitude
+          }
         }
       }
     `;
@@ -100,9 +102,15 @@ export const getCheckIns = (input) => {
       query {
         checkIns (input:"${input}") {
           checkIns {
-            uuid,
-            latitude,
-            longitude
+            checkIn {
+              uuid,
+              latitude,
+              longitude
+            },
+            posts {
+              uuid,
+              text
+            }
           }
         }
       }

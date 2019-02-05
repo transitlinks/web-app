@@ -21,9 +21,15 @@ export default {
         `query {
           checkIns(input: "${'test'}") {
             checkIns {
-              uuid,
-              latitude,
-              longitude
+              checkIn {
+                uuid,
+                latitude,
+                longitude
+              },
+              posts {
+                uuid,
+                text
+              }
             }
           }
         }`

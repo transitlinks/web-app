@@ -7,10 +7,11 @@ import s from './Feed.css';
 import FontIcon from 'material-ui/FontIcon';
 import Link from '../Link';
 import FeedItem from './FeedItem';
+import Add from '../Add'
 import msg from './messages';
 
 const FeedView = ({
-  checkIns, loadedCheckIns, navigate
+  checkIns, loadedCheckIns, savedCheckIn, navigate
 }) => {
 
   return (
@@ -20,7 +21,12 @@ const FeedView = ({
       <div className={s.results}>
         {
           ((loadedCheckIns || checkIns) || []).map(checkIn => {
-            return <FeedItem checkIn={checkIn} key={checkIn.uuid} />
+            if (!savedCheckIn || savedCheckIn.uuid !== checkIn.uuid) {
+              return <FeedItem checkIn={checkIn} key={checkIn.checkIn.uuid} />;
+            } else {
+              return <Add checkIn={checkIn} />
+            }
+
           })
         }
       </div>
@@ -29,7 +35,8 @@ const FeedView = ({
 };
 
 export default connect(state => ({
-  loadedCheckIns: state.posts.checkIns
+  loadedCheckIns: state.posts.checkIns,
+  savedCheckIn: state.posts.checkIn
 }), {
   navigate
 })(withStyles(s)(FeedView));

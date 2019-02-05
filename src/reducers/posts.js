@@ -24,7 +24,7 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({ post: null }),
+          start: () => ({}),
           success: () => ({
             post: Object.assign(
               action.payload.post,
@@ -43,7 +43,7 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({ posts: null }),
+          start: () => ({}),
           success: () => ({
             posts: action.payload.posts
           }),
@@ -59,7 +59,7 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({ checkIn: null }),
+          start: () => ({}),
           success: () => ({
             checkIn: Object.assign(
               action.payload.checkIn,
@@ -78,7 +78,7 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({ checkIns: null }),
+          start: () => ({}),
           success: () => ({
             checkIns: action.payload.checkIns.checkIns
           }),

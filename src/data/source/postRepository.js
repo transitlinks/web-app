@@ -60,7 +60,11 @@ export default {
 
   getFeedCheckIns: async (userId) => {
 
-    const checkIns = await CheckIn.findAll();
+    const checkIns = await CheckIn.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ]
+    });
 
     return checkIns.map(checkIn => checkIn.toJSON());
 

@@ -62,9 +62,6 @@ class App extends Component {
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
           <Header />
-          <div className={s.functionBar}>
-            <FunctionBar />
-          </div>
           {this.props.children}
           <Footer />
         </div>

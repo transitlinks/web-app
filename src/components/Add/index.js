@@ -18,9 +18,9 @@ const formatCoords = (coords) => {
   return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
 };
 
-const typeSelector = (iconName, isSelected) => {
+const typeSelector = (iconName, isSelected, onClick) => {
   return (
-    <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})}>
+    <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})} onClick={() => onClick()}>
       <div>
         <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{iconName}</FontIcon>
       </div>
@@ -28,7 +28,7 @@ const typeSelector = (iconName, isSelected) => {
   );
 };
 
-const getCheckIn = (geolocation) => {
+const createCheckIn = (geolocation) => {
 
   const { position } = geolocation;
   if (position) {
@@ -40,7 +40,95 @@ const getCheckIn = (geolocation) => {
 
 };
 
-const AddView = ({ type, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn }) => {
+const createPost = (props) =>  {
+
+  const { postText, checkIn } = props;
+
+  return {
+    post: {
+      text: postText,
+      checkInUuid: checkIn.uuid
+    }
+  };
+
+}
+
+const getTabContent = (type, props) => {
+
+  switch (type) {
+
+    case 'reaction':
+
+      const { postText, savePost, setProperty } = props;
+
+      return (
+        <div className={s.contentEditor}>
+          <div className={s.contentHorizontal}>
+            <div className={s.commentContainer}>
+              <TextField id="post-text"
+                         value={postText}
+                         multiLine={true}
+                         fullWidth={true}
+                         rows={2}
+                         onChange={(e) => setProperty('add.postText', e.target.value)}
+                         hintText={(!postText) ? "What's up?" : null}
+                         hintStyle={{ bottom: '36px'}}
+              />
+            </div>
+          </div>
+          <div className={s.contentControls}>
+            <div className={s.addMediaContainer}>
+              <div className={s.addMediaButton}>
+                <input type="file" name="file" id="file" className={s.fileInput} />
+                <label htmlFor="file">
+                  <FontIcon className="material-icons">add_a_photo</FontIcon>
+                </label>
+              </div>
+            </div>
+            <div className={s.sendButton}>
+              <FontIcon className="material-icons" onClick={() => savePost(createPost(props))}>send</FontIcon>
+            </div>
+          </div>
+        </div>
+      );
+    case 'arrival':
+      return (
+        <div className={s.contentEditor}>
+          Arrival
+        </div>
+      );
+    case 'departure':
+      return (
+        <div className={s.contentEditor}>
+          Departure
+        </div>
+      );
+    case 'lodging':
+      return (
+        <div className={s.contentEditor}>
+          Lodging
+        </div>
+      );
+    case 'poi':
+      return (
+        <div className={s.contentEditor}>
+          Point of interest
+        </div>
+      );
+    case 'activity':
+      return (
+        <div className={s.contentEditor}>
+          Activity
+        </div>
+      );
+
+  }
+};
+
+
+const AddView = (props) => {
+
+  const { type, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn } = props;
 
   let positionElem = null;
   if (geolocation) {
@@ -70,13 +158,12 @@ const AddView = ({ type, intl, geolocation, postText, setProperty, getGeolocatio
     <div className={s.container}>
       <div className={s.placeSelector}>
         <div className={s.positionContainer}>
-          <div className={s.positionButton} onClick={() => getGeolocation()}>
-            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
-          </div>
           <div className={s.positionSelector}>
-            { positionElem }
-            <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: getCheckIn(geolocation) })}>
-              <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
+            <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
+              Change
+            </div>
+            <div className={s.positionValue}>
+              { positionElem }
             </div>
           </div>
         </div>
@@ -84,40 +171,13 @@ const AddView = ({ type, intl, geolocation, postText, setProperty, getGeolocatio
       <div className={s.postContent}>
         <div className={s.contentTypeContainer}>
           <div className={s.contentTypeSelectors}>
-            { typeSelector('call_received', true) }
-            { typeSelector('call_made', false) }
-            { typeSelector('hotel', false) }
-            { typeSelector('grade', false) }
-            { typeSelector('directions_run', false) }
-            { typeSelector('tag_faces', false) }
+            { typeSelector('tag_faces', type === 'reaction', () => setProperty('add.type', 'reaction')) }
+            { typeSelector('call_received', type === 'arrival', () => setProperty('add.type', 'arrival')) }
+            { typeSelector('call_made', type === 'departure', () => setProperty('add.type', 'departure')) }
+            { typeSelector('hotel', type === 'lodging', () => setProperty('add.type', 'lodging')) }
           </div>
         </div>
-        <div className={s.contentEditor}>
-          <div className={s.contentHorizontal}>
-            <div className={s.addMediaContainer}>
-              <div className={s.addMediaButton}>
-                <input type="file" name="file" id="file" className={s.fileInput} />
-                <label htmlFor="file">
-                  <FontIcon className="material-icons" style={{ fontSize: '36px' }}>add_a_photo</FontIcon>
-                </label>
-              </div>
-            </div>
-            <div className={s.commentContainer}>
-              <TextField id="post-text"
-                         value={postText}
-                         multiLine={true}
-                         fullWidth={true}
-                         rows={2}
-                         onChange={(e) => setProperty('add.postText', e.target.value)}
-                         hintText={(!postText) ? "What's up?" : null}
-                         hintStyle={{ bottom: '36px'}}
-              />
-            </div>
-          </div>
-          <div className={s.contentControls}>
-            <RaisedButton label="Post" disabled={false} onClick={() => savePost({ post: { text: postText } })} />
-          </div>
-        </div>
+        { getTabContent(type, props) }
       </div>
     </div>
   );
@@ -135,7 +195,8 @@ export default injectIntl(
     },
     postText: state.posts.postText,
     savedPost: state.posts.post,
-    savedCheckIn: state.posts.checkIn
+    savedCheckIn: state.posts.checkIn,
+    type: state.posts.type || 'reaction'
   }), {
     setProperty,
     getGeolocation,
