@@ -5,7 +5,7 @@ import HomeView from '../../components/Home';
 
 import { connect } from "react-redux";
 import { getGeolocation } from "../../actions/global";
-import { getCheckIns } from "../../actions/posts";
+import { getFeed } from "../../actions/posts";
 
 const title = 'Transitlinks';
 
@@ -22,7 +22,7 @@ class Home extends React.Component {
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
-        this.props.getCheckIns();
+        this.props.getFeed();
       }
     }
 
@@ -32,11 +32,11 @@ class Home extends React.Component {
 
     this.context.setTitle(title);
 
-    const { checkIns } = this.props;
+    const { feed } = this.props;
 
     return (
       <div className={s.root}>
-        <HomeView checkIns={checkIns.checkIns} />
+        <HomeView feed={feed} />
       </div>
     );
   }
@@ -50,5 +50,5 @@ export default connect(state => ({
   savedCheckIn: state.posts.checkIn
 }), {
   getGeolocation,
-  getCheckIns
+  getFeed
 })(withStyles(s)(Home));

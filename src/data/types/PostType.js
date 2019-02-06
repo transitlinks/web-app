@@ -36,13 +36,10 @@ export const CheckInType = new GraphQLObjectType({
   name: 'CheckIn',
   description: 'Transitlinks CheckIn object',
   fields: {
-    checkIn: {
-      uuid: {type: new GraphQLNonNull(GraphQLString)},
-      clientId: {type: GraphQLString},
-      latitude: {type: GraphQLFloat},
-      longitude: {type: GraphQLFloat}
-    },
-    posts: { type: new GraphQLList(PostType) }
+    uuid: {type: new GraphQLNonNull(GraphQLString)},
+    clientId: {type: GraphQLString},
+    latitude: {type: GraphQLFloat},
+    longitude: {type: GraphQLFloat}
   },
 });
 
@@ -62,6 +59,23 @@ export const CheckInInputType = new GraphQLInputObjectType({
     clientId: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat }
+  }
+});
+
+export const FeedItemType = new GraphQLObjectType({
+  name: 'FeedItem',
+  description: 'Transitlinks FeedItem object',
+  fields: {
+    checkIn: { type: CheckInType },
+    posts: { type: new GraphQLList(PostType) }
+  }
+});
+
+export const FeedType = new GraphQLObjectType({
+  name: 'Feed',
+  description: 'Transitlinks Feed query result object',
+  fields: {
+    feedItems: { type: new GraphQLList(FeedItemType) }
   }
 });
 

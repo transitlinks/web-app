@@ -9,9 +9,9 @@ import {
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
-  GET_CHECKINS_START,
-  GET_CHECKINS_SUCCESS,
-  GET_CHECKINS_ERROR
+  GET_FEED_START,
+  GET_FEED_SUCCESS,
+  GET_FEED_ERROR
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -72,21 +72,21 @@ export default function reduce(state = {}, action) {
         SAVE_CHECKIN_SUCCESS,
         SAVE_CHECKIN_ERROR
       );
-    case GET_CHECKINS_START:
-    case GET_CHECKINS_SUCCESS:
-    case GET_CHECKINS_ERROR:
+    case GET_FEED_START:
+    case GET_FEED_SUCCESS:
+    case GET_FEED_ERROR:
       return graphqlReduce(
         state, action,
         {
           start: () => ({}),
           success: () => ({
-            checkIns: action.payload.checkIns.checkIns
+            feed: action.payload.feed
           }),
-          error: () => ({ checkIns: null })
+          error: () => ({ feed: null })
         },
-        GET_CHECKINS_START,
-        GET_CHECKINS_SUCCESS,
-        GET_CHECKINS_ERROR
+        GET_FEED_START,
+        GET_FEED_SUCCESS,
+        GET_FEED_ERROR
       );
 
   }

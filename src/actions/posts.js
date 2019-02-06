@@ -10,9 +10,9 @@ import {
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
-  GET_CHECKINS_START,
-  GET_CHECKINS_SUCCESS,
-  GET_CHECKINS_ERROR
+  GET_FEED_START,
+  GET_FEED_SUCCESS,
+  GET_FEED_ERROR
 } from '../constants';
 
 export const saveCheckIn = ({ checkIn }) => {
@@ -22,11 +22,9 @@ export const saveCheckIn = ({ checkIn }) => {
     const query = `
       mutation saveCheckIn {
         checkIn(checkIn:${toGraphQLObject(checkIn)}) {
-          checkIn {
-            uuid,
-            latitude,
-            longitude
-          }
+          uuid,
+          latitude,
+          longitude
         }
       }
     `;
@@ -94,14 +92,14 @@ export const getPosts = (input) => {
 
 }
 
-export const getCheckIns = (input) => {
+export const getFeed = (input) => {
 
   return async (...args) => {
 
     const query = `
       query {
-        checkIns (input:"${input}") {
-          checkIns {
+        feed (input:"${input}") {
+          feedItems {
             checkIn {
               uuid,
               latitude,
@@ -118,10 +116,10 @@ export const getCheckIns = (input) => {
 
     return graphqlAction(
       ...args,
-      { query }, [ 'checkIns' ],
-      GET_CHECKINS_START,
-      GET_CHECKINS_SUCCESS,
-      GET_CHECKINS_ERROR
+      { query }, [ 'feed' ],
+      GET_FEED_START,
+      GET_FEED_SUCCESS,
+      GET_FEED_ERROR
     );
 
   };

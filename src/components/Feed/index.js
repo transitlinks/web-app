@@ -11,8 +11,10 @@ import Add from '../Add'
 import msg from './messages';
 
 const FeedView = ({
-  checkIns, loadedCheckIns, savedCheckIn, navigate
+  feed, loadedFeed, savedCheckIn, navigate
 }) => {
+
+  const feedItems = (((loadedFeed || feed) || {}).feedItems || []);
 
   return (
     <div className={s.container}>
@@ -20,9 +22,10 @@ const FeedView = ({
       </div>
       <div className={s.results}>
         {
-          ((loadedCheckIns || checkIns) || []).map(checkIn => {
+          feedItems.map(feedItem => {
+            const { checkIn } = feedItem;
             if (!savedCheckIn || savedCheckIn.uuid !== checkIn.uuid) {
-              return <FeedItem checkIn={checkIn} key={checkIn.checkIn.uuid} />;
+              return <FeedItem checkIn={checkIn} key={checkIn.uuid} />;
             } else {
               return <Add checkIn={checkIn} />
             }
@@ -35,7 +38,7 @@ const FeedView = ({
 };
 
 export default connect(state => ({
-  loadedCheckIns: state.posts.checkIns,
+  loadedFeed: state.posts.feed,
   savedCheckIn: state.posts.checkIn
 }), {
   navigate

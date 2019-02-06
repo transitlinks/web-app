@@ -19,8 +19,8 @@ export default {
 
       const { data } = await graphqlRequest(
         `query {
-          checkIns(input: "${'test'}") {
-            checkIns {
+          feed(input: "${'test'}") {
+            feedItems {
               checkIn {
                 uuid,
                 latitude,
@@ -36,7 +36,7 @@ export default {
       );
 
       log.info('event=received-feed-data', data);
-      return <Home checkIns={data.checkIns} />;
+      return <Home feed={data.feed} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

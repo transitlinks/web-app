@@ -14,9 +14,9 @@ const FeedItem = ({
 
   return (
     <div className={s.container}>
-      <div className={s.link} onClick={() => navigate('/check-in/' + checkIn.checkIn.uuid)}>
+      <div className={s.link} onClick={() => navigate('/check-in/' + checkIn.uuid)}>
         <div className={s.linkTitle}>
-          { checkIn.checkIn.latitude }, { checkIn.checkIn.longitude }
+          { checkIn.latitude }, { checkIn.longitude }
         </div>
       </div>
     </div>
