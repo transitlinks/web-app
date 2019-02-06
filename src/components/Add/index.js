@@ -155,29 +155,31 @@ const AddView = (props) => {
   }
 
 	return (
-    <div className={s.container}>
-      <div className={s.placeSelector}>
-        <div className={s.positionContainer}>
-          <div className={s.positionSelector}>
-            <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
-              Change
-            </div>
-            <div className={s.positionValue}>
-              { positionElem }
+	  <div className={s.root}>
+      <div className={s.container}>
+        <div className={s.placeSelector}>
+          <div className={s.positionContainer}>
+            <div className={s.positionSelector}>
+              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
+                Change
+              </div>
+              <div className={s.positionValue}>
+                { positionElem }
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className={s.postContent}>
-        <div className={s.contentTypeContainer}>
-          <div className={s.contentTypeSelectors}>
-            { typeSelector('tag_faces', type === 'reaction', () => setProperty('add.type', 'reaction')) }
-            { typeSelector('call_received', type === 'arrival', () => setProperty('add.type', 'arrival')) }
-            { typeSelector('call_made', type === 'departure', () => setProperty('add.type', 'departure')) }
-            { typeSelector('hotel', type === 'lodging', () => setProperty('add.type', 'lodging')) }
+        <div className={s.postContent}>
+          <div className={s.contentTypeContainer}>
+            <div className={s.contentTypeSelectors}>
+              { typeSelector('tag_faces', type === 'reaction', () => setProperty('add.type', 'reaction')) }
+              { typeSelector('call_received', type === 'arrival', () => setProperty('add.type', 'arrival')) }
+              { typeSelector('call_made', type === 'departure', () => setProperty('add.type', 'departure')) }
+              { typeSelector('hotel', type === 'lodging', () => setProperty('add.type', 'lodging')) }
+            </div>
           </div>
+          { getTabContent(type, props) }
         </div>
-        { getTabContent(type, props) }
       </div>
     </div>
   );

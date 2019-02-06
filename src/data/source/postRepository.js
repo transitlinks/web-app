@@ -8,27 +8,34 @@ import { Post, CheckIn, User } from '../models';
 
 export default {
 
-  getPostByUuid: async (uuid) => {
+  getPost: async (where, options) => {
 
 		let post = await Post.findOne({
-      where: { uuid },
+      where,
       include: [ { all: true } ]
     });
 
-		if (post === null) {
-			return null;
-		}
-
-    return post.toJSON();
+		return post;
 
 	},
+
+  getPosts: async (where, options) => {
+
+    let posts = await Post.findAll({
+      where,
+      include: [ { all: true } ]
+    });
+
+    return posts;
+
+  },
 
   getPostsByUserUuid: async (uuid) => {
 
     const user = await User.findOne( { where: { uuid }});
     const posts = await Post.findAll({ where: { userId: user.id }});
 
-    return posts.map(post => post.toJSON());
+    return posts;
 
   },
 
@@ -37,40 +44,18 @@ export default {
     const checkIn = await CheckIn.findOne( { where: { uuid }});
     const posts = await Post.findAll({ where: { checkInId: checkIn.id }});
 
-    return posts.map(post => post.toJSON());
+    return posts;
 
   },
 
   getFeedPosts: async (userId) => {
 
     const posts = await Post.findAll();
-
-    return posts.map(post => post.toJSON());
-
-  },
-
-  getCheckInsByUserUuid: async (uuid) => {
-
-    const user = await User.findOne( { where: { uuid }});
-    const checkIns = await CheckIn.findAll({ where: { userId: user.id }});
-
-    return checkIns.map(post => checkIn.toJSON());
+    return posts;
 
   },
 
-  getFeedCheckIns: async (userId) => {
-
-    const checkIns = await CheckIn.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ]
-    });
-
-    return checkIns.map(checkIn => checkIn.toJSON());
-
-  },
-
-	savePost: async (post) => {
+  savePost: async (post) => {
 
     if (post.uuid) {
 
@@ -82,7 +67,7 @@ export default {
         throw new Error(`Invalid post update result: ${result}`);
       }
 
-      return await this.getPostByUuid(post.uuid);
+      return await this.getPost({ uuid: post.uuid });
 
     }
 
@@ -92,7 +77,52 @@ export default {
       throw new Error('Failed to create a post (null result)');
     }
 
-    return created.toJSON();
+    return created;
+
+  },
+
+  deletePost: async (uuid) => {
+
+    let post = await Post.findOne({ where: { uuid }});
+
+    if (!post) {
+      throw new Error('Could not find post with uuid ' + uuid);
+    }
+
+    await post.destroy();
+    return post;
+
+  },
+
+  getCheckIn: async (where, options) => {
+
+    let checkIn = await CheckIn.findOne({
+      where,
+      include: [ { all: true } ]
+    });
+
+    return checkIn;
+
+  },
+
+  getCheckInsByUserUuid: async (uuid) => {
+
+    const user = await User.findOne( { where: { uuid }});
+    const checkIns = await CheckIn.findAll({ where: { userId: user.id }});
+
+    return checkIns;
+
+  },
+
+  getFeedCheckIns: async (userId) => {
+
+    const checkIns = await CheckIn.findAll({
+      order: [
+        ['createdAt', 'DESC']
+      ]
+    });
+
+    return checkIns;
 
   },
 
@@ -108,7 +138,7 @@ export default {
         throw new Error(`Invalid check-in update result: ${result}`);
       }
 
-      return await this.getPostByUuid(checkIn.uuid);
+      return await this.getCheckIn({ uuid: checkIn.uuid });
 
     }
 
@@ -118,20 +148,7 @@ export default {
       throw new Error('Failed to create a check-in (null result)');
     }
 
-    return created.toJSON();
-
-  },
-
-  deletePost: async (uuid) => {
-
-    let post = await Post.findOne({ where: { uuid }});
-
-    if (!post) {
-      throw new Error('Could not find post with uuid ' + uuid);
-    }
-
-    await post.destroy();
-    return post;
+    return created;
 
   }
 

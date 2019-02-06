@@ -61,50 +61,57 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed }) => {
       <div>
         <Feed feed={feed} />
       </div>
-      <div className={s.about}>Find transit connections anywhere in the world by any mode of transport.</div>
-      <div className={s.breakdown}>
-        <div className={s.items}>
-          <div className={cx(s.item, s.find, selection === 'find' ? s.selected : s.unselected)}>
-            <div className={s.header} onClick={() => select('find')}>
-              <div className={s.title}>
-                <span>Find</span>
+
+      {
+        false &&
+        <div>
+          <div className={s.about}>Find transit connections anywhere in the world by any mode of transport.</div>
+          <div className={s.breakdown}>
+            <div className={s.items}>
+              <div className={cx(s.item, s.find, selection === 'find' ? s.selected : s.unselected)}>
+                <div className={s.header} onClick={() => select('find')}>
+                  <div className={s.title}>
+                    <span>Find</span>
+                  </div>
+                </div>
+                <div className={s.body}>
+                  <div className={s.content}>
+                    {findText}
+                  </div>
+                </div>
+              </div>
+              <div className={cx(s.item, selection === 'contribute' ? s.selected : s.unselected)}>
+                <div className={s.header} onClick={() => select('contribute')}>
+                  <div className={s.title}>
+                    <span>Contribute</span>
+                  </div>
+                </div>
+                <div className={s.body}>
+                  <div className={s.content}>
+                    {contributeText}
+                  </div>
+                </div>
+              </div>
+              <div className={cx(s.item, selection === 'share' ? s.selected : s.unselected)}>
+                <div className={s.header} onClick={() => select('share')}>
+                  <div className={s.title}>
+                    <span>Share</span>
+                  </div>
+                </div>
+                <div className={s.body}>
+                  <div className={s.content}>
+                    {shareText}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className={s.body}>
-              <div className={s.content}>
-                {findText}
-              </div>
-            </div>
-          </div>
-          <div className={cx(s.item, selection === 'contribute' ? s.selected : s.unselected)}>
-            <div className={s.header} onClick={() => select('contribute')}>
-              <div className={s.title}>
-                <span>Contribute</span>
-              </div>
-            </div>
-            <div className={s.body}>
-              <div className={s.content}>
-                {contributeText}
-              </div>
-            </div>
-          </div>
-          <div className={cx(s.item, selection === 'share' ? s.selected : s.unselected)}>
-            <div className={s.header} onClick={() => select('share')}>
-              <div className={s.title}>
-                <span>Share</span>
-              </div>
-            </div>
-            <div className={s.body}>
-              <div className={s.content}>
-                {shareText}
-              </div>
+            <div className={s.singleText}>
+              {singleText}
             </div>
           </div>
         </div>
-        <div className={s.singleText}>
-          {singleText}
-        </div>
-      </div>
+      }
+
     </div>
   );
 

@@ -54,18 +54,20 @@ const CheckInView = ({ intl, geolocation, setProperty, getGeolocation, saveCheck
   }
 
 	return (
-    <div className={s.container}>
-      <div className={s.placeSelector}>
-        <div className={s.positionContainer}>
-          <div className={s.positionButton} onClick={() => getGeolocation()}>
-            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
-          </div>
-          <div className={s.positionSelector}>
-            <div className={s.positionValue}>
-              { positionElem }
+	  <div className={s.root}>
+      <div className={s.container}>
+        <div className={s.placeSelector}>
+          <div className={s.positionContainer}>
+            <div className={s.positionButton} onClick={() => getGeolocation()}>
+              <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
             </div>
-            <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: getCheckIn(geolocation) })}>
-              <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
+            <div className={s.positionSelector}>
+              <div className={s.positionValue}>
+                { positionElem }
+              </div>
+              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: getCheckIn(geolocation) })}>
+                <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
+              </div>
             </div>
           </div>
         </div>

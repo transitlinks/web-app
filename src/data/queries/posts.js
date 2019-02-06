@@ -32,6 +32,25 @@ import {
 
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
+const savePost = async (postInput, request) => {
+
+  const { checkInUuid } = postInput;
+  const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
+  if (!checkIn) {
+
+  }
+
+  const post = {
+    checkInId: checkIn.id,
+    text: postInput.text
+  };
+
+  const saved = await postRepository.savePost(post);
+
+  return saved.toJSON();
+
+};
+
 export const PostMutationFields = {
 
   post: {
@@ -43,7 +62,7 @@ export const PostMutationFields = {
     },
     resolve: async ({ request }, { post }) => {
       log.info(`graphql-request=create-or-update-post user=${request.user ? request.user.uuid : null}`);
-      return await postRepository.savePost({ ...post, userId: request.user ? request.user.id : null });
+      return await savePost(post, request);
     }
 
   },
@@ -58,7 +77,7 @@ export const PostMutationFields = {
     resolve: async ({ request }, { checkIn }) => {
       log.info(`graphql-request=create-or-update-check-in user=${request.user ? request.user.uuid : null}`);
       const savedCheckIn = await postRepository.saveCheckIn({ ...checkIn, userId: request.user ? request.user.id : null });
-      return savedCheckIn;
+      return savedCheckIn.toJSON();
     }
 
   }
@@ -77,12 +96,12 @@ export const PostQueryFields = {
     resolve: async ({ request }, { uuid }) => {
 
       log.info(`graphql-request=find-post-by-uuid user=${request.user ? request.user.uuid : null} post-uuid=${uuid}`);
-      const post = await postRepository.getPostByUuid(uuid);
+      const post = await postRepository.getPost({ uuid });
       if (!post) {
         throw new Error(`Post (uuid ${uuid}) not found`);
       }
 
-      return post;
+      return post.toJSON();
 
     }
 
@@ -99,7 +118,7 @@ export const PostQueryFields = {
 
       log.info(`graphql-request=find-posts user=${request.user ? request.user.uuid : null}`);
       const posts = await postRepository.getFeedPosts(request.user ? request.user.id : null);
-      return { posts };
+      return { posts: posts.map(post => post.toJSON()) };
 
     }
 
@@ -117,9 +136,11 @@ export const PostQueryFields = {
       log.info(`graphql-request=get-feed user=${request.user ? request.user.uuid : null}`);
       const checkIns = await postRepository.getFeedCheckIns(request.user ? request.user.id : null);
       return {
-        feedItems: checkIns.map((checkIn) => {
+        feedItems: checkIns.map(async (checkIn) => {
+          const posts = await postRepository.getPosts({ checkInId: checkIn.id });
           return {
-            checkIn
+            checkIn: checkIn.toJSON(),
+            posts: posts.map(post => post.toJSON())
           };
         })
       };

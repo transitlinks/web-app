@@ -54,7 +54,6 @@ export const savePost = ({ post }) => {
       }
     `;
 
-    console.log("executing action", query);
     return graphqlAction(
       ...args,
       { query }, [ 'post' ],

@@ -1,7 +1,9 @@
 @import '../../components/variables.css';
 
 .root {
-
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-bottom: 12px;
 }
 
 .container {

@@ -65,8 +65,13 @@ CheckIn.belongsTo(User, {
   as: 'user'
 });
 
-Post.hasOne(CheckIn, {
+CheckIn.hasMany(Post, {
   foreignKey: 'checkInId'
+});
+
+Post.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
 });
 
 function sync(...args) {
