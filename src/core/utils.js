@@ -1,3 +1,5 @@
+const uuid = require('uuid/v1');
+
 export const toGraphQLObject = (object) => {
   const json = JSON.stringify(object);
   json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
@@ -91,5 +93,18 @@ export function passwordValid(password) {
     pass: true
   };
   
+
+}
+
+export function getClientId() {
+
+
+  let clientId = localStorage.getItem('txlinksClientId');
+  if (!clientId) {
+    clientId = uuid();
+    localStorage.setItem('txlinksClientId', clientId);
+  }
+
+  return clientId;
 
 }

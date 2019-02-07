@@ -67,7 +67,7 @@ export default {
         throw new Error(`Invalid post update result: ${result}`);
       }
 
-      return await this.getPost({ uuid: post.uuid });
+      return await Post.findOne({ where: { uuid: post.uuid }});
 
     }
 
@@ -94,14 +94,26 @@ export default {
 
   },
 
-  getCheckIn: async (where, options) => {
+  getCheckIn: async (where, options = {}) => {
 
     let checkIn = await CheckIn.findOne({
       where,
-      include: [ { all: true } ]
+      ...options
+      //include: [ { all: true } ]
     });
 
     return checkIn;
+
+  },
+
+  getCheckIns: async (where, options = {}) => {
+
+    const checkIns = await CheckIn.findAll({
+      where,
+      ...options
+    });
+
+    return checkIns;
 
   },
 
@@ -128,6 +140,8 @@ export default {
 
   saveCheckIn: async (checkIn) => {
 
+    console.log("save check in", checkIn.uuid);
+
     if (checkIn.uuid) {
 
       const result = await CheckIn.update(checkIn, {
@@ -138,7 +152,7 @@ export default {
         throw new Error(`Invalid check-in update result: ${result}`);
       }
 
-      return await this.getCheckIn({ uuid: checkIn.uuid });
+      return await CheckIn.findOne({ where:{ uuid: checkIn.uuid }});
 
     }
 

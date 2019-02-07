@@ -10,6 +10,7 @@ import Link from '../Link';
 import { getGeolocation } from '../../actions/global';
 import { savePost, saveCheckIn } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
+import { getClientId } from '../../core/utils';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
@@ -31,9 +32,11 @@ const typeSelector = (iconName, isSelected, onClick) => {
 const createCheckIn = (geolocation) => {
 
   const { position } = geolocation;
+  const clientId = getClientId();
+
   if (position) {
     const { coords: { latitude, longitude } } = position;
-    return { latitude, longitude };
+    return { latitude, longitude, clientId };
   }
 
   return null;
@@ -43,11 +46,13 @@ const createCheckIn = (geolocation) => {
 const createPost = (props) =>  {
 
   const { postText, checkIn } = props;
+  const clientId = getClientId();
 
   return {
     post: {
       text: postText,
-      checkInUuid: checkIn.uuid
+      checkInUuid: checkIn.uuid,
+      clientId
     }
   };
 
@@ -70,7 +75,7 @@ const getTabContent = (type, props) => {
                          multiLine={true}
                          fullWidth={true}
                          rows={2}
-                         onChange={(e) => setProperty('add.postText', e.target.value)}
+                         onChange={(e) => setProperty('posts.postText', e.target.value)}
                          hintText={(!postText) ? "What's up?" : null}
                          hintStyle={{ bottom: '36px'}}
               />
@@ -172,10 +177,10 @@ const AddView = (props) => {
         <div className={s.postContent}>
           <div className={s.contentTypeContainer}>
             <div className={s.contentTypeSelectors}>
-              { typeSelector('tag_faces', type === 'reaction', () => setProperty('add.type', 'reaction')) }
-              { typeSelector('call_received', type === 'arrival', () => setProperty('add.type', 'arrival')) }
-              { typeSelector('call_made', type === 'departure', () => setProperty('add.type', 'departure')) }
-              { typeSelector('hotel', type === 'lodging', () => setProperty('add.type', 'lodging')) }
+              { typeSelector('tag_faces', type === 'reaction', () => setProperty('posts.addType', 'reaction')) }
+              { typeSelector('call_received', type === 'arrival', () => setProperty('posts.addType', 'arrival')) }
+              { typeSelector('call_made', type === 'departure', () => setProperty('posts.addType', 'departure')) }
+              { typeSelector('hotel', type === 'lodging', () => setProperty('posts.addType', 'lodging')) }
             </div>
           </div>
           { getTabContent(type, props) }
@@ -198,7 +203,7 @@ export default injectIntl(
     postText: state.posts.postText,
     savedPost: state.posts.post,
     savedCheckIn: state.posts.checkIn,
-    type: state.posts.type || 'reaction'
+    type: state.posts.addType || 'reaction'
   }), {
     setProperty,
     getGeolocation,

@@ -28,7 +28,8 @@ export const PostInputType = new GraphQLInputObjectType({
   description: 'Input properties of Transitlinks Post object',
   fields: {
     checkInUuid: { type: GraphQLString },
-    text: { type: GraphQLString }
+    text: { type: GraphQLString },
+    clientId: { type: GraphQLString }
   }
 });
 
@@ -67,6 +68,8 @@ export const FeedItemType = new GraphQLObjectType({
   description: 'Transitlinks FeedItem object',
   fields: {
     checkIn: { type: CheckInType },
+    inbound: { type: new GraphQLList(CheckInType) },
+    outbound: { type: new GraphQLList(CheckInType) },
     posts: { type: new GraphQLList(PostType) }
   }
 });

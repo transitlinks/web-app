@@ -14,6 +14,10 @@ const Post = Model.define('Post', {
     defaultValue: DataType.UUIDV1,
     unique: true,
   },
+
+  clientId: {
+    type: DataType.STRING
+  },
     
   text: {
     type: DataType.TEXT
@@ -30,7 +34,7 @@ const Post = Model.define('Post', {
   },
 
   indexes: [
-    { fields: ['id', 'uuid'] },
+    { fields: ['id', 'uuid', 'clientId'] },
   ],
 
 });

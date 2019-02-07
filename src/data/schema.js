@@ -36,6 +36,7 @@ const schema = new Schema({
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
       feed: PostQueryFields.feed,
+      feedItem: PostQueryFields.feedItem,
       intl
     }
   }),

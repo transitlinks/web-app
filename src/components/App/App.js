@@ -59,6 +59,7 @@ class App extends Component {
       store.getState().runtime.userAgent : 'all';
 
     return (
+
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
           <Header />

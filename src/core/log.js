@@ -50,4 +50,23 @@ export const getLog = (context) => {
 
 };
 
+export const graphLog = (request, name, values) => {
+
+  let line = 'graphql-request=' + name;
+
+  if (request.user) {
+    line += ' user=' + user.uuid;
+  } else {
+    line += ' user=null';
+  }
+
+  if (values) {
+    line += ' ' + values;
+  }
+
+  return line;
+
+};
+
+
 export default getLog('default');

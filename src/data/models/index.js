@@ -69,6 +69,16 @@ CheckIn.hasMany(Post, {
   foreignKey: 'checkInId'
 });
 
+CheckIn.hasOne(CheckIn, {
+  foreignKey: 'nextCheckInId',
+  as: 'next'
+});
+
+CheckIn.hasOne(CheckIn, {
+  foreignKey: 'prevCheckInId',
+  as: 'prev'
+});
+
 Post.belongsTo(User, {
   foreignKey: 'userId',
   as: 'user'

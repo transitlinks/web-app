@@ -32,7 +32,7 @@ class Home extends React.Component {
 
     if (post) {
       if (!prevPost || prevPost.saved !== post.saved) {
-        this.props.setProperty('add.postText', '');
+        this.props.setProperty('posts.postText', '');
         this.props.getFeed();
       }
     }

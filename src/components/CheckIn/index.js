@@ -7,6 +7,7 @@ import s from './CheckIn.css';
 import { getGeolocation } from '../../actions/global';
 import { saveCheckIn } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
+import { getClientId } from "../../core/utils";
 import { injectIntl } from 'react-intl';
 import msg from './messages';
 
@@ -15,12 +16,12 @@ const formatCoords = (coords) => {
   return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
 };
 
-const getCheckIn = (geolocation) => {
+const createCheckIn = (geolocation) => {
 
   const { position } = geolocation;
   if (position) {
     const { coords: { latitude, longitude } } = position;
-    return { latitude, longitude };
+    return { clientId: getClientId(), latitude, longitude };
   }
 
   return null;
@@ -65,7 +66,7 @@ const CheckInView = ({ intl, geolocation, setProperty, getGeolocation, saveCheck
               <div className={s.positionValue}>
                 { positionElem }
               </div>
-              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: getCheckIn(geolocation) })}>
+              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
                 <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
               </div>
             </div>

@@ -12,7 +12,10 @@ import {
   SAVE_CHECKIN_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
-  GET_FEED_ERROR
+  GET_FEED_ERROR,
+  GET_FEEDITEM_START,
+  GET_FEEDITEM_SUCCESS,
+  GET_FEEDITEM_ERROR
 } from '../constants';
 
 export const saveCheckIn = ({ checkIn }) => {
@@ -104,6 +107,16 @@ export const getFeed = (input) => {
               latitude,
               longitude
             },
+            inbound {
+              uuid,
+              latitude,
+              longitude
+            },
+            outbound {
+              uuid,
+              latitude,
+              longitude
+            },
             posts {
               uuid,
               text
@@ -119,6 +132,48 @@ export const getFeed = (input) => {
       GET_FEED_START,
       GET_FEED_SUCCESS,
       GET_FEED_ERROR
+    );
+
+  };
+
+}
+
+export const getFeedItem = (checkInUuid) => {
+
+  return async (...args) => {
+
+    const query = `
+      query {
+        feedItem (checkInUuid:"${checkInUuid}") {
+          checkIn {
+            uuid,
+            latitude,
+            longitude
+          },
+          inbound {
+            uuid,
+            latitude,
+            longitude
+          },
+          outbound {
+            uuid,
+            latitude,
+            longitude
+          },
+          posts {
+            uuid,
+            text
+          }
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'feedItem' ],
+      GET_FEEDITEM_START,
+      GET_FEEDITEM_SUCCESS,
+      GET_FEEDITEM_ERROR
     );
 
   };

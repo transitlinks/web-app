@@ -11,7 +11,10 @@ import {
   SAVE_CHECKIN_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
-  GET_FEED_ERROR
+  GET_FEED_ERROR,
+  GET_FEEDITEM_START,
+  GET_FEEDITEM_SUCCESS,
+  GET_FEEDITEM_ERROR
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -88,9 +91,25 @@ export default function reduce(state = {}, action) {
         GET_FEED_SUCCESS,
         GET_FEED_ERROR
       );
+    case GET_FEEDITEM_START:
+    case GET_FEEDITEM_SUCCESS:
+    case GET_FEEDITEM_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            fetchedFeedItem: action.payload.feedItem
+          }),
+          error: () => ({ fetchedFeedItem: null })
+        },
+        GET_FEEDITEM_START,
+        GET_FEEDITEM_SUCCESS,
+        GET_FEEDITEM_ERROR
+      );
 
   }
 
-  return propToState(action, 'add', { ...state });
+  return propToState(action, 'posts', { ...state });
 
 }

@@ -55,7 +55,7 @@ const FeedView = ({
             const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid;
             return (
               <div className={s.feedItemContainer} key={checkIn.uuid}>
-                { editable ? <Add checkIn={checkIn} /> : <FeedItem checkIn={checkIn} /> }
+                { editable ? <Add checkIn={checkIn} /> : <FeedItem feedItem={feedItem} /> }
                 { feedItemContent(feedItem) }
               </div>
             );

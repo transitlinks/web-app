@@ -26,6 +26,16 @@ export default {
                 latitude,
                 longitude
               },
+              inbound {
+                uuid,
+                latitude,
+                longitude
+              },
+              outbound {
+                uuid,
+                latitude,
+                longitude
+              },
               posts {
                 uuid,
                 text
