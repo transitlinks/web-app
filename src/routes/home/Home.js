@@ -14,6 +14,7 @@ class Home extends React.Component {
 
   componentDidMount(props) {
     this.props.getGeolocation();
+    this.props.getFeed();
   }
 
   componentDidUpdate(prevProps) {

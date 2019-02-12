@@ -4,7 +4,7 @@ const log = getLog('data/source/postRepository');
 import Sequelize from 'sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
-import { Post, CheckIn, User } from '../models';
+import { Post, Terminal, CheckIn, User } from '../models';
 
 export default {
 
@@ -18,6 +18,7 @@ export default {
 		return post;
 
 	},
+
 
   getPosts: async (where, options) => {
 
@@ -81,6 +82,7 @@ export default {
 
   },
 
+
   deletePost: async (uuid) => {
 
     let post = await Post.findOne({ where: { uuid }});
@@ -91,6 +93,43 @@ export default {
 
     await post.destroy();
     return post;
+
+  },
+
+  getTerminal: async (where, options) => {
+
+    let terminal = await Terminal.findOne({
+      where,
+      include: [ { all: true } ]
+    });
+
+    return terminal;
+
+  },
+
+  saveTerminal: async (terminal) => {
+
+    if (terminal.uuid) {
+
+      const result = await Terminal.update(terminal, {
+        where: { uuid: terminal.uuid }
+      });
+
+      if (result.length !== 1 || result[0] !== 1) {
+        throw new Error(`Invalid terminal update result: ${result}`);
+      }
+
+      return await Terminal.findOne({ where: { uuid: terminal.uuid }});
+
+    }
+
+    const created = await Terminal.create(terminal);
+
+    if (!created) {
+      throw new Error('Failed to create a terminal (null result)');
+    }
+
+    return created;
 
   },
 

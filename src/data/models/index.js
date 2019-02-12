@@ -9,6 +9,7 @@ import MediaItem from './MediaItem';
 import Comment from './Comment';
 import Post from './Post';
 import CheckIn from './CheckIn';
+import Terminal from './Terminal';
 
 User.hasMany(Rating, {
   foreignKey: 'userId'
@@ -84,9 +85,14 @@ Post.belongsTo(User, {
   as: 'user'
 });
 
+Terminal.belongsTo(CheckIn, {
+  foreignKey: 'checkInId',
+  as: 'checkIn'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment, Post, CheckIn };
+export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment, Post, CheckIn, Terminal };

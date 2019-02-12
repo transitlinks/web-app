@@ -15,19 +15,16 @@ import {
 	PostType,
   PostsType,
 	PostInputType,
+  TerminalType,
+  TerminalInputType,
   CheckInType,
-  CheckInsType,
   CheckInInputType,
   FeedItemType,
   FeedType
 } from '../types/PostType';
 
 import {
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLNonNull
+  GraphQLString
 } from 'graphql';
 
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
@@ -52,6 +49,27 @@ const addUserId = (object, request) => {
   }
 
   return object;
+
+};
+
+
+const saveTerminal = async (terminalInput, request) => {
+
+  const { checkInUuid } = terminalInput;
+  const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
+  if (!checkIn) {
+
+  }
+
+  const terminal = {
+    checkInId: checkIn.id
+  };
+
+  copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId' ]);
+  addUserId(terminal, request);
+
+  const saved = await postRepository.saveTerminal(terminal);
+  return saved.toJSON();
 
 };
 
@@ -125,6 +143,20 @@ export const PostMutationFields = {
     resolve: async ({ request }, { post }) => {
       log.info(graphLog(request, 'save-post', 'clientId=' + post.clientId + ' uuid=' + post.uuid));
       return await savePost(post, request);
+    }
+
+  },
+
+  terminal: {
+
+    type: TerminalType,
+    description: 'Create or update a terminal',
+    args: {
+      post: { type: TerminalInputType }
+    },
+    resolve: async ({ request }, { post }) => {
+      log.info(graphLog(request, 'save-terminal'));
+      return await saveTerminal(post, request);
     }
 
   },
@@ -228,11 +260,13 @@ export const PostQueryFields = {
       log.info(graphLog(request, 'get-feed-item', 'uuid=' + checkInUuid));
       const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
       const posts = await postRepository.getPosts({ checkInId: checkIn.id });
+      const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
       const linkedCheckIns = await getLinkedCheckIns(checkIn);
       return {
         checkIn: checkIn.toJSON(),
         ...linkedCheckIns,
-        posts: posts.map(post => post.toJSON())
+        posts: posts.map(post => post.toJSON()),
+        terminals: terminals.map(terminal => terminal.toJSON())
       };
 
     }

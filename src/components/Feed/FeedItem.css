@@ -17,6 +17,10 @@
   position: relative;
 }
 
+.linkedCheckInContainer {
+  position: relative;
+}
+
 .feedItemContainer .feedItemDisplay {
   font-size: 18px;
   margin-top: 4px;
@@ -42,6 +46,10 @@
 .linkedCheckIn {
   padding-right: 12px;
   padding-left: 12px;
+}
+
+.linkedCheckInSelected {
+  background-color: #e0e0e0;
 }
 
 .inboundCheckIns .linkedCheckIn {
@@ -110,4 +118,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.inboundContainer {
+
+}
+
+.outboundContainer {
+
+}
+
+.open {
+  height: 36px;
+  transition: height 0.5s;
+  overflow: hidden;
+}
+
+.closed {
+  height: 0px;
+  overflow: hidden;
+  transition: height 0.5s;
 }

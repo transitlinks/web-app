@@ -6,6 +6,12 @@ import {
   GET_POSTS_ERROR,
   GET_POSTS_START,
   GET_POSTS_SUCCESS,
+  SAVE_TERMINAL_ERROR,
+  SAVE_TERMINAL_START,
+  SAVE_TERMINAL_SUCCESS,
+  GET_TERMINALS_ERROR,
+  GET_TERMINALS_START,
+  GET_TERMINALS_SUCCESS,
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
@@ -56,6 +62,41 @@ export default function reduce(state = {}, action) {
         GET_POSTS_SUCCESS,
         GET_POSTS_ERROR
       );
+    case SAVE_TERMINAL_START:
+    case SAVE_TERMINAL_SUCCESS:
+    case SAVE_TERMINAL_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            savedTerminal: Object.assign(
+              action.payload.terminal,
+              { saved: (new Date()).getTime() }
+            )
+          }),
+          error: () => ({ savedTerminal: null })
+        },
+        SAVE_TERMINAL_START,
+        SAVE_TERMINAL_SUCCESS,
+        SAVE_TERMINAL_ERROR
+      );
+    case GET_TERMINALS_START:
+    case GET_TERMINALS_SUCCESS:
+    case GET_TERMINALS_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            terminals: action.payload.posts
+          }),
+          error: () => ({ terminals: null })
+        },
+        GET_TERMINALS_START,
+        GET_TERMINALS_SUCCESS,
+        GET_TERMINALS_ERROR
+      );
     case SAVE_CHECKIN_START:
     case SAVE_CHECKIN_SUCCESS:
     case SAVE_CHECKIN_ERROR:
@@ -97,11 +138,39 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({}),
-          success: () => ({
-            fetchedFeedItem: action.payload.feedItem
+          start: () => ({
+            selectedFeedItem: action.payload.variables.checkInUuid,
+            loadingFeedItem: 'loading'
           }),
-          error: () => ({ fetchedFeedItem: null })
+          success: () => {
+            const { feed } = state;
+            console.log("attempt to splice feed", feed);
+            if (feed) {
+              const { replaceIndex } = action.payload.variables;
+              feed.feedItems[replaceIndex] = action.payload.feedItem;
+              /*
+              for (let i = 0; i < feed.feedItems.length; i++) {
+                const feedItem = feed.feedItems[i];
+                if (feedItem.checkIn.uuid === replaceUuid) {
+                  console.log("setting " + i + " to", action.payload.feedItem.checkIn.uuid);
+                  feed.feedItems[i] = action.payload.feedItem;
+                  break;
+                }
+              }
+              */
+
+            }
+            return {
+              fetchedFeedItem: action.payload.feedItem,
+              loadedFeed: feed,
+              loadingFeedItem: 'loaded'
+            };
+          },
+          error: () => ({
+            fetchedFeedItem: null,
+            selectedFeedItem: null,
+            loadingFeedItem: 'error'
+          })
         },
         GET_FEEDITEM_START,
         GET_FEEDITEM_SUCCESS,

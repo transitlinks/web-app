@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
@@ -7,26 +8,59 @@ import { extractLinkAreas } from '../utils';
 import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setProperty } from "../../actions/properties";
+import { getFeedItem } from "../../actions/posts";
+
 import msg from './messages';
 
 const FeedItem = ({
-  feedItem, showLinks, navigate, setProperty
+  index, feedItem, selectedFeedItem, loadingFeedItem, showLinks, navigate, setProperty, getFeedItem
 }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
 
+  const selectCheckIn = (checkInUuid, replaceUuid) => {
+    getFeedItem(checkInUuid, replaceUuid);
+  };
+
+  const getStateClass = (links) => {
+
+    if (showLinks === index && links.length > 0) {
+
+      if (loadingFeedItem === 'loaded') {
+        setTimeout(() => {
+          setProperty('posts.loadingFeedItem', null);
+        }, 100);
+        return s.closed;
+      } else {
+        return s.open;
+      }
+
+    } else {
+      return s.closed;
+    }
+
+  };
+
+  const getInboundClassnames = () => {
+    return cx(s.inboundContainer, getStateClass(inbound));
+  };
+
+  const getOutboundClassnames = () => {
+    return cx(s.outboundContainer, getStateClass(outbound));
+  };
+
   return (
     <div className={s.container}>
       {
-        (showLinks === checkIn.uuid && inbound.length > 0) &&
-        <div className={s.inboundContainer}>
+        <div className={getInboundClassnames()}>
           <div className={s.inboundCheckIns}>
             {
-              inbound.map(checkIn => {
+              inbound.map(inboundCheckIn => {
+                const {uuid, latitude, longitude} = inboundCheckIn;
                 return (
-                  <div className={s.linkedCheckIn}>
+                  <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
                     <div className={s.linkedCheckInDisplay}>
-                      { checkIn.latitude }, { checkIn.longitude }
+                      {latitude}, {longitude}
                     </div>
                     <div className={s.linkedCheckInControls}></div>
                   </div>
@@ -38,12 +72,12 @@ const FeedItem = ({
       }
       <div className={s.feedItemContainer}>
         {
-          (showLinks === checkIn.uuid && inbound.length > 0) &&
+          (showLinks === index && inbound.length > 0) &&
           <div className={s.inboundArrowBg}>
           </div>
         }
         {
-          (showLinks === checkIn.uuid && inbound.length > 0) &&
+          (showLinks === index && inbound.length > 0) &&
           <div className={s.inboundArrow}>
             <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
           </div>
@@ -53,35 +87,35 @@ const FeedItem = ({
         </div>
         <div className={s.feedItemControls}>
           {
-            showLinks === checkIn.uuid &&
+            showLinks === index &&
             <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', '')}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>close</FontIcon>
             </div>
           }
           {
-            showLinks !== checkIn.uuid &&
-            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', checkIn.uuid)}>
+            showLinks !== index &&
+            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', index)}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>unfold_more</FontIcon>
             </div>
           }
         </div>
         {
-          (showLinks === checkIn.uuid && outbound.length > 0) &&
+          (showLinks === index && outbound.length > 0) &&
           <div className={s.outboundArrowBg}>
             <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
           </div>
         }
       </div>
       {
-        (showLinks === checkIn.uuid && outbound.length > 0) &&
-        <div className={s.outboundContainer}>
+        <div className={getOutboundClassnames()}>
           <div className={s.outboundCheckIns}>
             {
-              outbound.map(checkIn => {
+              outbound.map(outboundCheckIn => {
+                const { uuid, latitude, longitude } = outboundCheckIn;
                 return (
-                  <div className={s.linkedCheckIn}>
+                  <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
                     <div className={s.linkedCheckInDisplay}>
-                      { checkIn.latitude }, { checkIn.longitude }
+                      { latitude }, { longitude }
                     </div>
                     <div className={s.linkedCheckInControls}></div>
                   </div>
@@ -97,8 +131,11 @@ const FeedItem = ({
 };
 
 export default connect(state => ({
-  showLinks: state.posts.showLinks
+  showLinks: state.posts.showLinks,
+  selectedFeedItem: state.posts.selectedFeedItem,
+  loadingFeedItem: state.posts.loadingFeedItem
 }), {
   navigate,
-  setProperty
+  setProperty,
+  getFeedItem
 })(withStyles(s)(FeedItem));

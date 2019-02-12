@@ -7,6 +7,12 @@ import {
   GET_POSTS_START,
   GET_POSTS_SUCCESS,
   GET_POSTS_ERROR,
+  SAVE_TERMINAL_START,
+  SAVE_TERMINAL_SUCCESS,
+  SAVE_TERMINAL_ERROR,
+  GET_TERMINALS_START,
+  GET_TERMINALS_SUCCESS,
+  GET_TERMINALS_ERROR,
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
@@ -94,6 +100,60 @@ export const getPosts = (input) => {
 
 }
 
+export const saveTerminal = ({ terminal }) => {
+
+  return async (...args) => {
+
+    const query = `
+      mutation saveTerminal {
+        terminal(terminal:${toGraphQLObject(terminal)}) {
+          uuid,
+          type,
+          transport,
+          transportId
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'terminal' ],
+      SAVE_TERMINAL_START,
+      SAVE_TERMINAL_SUCCESS,
+      SAVE_TERMINAL_ERROR
+    );
+
+  };
+
+}
+
+export const getTerminals = (checkInId) => {
+
+  return async (...args) => {
+
+    const query = `
+      query {
+        terminals (checkInId:"${checkInId}") {
+          uuid,
+          type,
+          transport,
+          transportId
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'terminals' ],
+      GET_TERMINALS_START,
+      GET_TERMINALS_SUCCESS,
+      GET_TERMINALS_ERROR
+    );
+
+  };
+
+}
+
 export const getFeed = (input) => {
 
   return async (...args) => {
@@ -120,6 +180,12 @@ export const getFeed = (input) => {
             posts {
               uuid,
               text
+            },
+            terminals {
+              uuid,
+              type,
+              transport,
+              transportId
             }
           }
         }
@@ -138,7 +204,7 @@ export const getFeed = (input) => {
 
 }
 
-export const getFeedItem = (checkInUuid) => {
+export const getFeedItem = (checkInUuid, replaceIndex) => {
 
   return async (...args) => {
 
@@ -170,7 +236,7 @@ export const getFeedItem = (checkInUuid) => {
 
     return graphqlAction(
       ...args,
-      { query }, [ 'feedItem' ],
+      { query, variables: { checkInUuid, replaceIndex } }, [ 'feedItem' ],
       GET_FEEDITEM_START,
       GET_FEEDITEM_SUCCESS,
       GET_FEEDITEM_ERROR

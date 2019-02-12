@@ -39,6 +39,12 @@ export default {
               posts {
                 uuid,
                 text
+              },
+              terminals {
+                uuid,
+                type,
+                transport,
+                transportId
               }
             }
           }

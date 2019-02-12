@@ -6,7 +6,7 @@ import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Add.css';
-import Link from '../Link';
+import Terminal from './Terminal';
 import { getGeolocation } from '../../actions/global';
 import { savePost, saveCheckIn } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
@@ -99,13 +99,13 @@ const getTabContent = (type, props) => {
     case 'arrival':
       return (
         <div className={s.contentEditor}>
-          Arrival
+          <Terminal type="arrival" terminal={{ type: 'arrival '}} />
         </div>
       );
     case 'departure':
       return (
         <div className={s.contentEditor}>
-          Departure
+          <Terminal type="departure" terminal={{ type: 'departure '}} />
         </div>
       );
     case 'lodging':

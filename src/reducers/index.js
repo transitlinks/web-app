@@ -11,6 +11,7 @@ import editLink from './editLink';
 import viewLinkInstance from './viewLinkInstance';
 import editCheckIn from './editCheckIn';
 import viewCheckIn from './viewCheckIn';
+import editTerminal from './editTerminal';
 import searchLinks from './searchLinks';
 import profile from './profile';
 import posts from './posts';
@@ -29,6 +30,7 @@ export default combineReducers({
   viewLinkInstance,
   editCheckIn,
   viewCheckIn,
+  editTerminal,
   searchLinks,
   profile,
   posts,

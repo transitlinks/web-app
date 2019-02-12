@@ -29,7 +29,30 @@ export const PostInputType = new GraphQLInputObjectType({
   fields: {
     checkInUuid: { type: GraphQLString },
     text: { type: GraphQLString },
+    type: { type: GraphQLString },
     clientId: { type: GraphQLString }
+  }
+});
+
+export const TerminalType = new GraphQLObjectType({
+  name: 'Terminal',
+  description: 'Transitlinks Terminal object',
+  fields: {
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    type: { type: GraphQLString },
+    transport: { type: GraphQLString },
+    transportId: { type: GraphQLString }
+  },
+});
+
+export const TerminalInputType = new GraphQLInputObjectType({
+  name: 'TerminalInput',
+  description: 'Input properties of Transitlinks Terminal object',
+  fields: {
+    checkInUuid: { type: GraphQLString },
+    clientId: { type: GraphQLString },
+    transport: { type: GraphQLString },
+    transportId: { type: GraphQLString },
   }
 });
 
@@ -70,7 +93,8 @@ export const FeedItemType = new GraphQLObjectType({
     checkIn: { type: CheckInType },
     inbound: { type: new GraphQLList(CheckInType) },
     outbound: { type: new GraphQLList(CheckInType) },
-    posts: { type: new GraphQLList(PostType) }
+    posts: { type: new GraphQLList(PostType) },
+    terminals: { type: new GraphQLList(TerminalType) }
   }
 });
 

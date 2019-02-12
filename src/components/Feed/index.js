@@ -39,10 +39,11 @@ const feedItemContent = (feedItem) => {
 };
 
 const FeedView = ({
-  feed, loadedFeed, savedCheckIn, navigate
+  feed, loadedFeed, savedCheckIn, fetchedFeedItem
 }) => {
 
   const feedItems = (((loadedFeed || feed) || {}).feedItems || []);
+  let editOpen = false;
 
   return (
     <div className={s.container}>
@@ -50,12 +51,16 @@ const FeedView = ({
       </div>
       <div className={s.results}>
         {
-          feedItems.map(feedItem => {
+          feedItems.map((feedItem, index) => {
+
             const { checkIn } = feedItem;
-            const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid;
+
+            const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid && !editOpen;
+            if (editable) editOpen = true;
+
             return (
-              <div className={s.feedItemContainer} key={checkIn.uuid}>
-                { editable ? <Add checkIn={checkIn} /> : <FeedItem feedItem={feedItem} /> }
+              <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
+                { editable ? <Add checkIn={checkIn} /> : <FeedItem feedItem={feedItem} index={index} /> }
                 { feedItemContent(feedItem) }
               </div>
             );
@@ -69,7 +74,8 @@ const FeedView = ({
 
 export default connect(state => ({
   loadedFeed: state.posts.feed,
-  savedCheckIn: state.posts.checkIn
+  savedCheckIn: state.posts.checkIn,
+  fetchedFeedItem: state.posts.fetchedFeedItem
 }), {
   navigate
 })(withStyles(s)(FeedView));
