@@ -60,11 +60,11 @@ const createPost = (props) =>  {
 
 const getTabContent = (type, props) => {
 
+  const { transportTypes, postText, savePost, setProperty } = props;
+
   switch (type) {
 
     case 'reaction':
-
-      const { postText, savePost, setProperty } = props;
 
       return (
         <div className={s.contentEditor}>
@@ -96,16 +96,17 @@ const getTabContent = (type, props) => {
           </div>
         </div>
       );
+
     case 'arrival':
       return (
         <div className={s.contentEditor}>
-          <Terminal type="arrival" terminal={{ type: 'arrival '}} />
+          <Terminal transportTypes={transportTypes} type="arrival" terminal={{ type: 'arrival '}} />
         </div>
       );
     case 'departure':
       return (
         <div className={s.contentEditor}>
-          <Terminal type="departure" terminal={{ type: 'departure '}} />
+          <Terminal transportTypes={transportTypes} type="departure" terminal={{ type: 'departure '}} />
         </div>
       );
     case 'lodging':
@@ -133,7 +134,8 @@ const getTabContent = (type, props) => {
 
 const AddView = (props) => {
 
-  const { type, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn } = props;
+  const { type, transportTypes, checkIn, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn } = props;
+  console.log("add props", props);
 
   let positionElem = null;
   if (geolocation) {

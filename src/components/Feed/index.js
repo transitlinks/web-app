@@ -39,7 +39,7 @@ const feedItemContent = (feedItem) => {
 };
 
 const FeedView = ({
-  feed, loadedFeed, savedCheckIn, fetchedFeedItem
+  feed, transportTypes, loadedFeed, savedCheckIn, fetchedFeedItem
 }) => {
 
   const feedItems = (((loadedFeed || feed) || {}).feedItems || []);
@@ -60,7 +60,7 @@ const FeedView = ({
 
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
-                { editable ? <Add checkIn={checkIn} /> : <FeedItem feedItem={feedItem} index={index} /> }
+                { editable ? <Add checkIn={checkIn} transportTypes={transportTypes} /> : <FeedItem feedItem={feedItem} index={index} /> }
                 { feedItemContent(feedItem) }
               </div>
             );

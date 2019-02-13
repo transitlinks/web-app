@@ -47,12 +47,13 @@ export default {
                 transportId
               }
             }
-          }
+          },
+          transportTypes { slug }
         }`
       );
 
       log.info('event=received-feed-data', data);
-      return <Home feed={data.feed} />;
+      return <Home feed={data.feed} transportTypes={data.transportTypes}/>;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

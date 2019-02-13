@@ -44,11 +44,11 @@ class Home extends React.Component {
 
     this.context.setTitle(title);
 
-    const { feed } = this.props;
+    const { feed, transportTypes } = this.props;
 
     return (
       <div className={s.root}>
-        <HomeView feed={feed} />
+        <HomeView feed={feed} transportTypes={transportTypes} />
       </div>
     );
   }

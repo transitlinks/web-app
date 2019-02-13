@@ -12,7 +12,7 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const HomeView = ({ intl, setProperty, breakdownSelected, feed }) => {
+const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes }) => {
 
   const select = (section) => {
     setProperty('breakdownSelected', section);
@@ -59,7 +59,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed }) => {
         <CheckIn />
       </div>
       <div>
-        <Feed feed={feed} />
+        <Feed feed={feed} transportTypes={transportTypes} />
       </div>
 
       {
