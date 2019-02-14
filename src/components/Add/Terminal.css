@@ -32,9 +32,13 @@
 }
 
 .transport {
-  width: 200px;
   display: flex;
   margin-right: 8px;
+  width: 300px;
+}
+
+.dateTime {
+  display: flex;
 }
 
 .transportId {
@@ -58,4 +62,20 @@
 .time {
   display: flex;
   width: 42px;
+}
+
+.inputRow3 {
+  display: flex;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: -10px;
+}
+
+.amount {
+  width: 100px;
+  margin-right: 8px;
+}
+
+.currency {
+  width: 80px;
 }
