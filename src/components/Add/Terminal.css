@@ -6,13 +6,6 @@
 .container {
 }
 
-.email {
-}
-
-.password {
-  margin-top: 36px;
-}
-
 .save {
   margin-top: 8px;
   display: flex;
@@ -22,4 +15,47 @@
 
 .save .button {
   margin-left: 12px;
+}
+
+.terminalPageOne {
+
+}
+
+.terminalPageOne .pageOneContainer {
+
+}
+
+.inputRow1 {
+  display: flex;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.transport {
+  width: 200px;
+  display: flex;
+  margin-right: 8px;
+}
+
+.transportId {
+  display: flex;
+  flex-grow: 1;
+}
+
+.inputRow2 {
+  display: flex;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: -10px;
+}
+
+.date {
+  display: flex;
+  width: 85px;
+  margin-right: 8px;
+}
+
+.time {
+  display: flex;
+  width: 42px;
 }

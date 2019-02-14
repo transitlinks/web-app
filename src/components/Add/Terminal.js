@@ -8,11 +8,26 @@ import s from './Terminal.css';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from "material-ui/MenuItem";
+import DatePicker from "material-ui/DatePicker";
+import TimePicker from "material-ui/TimePicker";
 import RaisedButton from 'material-ui/RaisedButton';
 import EmailInput from '../EmailInput';
 import PasswordInput from '../PasswordInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.terminal';
+
+const labels = {
+  departure: {
+    dateInputTitle: 'Date',
+    timeInputTitle: 'Time',
+    placeInputTitle: 'Departure description'
+  },
+  arrival: {
+    dateInputTitle: 'Date',
+    timeInputTitle: 'Time',
+    placeInputTitle: 'Arrival description'
+  }
+}
 
 const Terminal = (props) => {
 
@@ -23,6 +38,8 @@ const Terminal = (props) => {
     type,
     transport,
     transportId,
+    date,
+    time,
     setProperty,
     saveTerminal
   } = props;
@@ -32,7 +49,9 @@ const Terminal = (props) => {
     const editedTerminal = {
       type,
       transport,
-      transportId
+      transportId,
+      date,
+      time
     };
 
     saveTerminal(editedTerminal);
@@ -48,24 +67,53 @@ const Terminal = (props) => {
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
-        <div>
-          <div className={s.transport}>
-            <SelectField id="transport-select"
-                         value={transport}
-                         onChange={(event, index, value) => setProperty('editTerminal.transport', value)}
-                         floatingLabelText="Transport"
+        <div className={s.pageOneContainer}>
+          <div className={s.inputRow1}>
+            <div className={s.transport}>
+              <SelectField id="transport-select"
+                           value={transport}
+                           onChange={(event, index, value) => setProperty('editTerminal.transport', value)}
+                           floatingLabelText="Transport"
+                           floatingLabelFixed={true}
+                           hintText="Select type">
+                {transportOptions}
+              </SelectField>
+            </div>
+            <div className={s.transportId}>
+              <TextField id="transport-id"
+                         value={transportId}
+                         fullWidth={true}
+                         floatingLabelText="Transport ID"
                          floatingLabelFixed={true}
-                         hintText="Select transport type">
-              {transportOptions}
-            </SelectField>
+                         onChange={(e) => setProperty('editTerminal.transportId', e.target.value)}
+                         hintText={(!transportId) ? "Number, company..." : null}
+              />
+            </div>
           </div>
-          <div className={s.transportId}>
-            <TextField id="transport-id"
-                       value={transportId}
-                       fullWidth={true}
-                       onChange={(e) => setProperty('editTerminal.transportId', e.target.value)}
-                       hintText={(!transportId) ? "Number, transport company..." : null}
-            />
+          <div className={s.inputRow2}>
+            <div className={s.date}>
+              <DatePicker id={`${type}-date-picker`}
+                          hintText={labels[type].dateInputTitle}
+                          value={date}
+                          floatingLabelText="Arrival date"
+                          floatingLabelFixed={true}
+                          autoOk={true}
+                          fullWidth={true}
+                          onChange={(event, value) => setProperty('editTerminal.date', value)}
+              />
+            </div>
+            <div className={s.time}>
+              <TimePicker id={`${type}-time-picker`}
+                          format="24hr"
+                          hintText={labels[type].timeInputTitle}
+                          value={time}
+                          floatingLabelText="Time"
+                          floatingLabelFixed={true}
+                          autoOk={true}
+                          fullWidth={true}
+                          onChange={(event, value) => setProperty('editTerminal.time', value)}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -79,7 +127,9 @@ const Terminal = (props) => {
 export default injectIntl(
   connect(state => ({
     transport: state.editTerminal.transport,
-    transportId: state.editTerminal.transportId
+    transportId: state.editTerminal.transportId,
+    date: state.editTerminal.date || new Date(),
+    time: state.editTerminal.time || new Date()
   }), {
     setProperty, saveTerminal
   })(withStyles(s)(Terminal))
