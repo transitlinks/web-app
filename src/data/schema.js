@@ -53,7 +53,8 @@ const schema = new Schema({
       commentVote: CommentMutationFields.commentVote,
       rating: RatingMutationFields.rating,
       post: PostMutationFields.post,
-      checkIn: PostMutationFields.checkIn
+      checkIn: PostMutationFields.checkIn,
+      terminal: PostMutationFields.terminal
     },
   })
 

@@ -18,6 +18,7 @@ const formatCoords = (coords) => {
 
 const createCheckIn = (geolocation) => {
 
+
   const { position } = geolocation;
   if (position) {
     const { coords: { latitude, longitude } } = position;

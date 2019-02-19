@@ -69,13 +69,25 @@
   padding-left: 8px;
   padding-right: 8px;
   margin-top: -10px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.amount {
+.cost {
+  display: flex;
+}
+
+.cost .amount {
   width: 100px;
   margin-right: 8px;
 }
 
-.currency {
-  width: 80px;
+.cost .currency {
+  width: 90px;
+}
+
+.controls {
+  flex-grow: 1;
+  padding-left: 24px;
+  margin-bottom: -10px;
 }

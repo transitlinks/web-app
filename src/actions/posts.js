@@ -1,5 +1,7 @@
 import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
+import { geocode, extractPlaceFields } from '../services/linkService';
+
 import {
   SAVE_POST_START,
   SAVE_POST_SUCCESS,
@@ -26,14 +28,31 @@ import {
 
 export const saveCheckIn = ({ checkIn }) => {
 
+  const geocodeCheckIn = async () => {
+    return new Promise((resolve, reject) => {
+      geocode({ lat: checkIn.latitude, lng: checkIn.longitude }, (location) => {
+        resolve(location);
+      })
+    });
+  };
+
   return async (...args) => {
+
+    const location = await geocodeCheckIn();
+    console.log("geocoded location", location);
+
+    const placeFields = extractPlaceFields(location);
 
     const query = `
       mutation saveCheckIn {
-        checkIn(checkIn:${toGraphQLObject(checkIn)}) {
+        checkIn(checkIn:${toGraphQLObject({ ...placeFields, ...checkIn })}) {
           uuid,
           latitude,
-          longitude
+          longitude,
+          placeId,
+          locality,
+          country,
+          formattedAddress
         }
       }
     `;
@@ -48,7 +67,7 @@ export const saveCheckIn = ({ checkIn }) => {
 
   };
 
-}
+};
 
 export const savePost = ({ post }) => {
 
@@ -110,7 +129,11 @@ export const saveTerminal = ({ terminal }) => {
           uuid,
           type,
           transport,
-          transportId
+          transportId,
+          date,
+          time,
+          priceAmount,
+          priceCurrency
         }
       }
     `;
@@ -137,7 +160,11 @@ export const getTerminals = (checkInId) => {
           uuid,
           type,
           transport,
-          transportId
+          transportId,
+          date,
+          time,
+          priceAmount,
+          priceCurrency
         }
       }
     `;
@@ -165,7 +192,11 @@ export const getFeed = (input) => {
             checkIn {
               uuid,
               latitude,
-              longitude
+              longitude,
+              placeId,
+              formattedAddress,
+              locality,
+              country
             },
             inbound {
               uuid,
@@ -185,7 +216,11 @@ export const getFeed = (input) => {
               uuid,
               type,
               transport,
-              transportId
+              transportId,
+              date,
+              time,
+              priceAmount,
+              priceCurrency
             }
           }
         }
@@ -215,6 +250,10 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
             uuid,
             latitude,
             longitude
+            placeId,
+            formattedAddress,
+            locality,
+            country
           },
           inbound {
             uuid,

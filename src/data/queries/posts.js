@@ -65,7 +65,15 @@ const saveTerminal = async (terminalInput, request) => {
     checkInId: checkIn.id
   };
 
-  copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId' ]);
+  if (terminalInput.date) {
+    terminal.date = new Date(terminalInput.date);
+  }
+
+  if (terminalInput.time) {
+    terminal.time = new Date(terminalInput.time);
+  }
+
+  copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
   addUserId(terminal, request);
 
   const saved = await postRepository.saveTerminal(terminal);
@@ -97,7 +105,9 @@ const savePost = async (postInput, request) => {
 
 const saveCheckIn = async (checkInInput, request) => {
 
-  const checkIn = copyNonNull(checkInInput, {}, ['uuid', 'clientId', 'latitude', 'longitude']);
+  const checkIn = copyNonNull(checkInInput, {}, [
+    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress'
+  ]);
   addUserId(checkIn, request);
 
   const lastCheckIns = await postRepository.getCheckIns({ clientId: checkInInput.clientId }, {
@@ -152,11 +162,11 @@ export const PostMutationFields = {
     type: TerminalType,
     description: 'Create or update a terminal',
     args: {
-      post: { type: TerminalInputType }
+      terminal: { type: TerminalInputType }
     },
-    resolve: async ({ request }, { post }) => {
+    resolve: async ({ request }, { terminal }) => {
       log.info(graphLog(request, 'save-terminal'));
-      return await saveTerminal(post, request);
+      return await saveTerminal(terminal, request);
     }
 
   },
@@ -235,11 +245,13 @@ export const PostQueryFields = {
           const posts = await postRepository.getPosts({ checkInId: checkIn.id });
           log.info(graphLog(request, 'get-feed', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
           const linkedCheckIns = await getLinkedCheckIns(checkIn);
+          const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
           console.log("LINKED", linkedCheckIns);
           return {
-            checkIn: checkIn.toJSON(),
+            checkIn: checkIn.json(),
             ...linkedCheckIns,
-            posts: posts.map(post => post.toJSON())
+            posts: posts.map(post => post.json()),
+            terminals: terminals.map(terminal => terminal.json())
           };
         })
       };

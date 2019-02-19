@@ -27,6 +27,22 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  date: {
+    type: DataType.DATE
+  },
+
+  time: {
+    type: DataType.DATE
+  },
+
+  priceAmount: {
+    type: DataType.FLOAT
+  },
+
+  priceCurrency: {
+    type: DataType.STRING
+  }
+
 }, {
 
   instanceMethods: {

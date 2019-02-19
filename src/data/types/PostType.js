@@ -41,7 +41,11 @@ export const TerminalType = new GraphQLObjectType({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
     type: { type: GraphQLString },
     transport: { type: GraphQLString },
-    transportId: { type: GraphQLString }
+    transportId: { type: GraphQLString },
+    date: { type: GraphQLString },
+    time: { type: GraphQLString },
+    priceAmount: { type: GraphQLFloat },
+    priceCurrency: { type: GraphQLString }
   },
 });
 
@@ -51,8 +55,13 @@ export const TerminalInputType = new GraphQLInputObjectType({
   fields: {
     checkInUuid: { type: GraphQLString },
     clientId: { type: GraphQLString },
+    type: { type: GraphQLString },
     transport: { type: GraphQLString },
     transportId: { type: GraphQLString },
+    date: { type: GraphQLString },
+    time: { type: GraphQLString },
+    priceAmount: { type: GraphQLFloat },
+    priceCurrency: { type: GraphQLString }
   }
 });
 
@@ -63,7 +72,11 @@ export const CheckInType = new GraphQLObjectType({
     uuid: {type: new GraphQLNonNull(GraphQLString)},
     clientId: {type: GraphQLString},
     latitude: {type: GraphQLFloat},
-    longitude: {type: GraphQLFloat}
+    longitude: {type: GraphQLFloat},
+    placeId: {type: GraphQLString},
+    locality: {type: GraphQLString},
+    country: {type: GraphQLString},
+    formattedAddress: {type: GraphQLString}
   },
 });
 
@@ -82,7 +95,11 @@ export const CheckInInputType = new GraphQLInputObjectType({
   fields: {
     clientId: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
-    longitude: { type: GraphQLFloat }
+    longitude: { type: GraphQLFloat },
+    placeId: {type: GraphQLString},
+    locality: {type: GraphQLString},
+    country: {type: GraphQLString},
+    formattedAddress: {type: GraphQLString}
   }
 });
 

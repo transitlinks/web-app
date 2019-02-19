@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import cc from 'currency-codes';
 import { setProperty } from '../../actions/properties';
 import { saveTerminal } from '../../actions/posts';
 import { resetPassword, saveProfile } from '../../actions/account';
@@ -12,9 +11,9 @@ import MenuItem from "material-ui/MenuItem";
 import DatePicker from "material-ui/DatePicker";
 import TimePicker from "material-ui/TimePicker";
 import RaisedButton from 'material-ui/RaisedButton';
-import EmailInput from '../EmailInput';
-import PasswordInput from '../PasswordInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
+import { getAvailableCurrencies } from '../../services/linkService';
+
 import msg from './messages.terminal';
 
 const labels = {
@@ -34,6 +33,7 @@ const Terminal = (props) => {
 
   const {
     intl,
+    checkIn,
     transportTypes,
     terminal,
     type,
@@ -43,6 +43,7 @@ const Terminal = (props) => {
     time,
     priceAmount,
     priceCurrency,
+    saveDisabled,
     setProperty,
     saveTerminal
   } = props;
@@ -50,16 +51,32 @@ const Terminal = (props) => {
   const save  = () => {
 
     const editedTerminal = {
+      checkInUuid: checkIn.uuid,
       type,
       transport,
       transportId,
-      date,
-      time,
-      priceAmount,
       priceCurrency
     };
 
-    saveTerminal(editedTerminal);
+    if (terminal) {
+      editedTerminal.uuid = terminal.uuid;
+    }
+
+    if (priceAmount && priceAmount.length > 0) {
+      editedTerminal.priceAmount = parseFloat(priceAmount);
+    }
+
+    if (date) {
+      editedTerminal.date = date.toISOString();
+    }
+
+    if (time) {
+      editedTerminal.time = time.toISOString();
+    }
+
+    console.log("save terminal", editedTerminal);
+    saveTerminal({ terminal: editedTerminal });
+
 
   };
 
@@ -69,26 +86,10 @@ const Terminal = (props) => {
               value={type.slug} primaryText={intl.formatMessage(msg[type.slug])} />
   ));
 
-  const currencyCodes = {
-  };
-
-  const countries = cc.countries();
-
-  /*
-  const matchingCountries = countries.filter(country => country.indexOf(from.countryLong) !== -1);
-  if (matchingCountries.length > 0) {
-    cc.country(matchingCountries[0]).forEach(currency => {
-      currencyCodes[currency.code] = currency;
-    });
-  }
-  */
-
-  currencyCodes['USD'] = cc.code('USD');
-  currencyCodes['EUR'] = cc.code('EUR');
-  currencyCodes['GBP'] = cc.code('GBP');
+  const currencyCodes = getAvailableCurrencies(checkIn.country);
 
   const currencies = Object.keys(currencyCodes).map(code => (
-    <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code} ${currencyCodes[code].currency}`} />
+    <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code}`} />
   ));
 
   return (
@@ -99,7 +100,7 @@ const Terminal = (props) => {
             <div className={s.transport}>
               <SelectField id="transport-select"
                            fullWidth={true}
-                           value={transport}
+                           value={transport || terminal.transport}
                            onChange={(event, index, value) => setProperty('editTerminal.transport', value)}
                            floatingLabelText="Transport"
                            floatingLabelFixed={true}
@@ -111,7 +112,7 @@ const Terminal = (props) => {
               <div className={s.date}>
                 <DatePicker id={`${type}-date-picker`}
                             hintText={labels[type].dateInputTitle}
-                            value={date}
+                            value={date || terminal.date}
                             floatingLabelText="Arrival date"
                             floatingLabelFixed={true}
                             autoOk={true}
@@ -123,7 +124,7 @@ const Terminal = (props) => {
                 <TimePicker id={`${type}-time-picker`}
                             format="24hr"
                             hintText={labels[type].timeInputTitle}
-                            value={time}
+                            value={time || terminal.time}
                             floatingLabelText="Time"
                             floatingLabelFixed={true}
                             autoOk={true}
@@ -136,7 +137,7 @@ const Terminal = (props) => {
           <div className={s.inputRow2}>
             <div className={s.transportId}>
               <TextField id="transport-id"
-                         value={transportId}
+                         value={transportId || terminal.transportId}
                          fullWidth={true}
                          floatingLabelText="Transport ID"
                          floatingLabelFixed={true}
@@ -146,24 +147,29 @@ const Terminal = (props) => {
             </div>
           </div>
           <div className={s.inputRow3}>
-            <div className={s.amount}>
-              <TextField id="price-amount-input"
-                         style={ { width: '100%'} }
-                         value={priceAmount || ''}
-                         floatingLabelText="Cost"
-                         hintText="Price"
-                         floatingLabelFixed={true}
-                         onChange={(e) => setProperty('editTerminal.priceAmount', e.target.value)}
-              />
-            </div>
-            <div className={s.currency}>
-              <SelectField id="currency-select"
+            <div className={s.cost}>
+              <div className={s.amount}>
+                <TextField id="price-amount-input"
                            style={ { width: '100%'} }
-                           value={priceCurrency}
-                           floatingLabelText="Currency"
-                           onChange={(event, index, value) => setProperty('editTerminal.priceCurrency', value)}>
-                {currencies}
-              </SelectField>
+                           value={priceAmount || terminal.priceAmount || ''}
+                           floatingLabelText="Cost"
+                           hintText="Price"
+                           floatingLabelFixed={true}
+                           onChange={(e) => setProperty('editTerminal.priceAmount', e.target.value)}
+                />
+              </div>
+              <div className={s.currency}>
+                <SelectField id="currency-select"
+                             style={ { width: '100%'} }
+                             value={priceCurrency || terminal.priceCurrency}
+                             floatingLabelText="Currency"
+                             onChange={(event, index, value) => setProperty('editTerminal.priceCurrency', value)}>
+                  {currencies}
+                </SelectField>
+              </div>
+            </div>
+            <div className={s.controls}>
+              <RaisedButton label="OK" fullWidth={true} disabled={saveDisabled} onClick={() => save()} />
             </div>
           </div>
         </div>
@@ -182,7 +188,8 @@ export default injectIntl(
     date: state.editTerminal.date || new Date(),
     time: state.editTerminal.time || new Date(),
     priceAmount: state.editTerminal.priceAmount,
-    priceCurrency: state.editTerminal.priceCurrency
+    priceCurrency: state.editTerminal.priceCurrency,
+    saveDisabled: state.editTerminal.saveDisabled
   }), {
     setProperty, saveTerminal
   })(withStyles(s)(Terminal))

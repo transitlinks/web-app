@@ -23,6 +23,18 @@ const CheckIn = Model.define('CheckIn', {
     type: DataType.STRING
   },
 
+  locality: {
+    type: DataType.STRING
+  },
+
+  country: {
+    type: DataType.STRING
+  },
+
+  formattedAddress: {
+    type: DataType.STRING
+  },
+
   tripId: {
     type: DataType.STRING
   },

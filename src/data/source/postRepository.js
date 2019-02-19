@@ -107,6 +107,17 @@ export default {
 
   },
 
+  getTerminals: async (where, options) => {
+
+    let terminals = await Terminal.findAll({
+      where,
+      include: [ { all: true } ]
+    });
+
+    return terminals;
+
+  },
+
   saveTerminal: async (terminal) => {
 
     if (terminal.uuid) {

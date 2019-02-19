@@ -25,6 +25,10 @@ export default {
                 uuid,
                 latitude,
                 longitude
+                placeId,
+                formattedAddress,
+                locality,
+                country
               },
               inbound {
                 uuid,
@@ -44,7 +48,11 @@ export default {
                 uuid,
                 type,
                 transport,
-                transportId
+                transportId,
+                date,
+                time,
+                priceAmount,
+                priceCurrency
               }
             }
           },

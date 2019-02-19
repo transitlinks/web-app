@@ -1,3 +1,5 @@
+import cc from "currency-codes";
+
 export const createRatingsMap = (ratings) => {
   
   const ratingsMap = {};
@@ -128,5 +130,64 @@ export const geocode = (latLng, callback) => {
       console.error('Geocoder error', status);
     }
   });
+
+};
+
+export const extractPlaceFields = (location) => {
+
+  const fields = {
+    placeId: location.place_id
+  };
+
+  if (location.formatted_address) {
+    fields.formattedAddress = location.formatted_address;
+  } else {
+    fields.formattedAddress = location.address_components.formatted_address;
+  }
+
+  for (let i = 0; i < location.address_components.length; i++) {
+
+    const {types, long_name} = location.address_components[i];
+
+    if (types.indexOf('locality') !== -1) {
+      fields.locality = long_name;
+    }
+
+    if (types.indexOf('country') !== -1) {
+      fields.country = long_name;
+    }
+
+    if (fields.locality && fields.country) {
+      return fields;
+    }
+
+  }
+
+  return fields;
+
+};
+
+export const getAvailableCurrencies = (destination) => {
+
+  const currencyCodes = {
+  };
+
+  const countries = cc.countries();
+
+  const matchingCountries = countries.filter(country => {
+    return country.indexOf(destination) !== -1 || destination.indexOf(country) !== -1;
+  });
+
+  if (matchingCountries.length > 0) {
+    cc.country(matchingCountries[0]).forEach(currency => {
+      currencyCodes[currency.code] = currency;
+    });
+  }
+
+  currencyCodes['USD'] = cc.code('USD');
+  currencyCodes['EUR'] = cc.code('EUR');
+  currencyCodes['GBP'] = cc.code('GBP');
+
+  return currencyCodes;
 
 };

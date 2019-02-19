@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -60,7 +59,7 @@ const createPost = (props) =>  {
 
 const getTabContent = (type, props) => {
 
-  const { transportTypes, postText, savePost, setProperty } = props;
+  const { checkIn, transportTypes, postText, savePost, setProperty } = props;
 
   switch (type) {
 
@@ -100,13 +99,13 @@ const getTabContent = (type, props) => {
     case 'arrival':
       return (
         <div className={s.contentEditor}>
-          <Terminal transportTypes={transportTypes} type="arrival" terminal={{ type: 'arrival '}} />
+          <Terminal transportTypes={transportTypes} checkIn={checkIn} type="arrival" terminal={{ type: 'arrival '}} />
         </div>
       );
     case 'departure':
       return (
         <div className={s.contentEditor}>
-          <Terminal transportTypes={transportTypes} type="departure" terminal={{ type: 'departure '}} />
+          <Terminal transportTypes={transportTypes} checkIn={checkIn} type="departure" terminal={{ type: 'departure '}} />
         </div>
       );
     case 'lodging':
