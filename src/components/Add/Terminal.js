@@ -37,12 +37,7 @@ const Terminal = (props) => {
     transportTypes,
     terminal,
     type,
-    transport,
-    transportId,
-    date,
-    time,
-    priceAmount,
-    priceCurrency,
+    terminalProperties,
     saveDisabled,
     setProperty,
     saveTerminal
@@ -92,6 +87,22 @@ const Terminal = (props) => {
     <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code}`} />
   ));
 
+  const setTerminalProperty = (type, key, value) => {
+    if (!terminalProperties[type]) terminalProperties[type] = {};
+    terminalProperties[type][key] = value;
+    setProperty('editTerminal.terminalProperties', { ...terminalProperties });
+  };
+
+  let transport, transportId, date, time, priceAmount, priceCurrency;
+  if (terminalProperties[type]) {
+    transport = terminalProperties[type].transport;
+    transportId = terminalProperties[type].transportId;
+    date = terminalProperties[type].date;
+    time = terminalProperties[type].time;
+    priceAmount = terminalProperties[type].priceAmount;
+    priceCurrency = terminalProperties[type].priceCurrency;
+  }
+
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
@@ -101,7 +112,7 @@ const Terminal = (props) => {
               <SelectField id="transport-select"
                            fullWidth={true}
                            value={transport || terminal.transport}
-                           onChange={(event, index, value) => setProperty('editTerminal.transport', value)}
+                           onChange={(event, index, value) => setTerminalProperty(type, 'transport', value)}
                            floatingLabelText="Transport"
                            floatingLabelFixed={true}
                            hintText="Select type">
@@ -112,24 +123,24 @@ const Terminal = (props) => {
               <div className={s.date}>
                 <DatePicker id={`${type}-date-picker`}
                             hintText={labels[type].dateInputTitle}
-                            value={date || terminal.date}
+                            value={date || terminal.date || new Date()}
                             floatingLabelText="Arrival date"
                             floatingLabelFixed={true}
                             autoOk={true}
                             fullWidth={true}
-                            onChange={(event, value) => setProperty('editTerminal.date', value)}
+                            onChange={(event, value) => setTerminalProperty(type, 'date', value)}
                 />
               </div>
               <div className={s.time}>
                 <TimePicker id={`${type}-time-picker`}
                             format="24hr"
                             hintText={labels[type].timeInputTitle}
-                            value={time || terminal.time}
+                            value={time || terminal.time || new Date()}
                             floatingLabelText="Time"
                             floatingLabelFixed={true}
                             autoOk={true}
                             fullWidth={true}
-                            onChange={(event, value) => setProperty('editTerminal.time', value)}
+                            onChange={(event, value) => setTerminalProperty(type, 'time', value)}
                 />
               </div>
             </div>
@@ -137,11 +148,11 @@ const Terminal = (props) => {
           <div className={s.inputRow2}>
             <div className={s.transportId}>
               <TextField id="transport-id"
-                         value={transportId || terminal.transportId}
+                         value={transportId || terminal.transportId || ''}
                          fullWidth={true}
                          floatingLabelText="Transport ID"
                          floatingLabelFixed={true}
-                         onChange={(e) => setProperty('editTerminal.transportId', e.target.value)}
+                         onChange={(e) => setTerminalProperty(type, 'transportId', e.target.value)}
                          hintText={(!transportId) ? "Number, company..." : null}
               />
             </div>
@@ -155,7 +166,7 @@ const Terminal = (props) => {
                            floatingLabelText="Cost"
                            hintText="Price"
                            floatingLabelFixed={true}
-                           onChange={(e) => setProperty('editTerminal.priceAmount', e.target.value)}
+                           onChange={(e) => setTerminalProperty(type, 'priceAmount', e.target.value)}
                 />
               </div>
               <div className={s.currency}>
@@ -163,7 +174,7 @@ const Terminal = (props) => {
                              style={ { width: '100%'} }
                              value={priceCurrency || terminal.priceCurrency}
                              floatingLabelText="Currency"
-                             onChange={(event, index, value) => setProperty('editTerminal.priceCurrency', value)}>
+                             onChange={(event, index, value) => setTerminalProperty(type, 'priceCurrency', value)}>
                   {currencies}
                 </SelectField>
               </div>
@@ -183,12 +194,7 @@ const Terminal = (props) => {
 
 export default injectIntl(
   connect(state => ({
-    transport: state.editTerminal.transport,
-    transportId: state.editTerminal.transportId,
-    date: state.editTerminal.date || new Date(),
-    time: state.editTerminal.time || new Date(),
-    priceAmount: state.editTerminal.priceAmount,
-    priceCurrency: state.editTerminal.priceCurrency,
+    terminalProperties: state.editTerminal.terminalProperties || {},
     saveDisabled: state.editTerminal.saveDisabled
   }), {
     setProperty, saveTerminal

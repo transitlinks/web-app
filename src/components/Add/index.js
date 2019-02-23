@@ -6,6 +6,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Add.css';
 import Terminal from './Terminal';
+import FeedItemContent from '../FeedItemContent';
 import { getGeolocation } from '../../actions/global';
 import { savePost, saveCheckIn } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
@@ -44,7 +45,7 @@ const createCheckIn = (geolocation) => {
 
 const createPost = (props) =>  {
 
-  const { postText, checkIn } = props;
+  const { postText, feedItem: { checkIn } } = props;
   const clientId = getClientId();
 
   return {
@@ -59,7 +60,7 @@ const createPost = (props) =>  {
 
 const getTabContent = (type, props) => {
 
-  const { checkIn, transportTypes, postText, savePost, setProperty } = props;
+  const { feedItem: { checkIn }, transportTypes, postText, savePost, setProperty } = props;
 
   switch (type) {
 
@@ -133,7 +134,8 @@ const getTabContent = (type, props) => {
 
 const AddView = (props) => {
 
-  const { type, transportTypes, checkIn, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn } = props;
+  const { type, transportTypes, feedItem, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn } = props;
+
   console.log("add props", props);
 
   let positionElem = null;
@@ -159,6 +161,8 @@ const AddView = (props) => {
       );
     }
   }
+
+  const { checkIn } = feedItem;
 
 	return (
 	  <div className={s.root}>
@@ -187,6 +191,7 @@ const AddView = (props) => {
           { getTabContent(type, props) }
         </div>
       </div>
+      <FeedItemContent feedItem={feedItem} contentType={type} />
     </div>
   );
 

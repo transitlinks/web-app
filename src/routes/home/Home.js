@@ -25,6 +25,9 @@ class Home extends React.Component {
     const prevPost = prevProps.savedPost;
     const post = this.props.savedPost;
 
+    const prevTerminal = prevProps.savedTerminal;
+    const terminal = this.props.savedTerminal;
+
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
         this.props.getFeed();
@@ -34,6 +37,13 @@ class Home extends React.Component {
     if (post) {
       if (!prevPost || prevPost.saved !== post.saved) {
         this.props.setProperty('posts.postText', '');
+        this.props.getFeed();
+      }
+    }
+
+    if (terminal) {
+      if (!prevTerminal || prevTerminal.saved !== terminal.saved) {
+        this.props.setProperty('editTerminal.terminalProperties', null);
         this.props.getFeed();
       }
     }
@@ -60,7 +70,8 @@ Home.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
   savedCheckIn: state.posts.checkIn,
-  savedPost: state.posts.post
+  savedPost: state.posts.post,
+  savedTerminal: state.posts.savedTerminal
 }), {
   getGeolocation,
   getFeed,

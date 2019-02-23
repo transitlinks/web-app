@@ -12,7 +12,7 @@ import msg from './messages';
 
 const feedItemContent = (feedItem) => {
 
-  const { checkIn, posts } = feedItem;
+  const { checkIn, posts, terminals } = feedItem;
 
   let postElems = null;
   if (posts) {
@@ -30,8 +30,20 @@ const feedItemContent = (feedItem) => {
     });
   }
 
+  let terminalElems = null;
+  if (terminals) {
+    terminalElems = terminals.map(terminal => {
+      return (
+        <div className={s.terminal}>
+          --{terminal.type}
+        </div>
+      );
+    });
+  }
+
   return (
     <div className={s.feedItemContent}>
+      {terminalElems}
       {postElems}
     </div>
   );
@@ -60,8 +72,7 @@ const FeedView = ({
 
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
-                { editable ? <Add checkIn={checkIn} transportTypes={transportTypes} /> : <FeedItem feedItem={feedItem} index={index} /> }
-                { feedItemContent(feedItem) }
+                { editable ? <Add feedItem={feedItem} transportTypes={transportTypes} /> : <FeedItem feedItem={feedItem} index={index} /> }
               </div>
             );
 

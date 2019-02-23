@@ -139,3 +139,37 @@
   overflow: hidden;
   transition: height 0.5s;
 }
+
+.contentTypeContainer {
+}
+
+.contentTypeSelectors {
+  display: flex;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.contentTypeSelectors .contentTypeSelector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 5px;
+  padding-right: 4px;
+  padding-top: 2px;
+  padding-bottom: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
+  flex-grow: 1;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.contentTypeSelectors .typeSelected {
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+}
+
+.contentTypeSelectors .contentTypeSelector > div {
+  display: contents;
+}

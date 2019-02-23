@@ -1,0 +1,60 @@
+@import '../variables.css';
+
+.container {
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  max-width: 600px;
+}
+
+.feedItem {
+}
+
+.feedItemContent {
+}
+
+.feedItemContent .post {
+  margin-top: 12px;
+}
+
+.post .postInfo {
+  margin-bottom: 6px;
+  padding-left: 6px;
+}
+
+.postInfo .postAuthor {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.postInfo .postDate {
+  font-size: 10px;
+  color: #666;
+}
+
+.post .postText {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.terminal {
+  display: flex;
+}
+
+.terminal .transport {
+  border: 1px solid black;
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+.terminal .transportId {
+
+}
+
+.terminal .date {
+
+}
+
+.terminal .time {
+
+}

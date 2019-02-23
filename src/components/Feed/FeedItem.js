@@ -7,13 +7,24 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { extractLinkAreas } from '../utils';
 import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
+import FeedItemContent from '../FeedItemContent';
 import { setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
 import msg from './messages';
 
+const typeSelector = (iconName, isSelected, onClick) => {
+  return (
+    <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})} onClick={() => onClick()}>
+      <div>
+        <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{iconName}</FontIcon>
+      </div>
+    </div>
+  );
+};
+
 const FeedItem = ({
-  index, feedItem, selectedFeedItem, loadingFeedItem, showLinks, navigate, setProperty, getFeedItem
+  index, feedProperties, type, feedItem, selectedFeedItem, loadingFeedItem, showLinks, navigate, setProperty, getFeedItem
 }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
@@ -48,6 +59,17 @@ const FeedItem = ({
   const getOutboundClassnames = () => {
     return cx(s.outboundContainer, getStateClass(outbound));
   };
+
+  const selectContentType = (value) => {
+    if (!feedProperties[index]) feedProperties[index] = {};
+    feedProperties[index]['contentType'] = value;
+    setProperty('posts.feedProperties', { ...feedProperties });
+  };
+
+  let contentType = 'reaction';
+  if (feedProperties[index] && feedProperties[index]['contentType']) {
+    contentType = feedProperties[index]['contentType'];
+  }
 
   return (
     <div className={s.container}>
@@ -125,12 +147,25 @@ const FeedItem = ({
           </div>
         </div>
       }
+
+      <div className={s.contentTypeContainer}>
+        <div className={s.contentTypeSelectors}>
+          { typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction')) }
+          { typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival')) }
+          { typeSelector('call_made', contentType === 'departure', () => selectContentType('departure')) }
+          { typeSelector('hotel', contentType === 'lodging', () => selectContentType('lodging')) }
+        </div>
+      </div>
+
+      <FeedItemContent feedItem={feedItem} contentType={contentType} />
+
     </div>
   );
 
 };
 
 export default connect(state => ({
+  feedProperties: state.posts.feedProperties || {},
   showLinks: state.posts.showLinks,
   selectedFeedItem: state.posts.selectedFeedItem,
   loadingFeedItem: state.posts.loadingFeedItem
