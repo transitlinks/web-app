@@ -10,7 +10,7 @@ import FontIcon from 'material-ui/FontIcon';
 import { setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
-import msg from '../Feed/messages';
+import terminalMsg from '../Add/messages.terminal';
 
 const FeedItemContent = ({
   feedItem, contentType
@@ -18,6 +18,17 @@ const FeedItemContent = ({
 
   const { checkIn, posts, terminals } = feedItem;
   let content = null;
+
+  const formatDate = (date) => {
+
+    console.log("format date", date);
+    if (date) {
+      return (new Date(date)).toDateString().substring(4);
+    }
+
+    return '-';
+
+  };
 
   if (contentType === 'reaction') {
 
@@ -38,18 +49,17 @@ const FeedItemContent = ({
 
     content = terminals.filter(terminal => terminal.type === 'arrival').map(terminal => {
       return (
-        <div className={s.terminal}>
-          <div className={s.transport}>
-            {terminal.transport}
+        <div className={s.terminalContainer}>
+          <div className={s.terminal}>
+            <div className={s.transport}>
+              <FormattedMessage {...terminalMsg[terminal.transport]} />
+            </div>
+            <div className={s.terminalFrom}>
+              from Helsinki
+            </div>
           </div>
           <div className={s.transportId}>
             {terminal.transportId}
-          </div>
-          <div className={s.date}>
-            {terminal.date}
-          </div>
-          <div className={s.time}>
-            {terminal.time}
           </div>
         </div>
       );
@@ -78,6 +88,8 @@ const FeedItemContent = ({
 
 };
 
-export default connect(state => ({
-}), {
-})(withStyles(s)(FeedItemContent));
+export default injectIntl(
+  connect(state => ({
+  }), {
+  })(withStyles(s)(FeedItemContent))
+);
