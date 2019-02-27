@@ -8,11 +8,15 @@ const Terminal = Model.define('Terminal', {
     autoIncrement: true,
     primaryKey: true
   },
-  
+
   uuid: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
     unique: true,
+  },
+
+  clientId: {
+    type: DataType.STRING
   },
 
   type: {

@@ -60,7 +60,7 @@ const createPost = (props) =>  {
 
 const getTabContent = (type, props) => {
 
-  const { feedItem: { checkIn }, transportTypes, postText, savePost, setProperty } = props;
+  const { feedItem: { checkIn }, transportTypes, openTerminals, postText, savePost, setProperty } = props;
 
   switch (type) {
 
@@ -100,13 +100,13 @@ const getTabContent = (type, props) => {
     case 'arrival':
       return (
         <div className={s.contentEditor}>
-          <Terminal transportTypes={transportTypes} checkIn={checkIn} type="arrival" terminal={{ type: 'arrival '}} />
+          <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="arrival" terminal={{ type: 'arrival '}} />
         </div>
       );
     case 'departure':
       return (
         <div className={s.contentEditor}>
-          <Terminal transportTypes={transportTypes} checkIn={checkIn} type="departure" terminal={{ type: 'departure '}} />
+          <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="departure" terminal={{ type: 'departure '}} />
         </div>
       );
     case 'lodging':

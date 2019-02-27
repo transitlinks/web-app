@@ -164,7 +164,26 @@ export const getTerminals = (checkInId) => {
           date,
           time,
           priceAmount,
-          priceCurrency
+          priceCurrency,
+          linkedTerminal {
+            uuid,
+            type,
+            transport,
+            transportId,
+            date,
+            time,
+            priceAmount,
+            priceCurrency,
+            checkIn {
+              uuid,
+              latitude,
+              longitude,
+              placeId,
+              formattedAddress,
+              locality,
+              country
+            }
+          }
         }
       }
     `;
@@ -181,13 +200,13 @@ export const getTerminals = (checkInId) => {
 
 }
 
-export const getFeed = (input) => {
+export const getFeed = (clientId) => {
 
   return async (...args) => {
 
     const query = `
       query {
-        feed (input:"${input}") {
+        feed (clientId:"${clientId}") {
           feedItems {
             checkIn {
               uuid,
@@ -220,7 +239,45 @@ export const getFeed = (input) => {
               date,
               time,
               priceAmount,
-              priceCurrency
+              priceCurrency,
+              linkedTerminal {
+                uuid,
+                type,
+                transport,
+                transportId,
+                date,
+                time,
+                priceAmount,
+                priceCurrency,
+                checkIn {
+                  uuid,
+                  latitude,
+                  longitude,
+                  placeId,
+                  formattedAddress,
+                  locality,
+                  country
+                }
+              }
+            }
+          },
+          openTerminals {
+            uuid,
+            type,
+            transport,
+            transportId,
+            date,
+            time,
+            priceAmount,
+            priceCurrency,
+            checkIn {
+              uuid,
+              latitude,
+              longitude,
+              placeId,
+              formattedAddress,
+              locality,
+              country
             }
           }
         }
@@ -268,6 +325,35 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
           posts {
             uuid,
             text
+          },
+          terminals {
+            uuid,
+            type,
+            transport,
+            transportId,
+            date,
+            time,
+            priceAmount,
+            priceCurrency,
+            linkedTerminal {
+              uuid,
+              type,
+              transport,
+              transportId,
+              date,
+              time,
+              priceAmount,
+              priceCurrency,
+              checkIn {
+                uuid,
+                latitude,
+                longitude,
+                placeId,
+                formattedAddress,
+                locality,
+                country
+              }
+            }
           }
         }
       }

@@ -90,6 +90,11 @@ Terminal.belongsTo(CheckIn, {
   as: 'checkIn'
 });
 
+Terminal.hasOne(Terminal, {
+  foreignKey: 'linkedTerminalId',
+  as: 'linkedTerminal'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }

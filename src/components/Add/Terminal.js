@@ -15,6 +15,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { getAvailableCurrencies } from '../../services/linkService';
 
 import msg from './messages.terminal';
+import {getClientId} from "../../core/utils";
 
 const labels = {
   departure: {
@@ -36,6 +37,7 @@ const Terminal = (props) => {
     checkIn,
     transportTypes,
     terminal,
+    openTerminals,
     type,
     terminalProperties,
     saveDisabled,
@@ -69,6 +71,9 @@ const Terminal = (props) => {
       editedTerminal.time = time.toISOString();
     }
 
+    const clientId = getClientId();
+    editedTerminal.clientId = clientId;
+
     console.log("save terminal", editedTerminal);
     saveTerminal({ terminal: editedTerminal });
 
@@ -93,7 +98,7 @@ const Terminal = (props) => {
     setProperty('editTerminal.terminalProperties', { ...terminalProperties });
   };
 
-  let transport, transportId, date, time, priceAmount, priceCurrency;
+  let transport, transportId, date, time, priceAmount, priceCurrency, linkedTerminalUuid;
   if (terminalProperties[type]) {
     transport = terminalProperties[type].transport;
     transportId = terminalProperties[type].transportId;
@@ -101,12 +106,63 @@ const Terminal = (props) => {
     time = terminalProperties[type].time;
     priceAmount = terminalProperties[type].priceAmount;
     priceCurrency = terminalProperties[type].priceCurrency;
+    linkedTerminalUuid = terminalProperties[type].linkedTerminalUuid;
   }
+
+  const openTerminalOptions = (openTerminals || []).filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival')))
+    .map(terminal => {
+
+    const pronoun = type === 'arrival' ? ' to ' : ' from ';
+    const linkedTerminalLabel = intl.formatMessage(msg[terminal.transport]) + ' ' + terminal.transportId;
+
+    const menuItemLabel = (
+      <div className={s.terminalMenuItemLabel}>
+        <div className={s.itemLabelRow}>
+          <div className={s.terminalTransport}>
+            { intl.formatMessage(msg[terminal.transport]) }
+          </div>
+          <p>
+          { terminal.checkIn.formattedAddress }
+          { terminal.checkIn.formattedAddress }
+            { terminal.checkIn.formattedAddress }
+            { terminal.checkIn.formattedAddress }
+          </p>
+        </div>
+        <div className={s.terminalTransportId}>
+          { terminal.transportId }
+        </div>
+      </div>
+    );
+
+    return (
+      <MenuItem id={terminal.uuid} key={terminal.uuid} style={{ wdith: '100%', "WebkitAppearance": "initial" }}
+                value={terminal.uuid} primaryText={menuItemLabel}>
+      </MenuItem>
+    );
+
+  });
+
+  const linkedTerminalLabel = type === 'arrival' ? 'Departing from' : 'Going to';
 
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
         <div className={s.pageOneContainer}>
+          <div className={s.inputRow0}>
+            <div className={s.linkedTerminal}>
+              <SelectField id="linked-terminal-select"
+                           fullWidth={true}
+                           value={linkedTerminalUuid || ((openTerminals && openTerminals.length > 0) && openTerminals[0].uuid)}
+                           onChange={(event, index, value) => setTerminalProperty(type, 'linkedTerminalUuid', value)}
+                           floatingLabelText={linkedTerminalLabel}
+                           floatingLabelFixed={true}
+                           hintText="Select terminal"
+                           labelStyle={{ "height": "initial" }}
+                           style={{ "height": "initial" }}>
+                {openTerminalOptions}
+              </SelectField>
+            </div>
+          </div>
           <div className={s.inputRow1}>
             <div className={s.transport}>
               <SelectField id="transport-select"

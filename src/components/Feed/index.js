@@ -72,7 +72,13 @@ const FeedView = ({
 
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
-                { editable ? <Add feedItem={feedItem} transportTypes={transportTypes} /> : <FeedItem feedItem={feedItem} index={index} transportTypes={transportTypes} /> }
+                {
+                  editable ?
+                    <Add feedItem={feedItem}
+                         openTerminals={feed.openTerminals}
+                         transportTypes={transportTypes} />
+                    : <FeedItem feedItem={feedItem} index={index} transportTypes={transportTypes} />
+                }
               </div>
             );
 

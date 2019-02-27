@@ -6,6 +6,7 @@ import Home from './Home';
 import fetch from '../../core/fetch';
 import TransitLink from "../link";
 import ErrorPage from '../../components/common/ErrorPage';
+import {getClientId} from "../../core/utils";
 
 export default {
 
@@ -14,12 +15,13 @@ export default {
   async action({ params, context, query }) {
 
     const { graphqlRequest } = context.store.helpers;
+    const clientId = getClientId();
 
     try {
 
       const { data } = await graphqlRequest(
         `query {
-          feed(input: "${'test'}") {
+          feed(clientId: "${clientId}") {
             feedItems {
               checkIn {
                 uuid,
@@ -53,6 +55,25 @@ export default {
                 time,
                 priceAmount,
                 priceCurrency
+              }
+            },
+            openTerminals {
+              uuid,
+              type,
+              transport,
+              transportId,
+              date,
+              time,
+              priceAmount,
+              priceCurrency,
+              checkIn {
+                uuid,
+                latitude,
+                longitude,
+                placeId,
+                formattedAddress,
+                locality,
+                country
               }
             }
           },

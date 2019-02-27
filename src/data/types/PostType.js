@@ -37,15 +37,19 @@ export const PostInputType = new GraphQLInputObjectType({
 export const TerminalType = new GraphQLObjectType({
   name: 'Terminal',
   description: 'Transitlinks Terminal object',
-  fields: {
-    uuid: { type: new GraphQLNonNull(GraphQLString) },
-    type: { type: GraphQLString },
-    transport: { type: GraphQLString },
-    transportId: { type: GraphQLString },
-    date: { type: GraphQLString },
-    time: { type: GraphQLString },
-    priceAmount: { type: GraphQLFloat },
-    priceCurrency: { type: GraphQLString }
+  fields: () => {
+    return {
+      uuid: { type: new GraphQLNonNull(GraphQLString)},
+      type: { type: GraphQLString},
+      transport: { type: GraphQLString},
+      transportId: { type: GraphQLString},
+      date: { type: GraphQLString},
+      time: { type: GraphQLString},
+      priceAmount: { type: GraphQLFloat},
+      priceCurrency: { type: GraphQLString},
+      linkedTerminal: { type: TerminalType },
+      checkIn: { type: CheckInType }
+    };
   },
 });
 
@@ -119,7 +123,8 @@ export const FeedType = new GraphQLObjectType({
   name: 'Feed',
   description: 'Transitlinks Feed query result object',
   fields: {
-    feedItems: { type: new GraphQLList(FeedItemType) }
+    feedItems: { type: new GraphQLList(FeedItemType) },
+    openTerminals: { type: new GraphQLList(TerminalType) }
   }
 });
 

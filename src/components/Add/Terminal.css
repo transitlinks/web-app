@@ -1,6 +1,6 @@
 @import '../../components/variables.css';
 
-.root {  
+.root {
 }
 
 .container {
@@ -23,6 +23,12 @@
 
 .terminalPageOne .pageOneContainer {
 
+}
+
+.inputRow0 {
+  display: flex;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .inputRow1 {
@@ -90,4 +96,26 @@
   flex-grow: 1;
   padding-left: 24px;
   margin-bottom: -10px;
+}
+
+.terminalMenuItemLabel {
+  line-height: initial;
+  white-space: normal;
+}
+
+.terminalMenuItemLabel .itemLabelRow {
+}
+
+.terminalMenuItemLabel .terminalTransport {
+  margin-right: 16px;
+  float: left;
+}
+
+.terminalMenuItemLabel .terminalTransportId {
+  color: #888888;
+  line-height: 50px;
+}
+
+.terminalMenuItemLabel .terminalAddress {
+  white-space: normal;
 }

@@ -233,12 +233,17 @@ export const PostQueryFields = {
     type: FeedType,
     description: 'Query feed',
     args: {
-      input: { type: GraphQLString }
+      clientId: { type: GraphQLString }
     },
-    resolve: async ({ request }, { input }) => {
+    resolve: async ({ request }, { clientId }) => {
 
       log.info(graphLog(request, 'get-feed'));
       const checkIns = await postRepository.getFeedCheckIns(request.user ? request.user.id : null);
+      const openTerminalParams = { linkedTerminalId: null };
+      if (clientId) {
+        openTerminalParams.clientId = clientId;
+      }
+      const openTerminals = await postRepository.getTerminals(openTerminalParams);
       log.info(graphLog(request, 'get-feed', 'check-ins=' + checkIns.length));
       return {
         feedItems: checkIns.map(async (checkIn) => {
@@ -251,7 +256,30 @@ export const PostQueryFields = {
             checkIn: checkIn.json(),
             ...linkedCheckIns,
             posts: posts.map(post => post.json()),
-            terminals: terminals.map(terminal => terminal.json())
+            terminals: terminals.map(async (terminal) => {
+
+              let linkedTerminal = null;
+
+              if (terminal.linkedTerminalId) {
+                linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
+                const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
+                linkedTerminal = linkedTerminal.json();
+                linkedTerminal.checkIn = linkedTerminalCheckIn.json();
+              }
+
+              return {
+                ...terminal.json(),
+                linkedTerminal
+              };
+
+            })
+          };
+        }),
+        openTerminals: openTerminals.map(async (terminal) => {
+          const terminalCheckIn = await postRepository.getCheckIn({ id: terminal.checkInId });
+          return {
+            ...terminal.json(),
+            checkIn: terminalCheckIn
           };
         })
       };

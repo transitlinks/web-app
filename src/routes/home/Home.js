@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { getGeolocation } from "../../actions/global";
 import { getFeed } from "../../actions/posts";
 import { setProperty } from "../../actions/properties";
+import {getClientId} from "../../core/utils";
 
 const title = 'Transitlinks';
 
@@ -28,23 +29,25 @@ class Home extends React.Component {
     const prevTerminal = prevProps.savedTerminal;
     const terminal = this.props.savedTerminal;
 
+    const clientId = getClientId();
+
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
-        this.props.getFeed();
+        this.props.getFeed(clientId);
       }
     }
 
     if (post) {
       if (!prevPost || prevPost.saved !== post.saved) {
         this.props.setProperty('posts.postText', '');
-        this.props.getFeed();
+        this.props.getFeed(clientId);
       }
     }
 
     if (terminal) {
       if (!prevTerminal || prevTerminal.saved !== terminal.saved) {
         this.props.setProperty('editTerminal.terminalProperties', null);
-        this.props.getFeed();
+        this.props.getFeed(clientId);
       }
     }
 
