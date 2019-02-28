@@ -54,8 +54,18 @@ const FeedView = ({
   feed, transportTypes, loadedFeed, savedCheckIn, fetchedFeedItem
 }) => {
 
-  const feedItems = (((loadedFeed || feed) || {}).feedItems || []);
+  const currentFeed = (loadedFeed || feed) || {};
+  const feedItems = (currentFeed.feedItems || []).map(feedItem => {
+    return { ...feedItem };
+  });
+  const openTerminals = (currentFeed.openTerminals || []).map(terminal => {
+    console.log("otuuid", terminal.uuid);
+    return { ...terminal, id: terminal.uuid };
+  });
+
+
   let editOpen = false;
+  console.log("feed view", loadedFeed, feed, currentFeed);
 
   return (
     <div className={s.container}>
@@ -75,7 +85,7 @@ const FeedView = ({
                 {
                   editable ?
                     <Add feedItem={feedItem}
-                         openTerminals={feed.openTerminals}
+                         openTerminals={openTerminals}
                          transportTypes={transportTypes} />
                     : <FeedItem feedItem={feedItem} index={index} transportTypes={transportTypes} />
                 }

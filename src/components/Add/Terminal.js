@@ -92,22 +92,13 @@ const Terminal = (props) => {
     <MenuItem key={code} style={{ "WebkitAppearance": "initial" }} value={code} primaryText={`${code}`} />
   ));
 
-  const setTerminalProperty = (type, key, value) => {
+  const setTerminalProperties = (type, keys, values) => {
     if (!terminalProperties[type]) terminalProperties[type] = {};
-    terminalProperties[type][key] = value;
+    keys.forEach((key, i) => {
+      terminalProperties[type][key] = values[i];
+    });
     setProperty('editTerminal.terminalProperties', { ...terminalProperties });
   };
-
-  let transport, transportId, date, time, priceAmount, priceCurrency, linkedTerminalUuid;
-  if (terminalProperties[type]) {
-    transport = terminalProperties[type].transport;
-    transportId = terminalProperties[type].transportId;
-    date = terminalProperties[type].date;
-    time = terminalProperties[type].time;
-    priceAmount = terminalProperties[type].priceAmount;
-    priceCurrency = terminalProperties[type].priceCurrency;
-    linkedTerminalUuid = terminalProperties[type].linkedTerminalUuid;
-  }
 
   const openTerminalOptions = (openTerminals || []).filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival')))
     .map(terminal => {
@@ -121,15 +112,12 @@ const Terminal = (props) => {
           <div className={s.terminalTransport}>
             { intl.formatMessage(msg[terminal.transport]) }
           </div>
-          <p>
-          { terminal.checkIn.formattedAddress }
-          { terminal.checkIn.formattedAddress }
-            { terminal.checkIn.formattedAddress }
-            { terminal.checkIn.formattedAddress }
+          <p className={s.terminalTransportId}>
+            { terminal.transportId }
           </p>
         </div>
-        <div className={s.terminalTransportId}>
-          { terminal.transportId }
+        <div className={s.terminalAddress}>
+          { terminal.checkIn.formattedAddress }
         </div>
       </div>
     );
@@ -142,33 +130,82 @@ const Terminal = (props) => {
 
   });
 
-  const linkedTerminalLabel = type === 'arrival' ? 'Departing from' : 'Going to';
+  if (openTerminalOptions.length > 0) {
+    const itemElem = (
+      <div className={s.terminalMenuItemLabel}>
+        <div className={s.notLinked}>
+          NOT LINKED
+        </div>
+      </div>
+    );
+    const notLinkedItem = (
+      <MenuItem id={'not-linked'} key={'not-linked'} style={{ wdith: '100%', "WebkitAppearance": "initial" }}
+                value={'not-linked'} primaryText={itemElem}>
+      </MenuItem>
+    );
+    openTerminalOptions.unshift(notLinkedItem);
+  }
+
+  let linkedTerminalUuid = null;
+  if(terminalProperties[type] && terminalProperties[type].linkedTerminalUuid) {
+    linkedTerminalUuid = terminalProperties[type].linkedTerminalUuid;
+  }
+
+  let linkedTerminal = null;
+  if (linkedTerminalUuid && linkedTerminalUuid !== 'not-linked') {
+    linkedTerminal = openTerminals.filter(terminal => terminal.uuid = linkedTerminalUuid)[0];
+  }
+
+  const getTerminalProperty = (key) => {
+    if (!terminalProperties[type] || !terminalProperties[type][key]) {
+      if (linkedTerminal) {
+        return linkedTerminal[key];
+      }
+      return null;
+    }
+    return terminalProperties[type][key];
+  }
+
+  let transport = getTerminalProperty('transport');
+  let transportId = getTerminalProperty('transportId');
+  let date = getTerminalProperty('date');
+  let time = getTerminalProperty('time');
+  let priceCurrency = getTerminalProperty('priceCurrency');
+  let priceAmount = getTerminalProperty('priceAmount');
+
+  const linkedTerminalLabel = type === 'arrival' ? 'Link to departure' : 'Link to arrival';
+  console.log("determined link terminal id", linkedTerminalUuid);
 
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
         <div className={s.pageOneContainer}>
-          <div className={s.inputRow0}>
-            <div className={s.linkedTerminal}>
-              <SelectField id="linked-terminal-select"
-                           fullWidth={true}
-                           value={linkedTerminalUuid || ((openTerminals && openTerminals.length > 0) && openTerminals[0].uuid)}
-                           onChange={(event, index, value) => setTerminalProperty(type, 'linkedTerminalUuid', value)}
-                           floatingLabelText={linkedTerminalLabel}
-                           floatingLabelFixed={true}
-                           hintText="Select terminal"
-                           labelStyle={{ "height": "initial" }}
-                           style={{ "height": "initial" }}>
-                {openTerminalOptions}
-              </SelectField>
+          {
+            openTerminalOptions.length > 0 &&
+            <div className={s.inputRow0}>
+              <div className={s.linkedTerminal}>
+                <SelectField id="linked-terminal-select"
+                             fullWidth={true}
+                             value={linkedTerminalUuid || ((openTerminals && openTerminals.length > 0) && openTerminals[0].uuid)}
+                             onChange={(event, index, value) => setTerminalProperties(type,
+                               ['linkedTerminalUuid', 'transport', 'transportId', 'date', 'time', 'priceAmount', 'priceCurrency'],
+                               [value, null, null, null, null, null, null])}
+                             floatingLabelText={linkedTerminalLabel}
+                             floatingLabelFixed={true}
+                             hintText="Select terminal"
+                             labelStyle={{ "height": "initial" }}
+                             style={{ "height": "initial" }}>
+                  {openTerminalOptions}
+                </SelectField>
+              </div>
             </div>
-          </div>
+          }
           <div className={s.inputRow1}>
             <div className={s.transport}>
               <SelectField id="transport-select"
                            fullWidth={true}
                            value={transport || terminal.transport}
-                           onChange={(event, index, value) => setTerminalProperty(type, 'transport', value)}
+                           onChange={(event, index, value) => setTerminalProperties(type, ['transport'], [value])}
                            floatingLabelText="Transport"
                            floatingLabelFixed={true}
                            hintText="Select type">
@@ -184,7 +221,7 @@ const Terminal = (props) => {
                             floatingLabelFixed={true}
                             autoOk={true}
                             fullWidth={true}
-                            onChange={(event, value) => setTerminalProperty(type, 'date', value)}
+                            onChange={(event, value) => setTerminalProperties(type, ['date'], [value])}
                 />
               </div>
               <div className={s.time}>
@@ -196,7 +233,7 @@ const Terminal = (props) => {
                             floatingLabelFixed={true}
                             autoOk={true}
                             fullWidth={true}
-                            onChange={(event, value) => setTerminalProperty(type, 'time', value)}
+                            onChange={(event, value) => setTerminalProperties(type, ['time'], [value])}
                 />
               </div>
             </div>
@@ -208,7 +245,7 @@ const Terminal = (props) => {
                          fullWidth={true}
                          floatingLabelText="Transport ID"
                          floatingLabelFixed={true}
-                         onChange={(e) => setTerminalProperty(type, 'transportId', e.target.value)}
+                         onChange={(e) => setTerminalProperties(type, ['transportId'], [e.target.value])}
                          hintText={(!transportId) ? "Number, company..." : null}
               />
             </div>
@@ -222,7 +259,7 @@ const Terminal = (props) => {
                            floatingLabelText="Cost"
                            hintText="Price"
                            floatingLabelFixed={true}
-                           onChange={(e) => setTerminalProperty(type, 'priceAmount', e.target.value)}
+                           onChange={(e) => setTerminalProperties(type, ['priceAmount'], [e.target.value])}
                 />
               </div>
               <div className={s.currency}>
@@ -230,7 +267,7 @@ const Terminal = (props) => {
                              style={ { width: '100%'} }
                              value={priceCurrency || terminal.priceCurrency}
                              floatingLabelText="Currency"
-                             onChange={(event, index, value) => setTerminalProperty(type, 'priceCurrency', value)}>
+                             onChange={(event, index, value) => setTerminalProperties(type, ['priceCurrency'], [value])}>
                   {currencies}
                 </SelectField>
               </div>

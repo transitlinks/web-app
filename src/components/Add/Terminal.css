@@ -98,24 +98,46 @@
   margin-bottom: -10px;
 }
 
+.linkedTerminal {
+  width: 100%;
+}
+
 .terminalMenuItemLabel {
   line-height: initial;
   white-space: normal;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  min-height: 56px;
+}
+
+.terminalMenuItemLabel .notLinked {
+  padding: 6px;
+  border: 1px solid #888;
+  text-align: center;
+  margin-top: 10px;
+  min-width: 320px;
+  color: #000;
 }
 
 .terminalMenuItemLabel .itemLabelRow {
+  min-height: 40px;
 }
 
 .terminalMenuItemLabel .terminalTransport {
-  margin-right: 16px;
+  margin-right: 10px;
   float: left;
+  border: 1px solid #888;
+  padding: 6px;
+  color: #000;
 }
 
-.terminalMenuItemLabel .terminalTransportId {
+.terminalTransportId {
   color: #888888;
-  line-height: 50px;
+  margin-bottom: 6px;
 }
 
 .terminalMenuItemLabel .terminalAddress {
   white-space: normal;
+  margin-bottom: 20px;
+  color: #000;
 }
