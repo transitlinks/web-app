@@ -55,15 +55,25 @@ const addUserId = (object, request) => {
 
 const saveTerminal = async (terminalInput, request) => {
 
-  const { checkInUuid } = terminalInput;
+  const { checkInUuid, linkedTerminalUuid } = terminalInput;
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-  if (!checkIn) {
+  const linkedTerminal = await postRepository.getTerminal({ uuid: linkedTerminalUuid });
 
+  if (!checkIn) {
+    //TODO: Process error
+  }
+
+  if (!linkedTerminal) {
+    //TODO: Process error
   }
 
   const terminal = {
     checkInId: checkIn.id
   };
+
+  if (linkedTerminal) {
+    terminal.linkedTerminalId = linkedTerminal.id;
+  }
 
   if (terminalInput.date) {
     terminal.date = new Date(terminalInput.date);
@@ -77,6 +87,12 @@ const saveTerminal = async (terminalInput, request) => {
   addUserId(terminal, request);
 
   const saved = await postRepository.saveTerminal(terminal);
+
+  if (linkedTerminal) {
+    const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
+    postRepository.saveTerminal({ uuid: linkedTerminal.uuid, linkedTerminalId: saved.id, ...linkedTerminalUpdate });
+  }
+
   return saved.toJSON();
 
 };

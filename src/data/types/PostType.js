@@ -58,6 +58,7 @@ export const TerminalInputType = new GraphQLInputObjectType({
   description: 'Input properties of Transitlinks Terminal object',
   fields: {
     checkInUuid: { type: GraphQLString },
+    linkedTerminalUuid: { type: GraphQLString },
     clientId: { type: GraphQLString },
     type: { type: GraphQLString },
     transport: { type: GraphQLString },

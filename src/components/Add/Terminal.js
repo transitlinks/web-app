@@ -45,40 +45,6 @@ const Terminal = (props) => {
     saveTerminal
   } = props;
 
-  const save  = () => {
-
-    const editedTerminal = {
-      checkInUuid: checkIn.uuid,
-      type,
-      transport,
-      transportId,
-      priceCurrency
-    };
-
-    if (terminal) {
-      editedTerminal.uuid = terminal.uuid;
-    }
-
-    if (priceAmount && priceAmount.length > 0) {
-      editedTerminal.priceAmount = parseFloat(priceAmount);
-    }
-
-    if (date) {
-      editedTerminal.date = date.toISOString();
-    }
-
-    if (time) {
-      editedTerminal.time = time.toISOString();
-    }
-
-    const clientId = getClientId();
-    editedTerminal.clientId = clientId;
-
-    console.log("save terminal", editedTerminal);
-    saveTerminal({ terminal: editedTerminal });
-
-
-  };
 
   console.log("terminal", props);
   const transportOptions = transportTypes.map(type => (
@@ -100,8 +66,9 @@ const Terminal = (props) => {
     setProperty('editTerminal.terminalProperties', { ...terminalProperties });
   };
 
-  const openTerminalOptions = (openTerminals || []).filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival')))
-    .map(terminal => {
+  const typedOpenTerminals = openTerminals.filter(terminal => terminal.type === (type === 'arrival' ? 'departure' : 'arrival'));
+
+  const openTerminalOptions = typedOpenTerminals.map(terminal => {
 
     const pronoun = type === 'arrival' ? ' to ' : ' from ';
     const linkedTerminalLabel = intl.formatMessage(msg[terminal.transport]) + ' ' + terminal.transportId;
@@ -122,6 +89,7 @@ const Terminal = (props) => {
       </div>
     );
 
+    console.log("adding menu item", terminal);
     return (
       <MenuItem id={terminal.uuid} key={terminal.uuid} style={{ wdith: '100%', "WebkitAppearance": "initial" }}
                 value={terminal.uuid} primaryText={menuItemLabel}>
@@ -151,14 +119,17 @@ const Terminal = (props) => {
     linkedTerminalUuid = terminalProperties[type].linkedTerminalUuid;
   }
 
+  
   let linkedTerminal = null;
-  if (linkedTerminalUuid && linkedTerminalUuid !== 'not-linked') {
-    linkedTerminal = openTerminals.filter(terminal => terminal.uuid = linkedTerminalUuid)[0];
+  if (linkedTerminalUuid !== 'not-linked') {
+    if (typedOpenTerminals.length > 0) {
+      linkedTerminal = typedOpenTerminals.filter(terminal => terminal.uuid === (linkedTerminalUuid || typedOpenTerminals[0].uuid))[0];
+    }
   }
 
   const getTerminalProperty = (key) => {
-    if (!terminalProperties[type] || !terminalProperties[type][key]) {
-      if (linkedTerminal) {
+    if (!terminalProperties[type] || terminalProperties[type][key] === null) {
+      if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
         return linkedTerminal[key];
       }
       return null;
@@ -174,7 +145,46 @@ const Terminal = (props) => {
   let priceAmount = getTerminalProperty('priceAmount');
 
   const linkedTerminalLabel = type === 'arrival' ? 'Link to departure' : 'Link to arrival';
-  console.log("determined link terminal id", linkedTerminalUuid);
+
+  const save  = () => {
+
+    const editedTerminal = {
+      checkInUuid: checkIn.uuid,
+      type,
+      transport,
+      transportId,
+      priceCurrency
+    };
+
+    if (terminal) {
+      editedTerminal.uuid = terminal.uuid;
+    }
+
+    if (priceAmount && priceAmount.length > 0) {
+      editedTerminal.priceAmount = parseFloat(priceAmount);
+    }
+
+    if (date) {
+      editedTerminal.date = date.toISOString();
+    }
+
+    if (time) {
+      editedTerminal.time = time.toISOString();
+    }
+
+    if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
+      editedTerminal.linkedTerminalUuid = linkedTerminalUuid;
+    }
+
+    const clientId = getClientId();
+    editedTerminal.clientId = clientId;
+
+    console.log("save terminal", editedTerminal);
+    saveTerminal({ terminal: editedTerminal });
+
+
+  };
+
 
   return (
     <div>
@@ -186,7 +196,7 @@ const Terminal = (props) => {
               <div className={s.linkedTerminal}>
                 <SelectField id="linked-terminal-select"
                              fullWidth={true}
-                             value={linkedTerminalUuid || ((openTerminals && openTerminals.length > 0) && openTerminals[0].uuid)}
+                             value={linkedTerminalUuid || ((typedOpenTerminals && typedOpenTerminals.length > 0) && typedOpenTerminals[0].uuid)}
                              onChange={(event, index, value) => setTerminalProperties(type,
                                ['linkedTerminalUuid', 'transport', 'transportId', 'date', 'time', 'priceAmount', 'priceCurrency'],
                                [value, null, null, null, null, null, null])}
