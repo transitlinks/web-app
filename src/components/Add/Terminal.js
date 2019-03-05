@@ -160,8 +160,7 @@ const Terminal = (props) => {
       checkInUuid: checkIn.uuid,
       type,
       transport,
-      transportId,
-      priceCurrency
+      transportId
     };
 
     if (terminal) {
@@ -170,6 +169,10 @@ const Terminal = (props) => {
 
     if (priceAmount && priceAmount.length > 0) {
       editedTerminal.priceAmount = parseFloat(priceAmount);
+    }
+
+    if (priceCurrency) {
+      editedTerminal.priceCurrency = priceCurrency;
     }
 
     if (date) {
