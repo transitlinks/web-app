@@ -104,3 +104,31 @@
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
+
+.terminalEntry {
+  white-space: normal;
+  padding-bottom: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.terminalEntry .terminalEntryRow {
+}
+
+.terminalEntry .terminalEntryTransport {
+  margin-right: 10px;
+  font-weight: 800;
+  float: left;
+  color: #000;
+}
+
+.terminalEntryTransportId {
+  color: #888888;
+  margin-bottom: 6px;
+}
+
+.terminalEntry .terminalEntryAddress {
+  white-space: normal;
+  margin-bottom: 6px;
+  color: #000;
+}

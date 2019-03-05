@@ -19,6 +19,8 @@ const FeedItemContent = ({
   const { checkIn, posts, terminals } = feedItem;
   let content = null;
 
+  console.log('feedItem', feedItem);
+
   const formatDate = (date) => {
 
     console.log("format date", date);
@@ -27,6 +29,33 @@ const FeedItemContent = ({
     }
 
     return '-';
+
+  };
+
+  const renderTerminalEntry = (terminal) => {
+
+    let linkedTerminalAddress = null;
+    if (terminal.linkedTerminal) {
+      linkedTerminalAddress = (
+        <div className={s.terminalEntryAddress}>
+          { terminal.linkedTerminal.checkIn.formattedAddress }
+        </div>
+      );
+    }
+
+    return (
+      <div className={s.terminalEntry}>
+        <div className={s.terminalEntryRow}>
+          <div className={s.terminalEntryTransport}>
+            <FormattedMessage {...terminalMsg[terminal.transport]} />
+          </div>
+          <p className={s.terminalEntryTransportId}>
+            { terminal.transportId }
+          </p>
+        </div>
+        { linkedTerminalAddress }
+      </div>
+    );
 
   };
 
@@ -48,31 +77,13 @@ const FeedItemContent = ({
   } else if (contentType === 'arrival') {
 
     content = terminals.filter(terminal => terminal.type === 'arrival').map(terminal => {
-      return (
-        <div className={s.terminalContainer}>
-          <div className={s.terminal}>
-            <div className={s.transport}>
-              <FormattedMessage {...terminalMsg[terminal.transport]} />
-            </div>
-            <div className={s.terminalFrom}>
-              from Helsinki
-            </div>
-          </div>
-          <div className={s.transportId}>
-            {terminal.transportId}
-          </div>
-        </div>
-      );
+      return renderTerminalEntry(terminal);
     });
 
   } else if (contentType === 'departure') {
 
     content = terminals.filter(terminal => terminal.type === 'departure').map(terminal => {
-      return (
-        <div className={s.terminal}>
-          --{terminal.type}
-        </div>
-      );
+      return renderTerminalEntry(terminal);
     });
 
   } else if (contentType === 'lodging') {

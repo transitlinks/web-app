@@ -19,12 +19,12 @@ import {getClientId} from "../../core/utils";
 
 const labels = {
   departure: {
-    dateInputTitle: 'Date',
+    dateInputTitle: 'Departure date',
     timeInputTitle: 'Time',
     placeInputTitle: 'Departure description'
   },
   arrival: {
-    dateInputTitle: 'Date',
+    dateInputTitle: 'Arrival date',
     timeInputTitle: 'Time',
     placeInputTitle: 'Arrival description'
   }
@@ -98,6 +98,23 @@ const Terminal = (props) => {
 
   });
 
+
+  let linkedTerminalUuid = null;
+  if(terminalProperties[type] && terminalProperties[type].linkedTerminalUuid) {
+    linkedTerminalUuid = terminalProperties[type].linkedTerminalUuid;
+  } else {
+    if (typedOpenTerminals.length > 0) {
+      linkedTerminalUuid = typedOpenTerminals[0].uuid;
+    }
+  }
+  
+  let linkedTerminal = null;
+  if (linkedTerminalUuid !== 'not-linked') {
+    if (typedOpenTerminals.length > 0) {
+      linkedTerminal = typedOpenTerminals.filter(terminal => terminal.uuid === (linkedTerminalUuid || typedOpenTerminals[0].uuid))[0];
+    }
+  }
+
   if (openTerminalOptions.length > 0) {
     const itemElem = (
       <div className={s.terminalMenuItemLabel}>
@@ -111,20 +128,11 @@ const Terminal = (props) => {
                 value={'not-linked'} primaryText={itemElem}>
       </MenuItem>
     );
-    openTerminalOptions.unshift(notLinkedItem);
-  }
 
-  let linkedTerminalUuid = null;
-  if(terminalProperties[type] && terminalProperties[type].linkedTerminalUuid) {
-    linkedTerminalUuid = terminalProperties[type].linkedTerminalUuid;
-  }
-
-  
-  let linkedTerminal = null;
-  if (linkedTerminalUuid !== 'not-linked') {
-    if (typedOpenTerminals.length > 0) {
-      linkedTerminal = typedOpenTerminals.filter(terminal => terminal.uuid === (linkedTerminalUuid || typedOpenTerminals[0].uuid))[0];
+    if (linkedTerminalUuid === 'not-linked') {
+      openTerminalOptions.unshift(notLinkedItem);
     }
+
   }
 
   const getTerminalProperty = (key) => {
@@ -185,7 +193,6 @@ const Terminal = (props) => {
 
   };
 
-
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
@@ -210,82 +217,132 @@ const Terminal = (props) => {
               </div>
             </div>
           }
-          <div className={s.inputRow1}>
-            <div className={s.transport}>
-              <SelectField id="transport-select"
-                           fullWidth={true}
-                           value={transport || terminal.transport}
-                           onChange={(event, index, value) => setTerminalProperties(type, ['transport'], [value])}
-                           floatingLabelText="Transport"
-                           floatingLabelFixed={true}
-                           hintText="Select type">
-                {transportOptions}
-              </SelectField>
-            </div>
-            <div className={s.dateTime}>
-              <div className={s.date}>
-                <DatePicker id={`${type}-date-picker`}
-                            hintText={labels[type].dateInputTitle}
-                            value={date || terminal.date || new Date()}
-                            floatingLabelText="Arrival date"
-                            floatingLabelFixed={true}
-                            autoOk={true}
-                            fullWidth={true}
-                            onChange={(event, value) => setTerminalProperties(type, ['date'], [value])}
-                />
+          {
+
+            linkedTerminal ?
+              <div className={s.linkedTerminalContent}>
+                <div className={s.linkedRow1}>
+                  <div className={s.unlink}>
+                    <a href="#" onClick={(event, index, value) => setTerminalProperties(type,
+                      ['linkedTerminalUuid', 'transport', 'transportId', 'date', 'time', 'priceAmount', 'priceCurrency'],
+                      ['not-linked', null, null, null, null, null, null])}>
+                      Unlink
+                    </a>
+                  </div>
+                  <div className={s.linkedDateTime}>
+                    <div className={s.date}>
+                      <DatePicker id={`${type}-date-picker`}
+                                  hintText={labels[type].dateInputTitle}
+                                  value={date || terminal.date || new Date()}
+                                  floatingLabelText={labels[type].dateInputTitle}
+                                  floatingLabelFixed={true}
+                                  floatingLabelStyle={{ width: "120px" }}
+                                  autoOk={true}
+                                  fullWidth={true}
+                                  onChange={(event, value) => setTerminalProperties(type, ['date'], [value])}
+                      />
+                    </div>
+                    <div className={s.time}>
+                      <TimePicker id={`${type}-time-picker`}
+                                  format="24hr"
+                                  hintText={labels[type].timeInputTitle}
+                                  value={time || terminal.time || new Date()}
+                                  floatingLabelText="Time"
+                                  floatingLabelFixed={true}
+                                  autoOk={true}
+                                  fullWidth={true}
+                                  onChange={(event, value) => setTerminalProperties(type, ['time'], [value])}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className={s.inputRow3}>
+                  <div className={s.linkedControls}>
+                    <RaisedButton label="OK" fullWidth={true} disabled={saveDisabled} onClick={() => save()} />
+                  </div>
+                </div>
+              </div> :
+              <div>
+                <div className={s.inputRow1}>
+                  <div className={s.transport}>
+                    <SelectField id="transport-select"
+                                 fullWidth={true}
+                                 value={transport || terminal.transport}
+                                 onChange={(event, index, value) => setTerminalProperties(type, ['transport'], [value])}
+                                 floatingLabelText="Transport"
+                                 floatingLabelFixed={true}
+                                 hintText="Select type">
+                      {transportOptions}
+                    </SelectField>
+                  </div>
+                  <div className={s.dateTime}>
+                    <div className={s.date}>
+                      <DatePicker id={`${type}-date-picker`}
+                                  hintText={labels[type].dateInputTitle}
+                                  value={date || terminal.date || new Date()}
+                                  floatingLabelText={labels[type].dateInputTitle}
+                                  floatingLabelFixed={true}
+                                  floatingLabelStyle={{ width: "120px" }}
+                                  autoOk={true}
+                                  fullWidth={true}
+                                  onChange={(event, value) => setTerminalProperties(type, ['date'], [value])}
+                      />
+                    </div>
+                    <div className={s.time}>
+                      <TimePicker id={`${type}-time-picker`}
+                                  format="24hr"
+                                  hintText={labels[type].timeInputTitle}
+                                  value={time || terminal.time || new Date()}
+                                  floatingLabelText="Time"
+                                  floatingLabelFixed={true}
+                                  autoOk={true}
+                                  fullWidth={true}
+                                  onChange={(event, value) => setTerminalProperties(type, ['time'], [value])}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className={s.inputRow2}>
+                  <div className={s.transportId}>
+                    <TextField id="transport-id"
+                               value={transportId || terminal.transportId || ''}
+                               fullWidth={true}
+                               floatingLabelText="Transport ID"
+                               floatingLabelFixed={true}
+                               onChange={(e) => setTerminalProperties(type, ['transportId'], [e.target.value])}
+                               hintText={(!transportId) ? "Number, company..." : null}
+                    />
+                  </div>
+                </div>
+                <div className={s.inputRow3}>
+                  <div className={s.cost}>
+                    <div className={s.amount}>
+                      <TextField id="price-amount-input"
+                                 style={ { width: '100%'} }
+                                 value={priceAmount || terminal.priceAmount || ''}
+                                 floatingLabelText="Cost"
+                                 hintText="Price"
+                                 floatingLabelFixed={true}
+                                 onChange={(e) => setTerminalProperties(type, ['priceAmount'], [e.target.value])}
+                      />
+                    </div>
+                    <div className={s.currency}>
+                      <SelectField id="currency-select"
+                                   style={ { width: '100%'} }
+                                   value={priceCurrency || terminal.priceCurrency}
+                                   floatingLabelText="Currency"
+                                   onChange={(event, index, value) => setTerminalProperties(type, ['priceCurrency'], [value])}>
+                        {currencies}
+                      </SelectField>
+                    </div>
+                  </div>
+                  <div className={s.controls}>
+                    <RaisedButton label="OK" fullWidth={true} disabled={saveDisabled} onClick={() => save()} />
+                  </div>
+                </div>
               </div>
-              <div className={s.time}>
-                <TimePicker id={`${type}-time-picker`}
-                            format="24hr"
-                            hintText={labels[type].timeInputTitle}
-                            value={time || terminal.time || new Date()}
-                            floatingLabelText="Time"
-                            floatingLabelFixed={true}
-                            autoOk={true}
-                            fullWidth={true}
-                            onChange={(event, value) => setTerminalProperties(type, ['time'], [value])}
-                />
-              </div>
-            </div>
-          </div>
-          <div className={s.inputRow2}>
-            <div className={s.transportId}>
-              <TextField id="transport-id"
-                         value={transportId || terminal.transportId || ''}
-                         fullWidth={true}
-                         floatingLabelText="Transport ID"
-                         floatingLabelFixed={true}
-                         onChange={(e) => setTerminalProperties(type, ['transportId'], [e.target.value])}
-                         hintText={(!transportId) ? "Number, company..." : null}
-              />
-            </div>
-          </div>
-          <div className={s.inputRow3}>
-            <div className={s.cost}>
-              <div className={s.amount}>
-                <TextField id="price-amount-input"
-                           style={ { width: '100%'} }
-                           value={priceAmount || terminal.priceAmount || ''}
-                           floatingLabelText="Cost"
-                           hintText="Price"
-                           floatingLabelFixed={true}
-                           onChange={(e) => setTerminalProperties(type, ['priceAmount'], [e.target.value])}
-                />
-              </div>
-              <div className={s.currency}>
-                <SelectField id="currency-select"
-                             style={ { width: '100%'} }
-                             value={priceCurrency || terminal.priceCurrency}
-                             floatingLabelText="Currency"
-                             onChange={(event, index, value) => setTerminalProperties(type, ['priceCurrency'], [value])}>
-                  {currencies}
-                </SelectField>
-              </div>
-            </div>
-            <div className={s.controls}>
-              <RaisedButton label="OK" fullWidth={true} disabled={saveDisabled} onClick={() => save()} />
-            </div>
-          </div>
+
+          }
         </div>
       </div>
       <div>
