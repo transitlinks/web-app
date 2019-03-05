@@ -10,45 +10,6 @@ import FeedItem from './FeedItem';
 import Add from '../Add'
 import msg from './messages';
 
-const feedItemContent = (feedItem) => {
-
-  const { checkIn, posts, terminals } = feedItem;
-
-  let postElems = null;
-  if (posts) {
-    postElems = posts.map(post => {
-      return (
-        <div className={s.post}>
-          <div className={s.postInfo}>
-            <div className={s.postAuthor}>Anonymous</div>
-            <div className={s.postDate}>Feb 4 at 23:11</div>
-          </div>
-          <div className={s.postText}>{post.text}</div>
-          <div className={s.postControls}></div>
-        </div>
-      );
-    });
-  }
-
-  let terminalElems = null;
-  if (terminals) {
-    terminalElems = terminals.map(terminal => {
-      return (
-        <div className={s.terminal}>
-          --{terminal.type}
-        </div>
-      );
-    });
-  }
-
-  return (
-    <div className={s.feedItemContent}>
-      {terminalElems}
-      {postElems}
-    </div>
-  );
-
-};
 
 const FeedView = ({
   feed, transportTypes, loadedFeed, savedCheckIn, fetchedFeedItem

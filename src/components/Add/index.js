@@ -144,7 +144,7 @@ const AddView = (props) => {
       const { position } = geolocation;
       positionElem = (
         <div>
-          { formatCoords(position.coords) }
+          { feedItem.checkIn.formattedAddress }
         </div>
       );
     } else if (geolocation.status === 'locating') {

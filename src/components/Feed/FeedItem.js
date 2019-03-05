@@ -78,11 +78,11 @@ const FeedItem = ({
           <div className={s.inboundCheckIns}>
             {
               inbound.map(inboundCheckIn => {
-                const {uuid, latitude, longitude} = inboundCheckIn;
+                const {uuid, latitude, longitude, formattedAddress } = inboundCheckIn;
                 return (
                   <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
                     <div className={s.linkedCheckInDisplay}>
-                      {latitude}, {longitude}
+                      { formattedAddress }
                     </div>
                     <div className={s.linkedCheckInControls}></div>
                   </div>
@@ -105,7 +105,7 @@ const FeedItem = ({
           </div>
         }
         <div className={s.feedItemDisplay}>
-          { checkIn.latitude }, { checkIn.longitude }
+          { checkIn.formattedAddress }
         </div>
         <div className={s.feedItemControls}>
           {
@@ -133,11 +133,11 @@ const FeedItem = ({
           <div className={s.outboundCheckIns}>
             {
               outbound.map(outboundCheckIn => {
-                const { uuid, latitude, longitude } = outboundCheckIn;
+                const { uuid, latitude, longitude, formattedAddress } = outboundCheckIn;
                 return (
                   <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
                     <div className={s.linkedCheckInDisplay}>
-                      { latitude }, { longitude }
+                      { formattedAddress }
                     </div>
                     <div className={s.linkedCheckInControls}></div>
                   </div>

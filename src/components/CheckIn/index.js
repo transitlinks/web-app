@@ -10,6 +10,7 @@ import { setProperty } from '../../actions/properties';
 import { getClientId } from "../../core/utils";
 import { injectIntl } from 'react-intl';
 import msg from './messages';
+import {geocode} from "../../services/linkService";
 
 const formatCoords = (coords) => {
   const { latitude, longitude } = coords;
@@ -29,15 +30,20 @@ const createCheckIn = (geolocation) => {
 
 };
 
+
 const CheckInView = ({ intl, geolocation, setProperty, getGeolocation, saveCheckIn }) => {
 
   let positionElem = null;
+
   if (geolocation) {
     if (geolocation.status === 'located') {
       const { position } = geolocation;
+      //const location = await geocodePosition(position.latitude, position.longitude);
+      //console.log("LOC", location);
+      //const formattedAddress = location.formatted_address || location.address_components.formatted_address;
       positionElem = (
-        <div>
-          { formatCoords(position.coords) }
+        <div className={s.positionValue}>
+          { position.formattedAddress }
         </div>
       );
     } else if (geolocation.status === 'locating') {
@@ -64,12 +70,10 @@ const CheckInView = ({ intl, geolocation, setProperty, getGeolocation, saveCheck
               <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
             </div>
             <div className={s.positionSelector}>
-              <div className={s.positionValue}>
-                { positionElem }
-              </div>
               <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
                 <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
               </div>
+              { positionElem }
             </div>
           </div>
         </div>
