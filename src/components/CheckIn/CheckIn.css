@@ -31,9 +31,9 @@
   display: flex;
   position: relative;
   cursor: pointer;
+  width: 100px;
   flex-grow: 1;
   flex-direction: row-reverse;
-  
   height: 32px;
   align-items: center;
   padding-left: 6px;
@@ -48,6 +48,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.addressAutocomplete {
+  width: 100%;
+}
+
+.autocomplete hr {
+  display: none;
 }
 
 .placeSelector .positionContainer .editPositionButton {

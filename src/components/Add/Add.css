@@ -17,6 +17,8 @@
 .placeSelector .positionContainer {
   display: flex;
   align-items: center;
+  padding-right: 8px;
+  padding-left: 8px;
 }
 
 .placeSelector .positionContainer .positionButton {
@@ -29,22 +31,23 @@
   display: flex;
   position: relative;
   cursor: pointer;
-  flex-grow: 1;
+  width: 100%;
   height: 32px;
   align-items: center;
-  padding-left: 6px;
   font-size: 18px;
+  flex-direction: row-reverse;
 }
 
 .positionSelector .positionValue {
   margin-top: 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-grow: 1;
 }
 
 .placeSelector .positionContainer .editPositionButton {
   display: flex;
-  position: absolute;
-  top: 2px;
-  right: 2px;
   padding-top: 4px;
   padding-right: 6px;
   border-radius: 6px;

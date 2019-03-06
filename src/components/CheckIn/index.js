@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import FontIcon from 'material-ui/FontIcon';
+import AddressAutocomplete from './AddressAutocomplete';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './CheckIn.css';
@@ -17,38 +18,65 @@ const formatCoords = (coords) => {
   return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
 };
 
-const createCheckIn = (geolocation) => {
-
-
-  const { position } = geolocation;
-  if (position) {
-    const { coords: { latitude, longitude } } = position;
-    return { clientId: getClientId(), latitude, longitude };
-  }
-
-  return null;
-
+const createCheckIn = (coords) => {
+  if (!coords) return null;
+  const { latitude, longitude } = coords;
+  return { clientId: getClientId(), latitude, longitude };
 };
 
 
-const CheckInView = ({ intl, geolocation, setProperty, getGeolocation, saveCheckIn }) => {
+const CheckInView = ({ intl, geolocation, searchLocation, selectedLocation, setProperty, getGeolocation, saveCheckIn }) => {
 
   let positionElem = null;
+
+  const autocompleteProps = {
+    fullWidth: true
+  };
+
+  const searchTriggered = (input) => {
+    return input && input.length > 2;
+  };
+
+  const dataSource = () => {
+
+    if (!searchTriggered(input)) {
+      return [];
+    }
+
+    return (predictions || []).map(place => {
+      return {
+        id: place.apiId,
+        text: place.description,
+        value: place,
+        elem: (
+          <MenuItem id={place.apiId} style={{ "WebkitAppearance": "initial" }}
+                    primaryText={place.description} />
+        )
+      };
+    });
+  };
 
   if (geolocation) {
     if (geolocation.status === 'located') {
       const { position } = geolocation;
-      //const location = await geocodePosition(position.latitude, position.longitude);
-      //console.log("LOC", location);
-      //const formattedAddress = location.formatted_address || location.address_components.formatted_address;
-      positionElem = (
-        <div className={s.positionValue}>
-          { position.formattedAddress }
-        </div>
-      );
+      const locationText = selectedLocation ?
+        selectedLocation.description : position.formattedAddress;
+        positionElem = !searchLocation ? (
+          <div className={s.positionValue}>
+            <span onClick={() => setProperty('posts.searchLocation', true)}>{ locationText }</span>
+          </div>
+        ) : (
+          <div className={s.addressAutocomplete}>
+            <AddressAutocomplete id={"checkin-autocomplete"}
+                                 initialValue={position.coords}
+                                 endpoint="departure"
+                                 location={formatCoords(position.coords)}
+                                 className={s.autocomplete} />
+          </div>
+        );
     } else if (geolocation.status === 'locating') {
       positionElem = (
-        <div>
+        <div className={s.locating}>
           Locating...
         </div>
       );
@@ -61,16 +89,30 @@ const CheckInView = ({ intl, geolocation, setProperty, getGeolocation, saveCheck
     }
   }
 
+  let locationCoords = null;
+  if (selectedLocation) {
+    locationCoords = {
+      latitude: selectedLocation.lat,
+      longitude: selectedLocation.lng
+    };
+  } else if (geolocation && geolocation.position) {
+    locationCoords = geolocation.position.coords;
+  }
+
 	return (
 	  <div className={s.root}>
       <div className={s.container}>
         <div className={s.placeSelector}>
           <div className={s.positionContainer}>
-            <div className={s.positionButton} onClick={() => getGeolocation()}>
+            <div className={s.positionButton} onClick={() => {
+              setProperty('posts.searchLocation', false);
+              setProperty('departure', null);
+              getGeolocation();
+            }}>
               <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
             </div>
             <div className={s.positionSelector}>
-              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
+              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(locationCoords) })}>
                 <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
               </div>
               { positionElem }
@@ -92,7 +134,9 @@ export default injectIntl(
       position: state.global['geolocation.position'],
       error: state.global['geolocation.error']
     },
-    savedCheckIn: state.posts.checkIn
+    savedCheckIn: state.posts.checkIn,
+    searchLocation: state.posts.searchLocation,
+    selectedLocation: state.editLink.departure
   }), {
     setProperty,
     getGeolocation,
