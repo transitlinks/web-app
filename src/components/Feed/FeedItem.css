@@ -24,9 +24,16 @@
 .feedItemContainer .feedItemDisplay {
   font-size: 18px;
   margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 
 .feedItemContainer .feedItemControls {
+  min-width: 64px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .feedItemControls .linksButton {
@@ -57,15 +64,21 @@
   position: relative;
   background-color: white;
   z-index: 3;
+  display: flex;
 }
 
 .outboundCheckIns .linkedCheckIn {
   border-bottom: 1px solid #e0e0e0;
+  display: flex;
 }
 
 .linkedCheckIn .linkedCheckInDisplay {
   font-size: 18px;
   margin-top: 4px;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .linkedCheckIn .linkedCheckInControls {

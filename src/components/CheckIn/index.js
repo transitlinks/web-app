@@ -116,7 +116,10 @@ const CheckInView = ({ intl, geolocation, searchLocation, selectedLocation, setP
               <FontIcon className="material-icons" style={{ fontSize: '30px' }}>my_location</FontIcon>
             </div>
             <div className={s.positionSelector}>
-              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(locationCoords) })}>
+              <div className={s.editPositionButton} onClick={() => {
+                setProperty('posts.addType', null);
+                saveCheckIn({ checkIn: createCheckIn(locationCoords) });
+              }}>
                 <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
               </div>
               { positionElem }

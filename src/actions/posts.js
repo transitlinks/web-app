@@ -220,12 +220,20 @@ export const getFeed = (clientId) => {
             inbound {
               uuid,
               latitude,
-              longitude
+              longitude,
+              placeId,
+              formattedAddress,
+              locality,
+              country
             },
             outbound {
               uuid,
               latitude,
-              longitude
+              longitude,
+              placeId,
+              formattedAddress,
+              locality,
+              country
             },
             posts {
               uuid,

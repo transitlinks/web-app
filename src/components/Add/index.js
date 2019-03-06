@@ -134,7 +134,10 @@ const getTabContent = (type, props) => {
 
 const AddView = (props) => {
 
-  const { type, transportTypes, feedItem, intl, geolocation, postText, setProperty, getGeolocation, savePost, saveCheckIn } = props;
+  const {
+    type, transportTypes, feedItem, openTerminals, intl, geolocation, postText,
+    setProperty, getGeolocation, savePost, saveCheckIn
+  } = props;
 
   console.log("add props", props);
 
@@ -160,13 +163,31 @@ const AddView = (props) => {
 
   const { checkIn } = feedItem;
 
+  let defaultType = 'reaction';
+  if (openTerminals && openTerminals.length > 0) {
+    const openArrivals = openTerminals.filter(terminal => terminal.type === 'arrival');
+    const openDepartures = openTerminals.filter(terminal => terminal.type === 'departure');
+    if (openArrivals.length > 0) {
+      defaultType = 'departure';
+    } else if (openDepartures.length > 0) {
+      defaultType = 'arrival';
+    }
+
+    console.log("debug", openArrivals, openDepartures, defaultType);
+
+  }
+
+  const selectedType = type || defaultType;
+
 	return (
 	  <div className={s.root}>
       <div className={s.container}>
         <div className={s.placeSelector}>
           <div className={s.positionContainer}>
             <div className={s.positionSelector}>
-              <div className={s.editPositionButton} onClick={() => saveCheckIn({ checkIn: createCheckIn(geolocation) })}>
+              <div className={s.editPositionButton} onClick={() => {
+                saveCheckIn({ checkIn: createCheckIn(geolocation) });
+              }}>
                 Change
               </div>
               <div className={s.positionValue}>
@@ -178,13 +199,13 @@ const AddView = (props) => {
         <div className={s.postContent}>
           <div className={s.contentTypeContainer}>
             <div className={s.contentTypeSelectors}>
-              { typeSelector('tag_faces', type === 'reaction', () => setProperty('posts.addType', 'reaction')) }
-              { typeSelector('call_received', type === 'arrival', () => setProperty('posts.addType', 'arrival')) }
-              { typeSelector('call_made', type === 'departure', () => setProperty('posts.addType', 'departure')) }
-              { typeSelector('hotel', type === 'lodging', () => setProperty('posts.addType', 'lodging')) }
+              { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
+              { typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
+              { typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
+              { typeSelector('hotel', selectedType === 'lodging', () => setProperty('posts.addType', 'lodging')) }
             </div>
           </div>
-          { getTabContent(type, props) }
+          { getTabContent(selectedType, props) }
         </div>
       </div>
       <FeedItemContent transportTypes={transportTypes} feedItem={feedItem} contentType={type} />
@@ -205,7 +226,7 @@ export default injectIntl(
     postText: state.posts.postText,
     savedPost: state.posts.post,
     savedCheckIn: state.posts.checkIn,
-    type: state.posts.addType || 'reaction'
+    type: state.posts.addType
   }), {
     setProperty,
     getGeolocation,
