@@ -59,6 +59,10 @@ const CheckInView = ({ intl, geolocation, searchLocation, selectedLocation, setP
   if (geolocation) {
     if (geolocation.status === 'located') {
       const { position } = geolocation;
+      let coordsStr = '';
+      if (position && position.coords) {
+        coordsStr = position.coords.latitude + ',' + position.coords.longitude;
+      }
       const locationText = selectedLocation ?
         selectedLocation.description : position.formattedAddress;
         positionElem = !searchLocation ? (
@@ -70,7 +74,7 @@ const CheckInView = ({ intl, geolocation, searchLocation, selectedLocation, setP
             <AddressAutocomplete id={"checkin-autocomplete"}
                                  initialValue={position.coords}
                                  endpoint="departure"
-                                 location={formatCoords(position.coords)}
+                                 location={coordsStr}
                                  className={s.autocomplete} />
           </div>
         );
