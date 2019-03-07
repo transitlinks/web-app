@@ -145,6 +145,42 @@ const saveCheckIn = async (checkInInput, request) => {
 
 };
 
+const deleteCheckIn = async (checkInUuid, request) => {
+
+  const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
+  const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
+  const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });
+
+  if (prevCheckIn) {
+    if (nextCheckIn) {
+      await postRepository.saveCheckIn({ uuid: prevCheckIn.uuid, nextCheckInId: nextCheckIn.id });
+    }
+  }
+
+  if (nextCheckIn) {
+    if (prevCheckIn) {
+      await postRepository.saveCheckIn({ uuid: nextCheckIn.uuid, prevCheckInId: prevCheckIn.id });
+    }
+  }
+
+  await postRepository.deletePosts({ checkInId: checkIn.id });
+  const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
+  for (let i = 0; i < terminals.length; i++) {
+    if (terminals[i].linkedTerminalId) {
+      const linkedTerminal = await postRepository.getTerminal({ id: terminals[i].linkedTerminalId });
+      if (linkedTerminal) {
+        await postRepository.saveTerminal({uuid: linkedTerminal.uuid, linkedTerminalId: null});
+      }
+    }
+  }
+
+  await postRepository.deleteTerminals({ checkInId: checkIn.id });
+  await postRepository.deleteCheckIns({ uuid: checkIn.uuid });
+
+  return checkIn.toJSON();
+
+};
+
 const getLinkedCheckIns = async (checkIn) => {
 
   const inboundCheckIns = await postRepository.getCheckIns({ nextCheckInId: checkIn.id });
@@ -197,6 +233,20 @@ export const PostMutationFields = {
     resolve: async ({ request }, { checkIn }) => {
       log.info(graphLog(request, 'save-check-in', 'clientId=' + checkIn.clientId + ' uuid=' + checkIn.uuid));
       return await saveCheckIn(checkIn, request);
+    }
+
+  },
+
+  deleteCheckIn: {
+
+    type: CheckInType,
+    description: 'Delete a check-in',
+    args: {
+      checkInUuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { checkInUuid }) => {
+      log.info(graphLog(request, 'delete-check-in', 'uuid=' + checkInUuid));
+      return await deleteCheckIn(checkInUuid, request);
     }
 
   }

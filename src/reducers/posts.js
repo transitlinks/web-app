@@ -15,6 +15,9 @@ import {
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
+  DELETE_CHECKIN_START,
+  DELETE_CHECKIN_SUCCESS,
+  DELETE_CHECKIN_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
   GET_FEED_ERROR,
@@ -115,6 +118,25 @@ export default function reduce(state = {}, action) {
         SAVE_CHECKIN_START,
         SAVE_CHECKIN_SUCCESS,
         SAVE_CHECKIN_ERROR
+      );
+    case DELETE_CHECKIN_START:
+    case DELETE_CHECKIN_SUCCESS:
+    case DELETE_CHECKIN_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            deletedCheckIn: Object.assign(
+              action.payload,
+              { deleted: (new Date()).getTime() }
+            )
+          }),
+          error: () => ({ deletedCheckIn: null })
+        },
+        DELETE_CHECKIN_START,
+        DELETE_CHECKIN_SUCCESS,
+        DELETE_CHECKIN_ERROR
       );
     case GET_FEED_START:
     case GET_FEED_SUCCESS:

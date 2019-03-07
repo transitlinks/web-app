@@ -36,6 +36,11 @@
   justify-content: flex-end;
 }
 
+.feedItemControls .settingsButton {
+  display: flex;
+  margin-right: 6px;
+}
+
 .feedItemControls .linksButton {
   display: flex;
 }
@@ -185,4 +190,14 @@
 
 .contentTypeSelectors .contentTypeSelector > div {
   display: contents;
+}
+
+.feedItemSettings {
+  display: flex;
+  margin-top: 6px;
+  justify-content: space-around;
+}
+
+.feedItemSettings .feedItemSetting {
+  cursor: pointer;
 }

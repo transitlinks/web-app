@@ -9,7 +9,7 @@ import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
 import FeedItemContent from '../FeedItemContent';
 import { setProperty } from "../../actions/properties";
-import { getFeedItem } from "../../actions/posts";
+import { getFeedItem, deleteCheckIn } from "../../actions/posts";
 
 import msg from './messages';
 
@@ -24,7 +24,7 @@ const typeSelector = (iconName, isSelected, onClick) => {
 };
 
 const FeedItem = ({
-  index, feedProperties, type, feedItem, selectedFeedItem, loadingFeedItem, showLinks, navigate, setProperty, getFeedItem
+  index, feedProperties, type, feedItem, selectedFeedItem, loadingFeedItem, showLinks, showSettings, navigate, setProperty, getFeedItem, deleteCheckIn,
 }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
@@ -109,13 +109,22 @@ const FeedItem = ({
         </div>
         <div className={s.feedItemControls}>
           {
-            showLinks === index &&
-            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', '')}>
+            (showLinks === index || showSettings === index) &&
+            <div className={s.linksButton} onClick={() => {
+              setProperty('posts.showLinks', '');
+              setProperty('posts.showSettings', '');
+            }}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>close</FontIcon>
             </div>
           }
           {
-            showLinks !== index &&
+            (showLinks !== index && showSettings !== index) &&
+            <div className={s.settingsButton} onClick={() => setProperty('posts.showSettings', index)}>
+              <FontIcon className="material-icons" style={{ fontSize: '20px' }}>settings</FontIcon>
+            </div>
+          }
+          {
+            (showLinks !== index && showSettings !== index) &&
             <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', index)}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>unfold_more</FontIcon>
             </div>
@@ -148,6 +157,21 @@ const FeedItem = ({
         </div>
       }
 
+      {
+        showSettings === index &&
+        <div className={s.feedItemSettings}>
+          <div className={s.feedItemSetting}>
+            <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
+              console.log("call delete checkin", deleteCheckIn, checkIn.uuid);
+              deleteCheckIn({ checkInUuid: checkIn.uuid });
+            }}>delete</FontIcon>
+          </div>
+          <div className={s.feedItemSetting}>
+            <FontIcon className="material-icons" style={{fontSize: '20px'}}>share</FontIcon>
+          </div>
+        </div>
+      }
+
       <div className={s.contentTypeContainer}>
         <div className={s.contentTypeSelectors}>
           { typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction')) }
@@ -167,10 +191,12 @@ const FeedItem = ({
 export default connect(state => ({
   feedProperties: state.posts.feedProperties || {},
   showLinks: state.posts.showLinks,
+  showSettings: state.posts.showSettings,
   selectedFeedItem: state.posts.selectedFeedItem,
   loadingFeedItem: state.posts.loadingFeedItem
 }), {
   navigate,
   setProperty,
-  getFeedItem
+  getFeedItem,
+  deleteCheckIn
 })(withStyles(s)(FeedItem));

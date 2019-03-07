@@ -18,6 +18,9 @@ import {
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
+  DELETE_CHECKIN_START,
+  DELETE_CHECKIN_SUCCESS,
+  DELETE_CHECKIN_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
   GET_FEED_ERROR,
@@ -63,6 +66,36 @@ export const saveCheckIn = ({ checkIn }) => {
       SAVE_CHECKIN_START,
       SAVE_CHECKIN_SUCCESS,
       SAVE_CHECKIN_ERROR
+    );
+
+  };
+
+};
+
+export const deleteCheckIn = ({ checkInUuid }) => {
+
+  return async (...args) => {
+
+    const query = `
+      mutation deleteCheckIn {
+        deleteCheckIn(checkInUuid:"${checkInUuid}") {
+          uuid,
+          latitude,
+          longitude,
+          placeId,
+          locality,
+          country,
+          formattedAddress
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'checkIn' ],
+      DELETE_CHECKIN_START,
+      DELETE_CHECKIN_SUCCESS,
+      DELETE_CHECKIN_ERROR
     );
 
   };
@@ -323,12 +356,20 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
           inbound {
             uuid,
             latitude,
-            longitude
+            longitude,
+            placeId,
+            formattedAddress,
+            locality,
+            country
           },
           outbound {
             uuid,
             latitude,
-            longitude
+            longitude,
+            placeId,
+            formattedAddress,
+            locality,
+            country
           },
           posts {
             uuid,

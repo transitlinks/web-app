@@ -54,6 +54,7 @@ const schema = new Schema({
       rating: RatingMutationFields.rating,
       post: PostMutationFields.post,
       checkIn: PostMutationFields.checkIn,
+      deleteCheckIn: PostMutationFields.deleteCheckIn,
       terminal: PostMutationFields.terminal
     },
   })

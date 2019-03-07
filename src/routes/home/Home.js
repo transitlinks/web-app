@@ -29,10 +29,19 @@ class Home extends React.Component {
     const prevTerminal = prevProps.savedTerminal;
     const terminal = this.props.savedTerminal;
 
+    const prevDelCheckIn = prevProps.deletedCheckIn;
+    const delCheckIn = this.props.deletedCheckIn;
+
     const clientId = getClientId();
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
+        this.props.getFeed(clientId);
+      }
+    }
+
+    if (delCheckIn) {
+      if (!prevDelCheckIn || prevDelCheckIn.deleted !== delCheckIn.deleted) {
         this.props.getFeed(clientId);
       }
     }
@@ -74,6 +83,7 @@ Home.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
   savedCheckIn: state.posts.checkIn,
+  deletedCheckIn: state.posts.deletedCheckIn,
   savedPost: state.posts.post,
   savedTerminal: state.posts.savedTerminal
 }), {

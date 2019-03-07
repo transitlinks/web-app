@@ -214,6 +214,42 @@ export default {
 
     return created;
 
+  },
+
+  deleteCheckIns: async (where, options = {}) => {
+
+    const deleteResult = await CheckIn.destroy({
+      where,
+      ...options
+    });
+
+    console.log("delete checkins result", deleteResult);
+    return deleteResult;
+
+  },
+
+  deletePosts: async (where, options = {}) => {
+
+    const deleteResult = await Post.destroy({
+      where,
+      ...options
+    });
+
+    console.log("delete posts result", deleteResult);
+    return deleteResult;
+
+  },
+
+  deleteTerminals: async (where, options = {}) => {
+
+    const deleteResult = await Terminal.destroy({
+      where,
+      ...options
+    });
+
+    console.log("delete terminals result", deleteResult);
+    return deleteResult;
+
   }
 
 };
