@@ -18,12 +18,15 @@ import {
   DELETE_CHECKIN_START,
   DELETE_CHECKIN_SUCCESS,
   DELETE_CHECKIN_ERROR,
+  MEDIA_FILE_UPLOAD_START,
+  MEDIA_FILE_UPLOAD_SUCCESS,
+  MEDIA_FILE_UPLOAD_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
   GET_FEED_ERROR,
   GET_FEEDITEM_START,
   GET_FEEDITEM_SUCCESS,
-  GET_FEEDITEM_ERROR
+  GET_FEEDITEM_ERROR,
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -137,6 +140,26 @@ export default function reduce(state = {}, action) {
         DELETE_CHECKIN_START,
         DELETE_CHECKIN_SUCCESS,
         DELETE_CHECKIN_ERROR
+      );
+    case MEDIA_FILE_UPLOAD_START:
+    case MEDIA_FILE_UPLOAD_SUCCESS:
+    case MEDIA_FILE_UPLOAD_ERROR:
+      const mediaItems = state.mediaItems || [];
+      if (action.type === MEDIA_FILE_UPLOAD_SUCCESS) {
+        mediaItems.push(action.payload.mediaItem);
+      }
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            mediaItems
+          }),
+          error: () => ({})
+        },
+        MEDIA_FILE_UPLOAD_START,
+        MEDIA_FILE_UPLOAD_SUCCESS,
+        MEDIA_FILE_UPLOAD_ERROR
       );
     case GET_FEED_START:
     case GET_FEED_SUCCESS:

@@ -14,6 +14,10 @@ const MediaItem = Model.define('MediaItem', {
     defaultValue: DataType.UUIDV1,
     unique: true,
   },
+
+  entityUuid: {
+    type: DataType.STRING
+  },
     
   type: {
     type: DataType.STRING

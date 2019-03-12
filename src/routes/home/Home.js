@@ -42,6 +42,7 @@ class Home extends React.Component {
 
     if (delCheckIn) {
       if (!prevDelCheckIn || prevDelCheckIn.deleted !== delCheckIn.deleted) {
+        this.props.setProperty('posts.showSettings', '');
         this.props.getFeed(clientId);
       }
     }
@@ -49,6 +50,7 @@ class Home extends React.Component {
     if (post) {
       if (!prevPost || prevPost.saved !== post.saved) {
         this.props.setProperty('posts.postText', '');
+        this.props.setProperty('posts.mediaItems', []);
         this.props.getFeed(clientId);
       }
     }

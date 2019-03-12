@@ -8,7 +8,7 @@ import s from './Add.css';
 import Terminal from './Terminal';
 import FeedItemContent from '../FeedItemContent';
 import { getGeolocation } from '../../actions/global';
-import { savePost, saveCheckIn } from '../../actions/posts';
+import { savePost, saveCheckIn, uploadFiles } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl, FormattedMessage } from 'react-intl';
@@ -45,12 +45,17 @@ const createCheckIn = (geolocation) => {
 
 const createPost = (props) =>  {
 
-  const { postText, feedItem: { checkIn } } = props;
+  const { postText, feedItem: { checkIn }, mediaItems } = props;
   const clientId = getClientId();
+
+  (mediaItems || []).forEach(mediaItem => {
+    if (!mediaItem.thumbnail) delete mediaItem.thumbnail;
+  });
 
   return {
     post: {
       text: postText,
+      mediaItems,
       checkInUuid: checkIn.uuid,
       clientId
     }
@@ -58,16 +63,40 @@ const createPost = (props) =>  {
 
 }
 
+
 const getTabContent = (type, props) => {
 
-  const { feedItem: { checkIn }, transportTypes, openTerminals, postText, savePost, setProperty } = props;
+  const {
+    feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env,
+    savePost, uploadFiles, setProperty
+  } = props;
+
+  const onFileInputChange = (event) => {
+    uploadFiles({
+      entityType: 'CheckIn',
+      entityUuid: checkIn.uuid
+    }, event.target.files);
+  };
 
   switch (type) {
 
     case 'reaction':
 
+      console.log("MEDIA ITEMS", mediaItems);
+
       return (
         <div className={s.contentEditor}>
+          <div className={s.mediaContent}>
+            {
+              (mediaItems || []).map(mediaItem => {
+                return (
+                  <div>
+                    <img src={env.MEDIA_URL + mediaItem.url} width="100%"/>
+                  </div>
+                );
+              })
+            }
+          </div>
           <div className={s.contentHorizontal}>
             <div className={s.commentContainer}>
               <TextField id="post-text"
@@ -84,7 +113,7 @@ const getTabContent = (type, props) => {
           <div className={s.contentControls}>
             <div className={s.addMediaContainer}>
               <div className={s.addMediaButton}>
-                <input type="file" name="file" id="file" className={s.fileInput} />
+                <input type="file" name="file" id="file" onChange={onFileInputChange} className={s.fileInput} />
                 <label htmlFor="file">
                   <FontIcon className="material-icons">add_a_photo</FontIcon>
                 </label>
@@ -135,7 +164,7 @@ const getTabContent = (type, props) => {
 const AddView = (props) => {
 
   const {
-    type, transportTypes, feedItem, openTerminals, intl, geolocation, postText,
+    type, transportTypes, feedItem, openTerminals, intl, geolocation, postText, mediaItems,
     setProperty, getGeolocation, savePost, saveCheckIn
   } = props;
 
@@ -226,11 +255,14 @@ export default injectIntl(
     postText: state.posts.postText,
     savedPost: state.posts.post,
     savedCheckIn: state.posts.checkIn,
-    type: state.posts.addType
+    type: state.posts.addType,
+    mediaItems: state.posts.mediaItems,
+    env: state.env
   }), {
     setProperty,
     getGeolocation,
     savePost,
+    uploadFiles,
     saveCheckIn
   })(withStyles(s)(AddView))
 );

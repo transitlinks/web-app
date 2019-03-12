@@ -55,7 +55,7 @@ export const graphLog = (request, name, values) => {
   let line = 'graphql-request=' + name;
 
   if (request.user) {
-    line += ' user=' + user.uuid;
+    line += ' user=' + request.user.uuid;
   } else {
     line += ' user=null';
   }

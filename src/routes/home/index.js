@@ -44,7 +44,13 @@ export default {
               },
               posts {
                 uuid,
-                text
+                text,
+                user,
+                mediaItems {
+                  uuid,
+                  type,
+                  url
+                }
               },
               terminals {
                 uuid,

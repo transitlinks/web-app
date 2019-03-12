@@ -21,16 +21,23 @@ import {
   DELETE_CHECKIN_START,
   DELETE_CHECKIN_SUCCESS,
   DELETE_CHECKIN_ERROR,
+  MEDIA_FILE_UPLOAD_START,
+  MEDIA_FILE_UPLOAD_SUCCESS,
+  MEDIA_FILE_UPLOAD_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
   GET_FEED_ERROR,
   GET_FEEDITEM_START,
   GET_FEEDITEM_SUCCESS,
-  GET_FEEDITEM_ERROR
+  GET_FEEDITEM_ERROR,
+  INSTANCE_FILE_UPLOAD_START,
+  INSTANCE_FILE_UPLOAD_SUCCESS,
+  INSTANCE_FILE_UPLOAD_ERROR
 } from '../constants';
 
 export const saveCheckIn = ({ checkIn }) => {
 
+  /*
   const geocodeCheckIn = async () => {
     return new Promise((resolve, reject) => {
       geocode({ lat: checkIn.latitude, lng: checkIn.longitude }, (location) => {
@@ -38,10 +45,27 @@ export const saveCheckIn = ({ checkIn }) => {
       })
     });
   };
+  */
 
   return async (...args) => {
 
-    const location = await geocodeCheckIn();
+   // const location = await geocodeCheckIn();
+
+    const location = {
+      formatted_address: 'Dizengoff Str.',
+      place_id: '209091809',
+      address_components: [
+        {
+          types: 'locality',
+          long_name: 'Tel Aviv',
+        },
+        {
+          types: 'country',
+          long_name: 'Israel',
+        }
+      ]
+    };
+
     console.log("geocoded location", location);
 
     const placeFields = extractPlaceFields(location);
@@ -135,7 +159,13 @@ export const getPosts = (input) => {
       query {
         posts (input:"${input}") {
           uuid,
-          text
+          text,
+          user,
+          mediaItems {
+            uuid,
+            type,
+            url
+          }
         }
       }
     `;
@@ -270,7 +300,13 @@ export const getFeed = (clientId) => {
             },
             posts {
               uuid,
-              text
+              text,
+              user,
+              mediaItems {
+                uuid,
+                type,
+                url
+              }
             },
             terminals {
               uuid,
@@ -373,7 +409,13 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
           },
           posts {
             uuid,
-            text
+            text,
+            user,
+            mediaItems {
+              uuid,
+              type,
+              url
+            }
           },
           terminals {
             uuid,
@@ -419,3 +461,30 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
   };
 
 }
+
+export const uploadFiles = (mediaItem, files) => {
+
+  return async (...args) => {
+
+    const query = `
+      mutation uploadMedia {
+        mediaItem(mediaItem:${toGraphQLObject(mediaItem)}) {
+          uuid,
+          type,
+          thumbnail,
+          url
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query, files }, [ 'mediaItem' ],
+      MEDIA_FILE_UPLOAD_START,
+      MEDIA_FILE_UPLOAD_SUCCESS,
+      MEDIA_FILE_UPLOAD_ERROR
+    );
+
+  };
+
+};

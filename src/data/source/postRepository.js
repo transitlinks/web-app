@@ -4,7 +4,7 @@ const log = getLog('data/source/postRepository');
 import Sequelize from 'sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
-import { Post, Terminal, CheckIn, User } from '../models';
+import { Post, Terminal, CheckIn, User, MediaItem } from '../models';
 
 export default {
 
@@ -190,7 +190,7 @@ export default {
 
   saveCheckIn: async (checkIn) => {
 
-    console.log("save check in", checkIn.uuid);
+    console.log("save check in", checkIn, checkIn.uuid);
 
     if (checkIn.uuid) {
 
@@ -250,6 +250,45 @@ export default {
     console.log("delete terminals result", deleteResult);
     return deleteResult;
 
-  }
+  },
+
+  getMediaItems: async (where, options = {}) => {
+
+    const mediaItems = await MediaItem.findAll({
+      where,
+      ...options
+    });
+
+    return mediaItems;
+
+  },
+
+  saveMediaItem: async (mediaItem) => {
+
+    console.log("save media item", mediaItem.uuid);
+
+    if (mediaItem.uuid) {
+
+      const result = await MediaItem.update(mediaItem, {
+        where: { uuid: mediaItem.uuid }
+      });
+
+      if (result.length !== 1 || result[0] !== 1) {
+        throw new Error(`Invalid media item update result: ${result}`);
+      }
+
+      return await MediaItem.findOne({ where:{ uuid: mediaItem.uuid }});
+
+    }
+
+    const created = await MediaItem.create(mediaItem);
+
+    if (!created) {
+      throw new Error('Failed to create a media item (null result)');
+    }
+
+    return created;
+
+  },
 
 };

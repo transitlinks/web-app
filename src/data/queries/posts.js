@@ -8,7 +8,7 @@ import { getVideos, uploadVideo } from '../../services/youtubeDataApi';
 import {
   postRepository,
   userRepository,
-  placesApi
+  placesApi, linkRepository
 } from '../source';
 
 import {
@@ -19,6 +19,8 @@ import {
   TerminalInputType,
   CheckInType,
   CheckInInputType,
+  MediaItemType,
+  MediaItemInputType,
   FeedItemType,
   FeedType
 } from '../types/PostType';
@@ -27,7 +29,9 @@ import {
   GraphQLString
 } from 'graphql';
 
+
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
+
 
 const copyNonNull = (source, target, keys) => {
 
@@ -41,10 +45,10 @@ const copyNonNull = (source, target, keys) => {
 
 };
 
-const addUserId = (object, request) => {
+const addUserId = async (object, request) => {
 
   if (request.user) {
-    const userId = userRepository.getUserIdByUuid(request.user.uuid);
+    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
     object.userId = userId;
   }
 
@@ -84,7 +88,7 @@ const saveTerminal = async (terminalInput, request) => {
   }
 
   copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
-  addUserId(terminal, request);
+  await addUserId(terminal, request);
 
   const saved = await postRepository.saveTerminal(terminal);
 
@@ -112,10 +116,27 @@ const savePost = async (postInput, request) => {
   };
 
   copyNonNull(postInput, post, [ 'uuid', 'clientId' ]);
-  addUserId(post, request);
+  await addUserId(post, request);
 
-  const saved = await postRepository.savePost(post);
-  return saved.toJSON();
+  let saved = await postRepository.savePost(post);
+
+  const { mediaItems } = postInput;
+  if (mediaItems && mediaItems.length > 0) {
+    for (let i = 0; i < mediaItems.length; i++) {
+      const { thumbnail, type, url } = mediaItems[i];
+      postRepository.saveMediaItem({
+        thumbnail, type, url,
+        entityUuid: saved.uuid,
+        entityType: 'Post'
+      });
+    }
+  }
+
+
+  saved = saved.json();
+  saved.mediaItems = mediaItems;
+
+  return saved;
 
 };
 
@@ -124,7 +145,7 @@ const saveCheckIn = async (checkInInput, request) => {
   const checkIn = copyNonNull(checkInInput, {}, [
     'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress'
   ]);
-  addUserId(checkIn, request);
+  await addUserId(checkIn, request);
 
   const lastCheckIns = await postRepository.getCheckIns({ clientId: checkInInput.clientId }, {
     limit: 1,
@@ -145,9 +166,19 @@ const saveCheckIn = async (checkInInput, request) => {
 
 };
 
-const deleteCheckIn = async (checkInUuid, request) => {
+const deleteCheckIn = async (checkInUuid, request, clientId) => {
 
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
+
+  if (request.user) {
+    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+    if (checkIn.userId !== userId) {
+      throw new Error('Access not allowed');
+    }
+  }  else if (!(clientId && clientId === checkIn.clientId)) {
+    throw new Error('Access not allowed');
+  }
+
   const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
   const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });
 
@@ -249,6 +280,92 @@ export const PostMutationFields = {
       return await deleteCheckIn(checkInUuid, request);
     }
 
+  },
+
+  mediaItem: {
+
+    type: MediaItemType,
+    description: 'Upload media files',
+    args: {
+      mediaItem: { type: MediaItemInputType }
+    },
+    resolve: async ({ request }, { mediaItem }) => {
+
+      log.info(`graphql-request=upload-media-file user=${request.user ? request.user.uuid : null}`);
+      console.log("media item", mediaItem);;
+
+      const { file } = request;
+
+      const nameParts = file.originalname.split('.');
+      const extension = nameParts[nameParts.length - 1];
+      const savePath = STORAGE_PATH || path.join(__dirname, 'public');
+      const filePath = path.join(savePath, file.filename);
+
+      const mediaPath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), 'instance-media');
+      const entityPath = path.join(mediaPath, mediaItem.entityUuid);
+
+      if (fs.existsSync(filePath)) {
+
+        if (!fs.existsSync(mediaPath)) {
+          fs.mkdirSync(mediaPath);
+        }
+        if (!fs.existsSync(entityPath)) {
+          fs.mkdirSync(entityPath);
+        }
+
+        const now = (new Date()).getTime();
+        const entityFileName = `${now}.${extension}`;
+        const entityFilePath = path.join(entityPath, entityFileName);
+        fs.renameSync(filePath, entityFilePath);
+
+        let entity = null;
+        let entityUuid = null;
+        if (mediaItem.entityType === 'CheckIn') {
+          entity = await postRepository.getCheckIn({ uuid: mediaItem.entityUuid });
+          entityUuid = entity.uuid;
+        } else {
+          throw new Error(`Invalid entity type: ` + mediaItem.entityType);
+        }
+
+
+        let savedMediaItem = null;
+
+        if (file.mimetype.indexOf('image') !== -1) {
+
+          log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${entityFileName}`);
+
+          savedMediaItem = await postRepository.saveMediaItem({
+            entityUuid: entity.uuid,
+            type: 'image',
+            flag: false,
+            url: `/instance-media/${entityUuid}/${entityFileName}`
+          });
+
+        } else {
+
+          const upload = await uploadVideo(entityUuid, entityFilePath);
+          const thumbnail = upload.snippet.thumbnails.medium.url;
+          log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} video-id=${upload.id}`);
+
+          savedMediaItem = await postRepository.saveMediaItem({
+            entityUuid: entity.uuid,
+            type: 'video',
+            flag: false,
+            url: upload.id,
+            thumbnail
+          });
+
+        }
+
+        return savedMediaItem;
+
+      } else {
+        throw new Error(`Did not find media file ${filePath})`);
+      }
+
+
+    }
+
   }
 
 };
@@ -306,9 +423,14 @@ export const PostQueryFields = {
       log.info(graphLog(request, 'get-feed'));
       const checkIns = await postRepository.getFeedCheckIns(request.user ? request.user.id : null);
       const openTerminalParams = { linkedTerminalId: null };
-      if (clientId) {
+
+      if (request.user) {
+        const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+        openTerminalParams.userId = userId;
+      } else if (cientId) {
         openTerminalParams.clientId = clientId;
       }
+
       const openTerminals = await postRepository.getTerminals(openTerminalParams);
       log.info(graphLog(request, 'get-feed', 'check-ins=' + checkIns.length));
       return {
@@ -321,7 +443,19 @@ export const PostQueryFields = {
           return {
             checkIn: checkIn.json(),
             ...linkedCheckIns,
-            posts: posts.map(post => post.json()),
+            posts: posts.map(async (post) => {
+              const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
+              let userName = null;
+              if (post.userId) {
+                const user = await userRepository.getById(post.userId);
+                userName = user.firstName + ' ' + user.lastName;
+              }
+              return {
+                ...post.json(),
+                user: userName,
+                mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+              };
+            }),
             terminals: terminals.map(async (terminal) => {
 
               let linkedTerminal = null;
@@ -371,7 +505,19 @@ export const PostQueryFields = {
       return {
         checkIn: checkIn.toJSON(),
         ...linkedCheckIns,
-        posts: posts.map(post => post.toJSON()),
+        posts: posts.map(async (post) => {
+          const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
+          let userName = null;
+          if (post.userId) {
+            const user = await userRepository.getById(post.userId);
+            userName = user.firstName + ' ' + user.lastName;
+          }
+          return {
+            ...post.json(),
+            user: userName,
+            mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+          };
+        }),
         terminals: terminals.map(terminal => terminal.toJSON())
       };
 

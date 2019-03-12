@@ -25,7 +25,7 @@ const createCheckIn = (coords) => {
 };
 
 
-const CheckInView = ({ intl, geolocation, searchLocation, selectedLocation, setProperty, getGeolocation, saveCheckIn }) => {
+const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation, setProperty, getGeolocation, saveCheckIn }) => {
 
   let positionElem = null;
 
@@ -143,7 +143,8 @@ export default injectIntl(
     },
     savedCheckIn: state.posts.checkIn,
     searchLocation: state.posts.searchLocation,
-    selectedLocation: state.editLink.departure
+    selectedLocation: state.editLink.departure,
+    env: state.env
   }), {
     setProperty,
     getGeolocation,

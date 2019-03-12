@@ -8,10 +8,12 @@ import {
 export const PostType = new GraphQLObjectType({
   name: 'Post',
   description: 'Transitlinks Post object',
-  fields: {
+  fields: () => ({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
-    text: { type: GraphQLString }
-  },
+    text: { type: GraphQLString },
+    user: { type: GraphQLString },
+    mediaItems: { type: new GraphQLList(MediaItemType) }
+  })
 });
 
 export const PostsType = new GraphQLObjectType({
@@ -26,12 +28,13 @@ export const PostsType = new GraphQLObjectType({
 export const PostInputType = new GraphQLInputObjectType({
   name: 'PostInput',
   description: 'Input properties of Transitlinks Post object',
-  fields: {
+  fields: () => ({
     checkInUuid: { type: GraphQLString },
     text: { type: GraphQLString },
     type: { type: GraphQLString },
-    clientId: { type: GraphQLString }
-  }
+    clientId: { type: GraphQLString },
+    mediaItems: { type: new GraphQLList(MediaItemInputType) }
+  })
 });
 
 export const TerminalType = new GraphQLObjectType({
@@ -106,6 +109,30 @@ export const CheckInInputType = new GraphQLInputObjectType({
     country: {type: GraphQLString},
     formattedAddress: {type: GraphQLString}
   }
+});
+
+export const MediaItemInputType = new GraphQLInputObjectType({
+  name: 'MediaItemInput',
+  description: 'Input properties for MediaItem.',
+  fields: () => ({
+    entityType: { type: GraphQLString },
+    entityUuid: { type: GraphQLString },
+    uuid: { type: GraphQLString },
+    type: { type: GraphQLString },
+    url: { type: GraphQLString },
+    thumbnail: { type: GraphQLString }
+  })
+});
+
+export const MediaItemType = new GraphQLObjectType({
+  name: 'PostMediaItem',
+  description: 'File upload summary.',
+  fields: () => ({
+    uuid: { type: GraphQLString },
+    type: { type: GraphQLString },
+    thumbnail: { type: GraphQLString },
+    url: { type: GraphQLString }
+  })
 });
 
 export const FeedItemType = new GraphQLObjectType({

@@ -162,7 +162,6 @@ const FeedItem = ({
         <div className={s.feedItemSettings}>
           <div className={s.feedItemSetting}>
             <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
-              console.log("call delete checkin", deleteCheckIn, checkIn.uuid);
               deleteCheckIn({ checkInUuid: checkIn.uuid });
             }}>delete</FontIcon>
           </div>
@@ -175,8 +174,8 @@ const FeedItem = ({
       <div className={s.contentTypeContainer}>
         <div className={s.contentTypeSelectors}>
           { typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction')) }
-          { typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival')) }
           { typeSelector('call_made', contentType === 'departure', () => selectContentType('departure')) }
+          { typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival')) }
           { typeSelector('hotel', contentType === 'lodging', () => selectContentType('lodging')) }
         </div>
       </div>

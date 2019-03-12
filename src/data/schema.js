@@ -55,7 +55,8 @@ const schema = new Schema({
       post: PostMutationFields.post,
       checkIn: PostMutationFields.checkIn,
       deleteCheckIn: PostMutationFields.deleteCheckIn,
-      terminal: PostMutationFields.terminal
+      terminal: PostMutationFields.terminal,
+      mediaItem: PostMutationFields.mediaItem
     },
   })
 

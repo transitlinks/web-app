@@ -13,7 +13,7 @@ import { getFeedItem } from "../../actions/posts";
 import terminalMsg from '../Add/messages.terminal';
 
 const FeedItemContent = ({
-  feedItem, contentType
+  feedItem, contentType, env
 }) => {
 
   const { checkIn, posts, terminals } = feedItem;
@@ -62,11 +62,25 @@ const FeedItemContent = ({
   if (contentType === 'reaction') {
 
     content = posts.map(post => {
+
+      const name = post.user || 'Anonymous';
+
       return (
         <div className={s.post}>
           <div className={s.postInfo}>
-            <div className={s.postAuthor}>Anonymous</div>
+            <div className={s.postAuthor}>{name}</div>
             <div className={s.postDate}>Feb 4 at 23:11</div>
+          </div>
+          <div className={s.mediaContent}>
+            {
+              (post.mediaItems || []).map(mediaItem => {
+                return (
+                  <div>
+                    <img src={env.MEDIA_URL + mediaItem.url} width="100%"/>
+                  </div>
+                );
+              })
+            }
           </div>
           <div className={s.postText}>{post.text}</div>
           <div className={s.postControls}></div>
@@ -101,6 +115,9 @@ const FeedItemContent = ({
 
 export default injectIntl(
   connect(state => ({
+    env: state.env
   }), {
   })(withStyles(s)(FeedItemContent))
 );
+
+
