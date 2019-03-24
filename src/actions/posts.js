@@ -37,7 +37,6 @@ import {
 
 export const saveCheckIn = ({ checkIn }) => {
 
-  /*
   const geocodeCheckIn = async () => {
     return new Promise((resolve, reject) => {
       geocode({ lat: checkIn.latitude, lng: checkIn.longitude }, (location) => {
@@ -45,12 +44,12 @@ export const saveCheckIn = ({ checkIn }) => {
       })
     });
   };
-  */
 
   return async (...args) => {
 
-   // const location = await geocodeCheckIn();
+    const location = await geocodeCheckIn();
 
+    /*
     const location = {
       formatted_address: 'Dizengoff Str.',
       place_id: '209091809',
@@ -65,6 +64,7 @@ export const saveCheckIn = ({ checkIn }) => {
         }
       ]
     };
+    */
 
     console.log("geocoded location", location);
 

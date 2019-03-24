@@ -59,6 +59,8 @@ const FeedItemContent = ({
 
   };
 
+  console.log("feeditem content", posts, contentType);
+
   if (contentType === 'reaction') {
 
     content = posts.map(post => {

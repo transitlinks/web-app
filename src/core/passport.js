@@ -56,11 +56,17 @@ passport.use('login-facebook', new FacebookStrategy({
   async (req, accessToken, refreshToken, profile, done) => {
     log.debug('fb-auth', `fb-id=${profile.id}`);
     const emails = profile.emails;
+    let firstName = null;
+    let lastName = null;
+    if (profile.name) {
+      firstName = profile.name.givenName;
+      lastName = profile.name.familyName;
+    }
     if (emails && emails.length > 0) {
       const email = emails[0].value;
       const photo = `${FB_GRAPH_API}/${profile.id}/picture?type=large`;
       try {
-        const user = await login({ email, photo });
+        const user = await login({ email, firstName, lastName, photo });
         done(null, user);
       } catch (err) {
         done({ message: err.message });

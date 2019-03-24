@@ -237,7 +237,7 @@ const AddView = (props) => {
           { getTabContent(selectedType, props) }
         </div>
       </div>
-      <FeedItemContent transportTypes={transportTypes} feedItem={feedItem} contentType={type} />
+      <FeedItemContent transportTypes={transportTypes} feedItem={feedItem} contentType={selectedType} />
     </div>
   );
 

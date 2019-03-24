@@ -4,7 +4,9 @@ const log = getLog('core/auth');
 import bcrypt from 'bcrypt-nodejs';
 import { User, UserLogin } from '../data/models';
 
-export const login = async ({ email, password, photo }) => {
+export const login = async (userData) => {
+
+  const { email, firstName, lastName, password, photo } = userData;
   
   log.debug('login', `email=${email}`);
   
@@ -13,9 +15,12 @@ export const login = async ({ email, password, photo }) => {
     log.debug('login', 'create-user', `email=${email}`, `photo=${photo}`, `password=${password}`);
     const pwdHash = !(password && password.length > 0) ? null :
       bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+    console.log("NEW USER");
     user = await User.create({
       email,
       photo,
+      firstName,
+      lastName,
       password: pwdHash
     });
   }

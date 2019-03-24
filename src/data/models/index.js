@@ -85,6 +85,11 @@ Post.belongsTo(User, {
   as: 'user'
 });
 
+Terminal.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
 Terminal.belongsTo(CheckIn, {
   foreignKey: 'checkInId',
   as: 'checkIn'

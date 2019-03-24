@@ -34,6 +34,8 @@ class Home extends React.Component {
 
     const clientId = getClientId();
 
+    console.log(prevProps, this.props, clientId);
+
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
         this.props.getFeed(clientId);
@@ -49,6 +51,7 @@ class Home extends React.Component {
 
     if (post) {
       if (!prevPost || prevPost.saved !== post.saved) {
+        console.log("post added");
         this.props.setProperty('posts.postText', '');
         this.props.setProperty('posts.mediaItems', []);
         this.props.getFeed(clientId);

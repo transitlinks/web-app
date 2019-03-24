@@ -427,7 +427,7 @@ export const PostQueryFields = {
       if (request.user) {
         const userId = await userRepository.getUserIdByUuid(request.user.uuid);
         openTerminalParams.userId = userId;
-      } else if (cientId) {
+      } else if (clientId) {
         openTerminalParams.clientId = clientId;
       }
 
