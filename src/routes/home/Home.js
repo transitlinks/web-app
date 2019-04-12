@@ -60,7 +60,7 @@ class Home extends React.Component {
 
     if (terminal) {
       if (!prevTerminal || prevTerminal.saved !== terminal.saved) {
-        this.props.setProperty('posts.addType', null);
+        this.props.setProperty('posts.addType', terminal.type);
         this.props.setProperty('editTerminal.terminalProperties', null);
         this.props.getFeed(clientId);
       }

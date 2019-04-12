@@ -66,7 +66,7 @@ const Terminal = (props) => {
     setProperty('editTerminal.terminalProperties', { ...terminalProperties });
   };
 
-  const typedOpenTerminals = openTerminals.filter(terminal => terminal.type === (type === 'arrival' ? 'departure' : 'arrival'));
+  const typedOpenTerminals = openTerminals.filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival') && terminal.checkIn.uuid !== checkIn.uuid));
 
   const openTerminalOptions = typedOpenTerminals.map(terminal => {
 
@@ -149,6 +149,7 @@ const Terminal = (props) => {
   let transportId = getTerminalProperty('transportId');
   let date = getTerminalProperty('date');
   let time = getTerminalProperty('time');
+  const now  = new Date();;
   let priceCurrency = getTerminalProperty('priceCurrency');
   let priceAmount = getTerminalProperty('priceAmount');
 
@@ -175,13 +176,9 @@ const Terminal = (props) => {
       editedTerminal.priceCurrency = priceCurrency;
     }
 
-    if (date) {
-      editedTerminal.date = date.toISOString();
-    }
+    editedTerminal.date = (date || now).toISOString();
+    editedTerminal.time = (time || now).toISOString();
 
-    if (time) {
-      editedTerminal.time = time.toISOString();
-    }
 
     if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
       editedTerminal.linkedTerminalUuid = linkedTerminalUuid;
@@ -236,7 +233,7 @@ const Terminal = (props) => {
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
                                   hintText={labels[type].dateInputTitle}
-                                  value={date || terminal.date || new Date()}
+                                  value={date || terminal.date || now}
                                   floatingLabelText={labels[type].dateInputTitle}
                                   floatingLabelFixed={true}
                                   floatingLabelStyle={{ width: "120px" }}
@@ -249,7 +246,7 @@ const Terminal = (props) => {
                       <TimePicker id={`${type}-time-picker`}
                                   format="24hr"
                                   hintText={labels[type].timeInputTitle}
-                                  value={time || terminal.time || new Date()}
+                                  value={time || terminal.time || now}
                                   floatingLabelText="Time"
                                   floatingLabelFixed={true}
                                   autoOk={true}
@@ -282,7 +279,7 @@ const Terminal = (props) => {
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
                                   hintText={labels[type].dateInputTitle}
-                                  value={date || terminal.date || new Date()}
+                                  value={date || terminal.date || now}
                                   floatingLabelText={labels[type].dateInputTitle}
                                   floatingLabelFixed={true}
                                   floatingLabelStyle={{ width: "120px" }}
@@ -295,7 +292,7 @@ const Terminal = (props) => {
                       <TimePicker id={`${type}-time-picker`}
                                   format="24hr"
                                   hintText={labels[type].timeInputTitle}
-                                  value={time || terminal.time || new Date()}
+                                  value={time || terminal.time || now}
                                   floatingLabelText="Time"
                                   floatingLabelFixed={true}
                                   autoOk={true}

@@ -17,19 +17,44 @@
   margin-top: 12px;
 }
 
-.post .postInfo {
+.feedItemHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.feedItemHeader .feedItemInfo {
   margin-bottom: 6px;
   padding-left: 6px;
 }
 
-.postInfo .postAuthor {
+.feedItemHeader .feedItemInfo .feedItemAuthor {
   font-size: 14px;
   font-weight: bold;
 }
 
-.postInfo .postDate {
+.feedItemHeader .feedItemInfo .feedItemDate {
   font-size: 10px;
   color: #666;
+}
+
+.feedItemHeader .feedItemControls {
+  display: flex;
+  margin-right: 8px;
+}
+
+.feedItemHeader .feedItemControls .feedItemPrev {
+  margin-left: 4px;
+  margin-right: 8px
+}
+
+.feedItemHeader .feedItemControls .feedItemNext {
+  margin-left: 8px;
+  margin-right: 0px
+}
+
+.feedItemHeader .feedItemControls .feedItemOptions {
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .post .postText {
@@ -106,29 +131,28 @@
 }
 
 .terminalEntry {
-  white-space: normal;
-  padding-bottom: 6px;
   padding-left: 8px;
   padding-right: 8px;
+  margin-top: 12px;
 }
 
-.terminalEntry .terminalEntryRow {
+.terminalEntry .terminalEntryRow1 {
+  display: flex;
+  justify-content: space-between;
 }
 
 .terminalEntry .terminalEntryTransport {
-  margin-right: 10px;
   font-weight: 800;
-  float: left;
-  color: #000;
+}
+
+.terminalEntry .terminalEntryTime {
 }
 
 .terminalEntryTransportId {
   color: #888888;
-  margin-bottom: 6px;
+  margin-top: 6px;
 }
 
 .terminalEntry .terminalEntryAddress {
-  white-space: normal;
-  margin-bottom: 6px;
-  color: #000;
+  margin-top: 6px;
 }

@@ -194,8 +194,8 @@ const AddView = (props) => {
 
   let defaultType = 'reaction';
   if (openTerminals && openTerminals.length > 0) {
-    const openArrivals = openTerminals.filter(terminal => terminal.type === 'arrival');
-    const openDepartures = openTerminals.filter(terminal => terminal.type === 'departure');
+    const openArrivals = openTerminals.filter(terminal => (terminal.type === 'arrival' && terminal.checkIn.uuid !== checkIn.uuid));
+    const openDepartures = openTerminals.filter(terminal => (terminal.type === 'departure' && terminal.checkIn.uuid !== checkIn.uuid));
     if (openArrivals.length > 0) {
       defaultType = 'departure';
     } else if (openDepartures.length > 0) {
@@ -217,7 +217,7 @@ const AddView = (props) => {
               <div className={s.editPositionButton} onClick={() => {
                 saveCheckIn({ checkIn: createCheckIn(geolocation) });
               }}>
-                Change
+
               </div>
               <div className={s.positionValue}>
                 { positionElem }

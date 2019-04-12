@@ -1,6 +1,16 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
+export function padNumber(number) {
+
+  if (number < 10) {
+    return '0' + number;
+  }
+
+  return number;
+
+}
+
 export const getMessages = (source) => {
   
   let messages = {};
@@ -9,6 +19,22 @@ export const getMessages = (source) => {
   });
   
   return messages;
+
+};
+
+export const getDateString = (value) => {
+
+  const date = new Date(value);
+
+  return date.getFullYear() + '-' + padNumber(date.getMonth() + 1) + '-' + date.getDate();
+
+};
+
+export const getTimeString = (value) => {
+
+  const date = new Date(value);
+
+  return padNumber(date.getHours()) + ':' + padNumber(date.getMinutes());
 
 };
 

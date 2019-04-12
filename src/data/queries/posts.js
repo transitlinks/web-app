@@ -33,6 +33,21 @@ import {
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
 
+const requireOwnership = async (request, entity) => {
+
+  if (!entity.uuid) return;
+
+  if (request.user) {
+    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+    if (entity.userId !== userId) {
+      throw new Error('Access not allowed for user id');
+    }
+  }  else if (!(clientId && clientId === entity.clientId)) {
+    throw new Error('Access not allowed for client id');
+  }
+
+};
+
 const copyNonNull = (source, target, keys) => {
 
   keys.forEach(key => {
@@ -58,6 +73,12 @@ const addUserId = async (object, request) => {
 
 
 const saveTerminal = async (terminalInput, request) => {
+
+  if (terminalInput.uuid) {
+    const savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
+    await requireOwnership(request, savedTerminal);
+  }
+
 
   const { checkInUuid, linkedTerminalUuid } = terminalInput;
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
@@ -104,10 +125,15 @@ const saveTerminal = async (terminalInput, request) => {
 
 const savePost = async (postInput, request) => {
 
+  if (postInput.uuid) {
+    const savedPost = await postRepository.getPost({ uuid: postInput.uuid });
+    await requireOwnership(request, savedPost);
+  }
+
   const { checkInUuid } = postInput;
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
   if (!checkIn) {
-
+    // TODO: Error
   }
 
   const post = {
@@ -142,6 +168,11 @@ const savePost = async (postInput, request) => {
 
 const saveCheckIn = async (checkInInput, request) => {
 
+  if (checkInInput.uuid) {
+    const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
+    await requireOwnership(request, savedCheckIn);
+  }
+
   const checkIn = copyNonNull(checkInInput, {}, [
     'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress'
   ]);
@@ -169,15 +200,7 @@ const saveCheckIn = async (checkInInput, request) => {
 const deleteCheckIn = async (checkInUuid, request, clientId) => {
 
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-
-  if (request.user) {
-    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
-    if (checkIn.userId !== userId) {
-      throw new Error('Access not allowed');
-    }
-  }  else if (!(clientId && clientId === checkIn.clientId)) {
-    throw new Error('Access not allowed');
-  }
+  await requireOwnership(request, checkIn);
 
   const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
   const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });

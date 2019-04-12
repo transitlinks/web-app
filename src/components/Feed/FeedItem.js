@@ -24,7 +24,7 @@ const typeSelector = (iconName, isSelected, onClick) => {
 };
 
 const FeedItem = ({
-  index, feedProperties, type, feedItem, selectedFeedItem, loadingFeedItem, showLinks, showSettings, navigate, setProperty, getFeedItem, deleteCheckIn,
+  index, feedProperties, feedItem, selectedFeedItem, loadingFeedItem, showLinks, showSettings, navigate, setProperty, getFeedItem, deleteCheckIn,
 }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
@@ -60,16 +60,46 @@ const FeedItem = ({
     return cx(s.outboundContainer, getStateClass(outbound));
   };
 
+  let contentType = 'reaction';
+
   const selectContentType = (value) => {
     if (!feedProperties[index]) feedProperties[index] = {};
     feedProperties[index]['contentType'] = value;
     setProperty('posts.feedProperties', { ...feedProperties });
   };
 
-  let contentType = 'reaction';
   if (feedProperties[index] && feedProperties[index]['contentType']) {
     contentType = feedProperties[index]['contentType'];
   }
+
+  let typeSelectors = [];
+  let defaultContentType = null;
+  if (feedItem.posts.length > 0) {
+    typeSelectors.push(typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction')));
+    defaultContentType = 'reaction';
+  }
+
+  const departures = feedItem.terminals.filter(terminal => terminal.type === 'departure');
+  if (departures.length > 0) {
+    typeSelectors.push(typeSelector('call_made', contentType === 'departure', () => selectContentType('departure')));
+    defaultContentType = 'departure';
+  }
+
+  const arrivals = feedItem.terminals.filter(terminal => terminal.type === 'arrival');
+  if (arrivals.length > 0) {
+    typeSelectors.push(typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival')));
+    defaultContentType = 'arrival';
+  }
+
+
+  if (typeSelectors.length < 2) {
+    if (typeSelectors.length === 1) {
+      contentType = defaultContentType;
+    }
+    typeSelectors = null;
+  }
+
+  //{ typeSelector('hotel', contentType === 'lodging', () => selectContentType('lodging')) }
 
   return (
     <div className={s.container}>
@@ -173,10 +203,7 @@ const FeedItem = ({
 
       <div className={s.contentTypeContainer}>
         <div className={s.contentTypeSelectors}>
-          { typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction')) }
-          { typeSelector('call_made', contentType === 'departure', () => selectContentType('departure')) }
-          { typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival')) }
-          { typeSelector('hotel', contentType === 'lodging', () => selectContentType('lodging')) }
+          { typeSelectors }
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { extractLinkAreas } from '../utils';
+import { extractLinkAreas, getDateString, getTimeString } from '../utils';
 import s from './FeedItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setProperty } from "../../actions/properties";
@@ -23,7 +23,6 @@ const FeedItemContent = ({
 
   const formatDate = (date) => {
 
-    console.log("format date", date);
     if (date) {
       return (new Date(date)).toDateString().substring(4);
     }
@@ -36,22 +35,30 @@ const FeedItemContent = ({
 
     let linkedTerminalAddress = null;
     if (terminal.linkedTerminal) {
+      const direction = terminal.type === 'departure' ? 'To' : 'From';
       linkedTerminalAddress = (
         <div className={s.terminalEntryAddress}>
-          { terminal.linkedTerminal.checkIn.formattedAddress }
+          { direction }:&nbsp;
+          <a href="">{ terminal.linkedTerminal.checkIn.formattedAddress }</a>
         </div>
       );
     }
 
+    const dateStr = terminal.date ? getDateString(terminal.date) : '';
+    const timeStr = terminal.time ? getTimeString(terminal.time) : '';
+
     return (
       <div className={s.terminalEntry}>
-        <div className={s.terminalEntryRow}>
+        <div className={s.terminalEntryRow1}>
           <div className={s.terminalEntryTransport}>
             <FormattedMessage {...terminalMsg[terminal.transport]} />
           </div>
-          <p className={s.terminalEntryTransportId}>
-            { terminal.transportId }
-          </p>
+          <div className={s.terminalEntryTime}>
+            { dateStr } { timeStr }
+          </div>
+        </div>
+        <div className={s.terminalEntryTransportId}>
+          { terminal.transportId }
         </div>
         { linkedTerminalAddress }
       </div>
@@ -61,6 +68,30 @@ const FeedItemContent = ({
 
   console.log("feeditem content", posts, contentType);
 
+  const renderFeedItemHeader = (name) => {
+
+    return (
+      <div className={s.feedItemHeader}>
+        <div className={s.feedItemInfo}>
+          <div className={s.feedItemAuthor}>{name}</div>
+          <div className={s.feedItemDate}>Feb 4 at 23:11</div>
+        </div>
+        <div className={s.feedItemControls}>
+          <div className={s.feedItemPrev}>
+            &lt;
+          </div>
+          <div className={s.feedItemOptions}>
+            x
+          </div>
+          <div className={s.feedItemNext}>
+            &gt;
+          </div>
+        </div>
+      </div>
+    );
+
+  };
+
   if (contentType === 'reaction') {
 
     content = posts.map(post => {
@@ -69,10 +100,7 @@ const FeedItemContent = ({
 
       return (
         <div className={s.post}>
-          <div className={s.postInfo}>
-            <div className={s.postAuthor}>{name}</div>
-            <div className={s.postDate}>Feb 4 at 23:11</div>
-          </div>
+          { renderFeedItemHeader(name) }
           <div className={s.mediaContent}>
             {
               (post.mediaItems || []).map(mediaItem => {
