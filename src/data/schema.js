@@ -11,6 +11,7 @@ import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
 import { PostMutationFields, PostQueryFields } from './queries/posts';
+import { DiscoverMutationFields, DiscoverQueryFields } from './queries/discover';
 import { CommentMutationFields, CommentQueryFields } from './queries/comments';
 import { UserMutationFields, UserQueryFields } from './queries/users';
 import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './queries/ratings';
@@ -37,6 +38,7 @@ const schema = new Schema({
       posts: PostQueryFields.posts,
       feed: PostQueryFields.feed,
       feedItem: PostQueryFields.feedItem,
+      discover: DiscoverQueryFields.discover,
       intl
     }
   }),

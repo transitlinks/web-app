@@ -16,6 +16,7 @@ import App from '../components/App';
 
 // Child routes
 import home from './home';
+import discover from './discover';
 import search from './search';
 import link from './link';
 import linkInstance from './linkInstance';
@@ -35,6 +36,7 @@ const routes = {
   // keep in mind, routes are evaluated in order
   children: [
     home,
+    discover,
     login,
     account,
     add,
