@@ -14,7 +14,8 @@ export const DiscoveryItemType = new GraphQLObjectType({
   name: 'DiscoveryItem',
   description: 'Transitlinks Discovery Item object',
   fields: () => ({
-    group: { type: GraphQLString },
+    groupType: { type: GraphQLString },
+    groupName: { type: GraphQLString },
     posts: { type: new GraphQLList(PostType) },
     departures: { type: new GraphQLList(TerminalType) },
     arrivals: { type: new GraphQLList(TerminalType) }

@@ -22,15 +22,49 @@ export default {
         `query {
           discover (search: "${search}", type: "${type}") {
             discoveries {
-              group,
+              groupType,
+              groupName,
               posts {
-                uuid
+                uuid,
+                text,
+                user,
+                mediaItems {
+                  uuid,
+                  type,
+                  url
+                },
+                checkIn {
+                  uuid,
+                  formattedAddress
+                }
               },
               departures {
-                uuid
+                uuid,
+                type,
+                transport,
+                transportId,
+                date,
+                time,
+                priceAmount,
+                priceCurrency,
+                checkIn {
+                  uuid,
+                  formattedAddress
+                }
               },
               arrivals {
-                uuid
+                uuid,
+                type,
+                transport,
+                transportId,
+                date,
+                time,
+                priceAmount,
+                priceCurrency,
+                checkIn {
+                  uuid,
+                  formattedAddress
+                }
               }
             }
           }
@@ -38,7 +72,7 @@ export default {
       );
 
       log.info("event=received-discoveries-data", data);
-      return <Discover discoveries={data.discoveries} />;
+      return <Discover discover={data.discover} />;
     
     } catch (error) {
       log.info("error=route-discover", error);

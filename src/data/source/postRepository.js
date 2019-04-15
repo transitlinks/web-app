@@ -228,6 +228,16 @@ export default {
 
   },
 
+  getCheckInLocalities: async () => {
+
+    const localities = await CheckIn.aggregate('locality', 'DISTINCT', { plain: false });
+    //const localities = await CheckIn.findAll({
+    //  group: ['id', 'locality']
+    //});
+    return localities.map(locality => locality.DISTINCT);
+
+  },
+
   deletePosts: async (where, options = {}) => {
 
     const deleteResult = await Post.destroy({

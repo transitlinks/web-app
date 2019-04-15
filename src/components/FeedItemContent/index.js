@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { extractLinkAreas, getDateString, getTimeString } from '../utils';
+import Terminal from '../Terminal';
 import s from './FeedItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setProperty } from "../../actions/properties";
@@ -28,41 +29,6 @@ const FeedItemContent = ({
     }
 
     return '-';
-
-  };
-
-  const renderTerminalEntry = (terminal) => {
-
-    let linkedTerminalAddress = null;
-    if (terminal.linkedTerminal) {
-      const direction = terminal.type === 'departure' ? 'To' : 'From';
-      linkedTerminalAddress = (
-        <div className={s.terminalEntryAddress}>
-          { direction }:&nbsp;
-          <a href="">{ terminal.linkedTerminal.checkIn.formattedAddress }</a>
-        </div>
-      );
-    }
-
-    const dateStr = terminal.date ? getDateString(terminal.date) : '';
-    const timeStr = terminal.time ? getTimeString(terminal.time) : '';
-
-    return (
-      <div className={s.terminalEntry}>
-        <div className={s.terminalEntryRow1}>
-          <div className={s.terminalEntryTransport}>
-            <FormattedMessage {...terminalMsg[terminal.transport]} />
-          </div>
-          <div className={s.terminalEntryTime}>
-            { dateStr } { timeStr }
-          </div>
-        </div>
-        <div className={s.terminalEntryTransportId}>
-          { terminal.transportId }
-        </div>
-        { linkedTerminalAddress }
-      </div>
-    );
 
   };
 
@@ -121,13 +87,13 @@ const FeedItemContent = ({
   } else if (contentType === 'arrival') {
 
     content = terminals.filter(terminal => terminal.type === 'arrival').map(terminal => {
-      return renderTerminalEntry(terminal);
+      return <Terminal terminal={terminal} />;
     });
 
   } else if (contentType === 'departure') {
 
     content = terminals.filter(terminal => terminal.type === 'departure').map(terminal => {
-      return renderTerminalEntry(terminal);
+      return <Terminal terminal={terminal} />;
     });
 
   } else if (contentType === 'lodging') {

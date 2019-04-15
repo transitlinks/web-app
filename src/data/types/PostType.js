@@ -12,7 +12,8 @@ export const PostType = new GraphQLObjectType({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
     text: { type: GraphQLString },
     user: { type: GraphQLString },
-    mediaItems: { type: new GraphQLList(MediaItemType) }
+    mediaItems: { type: new GraphQLList(MediaItemType) },
+    checkIn: { type: CheckInType }
   })
 });
 

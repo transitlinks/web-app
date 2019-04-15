@@ -1,0 +1,158 @@
+@import '../variables.css';
+
+.container {
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  max-width: 600px;
+}
+
+.feedItem {
+}
+
+.feedItemContent {
+}
+
+.feedItemContent .post {
+  margin-top: 12px;
+}
+
+.feedItemHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.feedItemHeader .feedItemInfo {
+  margin-bottom: 6px;
+  padding-left: 6px;
+}
+
+.feedItemHeader .feedItemInfo .feedItemAuthor {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.feedItemHeader .feedItemInfo .feedItemDate {
+  font-size: 10px;
+  color: #666;
+}
+
+.feedItemHeader .feedItemControls {
+  display: flex;
+  margin-right: 8px;
+}
+
+.feedItemHeader .feedItemControls .feedItemPrev {
+  margin-left: 4px;
+  margin-right: 8px
+}
+
+.feedItemHeader .feedItemControls .feedItemNext {
+  margin-left: 8px;
+  margin-right: 0px
+}
+
+.feedItemHeader .feedItemControls .feedItemOptions {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.post .postText {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.terminalContainer {
+  margin-left: 8px;
+  margin-right: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  cursor: pointer;
+}
+
+.terminal {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.terminal .transport {
+}
+
+.transportId {
+  color: #888;
+}
+
+.terminal .date {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.terminal .time {
+
+}
+
+.terminalDestination {
+
+}
+
+.terminalOrigin {
+  display: flex;
+  width: 50%;
+  position: relative;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  height: 39px;
+}
+
+.terminalFrom {
+
+}
+
+.triangle {
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 14px;
+  position: absolute;
+  right: -14px;
+  top: 5px;
+}
+
+.triangleRight {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.triangleLeft {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.terminalEntry {
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: 12px;
+}
+
+.terminalEntry .terminalEntryRow1 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.terminalEntry .terminalEntryTransport {
+  font-weight: 800;
+}
+
+.terminalEntry .terminalEntryTime {
+}
+
+.terminalEntryTransportId {
+  color: #888888;
+  margin-top: 6px;
+}
+
+.terminalEntry .terminalEntryAddress {
+  margin-top: 6px;
+}

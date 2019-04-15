@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Discover.css';
 import DiscoverView from '../../components/Discover';
+import FunctionBar from '../../components/FunctionBar';
 
 const title = 'Transitlinks - Discover';
 
@@ -10,7 +11,7 @@ class Discover extends React.Component {
   render() {  
 
     const { context, props } = this;
-    const { discoveries } = props;
+    const { discover } = props;
 
     context.setTitle(title);
 
@@ -19,7 +20,10 @@ class Discover extends React.Component {
       <div>
         <div className={s.root}>
           <div className={s.container}>
-            <DiscoverView discoveries={discoveries}>
+            <div className={s.functionBar}>
+              <FunctionBar />
+            </div>
+            <DiscoverView discover={discover}>
             </DiscoverView>
           </div>
         </div>

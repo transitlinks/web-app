@@ -53,8 +53,50 @@ export const DiscoverQueryFields = {
     resolve: async ({ request }, { search, type }) => {
 
       log.info(graphLog(request, 'discover',`search=${search} type=${type}`));
+
+      const localities = await postRepository.getCheckInLocalities();
+      //const checkIns = await postRepository.getCheckIns({});;
+      console.log("locs", localities);
+
+      let discoveries = [];;
+      for (let i = 0; i < localities.length; i++) {
+        const checkInsByLoc = await postRepository.getCheckIns({ locality: localities[i] });
+        let locPosts = [];
+        let locDepartures = [];
+        let locArrivals = [];
+        for (let j = 0; j < checkInsByLoc.length; j++) {
+          const posts = await postRepository.getPosts({ checkInId: checkInsByLoc[j].id });
+          const departures = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'departure' });
+          const arrivals = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'arrival' });
+          locPosts = locPosts.concat(posts.map(post => {
+            const json = post.json();
+            json.checkIn = checkInsByLoc[j].json()
+            return json;
+          }));
+          locDepartures = locDepartures.concat(departures.map(departure => {
+            const json = departure.json();
+            json.checkIn = checkInsByLoc[j].json()
+            return json;
+          }));
+          locArrivals = locArrivals.concat(arrivals.map(arrival => {
+            const json = arrival.json();
+            json.checkIn = checkInsByLoc[j].json()
+            return json;
+          }));
+        }
+        discoveries = discoveries.concat([
+          {
+            groupType: 'locality',
+            groupName: localities[i],
+            posts: locPosts,
+            departures: locDepartures,
+            arrivals: locArrivals
+          }
+        ]);
+      }
+
       return {
-        discoveries: []
+        discoveries
       };
 
     }
