@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { extractLinkAreas, getDateString, getTimeString } from '../utils';
+import Post from '../Post';
 import Terminal from '../Terminal';
 import s from './FeedItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
@@ -34,54 +35,10 @@ const FeedItemContent = ({
 
   console.log("feeditem content", posts, contentType);
 
-  const renderFeedItemHeader = (name) => {
-
-    return (
-      <div className={s.feedItemHeader}>
-        <div className={s.feedItemInfo}>
-          <div className={s.feedItemAuthor}>{name}</div>
-          <div className={s.feedItemDate}>Feb 4 at 23:11</div>
-        </div>
-        <div className={s.feedItemControls}>
-          <div className={s.feedItemPrev}>
-            &lt;
-          </div>
-          <div className={s.feedItemOptions}>
-            x
-          </div>
-          <div className={s.feedItemNext}>
-            &gt;
-          </div>
-        </div>
-      </div>
-    );
-
-  };
-
   if (contentType === 'reaction') {
 
     content = posts.map(post => {
-
-      const name = post.user || 'Anonymous';
-
-      return (
-        <div className={s.post}>
-          { renderFeedItemHeader(name) }
-          <div className={s.mediaContent}>
-            {
-              (post.mediaItems || []).map(mediaItem => {
-                return (
-                  <div>
-                    <img src={env.MEDIA_URL + mediaItem.url} width="100%"/>
-                  </div>
-                );
-              })
-            }
-          </div>
-          <div className={s.postText}>{post.text}</div>
-          <div className={s.postControls}></div>
-        </div>
-      );
+      return <Post post={post}/>;
     });
 
   } else if (contentType === 'arrival') {

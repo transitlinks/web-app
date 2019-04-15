@@ -68,10 +68,18 @@ export const DiscoverQueryFields = {
           const posts = await postRepository.getPosts({ checkInId: checkInsByLoc[j].id });
           const departures = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'departure' });
           const arrivals = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'arrival' });
-          locPosts = locPosts.concat(posts.map(post => {
-            const json = post.json();
-            json.checkIn = checkInsByLoc[j].json()
-            return json;
+          locPosts = locPosts.concat(posts.map(async post => {
+            const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
+            let userName = null;
+            if (post.userId) {
+              const user = await userRepository.getById(post.userId);
+              userName = user.firstName + ' ' + user.lastName;
+            }
+            return {
+              ...post.json(),
+              user: userName,
+              mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+            };
           }));
           locDepartures = locDepartures.concat(departures.map(departure => {
             const json = departure.json();

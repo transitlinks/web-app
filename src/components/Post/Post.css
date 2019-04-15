@@ -1,0 +1,77 @@
+@import '../variables.css';
+
+.container {
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+  max-width: 600px;
+}
+
+.post {
+  margin-top: 12px;
+}
+
+.post .postText {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.feedItemHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.feedItemHeader .feedItemInfo {
+  margin-bottom: 6px;
+  padding-left: 6px;
+}
+
+.feedItemHeader .feedItemInfo .feedItemAuthor {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.feedItemHeader .feedItemInfo .feedItemDate {
+  font-size: 10px;
+  color: #666;
+}
+
+.feedItemHeader .feedItemControls {
+  display: flex;
+  margin-right: 8px;
+}
+
+.feedItemHeader .feedItemControls .feedItemPrev {
+  margin-left: 4px;
+  margin-right: 8px
+}
+
+.feedItemHeader .feedItemControls .feedItemNext {
+  margin-left: 8px;
+  margin-right: 0px
+}
+
+.feedItemHeader .feedItemControls .feedItemOptions {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.triangle {
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 14px;
+  position: absolute;
+  right: -14px;
+  top: 5px;
+}
+
+.triangleRight {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.triangleLeft {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}

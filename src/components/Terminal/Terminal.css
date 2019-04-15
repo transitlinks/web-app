@@ -17,46 +17,6 @@
   margin-top: 12px;
 }
 
-.feedItemHeader {
-  display: flex;
-  justify-content: space-between;
-}
-
-.feedItemHeader .feedItemInfo {
-  margin-bottom: 6px;
-  padding-left: 6px;
-}
-
-.feedItemHeader .feedItemInfo .feedItemAuthor {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.feedItemHeader .feedItemInfo .feedItemDate {
-  font-size: 10px;
-  color: #666;
-}
-
-.feedItemHeader .feedItemControls {
-  display: flex;
-  margin-right: 8px;
-}
-
-.feedItemHeader .feedItemControls .feedItemPrev {
-  margin-left: 4px;
-  margin-right: 8px
-}
-
-.feedItemHeader .feedItemControls .feedItemNext {
-  margin-left: 8px;
-  margin-right: 0px
-}
-
-.feedItemHeader .feedItemControls .feedItemOptions {
-  margin-left: 4px;
-  margin-right: 4px;
-}
-
 .post .postText {
   padding-left: 6px;
   padding-right: 6px;

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
+import Post from '../Post';
 import Terminal from '../Terminal';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
@@ -29,6 +30,13 @@ const DiscoverView = ({ discover, children, intl }) => {
               <div key={discovery.groupName}>
                 <div>
                   { discovery.groupName || 'Ungrouped' }
+                </div>
+                <div>
+                  {
+                    posts.map(post => {
+                      return <Post post={post} />;
+                    })
+                  }
                 </div>
                 <div>
                   {
