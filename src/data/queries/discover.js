@@ -78,18 +78,47 @@ export const DiscoverQueryFields = {
             return {
               ...post.json(),
               user: userName,
+              checkIn: checkInsByLoc[j],
               mediaItems: mediaItems.map(mediaItem => mediaItem.json())
             };
           }));
-          locDepartures = locDepartures.concat(departures.map(departure => {
-            const json = departure.json();
-            json.checkIn = checkInsByLoc[j].json()
-            return json;
+
+          locDepartures = locDepartures.concat(departures.map(async terminal => {
+
+            let linkedTerminal = null;
+
+            if (terminal.linkedTerminalId) {
+              linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
+              const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
+              linkedTerminal = linkedTerminal.json();
+              linkedTerminal.checkIn = linkedTerminalCheckIn.json();
+            }
+
+            return {
+              ...terminal.json(),
+              checkIn: checkInsByLoc[j].json(),
+              linkedTerminal
+            };
+
           }));
-          locArrivals = locArrivals.concat(arrivals.map(arrival => {
-            const json = arrival.json();
-            json.checkIn = checkInsByLoc[j].json()
-            return json;
+
+          locArrivals = locArrivals.concat(arrivals.map(async terminal => {
+
+            let linkedTerminal = null;
+
+            if (terminal.linkedTerminalId) {
+              linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
+              const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
+              linkedTerminal = linkedTerminal.json();
+              linkedTerminal.checkIn = linkedTerminalCheckIn.json();
+            }
+
+            return {
+              ...terminal.json(),
+              checkIn: checkInsByLoc[j].json(),
+              linkedTerminal
+            };
+
           }));
         }
         discoveries = discoveries.concat([

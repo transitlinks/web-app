@@ -49,7 +49,27 @@ export default {
                 priceCurrency,
                 checkIn {
                   uuid,
-                  formattedAddress
+                  formattedAddress,
+                  locality
+                },
+                linkedTerminal {
+                  uuid,
+                  type,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  priceAmount,
+                  priceCurrency,
+                  checkIn {
+                    uuid,
+                    latitude,
+                    longitude,
+                    placeId,
+                    formattedAddress,
+                    locality,
+                    country
+                  }
                 }
               },
               arrivals {
@@ -63,7 +83,27 @@ export default {
                 priceCurrency,
                 checkIn {
                   uuid,
-                  formattedAddress
+                  formattedAddress,
+                  locality
+                },
+                linkedTerminal {
+                  uuid,
+                  type,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  priceAmount,
+                  priceCurrency,
+                  checkIn {
+                    uuid,
+                    latitude,
+                    longitude,
+                    placeId,
+                    formattedAddress,
+                    locality,
+                    country
+                  }
                 }
               }
             }

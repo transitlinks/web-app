@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
-import Post from '../Post';
+import PostCollection from './PostCollection';
 import Terminal from '../Terminal';
+import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Discover.css';
@@ -17,6 +18,53 @@ const DiscoverView = ({ discover, children, intl }) => {
 
   console.log("show discoveries", discoveries);
 
+  const renderTerminalsList = (terminalType, terminals) => {
+
+    /*
+    const terminalLocations = {
+      "St. Petersburg": 1,
+      "New York": 1,
+      "Calcutta": 1,
+      "Paris": 1,
+      "Minneapolis": 1
+    };
+    */
+
+    const terminalLocations = {};
+    terminals.forEach(terminal => {
+      if (terminal.linkedTerminal) {
+        terminalLocations[terminal.linkedTerminal.checkIn.locality] = 1;
+      }
+    });
+
+    const locationLabels = Object.keys(terminalLocations);
+
+    return (
+      <div className={s.terminalsByType}>
+        <div className={s.terminalTypeSummary}>
+          <div className={s.terminalTypeIcon}>
+            <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{ terminalType === 'arrival' ? 'call_received' : 'call_made' }</FontIcon>
+          </div>
+          <div className={s.terminalTypeValue}>
+            <a href="#">{terminals.length}</a>
+          </div>
+        </div>
+        <div className={s.destinationList}>
+          {
+            locationLabels.map((locationLabel, i) => (
+              <span>
+                <a href="#">{locationLabel}</a>
+                {
+                  (i < locationLabels.length - 1) && (<span>, </span>)
+                }
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    );
+  };
+
 	return (
     <div className={s.container}>
       <div>
@@ -27,33 +75,16 @@ const DiscoverView = ({ discover, children, intl }) => {
             const { posts, departures, arrivals } = discovery;
 
             return (
-              <div key={discovery.groupName}>
-                <div>
+              <div key={discovery.groupName} className={s.discoveryItem}>
+                <div className={s.discoveryHeader}>
                   { discovery.groupName || 'Ungrouped' }
                 </div>
-                <div>
-                  {
-                    posts.map(post => {
-                      return <Post post={post} />;
-                    })
-                  }
+                <div className={s.terminalSummary}>
+                  { renderTerminalsList('arrival', arrivals) }
+                  { renderTerminalsList('departure', departures) }
                 </div>
-                <div>
-                  {
-                    departures.map(departure => {
-                      return <Terminal terminal={departure} />;
-                    })
-                  }
-                </div>
-                <div>
-                  {
-                    arrivals.map(arrival => {
-                      return <Terminal terminal={arrival} />;
-                    })
-                  }
-                </div>
-                <div>
-                  Posts: {posts.length}, Departures: {departures.length}, Arrivals: {arrivals.length}
+                <div className={s.postSummary}>
+                  <PostCollection posts={posts} />
                 </div>
               </div>
             )

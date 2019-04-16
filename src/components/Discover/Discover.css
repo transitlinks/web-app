@@ -7,8 +7,8 @@
 .container {
   max-width: 760px;
   margin: auto;
-  padding-right: 12px;
-  padding-left: 12px;
+  padding-right: 4px;
+  padding-left: 4px;
 }
 
 .sectionLinks {
@@ -39,5 +39,102 @@
 }
 
 .logOut .logOutLink {
+
+}
+
+.discoveryItem {
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.discoveryItem .discoveryHeader {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 20px;
+  font-weight: lighter;
+}
+
+.mainPost {
+
+}
+
+.mainPost .mainPostHeader {
+  background-color: #e0e0e0;
+  padding-top: 3px;
+  padding-left: 4px;
+  padding-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.secondaryPosts {
+  margin-top: 6px;
+  padding-top: 4px;
+  display: flex;
+}
+
+.secondaryPosts .secondaryPost {
+  width: 33%;
+  margin-left: 1px;
+  margin-right: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondaryPosts .secondaryPost .postCount {
+  text-align: center;
+}
+
+.terminalSummary {
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.terminalSummary .terminalsByType {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.terminalSummary .terminalTypeSummary {
+  display: flex;
+  align-items: center;
+  width: 88px;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.terminalSummary .terminalTypeSummary .terminalTypeValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 7px;
+  padding-left: 7px;
+  border: 1px solid #e0e0e0;
+  flex-grow: 1;
+}
+
+.terminalSummary .terminalTypeSummary .terminalTypeIcon {
+  display: flex;
+  background-color: #e0e0e0;
+  padding: 2px;
+}
+
+.terminalSummary .destinationList {
+  margin-left: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.terminalSummary .terminalsByType .summaryLabel {
+
+}
+
+.terminalSummary .terminalsByType .summaryValue {
 
 }

@@ -14,7 +14,7 @@ import { getFeedItem } from "../../actions/posts";
 import terminalMsg from '../Add/messages.terminal';
 
 const Post = ({
-  post, env
+  post, header, env
 }) => {
 
   const name = post.user || 'Anonymous';
@@ -28,15 +28,6 @@ const Post = ({
           <div className={s.feedItemDate}>Feb 4 at 23:11</div>
         </div>
         <div className={s.feedItemControls}>
-          <div className={s.feedItemPrev}>
-            &lt;
-          </div>
-          <div className={s.feedItemOptions}>
-            x
-          </div>
-          <div className={s.feedItemNext}>
-            &gt;
-          </div>
         </div>
       </div>
     );
@@ -45,7 +36,7 @@ const Post = ({
 
   return (
     <div className={s.post}>
-      { renderFeedItemHeader(name) }
+      { header || renderFeedItemHeader(name) }
       <div className={s.mediaContent}>
         {
           (post.mediaItems || []).map(mediaItem => {
