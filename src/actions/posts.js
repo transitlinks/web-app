@@ -1,6 +1,7 @@
 import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import { geocode, extractPlaceFields } from '../services/linkService';
+import { getClientId } from "../core/utils";
 
 import {
   SAVE_POST_START,
@@ -27,6 +28,9 @@ import {
   GET_FEED_START,
   GET_FEED_SUCCESS,
   GET_FEED_ERROR,
+  GET_DISCOVER_START,
+  GET_DISCOVER_SUCCESS,
+  GET_DISCOVER_ERROR,
   GET_FEEDITEM_START,
   GET_FEEDITEM_SUCCESS,
   GET_FEEDITEM_ERROR,
@@ -100,9 +104,12 @@ export const deleteCheckIn = ({ checkInUuid }) => {
 
   return async (...args) => {
 
+
+    const clientId = getClientId();
+
     const query = `
       mutation deleteCheckIn {
-        deleteCheckIn(checkInUuid:"${checkInUuid}") {
+        deleteCheckIn(checkInUuid:"${checkInUuid}", clientId:"${clientId}") {
           uuid,
           latitude,
           longitude,
@@ -263,6 +270,157 @@ export const getTerminals = (checkInId) => {
 
 }
 
+export const getDiscoveries = (search, type) => {
+
+  return async (...args) => {
+
+    const query = `query {
+          discover (search: "${search}", type: "${type}") {
+            discoveries {
+              groupType,
+              groupName,
+              checkInCount,
+              feedItem {
+                checkIn {
+                  uuid,
+                  latitude,
+                  longitude
+                  placeId,
+                  formattedAddress,
+                  locality,
+                  country
+                },
+                inbound {
+                  uuid,
+                  latitude,
+                  longitude,
+                  formattedAddress
+                },
+                outbound {
+                  uuid,
+                  latitude,
+                  longitude,
+                  formattedAddress
+                },
+                posts {
+                  uuid,
+                  text,
+                  user,
+                  mediaItems {
+                    uuid,
+                    type,
+                    url
+                  }
+                },
+                terminals {
+                  uuid,
+                  type,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  priceAmount,
+                  priceCurrency
+                }
+              },
+              posts {
+                uuid,
+                text,
+                user,
+                mediaItems {
+                  uuid,
+                  type,
+                  url
+                },
+                checkIn {
+                  uuid,
+                  formattedAddress
+                }
+              },
+              departures {
+                uuid,
+                type,
+                transport,
+                transportId,
+                date,
+                time,
+                priceAmount,
+                priceCurrency,
+                checkIn {
+                  uuid,
+                  formattedAddress,
+                  locality
+                },
+                linkedTerminal {
+                  uuid,
+                  type,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  priceAmount,
+                  priceCurrency,
+                  checkIn {
+                    uuid,
+                    latitude,
+                    longitude,
+                    placeId,
+                    formattedAddress,
+                    locality,
+                    country
+                  }
+                }
+              },
+              arrivals {
+                uuid,
+                type,
+                transport,
+                transportId,
+                date,
+                time,
+                priceAmount,
+                priceCurrency,
+                checkIn {
+                  uuid,
+                  formattedAddress,
+                  locality
+                },
+                linkedTerminal {
+                  uuid,
+                  type,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  priceAmount,
+                  priceCurrency,
+                  checkIn {
+                    uuid,
+                    latitude,
+                    longitude,
+                    placeId,
+                    formattedAddress,
+                    locality,
+                    country
+                  }
+                }
+              }
+            }
+          }
+        }`
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'discover' ],
+      GET_DISCOVER_START,
+      GET_DISCOVER_SUCCESS,
+      GET_DISCOVER_ERROR
+    );
+
+  };
+
+}
+
 export const getFeed = (clientId) => {
 
   return async (...args) => {
@@ -273,6 +431,8 @@ export const getFeed = (clientId) => {
           feedItems {
             checkIn {
               uuid,
+              user,
+              date,
               latitude,
               longitude,
               placeId,
@@ -373,7 +533,7 @@ export const getFeed = (clientId) => {
 
 }
 
-export const getFeedItem = (checkInUuid, replaceIndex) => {
+export const getFeedItem = (checkInUuid, frameId, target) => {
 
   return async (...args) => {
 
@@ -382,6 +542,8 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
         feedItem (checkInUuid:"${checkInUuid}") {
           checkIn {
             uuid,
+            user,
+            date,
             latitude,
             longitude
             placeId,
@@ -452,7 +614,7 @@ export const getFeedItem = (checkInUuid, replaceIndex) => {
 
     return graphqlAction(
       ...args,
-      { query, variables: { checkInUuid, replaceIndex } }, [ 'feedItem' ],
+      { query, variables: { checkInUuid, frameId, target } }, [ 'feedItem' ],
       GET_FEEDITEM_START,
       GET_FEEDITEM_SUCCESS,
       GET_FEEDITEM_ERROR

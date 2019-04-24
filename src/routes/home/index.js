@@ -25,6 +25,8 @@ export default {
             feedItems {
               checkIn {
                 uuid,
+                user,
+                date,
                 latitude,
                 longitude
                 placeId,

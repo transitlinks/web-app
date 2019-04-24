@@ -57,6 +57,76 @@
   margin-right: 4px;
 }
 
+.contentHeader {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 4px;
+}
+
+.contentHeader .contentHeaderLeft {
+  display: flex;
+}
+
+.contentHeader .contentHeaderRight {
+
+}
+
+.contentHeader .contentHeaderLeft .userIcon {
+
+}
+
+.contentHeader .contentHeaderLeft .contentInfo {
+
+}
+
+.contentInfo .contentUser {
+  font-size: 14px;
+}
+
+.contentInfo .contentDate {
+  font-size: 14px;
+}
+
+
+.posts {
+  position: relative;
+}
+
+.posts .navLeft {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  top: 75px;
+  padding: 12px;
+}
+
+.posts .navRight {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  top: 75px;
+  right: 0px;
+  padding: 12px;
+}
+
+.posts .navIndicator {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  top: 6px;
+  right: 50%;
+  padding-right: 4px;
+  padding-left: 4px;
+  display: flex;
+  border-radius: 6px;
+}
+
+.posts .navIndicator .indicatorDot {
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+.posts .navIndicator .selectedIndicatorDot {
+  font-weight: bold;
+}
+
 .post .postText {
   padding-left: 6px;
   padding-right: 6px;

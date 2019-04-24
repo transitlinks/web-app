@@ -17,26 +17,13 @@ const Post = ({
   post, header, env
 }) => {
 
-  const name = post.user || 'Anonymous';
+  const name = post.user || 'Anonymous';;
 
-  const renderFeedItemHeader = (name) => {
-
-    return (
-      <div className={s.feedItemHeader}>
-        <div className={s.feedItemInfo}>
-          <div className={s.feedItemAuthor}>{name}</div>
-          <div className={s.feedItemDate}>Feb 4 at 23:11</div>
-        </div>
-        <div className={s.feedItemControls}>
-        </div>
-      </div>
-    );
-
-  };
+  const textOnly = (post.mediaItems || []).length === 0;
 
   return (
-    <div className={s.post}>
-      { header || renderFeedItemHeader(name) }
+    <div className={cx(s.post, textOnly ? s.textOnlyPost : {})}>
+      { header }
       <div className={s.mediaContent}>
         {
           (post.mediaItems || []).map(mediaItem => {
@@ -48,7 +35,7 @@ const Post = ({
           })
         }
       </div>
-      <div className={s.postText}>{post.text}</div>
+      <div className={!textOnly ? s.postMediaText : s.postText}>{post.text}</div>
       <div className={s.postControls}></div>
     </div>
   );

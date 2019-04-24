@@ -1,4 +1,4 @@
-import { SET_PROPERTY } from "../constants";
+import { SET_PROPERTY, SET_DEEP_PROPERTY } from "../constants";
 
 export function propToState(action, prefix, state) {
 
@@ -8,9 +8,26 @@ export function propToState(action, prefix, state) {
       const propName = name.substring(name.indexOf('.') + 1);
       state[propName] = action.payload.value;
     }
+  } else if (action.type === SET_DEEP_PROPERTY) {
+    const { store, path, value } = action.payload;
+    if (store === prefix) {
+      let endPath = state;
+      for (let i = 0; i < path.length; i++) {
+        console.log(endPath, path[i]);
+        if (i === path.length - 1) {
+          endPath[path[i]] = value;
+        } else if (!endPath[path[i]]) {
+          endPath[path[i]] = {};
+        }
+        endPath = endPath[path[i]];
+      }
+    }
   }
 
-  return state;
+  return {
+    ...state,
+    propertyUpdated: (new Date()).getTime()
+  };
 
 }
 

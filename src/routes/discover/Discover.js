@@ -3,15 +3,25 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Discover.css';
 import DiscoverView from '../../components/Discover';
 import FunctionBar from '../../components/FunctionBar';
+import { getDiscoveries } from "../../actions/discover";
+import {connect} from "react-redux";
+import {getGeolocation} from "../../actions/global";
+import {getFeed} from "../../actions/posts";
+import {setProperty} from "../../actions/properties";
 
 const title = 'Transitlinks - Discover';
 
 class Discover extends React.Component {
 
+
+  componentDidMount(props) {
+    this.props.getDiscoveries();
+  }
+
   render() {  
 
     const { context, props } = this;
-    const { discover } = props;
+    const { discover, transportTypes } = props;
 
     context.setTitle(title);
 
@@ -23,7 +33,7 @@ class Discover extends React.Component {
             <div className={s.functionBar}>
               <FunctionBar />
             </div>
-            <DiscoverView discover={discover}>
+            <DiscoverView discover={discover} transportTypes={transportTypes} >
             </DiscoverView>
           </div>
         </div>
@@ -37,4 +47,9 @@ class Discover extends React.Component {
 
 Discover.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(s)(Discover);
+export default connect(state => ({
+}), {
+  getDiscoveries,
+  setProperty
+})(withStyles(s)(Discover));
+

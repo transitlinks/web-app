@@ -8,9 +8,8 @@ import { extractLinkAreas } from '../utils';
 import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
 import FeedItemContent from '../FeedItemContent';
-import { setProperty } from "../../actions/properties";
+import { setProperty, setDeepProperty } from "../../actions/properties";
 import { getFeedItem, deleteCheckIn } from "../../actions/posts";
-
 
 import msg from './messages';
 
@@ -24,19 +23,21 @@ const typeSelector = (iconName, isSelected, onClick) => {
   );
 };
 
-const FeedItem = ({
-  index, feedProperties, feedItem, selectedFeedItem, loadingFeedItem, showLinks, showSettings, navigate, setProperty, getFeedItem, deleteCheckIn,
-}) => {
+const CheckInItem = (
+  {
+    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated, showLinks, showSettings,
+    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn,}
+  ) => {
 
   const { checkIn, inbound, outbound } = feedItem;
 
-  const selectCheckIn = (checkInUuid, replaceUuid) => {
-    getFeedItem(checkInUuid, replaceUuid);
+  const selectCheckIn = (checkInUuid, frameId) => {
+    getFeedItem(checkInUuid, frameId, target);
   };
 
   const getStateClass = (links) => {
 
-    if (showLinks === index && links.length > 0) {
+    if (showLinks === frameId && links.length > 0) {
 
       if (loadingFeedItem === 'loaded') {
         setTimeout(() => {
@@ -64,13 +65,11 @@ const FeedItem = ({
   let contentType = 'reaction';
 
   const selectContentType = (value) => {
-    if (!feedProperties[index]) feedProperties[index] = {};
-    feedProperties[index]['contentType'] = value;
-    setProperty('posts.feedProperties', { ...feedProperties });
+    setDeepProperty('posts', ['feedProperties', frameId, 'contentType'], value);
   };
 
-  if (feedProperties[index] && feedProperties[index]['contentType']) {
-    contentType = feedProperties[index]['contentType'];
+  if (feedProperties[frameId] && feedProperties[frameId]['contentType']) {
+    contentType = feedProperties[frameId]['contentType'];
   }
 
   let typeSelectors = [];
@@ -111,7 +110,7 @@ const FeedItem = ({
               inbound.map(inboundCheckIn => {
                 const {uuid, latitude, longitude, formattedAddress } = inboundCheckIn;
                 return (
-                  <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
+                  <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, frameId)}>
                     <div className={s.linkedCheckInDisplay}>
                       { formattedAddress }
                     </div>
@@ -125,12 +124,12 @@ const FeedItem = ({
       }
       <div className={s.feedItemContainer}>
         {
-          (showLinks === index && inbound.length > 0) &&
+          (showLinks === frameId && inbound.length > 0) &&
           <div className={s.inboundArrowBg}>
           </div>
         }
         {
-          (showLinks === index && inbound.length > 0) &&
+          (showLinks === frameId && inbound.length > 0) &&
           <div className={s.inboundArrow}>
             <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
           </div>
@@ -140,7 +139,7 @@ const FeedItem = ({
         </div>
         <div className={s.feedItemControls}>
           {
-            (showLinks === index || showSettings === index) &&
+            (showLinks === frameId || showSettings === frameId) &&
             <div className={s.linksButton} onClick={() => {
               setProperty('posts.showLinks', '');
               setProperty('posts.showSettings', '');
@@ -149,20 +148,20 @@ const FeedItem = ({
             </div>
           }
           {
-            (showLinks !== index && showSettings !== index) &&
-            <div className={s.settingsButton} onClick={() => setProperty('posts.showSettings', index)}>
+            (showLinks !== frameId && showSettings !== frameId) &&
+            <div className={s.settingsButton} onClick={() => setProperty('posts.showSettings', frameId)}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>settings</FontIcon>
             </div>
           }
           {
-            (showLinks !== index && showSettings !== index) &&
-            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', index)}>
+            (showLinks !== frameId && showSettings !== frameId) &&
+            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', frameId)}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>unfold_more</FontIcon>
             </div>
           }
         </div>
         {
-          (showLinks === index && outbound.length > 0) &&
+          (showLinks === frameId && outbound.length > 0) &&
           <div className={s.outboundArrowBg}>
             <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
           </div>
@@ -175,7 +174,7 @@ const FeedItem = ({
               outbound.map(outboundCheckIn => {
                 const { uuid, latitude, longitude, formattedAddress } = outboundCheckIn;
                 return (
-                  <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
+                  <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, frameId)}>
                     <div className={s.linkedCheckInDisplay}>
                       { formattedAddress }
                     </div>
@@ -189,7 +188,7 @@ const FeedItem = ({
       }
 
       {
-        showSettings === index &&
+        showSettings === frameId &&
         <div className={s.feedItemSettings}>
           <div className={s.feedItemSetting}>
             <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
@@ -208,7 +207,7 @@ const FeedItem = ({
         </div>
       </div>
 
-      <FeedItemContent feedItem={feedItem} contentType={contentType} />
+      <FeedItemContent feedItem={feedItem} frameId={frameId} contentType={contentType} />
 
     </div>
   );
@@ -217,13 +216,15 @@ const FeedItem = ({
 
 export default connect(state => ({
   feedProperties: state.posts.feedProperties || {},
+  fetchedFeedItems: state.posts.fetchedFeedItems,
   showLinks: state.posts.showLinks,
   showSettings: state.posts.showSettings,
-  selectedFeedItem: state.posts.selectedFeedItem,
-  loadingFeedItem: state.posts.loadingFeedItem
+  loadingFeedItem: state.posts.loadingFeedItem,
+  propertyUpdated: state.posts.propertyUpdated
 }), {
   navigate,
   setProperty,
+  setDeepProperty,
   getFeedItem,
   deleteCheckIn
-})(withStyles(s)(FeedItem));
+})(withStyles(s)(CheckInItem));

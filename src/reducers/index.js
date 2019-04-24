@@ -15,6 +15,7 @@ import editTerminal from './editTerminal';
 import searchLinks from './searchLinks';
 import profile from './profile';
 import posts from './posts';
+import discover from './discover';
 import home from './home';
 
 export default combineReducers({
@@ -34,5 +35,6 @@ export default combineReducers({
   searchLinks,
   profile,
   posts,
+  discover,
   home
 });

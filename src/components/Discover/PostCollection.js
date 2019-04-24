@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
 import Post from '../Post';
 import Terminal from '../Terminal';
+import CheckInItem from '../CheckInItem';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Discover.css';
@@ -11,9 +12,7 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const PostCollection = ({ posts, env, children, intl }) => {
-
-  console.log("show post collection", posts);
+const PostCollection = ({ transportTypes, posts, env, children, intl }) => {
 
   if (posts.length === 0) {
     return null;
@@ -69,14 +68,10 @@ const PostCollection = ({ posts, env, children, intl }) => {
     </div>
   );
 
+  const mainPost = posts.length > 1 ? posts[1] : posts[0];
+
 	return (
     <div className={s.postCollection}>
-      <div className={s.mainPost}>
-        <div className={s.mainPostHeader}>
-          { formattedAddress }
-        </div>
-        <Post post={posts[posts.length > 1 ? 1 : 0]} />
-      </div>
       { secondaryPostsElem }
     </div>
   );

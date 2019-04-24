@@ -9,7 +9,9 @@ export default function global(state = {}, action) {
   const endState = { ...state };
 
   switch (action.type) {
-
+    case GET_GEOLOCATION_START:
+      endState['geolocation.status'] = 'locating';
+      return endState;
     case GET_GEOLOCATION_START:
       endState['geolocation.status'] = 'locating';
       return endState;

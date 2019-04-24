@@ -7,12 +7,13 @@ import s from './Feed.css';
 import FontIcon from 'material-ui/FontIcon';
 import Link from '../Link';
 import FeedItem from './FeedItem';
-import Add from '../Add'
+import Add from '../Add';
+import CheckInItem from '../CheckInItem';
 import msg from './messages';
 
 
 const FeedView = ({
-  feed, transportTypes, loadedFeed, savedCheckIn, fetchedFeedItem
+  feed, transportTypes, loadedFeed, savedCheckIn, fetchedFeedItems, feedUpdated
 }) => {
 
   const currentFeed = (loadedFeed || feed) || {};
@@ -20,13 +21,11 @@ const FeedView = ({
     return { ...feedItem };
   });
   const openTerminals = (currentFeed.openTerminals || []).map(terminal => {
-    console.log("otuuid", terminal.uuid);
     return { ...terminal, id: terminal.uuid };
   });
 
 
   let editOpen = false;
-  console.log("feed view", loadedFeed, feed, currentFeed);
 
   return (
     <div className={s.container}>
@@ -36,10 +35,13 @@ const FeedView = ({
         {
           feedItems.map((feedItem, index) => {
 
+            const frameId = `feed-${index}`;
             const { checkIn } = feedItem;
 
             const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid && !editOpen;
             if (editable) editOpen = true;
+
+            const fetchedFeedItem = fetchedFeedItems[frameId];
 
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
@@ -48,7 +50,7 @@ const FeedView = ({
                     <Add feedItem={feedItem}
                          openTerminals={openTerminals}
                          transportTypes={transportTypes} />
-                    : <FeedItem feedItem={feedItem} index={index} transportTypes={transportTypes} />
+                    : <CheckInItem feedItem={(fetchedFeedItem || feedItem)} frameId={frameId} transportTypes={transportTypes} />
                 }
               </div>
             );
@@ -63,7 +65,8 @@ const FeedView = ({
 export default connect(state => ({
   loadedFeed: state.posts.feed,
   savedCheckIn: state.posts.checkIn,
-  fetchedFeedItem: state.posts.fetchedFeedItem
+  fetchedFeedItems: state.posts.fetchedFeedItems || {},
+  feedUpdated: state.posts.feedUpdated
 }), {
   navigate
 })(withStyles(s)(FeedView));

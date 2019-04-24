@@ -33,10 +33,11 @@ import {
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
 
-const requireOwnership = async (request, entity) => {
+const requireOwnership = async (request, clientId, entity) => {
 
   if (!entity.uuid) return;
 
+  console.log("request", request.user, clientId, entity.clientId, entity.userId);
   if (request.user) {
     const userId = await userRepository.getUserIdByUuid(request.user.uuid);
     if (entity.userId !== userId) {
@@ -76,7 +77,7 @@ const saveTerminal = async (terminalInput, request) => {
 
   if (terminalInput.uuid) {
     const savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
-    await requireOwnership(request, savedTerminal);
+    await requireOwnership(request, null, savedTerminal);
   }
 
 
@@ -127,7 +128,7 @@ const savePost = async (postInput, request) => {
 
   if (postInput.uuid) {
     const savedPost = await postRepository.getPost({ uuid: postInput.uuid });
-    await requireOwnership(request, savedPost);
+    await requireOwnership(request, null, savedPost);
   }
 
   const { checkInUuid } = postInput;
@@ -170,7 +171,7 @@ const saveCheckIn = async (checkInInput, request) => {
 
   if (checkInInput.uuid) {
     const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
-    await requireOwnership(request, savedCheckIn);
+    await requireOwnership(request, null, savedCheckIn);
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [
@@ -197,10 +198,10 @@ const saveCheckIn = async (checkInInput, request) => {
 
 };
 
-const deleteCheckIn = async (checkInUuid, request, clientId) => {
+const deleteCheckIn = async (checkInUuid, clientId, request) => {
 
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-  await requireOwnership(request, checkIn);
+  await requireOwnership(request, clientId, checkIn);
 
   const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
   const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });
@@ -296,11 +297,12 @@ export const PostMutationFields = {
     type: CheckInType,
     description: 'Delete a check-in',
     args: {
-      checkInUuid: { type: GraphQLString }
+      checkInUuid: { type: GraphQLString },
+      clientId: { type: GraphQLString }
     },
-    resolve: async ({ request }, { checkInUuid }) => {
-      log.info(graphLog(request, 'delete-check-in', 'uuid=' + checkInUuid));
-      return await deleteCheckIn(checkInUuid, request);
+    resolve: async ({ request }, { checkInUuid, clientId }) => {
+      log.info(graphLog(request, 'delete-check-in', 'uuid=' + checkInUuid + 'clientId=' + clientId ));
+      return await deleteCheckIn(checkInUuid, clientId, request);
     }
 
   },
@@ -393,6 +395,61 @@ export const PostMutationFields = {
 
 };
 
+export const getFeedItem = async (request, checkIn) => {
+
+  const posts = await postRepository.getPosts({ checkInId: checkIn.id });
+  console.log("FEED ITEM POSTS", checkIn.id);
+  log.info(graphLog(request, 'get-feed', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
+  const linkedCheckIns = await getLinkedCheckIns(checkIn);
+  const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
+
+  let checkInUser = null;
+  if (checkIn.userId) {
+    checkInUser = await userRepository.getById(checkIn.userId);
+    checkInUser = checkInUser.firstName + ' ' + checkInUser.lastName;
+  }
+
+  return {
+    checkIn: {
+      ...(checkIn.json()),
+      user: checkInUser,
+      date: checkIn.createdAt
+    },
+    ...linkedCheckIns,
+    posts: posts.map(async (post) => {
+      const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
+      let userName = null;
+      if (post.userId) {
+        const user = await userRepository.getById(post.userId);
+        userName = user.firstName + ' ' + user.lastName;
+      }
+      return {
+        ...post.json(),
+        user: userName,
+        mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+      };
+    }),
+    terminals: terminals.map(async (terminal) => {
+
+      let linkedTerminal = null;
+
+      if (terminal.linkedTerminalId) {
+        linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
+        const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
+        linkedTerminal = linkedTerminal.json();
+        linkedTerminal.checkIn = linkedTerminalCheckIn.json();
+      }
+
+      return {
+        ...terminal.json(),
+        linkedTerminal
+      };
+
+    })
+  };
+
+};
+
 export const PostQueryFields = {
 
   post: {
@@ -458,45 +515,7 @@ export const PostQueryFields = {
       log.info(graphLog(request, 'get-feed', 'check-ins=' + checkIns.length));
       return {
         feedItems: checkIns.map(async (checkIn) => {
-          const posts = await postRepository.getPosts({ checkInId: checkIn.id });
-          log.info(graphLog(request, 'get-feed', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
-          const linkedCheckIns = await getLinkedCheckIns(checkIn);
-          const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
-          console.log("LINKED", linkedCheckIns);
-          return {
-            checkIn: checkIn.json(),
-            ...linkedCheckIns,
-            posts: posts.map(async (post) => {
-              const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
-              let userName = null;
-              if (post.userId) {
-                const user = await userRepository.getById(post.userId);
-                userName = user.firstName + ' ' + user.lastName;
-              }
-              return {
-                ...post.json(),
-                user: userName,
-                mediaItems: mediaItems.map(mediaItem => mediaItem.json())
-              };
-            }),
-            terminals: terminals.map(async (terminal) => {
-
-              let linkedTerminal = null;
-
-              if (terminal.linkedTerminalId) {
-                linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
-                const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
-                linkedTerminal = linkedTerminal.json();
-                linkedTerminal.checkIn = linkedTerminalCheckIn.json();
-              }
-
-              return {
-                ...terminal.json(),
-                linkedTerminal
-              };
-
-            })
-          };
+          return await getFeedItem(request, checkIn);
         }),
         openTerminals: openTerminals.map(async (terminal) => {
           const terminalCheckIn = await postRepository.getCheckIn({ id: terminal.checkInId });
@@ -522,27 +541,7 @@ export const PostQueryFields = {
 
       log.info(graphLog(request, 'get-feed-item', 'uuid=' + checkInUuid));
       const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-      const posts = await postRepository.getPosts({ checkInId: checkIn.id });
-      const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
-      const linkedCheckIns = await getLinkedCheckIns(checkIn);
-      return {
-        checkIn: checkIn.toJSON(),
-        ...linkedCheckIns,
-        posts: posts.map(async (post) => {
-          const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
-          let userName = null;
-          if (post.userId) {
-            const user = await userRepository.getById(post.userId);
-            userName = user.firstName + ' ' + user.lastName;
-          }
-          return {
-            ...post.json(),
-            user: userName,
-            mediaItems: mediaItems.map(mediaItem => mediaItem.json())
-          };
-        }),
-        terminals: terminals.map(terminal => terminal.toJSON())
-      };
+      return await getFeedItem(request, checkIn);
 
     }
 

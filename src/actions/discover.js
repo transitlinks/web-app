@@ -1,25 +1,18 @@
-import { getLog } from '../../core/log';
-const log = getLog('routes/discover');
+import { toGraphQLObject } from '../core/utils';
+import { graphqlAction } from './utils';
+import { geocode, extractPlaceFields } from '../services/linkService';
 
-import React from 'react';
-import ErrorPage from '../../components/common/ErrorPage';
-import Discover from './Discover';
+import {
+  GET_DISCOVER_START,
+  GET_DISCOVER_SUCCESS,
+  GET_DISCOVER_ERROR
+} from '../constants';
 
-export default {
+export const getDiscoveries = (search, type) => {
 
-  path: '/discover/:search?/:type?',
+  return async (...args) => {
 
-  async action({ params, context }) {
-    
-    let search = params.search;
-    let type = params.type;
-
-    const { graphqlRequest } = context.store.helpers;
- 
-    try { 
-
-      const { data } = await graphqlRequest(
-        `query {
+    const query = `query {
           discover (search: "${search}", type: "${type}") {
             discoveries {
               groupType,
@@ -67,31 +60,7 @@ export default {
                   date,
                   time,
                   priceAmount,
-                  priceCurrency,
-                  checkIn {
-                    uuid,
-                    formattedAddress,
-                    locality
-                  },
-                  linkedTerminal {
-                    uuid,
-                    type,
-                    transport,
-                    transportId,
-                    date,
-                    time,
-                    priceAmount,
-                    priceCurrency,
-                    checkIn {
-                      uuid,
-                      latitude,
-                      longitude,
-                      placeId,
-                      formattedAddress,
-                      locality,
-                      country
-                    }
-                  } 
+                  priceCurrency
                 }
               },
               posts {
@@ -177,19 +146,17 @@ export default {
                 }
               }
             }
-          },
-          transportTypes { slug }
+          }
         }`
-      );
 
-      log.info("event=received-discoveries-data", data);
-      return <Discover discover={data.discover} transportTypes={data.transportTypes} />;
-    
-    } catch (error) {
-      log.info("error=route-discover", error);
-      return <ErrorPage errors={error.errors} />
-    }
+    return graphqlAction(
+      ...args,
+      { query }, [ 'discover' ],
+      GET_DISCOVER_START,
+      GET_DISCOVER_SUCCESS,
+      GET_DISCOVER_ERROR
+    );
 
-  }
+  };
 
-};
+}

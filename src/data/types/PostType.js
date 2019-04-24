@@ -80,12 +80,14 @@ export const CheckInType = new GraphQLObjectType({
   fields: {
     uuid: {type: new GraphQLNonNull(GraphQLString)},
     clientId: {type: GraphQLString},
+    user: { type: GraphQLString },
     latitude: {type: GraphQLFloat},
     longitude: {type: GraphQLFloat},
     placeId: {type: GraphQLString},
     locality: {type: GraphQLString},
     country: {type: GraphQLString},
-    formattedAddress: {type: GraphQLString}
+    formattedAddress: {type: GraphQLString},
+    date: {type: GraphQLString}
   },
 });
 

@@ -3,20 +3,20 @@ import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
 import PostCollection from './PostCollection';
 import Terminal from '../Terminal';
+import CheckInItem from '../CheckInItem';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Discover.css';
 import Link from '../Link';
+import { getDiscoveries } from '../../actions/discover';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const DiscoverView = ({ discover, children, intl }) => {
+const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated, transportTypes, children, intl }) => {
 
-  const { discoveries } = discover;
-
-  console.log("show discoveries", discoveries);
+  let discoveries = (loadedDiscover || discover).discoveries;
 
   const renderTerminalsList = (terminalType, terminals) => {
 
@@ -33,7 +33,7 @@ const DiscoverView = ({ discover, children, intl }) => {
     const terminalLocations = {};
     terminals.forEach(terminal => {
       if (terminal.linkedTerminal) {
-        terminalLocations[terminal.linkedTerminal.checkIn.locality] = 1;
+        terminalLocations[terminal.linkedTerminal.checkIn.locality  || 'Unnamed'] = 1;
       }
     });
 
@@ -70,21 +70,31 @@ const DiscoverView = ({ discover, children, intl }) => {
       <div>
         {
 
-          (discoveries || []).map(discovery => {
+          (discoveries || []).map((discovery, index) => {
 
-            const { posts, departures, arrivals } = discovery;
+            const frameId = `discover-${index}`;
+
+            const { posts, departures, arrivals, feedItem } = discovery;
 
             return (
               <div key={discovery.groupName} className={s.discoveryItem}>
                 <div className={s.discoveryHeader}>
-                  { discovery.groupName || 'Ungrouped' }
+                  <div className={s.discoveryGroupName}>
+                    { discovery.groupName || 'Unnamed' }
+                  </div>
+                  <div className={s.discoveryHeaderControls}>
+                    <div className={s.checkInCount}>
+                      { discovery.checkInCount } check-ins
+                    </div>
+                  </div>
                 </div>
                 <div className={s.terminalSummary}>
                   { renderTerminalsList('arrival', arrivals) }
                   { renderTerminalsList('departure', departures) }
                 </div>
                 <div className={s.postSummary}>
-                  <PostCollection posts={posts} />
+                  <CheckInItem feedItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+                  <PostCollection posts={posts} frameId={frameId} transportTypes={transportTypes} />
                 </div>
               </div>
             )
@@ -101,6 +111,10 @@ DiscoverView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
   connect(state => ({
+    loadedDiscover: state.discover.discover,
+    fetchedFeedItems: state.posts.fetchedFeedItems || {},
+    feedUpdated: state.posts.feedUpdated
   }), {
+    getDiscoveries
   })(withStyles(s)(DiscoverView))
 );

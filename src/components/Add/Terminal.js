@@ -89,7 +89,6 @@ const Terminal = (props) => {
       </div>
     );
 
-    console.log("adding menu item", terminal);
     return (
       <MenuItem id={terminal.uuid} key={terminal.uuid} style={{ wdith: '100%', "WebkitAppearance": "initial" }}
                 value={terminal.uuid} primaryText={menuItemLabel}>
@@ -182,6 +181,8 @@ const Terminal = (props) => {
 
     if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
       editedTerminal.linkedTerminalUuid = linkedTerminalUuid;
+      editedTerminal.transport = linkedTerminal.transport;
+      editedTerminal.transportId = linkedTerminal.transactionId;
     }
 
     const clientId = getClientId();

@@ -52,8 +52,22 @@
 .discoveryItem .discoveryHeader {
   padding-top: 2px;
   padding-bottom: 2px;
-  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.discoveryHeader .discoveryGroupName {
+  font-size: 28px;
   font-weight: lighter;
+}
+
+.discoveryHeader .discoveryHeaderControls {
+
+}
+
+.discoveryHeader .discoveryHeaderControls .checkInCount {
+
 }
 
 .mainPost {
@@ -61,6 +75,9 @@
 }
 
 .mainPost .mainPostHeader {
+}
+
+.mainPostHeader .mainPostCheckIn {
   background-color: #e0e0e0;
   padding-top: 3px;
   padding-left: 4px;
@@ -68,6 +85,33 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.mainPostHeader .mainPostInfo {
+
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoLeft {
+  margin-bottom: 6px;
+  padding-left: 6px;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoLeft .feedItemAuthor {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoLeft .feedItemDate {
+  font-size: 10px;
+  color: #666;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoRight {
+  margin-right: 8px;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoRight .feedItemControls {
+  display: flex;
 }
 
 .secondaryPosts {

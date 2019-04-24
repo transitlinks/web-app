@@ -184,36 +184,24 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({
-            selectedFeedItem: action.payload.variables.checkInUuid,
             loadingFeedItem: 'loading'
           }),
           success: () => {
-            const { feed } = state;
-            console.log("attempt to splice feed", feed);
-            if (feed) {
-              const { replaceIndex } = action.payload.variables;
-              feed.feedItems[replaceIndex] = action.payload.feedItem;
-              /*
-              for (let i = 0; i < feed.feedItems.length; i++) {
-                const feedItem = feed.feedItems[i];
-                if (feedItem.checkIn.uuid === replaceUuid) {
-                  console.log("setting " + i + " to", action.payload.feedItem.checkIn.uuid);
-                  feed.feedItems[i] = action.payload.feedItem;
-                  break;
-                }
-              }
-              */
 
-            }
+            let { fetchedFeedItems } = state;
+            if (!fetchedFeedItems) fetchedFeedItems = {};
+            const { feedItem, variables } = action.payload;
+            fetchedFeedItems[variables.frameId] = feedItem;
+
             return {
-              fetchedFeedItem: action.payload.feedItem,
-              loadedFeed: feed,
-              loadingFeedItem: 'loaded'
+              fetchedFeedItems,
+              loadingFeedItem: 'loaded',
+              feedUpdated: (new Date()).getTime()
             };
+
           },
           error: () => ({
-            fetchedFeedItem: null,
-            selectedFeedItem: null,
+            fetchedFeedItems: {},
             loadingFeedItem: 'error'
           })
         },

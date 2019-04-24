@@ -34,7 +34,7 @@ const Terminal = ({
     <div className={s.terminalEntry}>
       <div className={s.terminalEntryRow1}>
         <div className={s.terminalEntryTransport}>
-          <FormattedMessage {...terminalMsg[terminal.transport]} />
+          { terminalMsg[terminal.transport] && <FormattedMessage {...terminalMsg[terminal.transport]} /> }
         </div>
         <div className={s.terminalEntryTime}>
           { dateStr } { timeStr }

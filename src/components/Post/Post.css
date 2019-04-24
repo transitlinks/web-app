@@ -9,11 +9,25 @@
 
 .post {
   margin-top: 4px;
+  min-height: 200px;
+}
+
+.textOnlyPost {
+  display: flex;
+  align-items: center;
 }
 
 .post .postText {
   padding-left: 6px;
   padding-right: 6px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post .postMediaText {
+
 }
 
 .feedItemHeader {

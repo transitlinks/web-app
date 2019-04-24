@@ -9,19 +9,18 @@ import Post from '../Post';
 import Terminal from '../Terminal';
 import s from './FeedItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
-import { setProperty } from "../../actions/properties";
+import { setDeepProperty, setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
 import terminalMsg from '../Add/messages.terminal';
 
 const FeedItemContent = ({
-  feedItem, contentType, env
+  feedItem, contentType, feedProperties, frameId, env,
+  setDeepProperty, setProperty
 }) => {
 
   const { checkIn, posts, terminals } = feedItem;
   let content = null;
-
-  console.log('feedItem', feedItem);
 
   const formatDate = (date) => {
 
@@ -33,13 +32,57 @@ const FeedItemContent = ({
 
   };
 
-  console.log("feeditem content", posts, contentType);
+
+  const scrollToPost = (postIndex) => {
+    setDeepProperty('posts', ['feedProperties', frameId, 'activePost'], postIndex);
+  };
+
+  let activePost = ((feedProperties && feedProperties[frameId]) && feedProperties[frameId]['activePost']) || 0;
 
   if (contentType === 'reaction') {
 
-    content = posts.map(post => {
-      return <Post post={post}/>;
-    });
+    console.log("show post", frameId, activePost, feedItem);
+    if (posts.length > 0) {
+
+      const indicatorDots = [];
+      if (posts.length > 1) {
+        for (let i = 0; i < posts.length; i++) {
+          indicatorDots.push(
+            <div className={cx(s.indicatorDot, i === activePost ? s.selectedIndicatorDot : {})}>
+              o
+            </div>
+          );
+        }
+      }
+
+      content = (
+        <div className={s.posts}>
+          <Post post={posts[activePost || 0]}/>
+          {
+            activePost > 0 &&
+              <div className={s.navLeft} onClick={() => scrollToPost(activePost - 1)}>
+                &lt;
+              </div>
+          }
+          {
+            activePost < posts.length - 1 &&
+            <div className={s.navRight} onClick={() => scrollToPost(activePost + 1)}>
+              &gt;
+            </div>
+          }
+          <div className={s.navIndicator}>
+            {indicatorDots}
+          </div>
+        </div>
+      );
+
+    } else {
+
+      content = (
+        <div></div>
+      );
+
+    }
 
   } else if (contentType === 'arrival') {
 
@@ -57,8 +100,26 @@ const FeedItemContent = ({
 
   }
 
+  const userName = checkIn.user || 'Anonymoyus';
+  const dateStr = (new Date(checkIn.date)).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
   return (
     <div className={s.feedItemContent}>
+      <div className={s.contentHeader}>
+        <div className={s.contentHeaderLeft}>
+          <div className={s.userIcon}>
+          </div>
+          <div className={s.contentInfo}>
+            <div className={s.contentUser}>
+              { userName }
+            </div>
+            <div className={s.contentDate}>
+              { dateStr }
+            </div>
+          </div>
+        </div>
+        <div className={s.contentHeaderRight}>
+        </div>
+      </div>
       {content}
     </div>
   );
@@ -68,8 +129,10 @@ const FeedItemContent = ({
 
 export default injectIntl(
   connect(state => ({
-    env: state.env
+    env: state.env,
+    feedProperties: state.posts.feedProperties || {}
   }), {
+    setDeepProperty, setProperty
   })(withStyles(s)(FeedItemContent))
 );
 

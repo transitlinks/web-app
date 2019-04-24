@@ -25,6 +25,8 @@ import {
   FeedType
 } from '../types/PostType';
 
+import { getFeedItem } from './posts';
+
 import {
   DiscoveryResultType,
   DiscoveryItemType
@@ -61,6 +63,7 @@ export const DiscoverQueryFields = {
       let discoveries = [];;
       for (let i = 0; i < localities.length; i++) {
         const checkInsByLoc = await postRepository.getCheckIns({ locality: localities[i] });
+        console.log("CHECKINS BY LOC", checkInsByLoc[0].id);
         let locPosts = [];
         let locDepartures = [];
         let locArrivals = [];
@@ -125,6 +128,8 @@ export const DiscoverQueryFields = {
           {
             groupType: 'locality',
             groupName: localities[i],
+            checkInCount: checkInsByLoc.length,
+            feedItem: await getFeedItem(request, checkInsByLoc[0]),
             posts: locPosts,
             departures: locDepartures,
             arrivals: locArrivals

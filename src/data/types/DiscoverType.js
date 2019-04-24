@@ -7,7 +7,8 @@ import {
 
 import {
   PostType,
-  TerminalType
+  TerminalType,
+  FeedItemType
 } from "./PostType";
 
 export const DiscoveryItemType = new GraphQLObjectType({
@@ -16,6 +17,8 @@ export const DiscoveryItemType = new GraphQLObjectType({
   fields: () => ({
     groupType: { type: GraphQLString },
     groupName: { type: GraphQLString },
+    checkInCount: { type: GraphQLInt },
+    feedItem: { type: FeedItemType },
     posts: { type: new GraphQLList(PostType) },
     departures: { type: new GraphQLList(TerminalType) },
     arrivals: { type: new GraphQLList(TerminalType) }
