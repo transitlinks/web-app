@@ -28,8 +28,8 @@ const Post = ({
         {
           (post.mediaItems || []).map(mediaItem => {
             return (
-              <div>
-                <img src={env.MEDIA_URL + mediaItem.url} width="100%"/>
+              <div className={s.imgContainer}>
+                <img src={env.MEDIA_URL + mediaItem.url} />
               </div>
             );
           })

@@ -4,7 +4,6 @@
   max-width: 460px;
   margin: auto;
   padding-bottom: 2px;
-  margin-top: 18px;
 }
 
 .feedItemContainer {
@@ -35,6 +34,7 @@
   min-width: 64px;
   display: flex;
   justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .feedItemControls .settingsButton {
@@ -47,13 +47,12 @@
 }
 
 .inboundCheckIns {
-  margin-bottom: 6px;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .outboundCheckIns {
-  margin-top: 6px;
-  border-top: 1px solid #e0e0e0;
+  padding-top: 2px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .linkedCheckIn {
@@ -74,7 +73,6 @@
 }
 
 .outboundCheckIns .linkedCheckIn {
-  border-bottom: 1px solid #e0e0e0;
   display: flex;
 }
 
@@ -139,14 +137,6 @@
   align-items: center;
 }
 
-.inboundContainer {
-
-}
-
-.outboundContainer {
-  margin-bottom: 4px;
-}
-
 .open {
   height: 36px;
   transition: height 0.5s;
@@ -158,6 +148,15 @@
   margin-bottom: initial;
   overflow: hidden;
   transition: height 0.5s;
+}
+
+
+.inboundContainer {
+  margin-top: 4px;
+}
+
+.outboundContainer {
+  margin-bottom: 4px;
 }
 
 .contentTypeContainer {

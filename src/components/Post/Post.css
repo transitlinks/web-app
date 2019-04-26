@@ -27,7 +27,7 @@
 }
 
 .post .postMediaText {
-
+  padding: 4px;
 }
 
 .feedItemHeader {
@@ -88,4 +88,18 @@
 .triangleLeft {
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
+}
+
+.imgContainer {
+  width: 100%;
+  max-height: 115vw;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.imgContainer img {
+  width: 100%;
+  height: auto;
 }

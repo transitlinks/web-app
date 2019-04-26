@@ -73,11 +73,11 @@ const addUserId = async (object, request) => {
 };
 
 
-const saveTerminal = async (terminalInput, request) => {
+const saveTerminal = async (terminalInput, clientId, request) => {
 
   if (terminalInput.uuid) {
     const savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
-    await requireOwnership(request, null, savedTerminal);
+    await requireOwnership(request, clientId, savedTerminal);
   }
 
 
@@ -124,11 +124,11 @@ const saveTerminal = async (terminalInput, request) => {
 };
 
 
-const savePost = async (postInput, request) => {
+const savePost = async (postInput, clientId, request) => {
 
   if (postInput.uuid) {
     const savedPost = await postRepository.getPost({ uuid: postInput.uuid });
-    await requireOwnership(request, null, savedPost);
+    await requireOwnership(request, clientId, savedPost);
   }
 
   const { checkInUuid } = postInput;
@@ -167,11 +167,11 @@ const savePost = async (postInput, request) => {
 
 };
 
-const saveCheckIn = async (checkInInput, request) => {
+const saveCheckIn = async (checkInInput, clientId, request) => {
 
   if (checkInInput.uuid) {
     const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
-    await requireOwnership(request, null, savedCheckIn);
+    await requireOwnership(request, clientId, savedCheckIn);
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [
@@ -255,11 +255,12 @@ export const PostMutationFields = {
     type: PostType,
     description: 'Create or update a post',
     args: {
-      post: { type: PostInputType }
+      post: { type: PostInputType },
+      clientId: { type: GraphQLString }
     },
-    resolve: async ({ request }, { post }) => {
+    resolve: async ({ request }, { post, clientId }) => {
       log.info(graphLog(request, 'save-post', 'clientId=' + post.clientId + ' uuid=' + post.uuid));
-      return await savePost(post, request);
+      return await savePost(post, clientId, request);
     }
 
   },
@@ -269,11 +270,12 @@ export const PostMutationFields = {
     type: TerminalType,
     description: 'Create or update a terminal',
     args: {
-      terminal: { type: TerminalInputType }
+      terminal: { type: TerminalInputType },
+      clientId: { type: GraphQLString }
     },
-    resolve: async ({ request }, { terminal }) => {
+    resolve: async ({ request }, { terminal, clientId }) => {
       log.info(graphLog(request, 'save-terminal'));
-      return await saveTerminal(terminal, request);
+      return await saveTerminal(terminal, clientId, request);
     }
 
   },
@@ -283,11 +285,12 @@ export const PostMutationFields = {
     type: CheckInType,
     description: 'Create or update a check-in',
     args: {
-      checkIn: { type: CheckInInputType }
+      checkIn: { type: CheckInInputType },
+      clientId: { type: GraphQLString }
     },
-    resolve: async ({ request }, { checkIn }) => {
+    resolve: async ({ request }, { checkIn, clientId }) => {
       log.info(graphLog(request, 'save-check-in', 'clientId=' + checkIn.clientId + ' uuid=' + checkIn.uuid));
-      return await saveCheckIn(checkIn, request);
+      return await saveCheckIn(checkIn, clientId, request);
     }
 
   },

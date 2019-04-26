@@ -55,11 +55,11 @@ const CheckInItem = (
   };
 
   const getInboundClassnames = () => {
-    return cx(s.inboundContainer, getStateClass(inbound));
+    return cx(getStateClass(inbound), s.inboundContainer);
   };
 
   const getOutboundClassnames = () => {
-    return cx(s.outboundContainer, getStateClass(outbound));
+    return cx(getStateClass(outbound), s.outboundContainer);
   };
 
   let contentType = 'reaction';
@@ -124,15 +124,17 @@ const CheckInItem = (
       }
       <div className={s.feedItemContainer}>
         {
-          (showLinks === frameId && inbound.length > 0) &&
-          <div className={s.inboundArrowBg}>
-          </div>
+          null
+          //(showLinks === frameId && inbound.length > 0) &&
+          //<div className={s.inboundArrowBg}>
+          //</div>
         }
         {
-          (showLinks === frameId && inbound.length > 0) &&
-          <div className={s.inboundArrow}>
-            <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
-          </div>
+          null
+          //(showLinks === frameId && inbound.length > 0) &&
+          //<div className={s.inboundArrow}>
+          //  <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
+          //</div>
         }
         <div className={s.feedItemDisplay}>
           { checkIn.formattedAddress }
@@ -161,10 +163,11 @@ const CheckInItem = (
           }
         </div>
         {
-          (showLinks === frameId && outbound.length > 0) &&
-          <div className={s.outboundArrowBg}>
-            <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
-          </div>
+          null
+          //(showLinks === frameId && outbound.length > 0) &&
+          //<div className={s.outboundArrowBg}>
+          //  <FontIcon className="material-icons" style={{fontSize: '20px'}}>arrow_downward</FontIcon>
+          //</div>
         }
       </div>
       {

@@ -11,6 +11,7 @@
 }
 
 .feedItemContent {
+  margin-bottom: 12px;
 }
 
 .feedItemContent .post {
@@ -94,37 +95,49 @@
 
 .posts .navLeft {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.5);
-  top: 75px;
-  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.25);
+  top: calc(50% - 20px);
+  display: flex;
+  align-items: center;
 }
 
 .posts .navRight {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.5);
-  top: 75px;
+  background-color: rgba(255, 255, 255, 0.25);
+  top: calc(50% - 20px);
   right: 0px;
-  padding: 12px;
+  display: flex;
+  align-items: center;
 }
 
-.posts .navIndicator {
+.posts .navIndicatorContainer {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.5);
   top: 6px;
-  right: 50%;
+  width: 100%;
+  display: flex;
+}
+
+.navIndicatorContainer .navIndicator {
   padding-right: 4px;
   padding-left: 4px;
   display: flex;
   border-radius: 6px;
+  margin: auto;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .posts .navIndicator .indicatorDot {
   margin-right: 2px;
   margin-left: 2px;
+  height: 8px;
+  width: 8px;
+  border: 1px solid black;
+  border-radius: 8px;
 }
 
 .posts .navIndicator .selectedIndicatorDot {
-  font-weight: bold;
+  background-color: black;
 }
 
 .post .postText {

@@ -41,25 +41,25 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
 
     return (
       <div className={s.terminalsByType}>
-        <div className={s.terminalTypeSummary}>
-          <div className={s.terminalTypeIcon}>
-            <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{ terminalType === 'arrival' ? 'call_received' : 'call_made' }</FontIcon>
+        <div className={cx(s.terminalTypeSummary, terminalType === 'arrival' ? s.terminalTypeSummaryArrivals : s.terminalTypeSummaryDepartures)}>
+          <div className={s.destinationList}>
+            {
+              locationLabels.map((locationLabel, i) => (
+                <span>
+                <a href="#">{locationLabel}</a>
+                  {
+                    (i < locationLabels.length - 1) && (<span>, </span>)
+                  }
+              </span>
+              ))
+            }
           </div>
           <div className={s.terminalTypeValue}>
             <a href="#">{terminals.length}</a>
           </div>
-        </div>
-        <div className={s.destinationList}>
-          {
-            locationLabels.map((locationLabel, i) => (
-              <span>
-                <a href="#">{locationLabel}</a>
-                {
-                  (i < locationLabels.length - 1) && (<span>, </span>)
-                }
-              </span>
-            ))
-          }
+          <div className={s.terminalTypeIcon}>
+            <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{ terminalType === 'arrival' ? 'call_received' : 'call_made' }</FontIcon>
+          </div>
         </div>
       </div>
     );
@@ -84,7 +84,12 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
                   </div>
                   <div className={s.discoveryHeaderControls}>
                     <div className={s.checkInCount}>
-                      { discovery.checkInCount } check-ins
+                      <div className={s.checkInCountIcon}>
+                        <FontIcon className="material-icons" style={{ fontSize: '16px' }}>place</FontIcon>
+                      </div>
+                      <div className={s.checkInCountValue}>
+                        { discovery.checkInCount }
+                      </div>
                     </div>
                   </div>
                 </div>

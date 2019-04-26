@@ -74,9 +74,11 @@ export const saveCheckIn = ({ checkIn }) => {
 
     const placeFields = extractPlaceFields(location);
 
+    const clientId = getClientId();
+
     const query = `
       mutation saveCheckIn {
-        checkIn(checkIn:${toGraphQLObject({ ...placeFields, ...checkIn })}) {
+        checkIn(checkIn:${toGraphQLObject({ ...placeFields, ...checkIn })}, clientId:"${clientId}") {
           uuid,
           latitude,
           longitude,
@@ -135,11 +137,13 @@ export const deleteCheckIn = ({ checkInUuid }) => {
 
 export const savePost = ({ post }) => {
 
+  const clientId = getClientId();
+
   return async (...args) => {
 
     const query = `
       mutation savePost {
-        post(post:${toGraphQLObject(post)}) {
+        post(post:${toGraphQLObject(post)}, clientId:"${clientId}") {
           uuid,
           text
         }
@@ -191,11 +195,13 @@ export const getPosts = (input) => {
 
 export const saveTerminal = ({ terminal }) => {
 
+  const clientId = getClientId();
+
   return async (...args) => {
 
     const query = `
       mutation saveTerminal {
-        terminal(terminal:${toGraphQLObject(terminal)}) {
+        terminal(terminal:${toGraphQLObject(terminal)}, clientId:"${clientId}") {
           uuid,
           type,
           transport,

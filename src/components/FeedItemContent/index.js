@@ -13,6 +13,7 @@ import { setDeepProperty, setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
 import terminalMsg from '../Add/messages.terminal';
+import Link from "../Header";
 
 const FeedItemContent = ({
   feedItem, contentType, feedProperties, frameId, env,
@@ -49,7 +50,6 @@ const FeedItemContent = ({
         for (let i = 0; i < posts.length; i++) {
           indicatorDots.push(
             <div className={cx(s.indicatorDot, i === activePost ? s.selectedIndicatorDot : {})}>
-              o
             </div>
           );
         }
@@ -61,17 +61,19 @@ const FeedItemContent = ({
           {
             activePost > 0 &&
               <div className={s.navLeft} onClick={() => scrollToPost(activePost - 1)}>
-                &lt;
+                <FontIcon className="material-icons" style={{ fontSize: '40px' }}>keyboard_arrow_left</FontIcon>
               </div>
           }
           {
             activePost < posts.length - 1 &&
             <div className={s.navRight} onClick={() => scrollToPost(activePost + 1)}>
-              &gt;
+              <FontIcon className="material-icons" style={{ fontSize: '40px' }}>keyboard_arrow_right</FontIcon>
             </div>
           }
-          <div className={s.navIndicator}>
-            {indicatorDots}
+          <div className={s.navIndicatorContainer}>
+            <div className={s.navIndicator}>
+              {indicatorDots}
+            </div>
           </div>
         </div>
       );
