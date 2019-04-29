@@ -91,7 +91,7 @@ export default {
                       locality,
                       country
                     }
-                  } 
+                  }
                 }
               },
               posts {

@@ -60,7 +60,31 @@ export const getDiscoveries = (search, type) => {
                   date,
                   time,
                   priceAmount,
-                  priceCurrency
+                  priceCurrency,
+                  checkIn {
+                    uuid,
+                    formattedAddress,
+                    locality
+                  },
+                  linkedTerminal {
+                    uuid,
+                    type,
+                    transport,
+                    transportId,
+                    date,
+                    time,
+                    priceAmount,
+                    priceCurrency,
+                    checkIn {
+                      uuid,
+                      latitude,
+                      longitude,
+                      placeId,
+                      formattedAddress,
+                      locality,
+                      country
+                    }
+                  }
                 }
               },
               posts {

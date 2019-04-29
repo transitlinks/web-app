@@ -37,7 +37,6 @@ const requireOwnership = async (request, clientId, entity) => {
 
   if (!entity.uuid) return;
 
-  console.log("request", request.user, clientId, entity.clientId, entity.userId);
   if (request.user) {
     const userId = await userRepository.getUserIdByUuid(request.user.uuid);
     if (entity.userId !== userId) {
@@ -184,14 +183,17 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     order: [[ 'createdAt', 'DESC' ]]
   });
 
+  console.log("SAVING CHECK IN", lastCheckIns.length);
   if (lastCheckIns.length > 0) {
     checkIn.prevCheckInId = lastCheckIns[0].id;
+    console.log("PREV CHECK IN ID", lastCheckIns[0].id);
   };
 
   const saved = await postRepository.saveCheckIn(checkIn);
 
   if (lastCheckIns.length > 0) {
     await postRepository.saveCheckIn({ uuid: lastCheckIns[0].uuid, nextCheckInId: saved.id });
+    console.log("NEXT CHECK IN ID", saved.id);
   };
 
   return saved.toJSON();
@@ -401,7 +403,7 @@ export const PostMutationFields = {
 export const getFeedItem = async (request, checkIn) => {
 
   const posts = await postRepository.getPosts({ checkInId: checkIn.id });
-  console.log("FEED ITEM POSTS", checkIn.id);
+
   log.info(graphLog(request, 'get-feed', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
   const linkedCheckIns = await getLinkedCheckIns(checkIn);
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });

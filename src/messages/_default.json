@@ -40,8 +40,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -51,8 +51,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -393,8 +393,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -404,8 +404,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -415,8 +415,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -435,8 +435,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -446,8 +446,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -457,8 +457,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {
@@ -468,8 +468,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/Add/messages.terminal.js",
+      "src/components/Add/messages.profile.js"
     ]
   },
   {

@@ -51,7 +51,7 @@ const Terminal = Model.define('Terminal', {
 
   instanceMethods: {
     json: function() {
-      const json = this.toJSON();
+      const json = { ...this.toJSON() };
       delete json.id;
       return json;
     }
