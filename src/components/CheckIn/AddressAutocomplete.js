@@ -68,6 +68,7 @@ const AddressAutocomplete = ({
 			description: geocodeAddress
 		});
 		setProperty('mapDialog', null);
+    setProperty('posts.searchLocation', false);
   };
 
 	const setCoords = (place) => {

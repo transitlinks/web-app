@@ -63,6 +63,7 @@ const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation,
       if (position && position.coords) {
         coordsStr = position.coords.latitude + ',' + position.coords.longitude;
       }
+
       const locationText = selectedLocation ?
         selectedLocation.description : position.formattedAddress;
         positionElem = !searchLocation ? (
@@ -102,6 +103,8 @@ const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation,
   } else if (geolocation && geolocation.position) {
     locationCoords = geolocation.position.coords;
   }
+
+  console.log("selected location", selectedLocation);
 
 	return (
 	  <div className={s.root}>

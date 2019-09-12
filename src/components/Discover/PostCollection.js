@@ -20,7 +20,7 @@ const PostCollection = ({ transportTypes, posts, env, children, intl }) => {
 
   let secondaryPosts = [];
   if (posts.length > 1) {
-    secondaryPosts = posts.slice(1, 3).filter(post => post.mediaItems.length > 0);
+    secondaryPosts = posts.filter(post => post.mediaItems.length > 0).slice(1, 3);
   }
 
   let secondaryPostsElem = null;

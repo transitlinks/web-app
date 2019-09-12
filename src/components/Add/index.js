@@ -207,6 +207,7 @@ const AddView = (props) => {
   }
 
   const selectedType = type || defaultType;
+  console.log("adding....", geolocation);
 
 	return (
 	  <div className={s.root}>

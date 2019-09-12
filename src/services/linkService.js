@@ -101,6 +101,7 @@ export const calcTransitDuration = (instance) => {
 export const reverseGeocode = (placeId, callback) => {
     
   const geocoder = new google.maps.Geocoder;
+  console.log("reverse geocode by placeId", placeId);
   geocoder.geocode({ placeId }, (results, status) => {
     if (status === 'OK') {
       if (results[0]) {
@@ -118,6 +119,7 @@ export const reverseGeocode = (placeId, callback) => {
 export const geocode = (latLng, callback) => {
 
   const geocoder = new google.maps.Geocoder;
+  console.log("geocode by latLing", latLng);
   geocoder.geocode({ location: latLng }, (results, status) => {
     
     if (status === 'OK') {

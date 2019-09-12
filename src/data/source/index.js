@@ -26,7 +26,7 @@ if (process.env.TEST_ENV === 'test') {
   ratingRepository = ratingRepositoryReal;
   commentRepository = commentRepositoryReal;
   files = filesReal;
-  placesApi = placesApiMock;
+  placesApi = placesApiReal;
 } else {
   localityRepository = localityRepositoryReal;
   linkRepository = linkRepositoryReal;
