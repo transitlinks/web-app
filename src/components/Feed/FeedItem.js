@@ -208,7 +208,7 @@ const FeedItem = ({
         </div>
       </div>
 
-      <FeedItemContent feedItem={feedItem} contentType={contentType} />
+      <FeedItemContent feedItem={feedItem} frmeId={frameId} contentType={contentType} />
 
     </div>
   );

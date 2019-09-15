@@ -39,10 +39,14 @@ const FeedItemContent = ({
   };
 
   let activePost = ((feedProperties && feedProperties[frameId]) && feedProperties[frameId]['activePost']) || 0;
+  if (activePost > posts.length - 1) {
+    console.log("post out of bounds", feedProperties, activePost, frameId, posts);
+    activePost = 0;
+  }
 
   if (contentType === 'reaction') {
 
-    console.log("show post", frameId, activePost, feedItem);
+    //console.log("show post", frameId, activePost, feedItem);
     if (posts.length > 0) {
 
       const indicatorDots = [];
@@ -105,7 +109,7 @@ const FeedItemContent = ({
   const userName = checkIn.user || 'Anonymoyus';
   const dateStr = (new Date(checkIn.date)).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
   return (
-    <div className={s.feedItemContent}>
+    <div className={s.feedItemContent} id={`content-${frameId}`}>
       <div className={s.contentHeader}>
         <div className={s.contentHeaderLeft}>
           <div className={s.userIcon}>

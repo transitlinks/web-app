@@ -102,7 +102,7 @@ const CheckInItem = (
   //{ typeSelector('hotel', contentType === 'lodging', () => selectContentType('lodging')) }
 
   return (
-    <div className={s.container}>
+    <div className={s.container} id={`checkin-${frameId}`}>
       {
         <div className={getInboundClassnames()}>
           <div className={s.inboundCheckIns}>

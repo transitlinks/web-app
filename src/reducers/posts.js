@@ -110,12 +110,23 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({}),
-          success: () => ({
-            checkIn: Object.assign(
+          success: () => {
+            const checkIn = Object.assign(
               action.payload.checkIn,
               { saved: (new Date()).getTime() }
-            )
-          }),
+            );
+            const { feedProperties } = state;
+            console.log(feedProperties);
+            if (feedProperties) {
+              if (feedProperties['frame-add']) {
+                if (feedProperties['feed-1']) {
+                  feedProperties['feed-1'] = Object.assign({}, feedProperties['frame-add']);
+                }
+                feedProperties['frame-add'] = {};
+              }
+            }
+            return { checkIn, feedProperties };
+          },
           error: () => ({ checkIn: null })
         },
         SAVE_CHECKIN_START,
