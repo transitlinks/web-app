@@ -1,15 +1,10 @@
 import React from 'react';
-import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Feed.css';
-import FontIcon from 'material-ui/FontIcon';
-import Link from '../Link';
-import FeedItem from './FeedItem';
 import Add from '../Add';
 import CheckInItem from '../CheckInItem';
-import msg from './messages';
 
 
 const FeedView = ({
@@ -35,8 +30,8 @@ const FeedView = ({
         {
           feedItems.map((feedItem, index) => {
 
-            const frameId = `feed-${index}`;
             const { checkIn } = feedItem;
+            const frameId = `feed-${checkIn.uuid}`;
 
             const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid && !editOpen;
             if (editable) editOpen = true;
