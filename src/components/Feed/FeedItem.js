@@ -109,7 +109,7 @@ const FeedItem = ({
           <div className={s.inboundCheckIns}>
             {
               inbound.map(inboundCheckIn => {
-                const {uuid, latitude, longitude, formattedAddress } = inboundCheckIn;
+                const { uuid, latitude, longitude, formattedAddress } = inboundCheckIn;
                 return (
                   <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, index)}>
                     <div className={s.linkedCheckInDisplay}>
