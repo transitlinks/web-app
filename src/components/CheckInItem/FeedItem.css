@@ -194,3 +194,10 @@
 .feedItemSettings .feedItemSetting {
   cursor: pointer;
 }
+.updateFeedItem {
+  width: 20px;
+  height: 15px;
+  position: absolute;
+  display: inline;
+  right: 0px;
+}

@@ -25,9 +25,9 @@ const typeSelector = (iconName, isSelected, onClick) => {
 
 const CheckInItem = (
   {
-    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated, showLinks, showSettings,
-    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn,}
-  ) => {
+    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated, showLinks, showSettings, updateFeedItem,
+    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn
+  }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
 
@@ -192,16 +192,26 @@ const CheckInItem = (
 
       {
         showSettings === frameId &&
-        <div className={s.feedItemSettings}>
-          <div className={s.feedItemSetting}>
-            <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
-              deleteCheckIn({ checkInUuid: checkIn.uuid });
-            }}>delete</FontIcon>
+        (
+          !updateFeedItem ?
+          <div className={s.feedItemSettings}>
+            <div className={s.feedItemSetting}>
+              <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
+                deleteCheckIn({ checkInUuid: checkIn.uuid });
+              }}>delete</FontIcon>
+            </div>
+            <div className={s.feedItemSetting}>
+              <FontIcon className="material-icons" style={{fontSize: '20px'}}>share</FontIcon>
+              <div className={s.updateFeedItem} onClick={() => {
+                setProperty('posts.updateFeedItem', true);
+              }}></div>
+            </div>
+          </div> :
+          <div>
+            <input type="text" value={checkIn.date} />
+            <button onClick={() => setProperty('posts.updateFeedItem', false)}>OK</button>
           </div>
-          <div className={s.feedItemSetting}>
-            <FontIcon className="material-icons" style={{fontSize: '20px'}}>share</FontIcon>
-          </div>
-        </div>
+        )
       }
 
       <div className={s.contentTypeContainer}>
@@ -223,7 +233,8 @@ export default connect(state => ({
   showLinks: state.posts.showLinks,
   showSettings: state.posts.showSettings,
   loadingFeedItem: state.posts.loadingFeedItem,
-  propertyUpdated: state.posts.propertyUpdated
+  propertyUpdated: state.posts.propertyUpdated,
+  updateFeedItem: state.posts.updateFeedItem
 }), {
   navigate,
   setProperty,

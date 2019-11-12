@@ -25,7 +25,9 @@ const typeSelector = (iconName, isSelected, onClick) => {
 };
 
 const FeedItem = ({
-  index, feedProperties, feedItem, selectedFeedItem, loadingFeedItem, showLinks, showSettings, navigate, setProperty, getFeedItem, deleteCheckIn,
+  index, feedProperties, feedItem, selectedFeedItem, loadingFeedItem,
+  showLinks, showSettings, navigate, setProperty, getFeedItem, deleteCheckIn,
+  updateFeedItem
 }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
@@ -189,17 +191,26 @@ const FeedItem = ({
       }
 
       {
-        showSettings === index &&
-        <div className={s.feedItemSettings}>
-          <div className={s.feedItemSetting}>
-            <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
-              deleteCheckIn({ checkInUuid: checkIn.uuid });
-            }}>delete</FontIcon>
-          </div>
-          <div className={s.feedItemSetting}>
-            <FontIcon className="material-icons" style={{fontSize: '20px'}}>share</FontIcon>
-          </div>
-        </div>
+        (showSettings === index && (
+          !updateFeedItem ?
+            <div className={s.feedItemSettings}>
+              <div className={s.feedItemSetting}>
+                <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
+                  deleteCheckIn({ checkInUuid: checkIn.uuid });
+                }}>delete</FontIcon>
+              </div>
+              <div className={s.feedItemSetting}>
+                <FontIcon className="material-icons" style={{fontSize: '20px'}}>share</FontIcon>
+                <div className={s.updateFeedItem} onClick={() => {
+                  setProperty('posts.updateFeedItem', true);
+                }}></div>
+              </div>
+            </div> :
+            <div>
+              <input type="text" value={checkIn.date}/>
+              <button>OK</button>
+            </div>
+        ))
       }
 
       <div className={s.contentTypeContainer}>
@@ -220,7 +231,8 @@ export default connect(state => ({
   showLinks: state.posts.showLinks,
   showSettings: state.posts.showSettings,
   selectedFeedItem: state.posts.selectedFeedItem,
-  loadingFeedItem: state.posts.loadingFeedItem
+  loadingFeedItem: state.posts.loadingFeedItem,
+  updateFeedItem: state.posts.updateFeedItem
 }), {
   navigate,
   setProperty,

@@ -194,3 +194,9 @@
 .feedItemSettings .feedItemSetting {
   cursor: pointer;
 }
+
+.updateFeedItem {
+  width: 20px;
+  height: 15px;
+  background-color: red;
+}
