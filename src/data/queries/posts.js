@@ -174,8 +174,14 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [
-    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress'
+    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress', 'date'
   ]);
+
+  if (checkIn.date) {
+    checkIn.createdAt = checkIn.date;
+    checkIn.updatedAt = checkIn.date;
+  }
+
   await addUserId(checkIn, request);
 
   const lastCheckIns = await postRepository.getCheckIns({ clientId: checkInInput.clientId }, {

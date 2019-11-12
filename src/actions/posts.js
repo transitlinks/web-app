@@ -51,7 +51,14 @@ export const saveCheckIn = ({ checkIn }) => {
 
   return async (...args) => {
 
-    const location = await geocodeCheckIn();
+    let placeFields = {};
+
+    if (checkIn.latitude && checkIn.longitude) {
+      const location = await geocodeCheckIn();
+      console.log("geocoded location", location);
+      placeFields = extractPlaceFields(location);
+    }
+
 
     /*
     const location = {
@@ -69,10 +76,6 @@ export const saveCheckIn = ({ checkIn }) => {
       ]
     };
     */
-
-    console.log("geocoded location", location);
-
-    const placeFields = extractPlaceFields(location);
 
     const clientId = getClientId();
 

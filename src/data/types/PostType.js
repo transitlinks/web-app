@@ -104,6 +104,8 @@ export const CheckInInputType = new GraphQLInputObjectType({
   name: 'CheckInInput',
   description: 'Input properties of Transitlinks CheckIn object',
   fields: {
+    uuid: {type: GraphQLString},
+    date: {type: GraphQLString},
     clientId: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat },

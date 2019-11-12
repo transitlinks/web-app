@@ -9,7 +9,7 @@ import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
 import FeedItemContent from '../FeedItemContent';
 import { setProperty, setDeepProperty } from "../../actions/properties";
-import { getFeedItem, deleteCheckIn } from "../../actions/posts";
+import { getFeedItem, deleteCheckIn, saveCheckIn } from "../../actions/posts";
 
 import msg from './messages';
 
@@ -25,8 +25,8 @@ const typeSelector = (iconName, isSelected, onClick) => {
 
 const CheckInItem = (
   {
-    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated, showLinks, showSettings, updateFeedItem,
-    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn
+    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated, showLinks, showSettings, updateFeedItem, updatedCheckInDate,
+    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn
   }) => {
 
   const { checkIn, inbound, outbound } = feedItem;
@@ -208,8 +208,15 @@ const CheckInItem = (
             </div>
           </div> :
           <div>
-            <input type="text" value={checkIn.date} />
-            <button onClick={() => setProperty('posts.updateFeedItem', false)}>OK</button>
+            <input type="text" value={updatedCheckInDate || checkIn.date} onChange={(event) => {
+              console.log("event target val", event.target.value, "]"+updatedCheckInDate+"[");
+              setProperty('posts.updatedCheckInDate', event.target.value);
+            }}/>
+            <button onClick={() => {
+              setProperty('posts.updateFeedItem', false);
+              const updatedDate = new Date(updatedCheckInDate);
+              saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: updatedDate } });
+            }}>OK</button>
           </div>
         )
       }
@@ -234,11 +241,13 @@ export default connect(state => ({
   showSettings: state.posts.showSettings,
   loadingFeedItem: state.posts.loadingFeedItem,
   propertyUpdated: state.posts.propertyUpdated,
-  updateFeedItem: state.posts.updateFeedItem
+  updateFeedItem: state.posts.updateFeedItem,
+  updatedCheckInDate: state.posts.updatedCheckInDate
 }), {
   navigate,
   setProperty,
   setDeepProperty,
   getFeedItem,
-  deleteCheckIn
+  deleteCheckIn,
+  saveCheckIn
 })(withStyles(s)(CheckInItem));
