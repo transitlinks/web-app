@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
 
@@ -35,16 +36,20 @@ import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
 const requireOwnership = async (request, clientId, entity) => {
 
-  if (!entity.uuid) return;
+  if (!entity.uuid) return null;
+
+  let userId = null;
 
   if (request.user) {
-    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+    userId = await userRepository.getUserIdByUuid(request.user.uuid);
     if (entity.userId !== userId) {
       throw new Error('Access not allowed for user id');
     }
   }  else if (!(clientId && clientId === entity.clientId)) {
     throw new Error('Access not allowed for client id');
   }
+
+  return userId;
 
 };
 
@@ -168,9 +173,10 @@ const savePost = async (postInput, clientId, request) => {
 
 const saveCheckIn = async (checkInInput, clientId, request) => {
 
+  let userId = null;
   if (checkInInput.uuid) {
     const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
-    await requireOwnership(request, clientId, savedCheckIn);
+    userId = await requireOwnership(request, clientId, savedCheckIn);
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [
@@ -184,7 +190,8 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   await addUserId(checkIn, request);
 
-  const lastCheckIns = await postRepository.getCheckIns({ clientId: checkInInput.clientId }, {
+  const clientParams = userId ? { userId } : { clientId: checkInInput.clientId };
+  const lastCheckIns = await postRepository.getCheckIns(clientParams, {
     limit: 1,
     order: [[ 'createdAt', 'DESC' ]]
   });
@@ -253,6 +260,42 @@ const getLinkedCheckIns = async (checkIn) => {
     inbound: inboundCheckIns.map(checkIn => checkIn.toJSON()),
     outbound: outboundCheckIns.map(checkIn => checkIn.toJSON())
   };
+
+};
+
+const writeFileSync = (path, buffer) => {
+
+  const permission = 438;
+  let fileDescriptor;
+
+  try {
+    fileDescriptor = fs.openSync(path, 'w', permission);
+  } catch (e) {
+    log.error('Error opening file for writing', e);
+    fs.chmodSync(path, permission);
+    fileDescriptor = fs.openSync(path, 'w', permission);
+  }
+
+  if (fileDescriptor) {
+    fs.writeSync(fileDescriptor, buffer, 0, buffer.length, 0);
+    fs.closeSync(fileDescriptor);
+    log.info('wrote file', path);
+  }
+
+};
+
+const processImage = (inputFile, outputFile) => {
+
+  const readableStream = fs.createReadStream(inputFile);;
+
+  const pipeline = sharp()
+    .rotate()
+    .resize(600, null)
+    .toBuffer(function (err, outputBuffer, info) {
+      writeFileSync(outputFile, outputBuffer);
+    });
+
+  readableStream.pipe(pipeline);
 
 };
 
@@ -352,7 +395,7 @@ export const PostMutationFields = {
         const now = (new Date()).getTime();
         const entityFileName = `${now}.${extension}`;
         const entityFilePath = path.join(entityPath, entityFileName);
-        fs.renameSync(filePath, entityFilePath);
+        processImage(filePath, entityFilePath);
 
         let entity = null;
         let entityUuid = null;

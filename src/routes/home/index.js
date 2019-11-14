@@ -25,6 +25,7 @@ export default {
             feedItems {
               checkIn {
                 uuid,
+                clientId,
                 user,
                 date,
                 latitude,
@@ -37,12 +38,20 @@ export default {
               inbound {
                 uuid,
                 latitude,
-                longitude
+                longitude,
+                placeId,
+                formattedAddress,
+                locality,
+                country
               },
               outbound {
                 uuid,
                 latitude,
-                longitude
+                longitude,
+                placeId,
+                formattedAddress,
+                locality,
+                country
               },
               posts {
                 uuid,

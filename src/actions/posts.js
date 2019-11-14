@@ -440,6 +440,7 @@ export const getFeed = (clientId) => {
           feedItems {
             checkIn {
               uuid,
+              clientId,
               user,
               date,
               latitude,
