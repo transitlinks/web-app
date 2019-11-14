@@ -17,6 +17,7 @@ import App from '../components/App';
 // Child routes
 import home from './home';
 import discover from './discover';
+import links from './links';
 import search from './search';
 import link from './link';
 import linkInstance from './linkInstance';
@@ -37,6 +38,7 @@ const routes = {
   children: [
     home,
     discover,
+    links,
     login,
     account,
     add,

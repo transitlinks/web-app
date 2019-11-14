@@ -1,0 +1,205 @@
+@import '../../components/variables.css';
+
+.root {
+
+}
+
+.container {
+  max-width: 760px;
+  margin: auto;
+}
+
+.sectionLinks {
+  display: flex;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.sectionLinks .sectionLink {
+  margin-right: 12px;
+}
+
+.sectionLinks .selected a {
+  color: black;
+  text-decoration: none;
+  cursor: default;
+}
+
+.sectionContent {
+}
+
+.logOut {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.logOut .logOutLink {
+
+}
+
+.discoveryItem {
+  margin-top: 6px;
+  margin-bottom: 36px;
+}
+
+.discoveryItem .discoveryHeader {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.discoveryHeader .discoveryGroupName {
+  font-size: 28px;
+  font-weight: lighter;
+}
+
+.discoveryHeader .discoveryHeaderControls {
+
+}
+
+.discoveryHeader .discoveryHeaderControls .checkInCount {
+  display: flex;
+  align-items: center;
+}
+
+.checkInCount .checkInCountIcon {
+  display: contents;
+}
+
+.checkInCount .checkInCountValue {
+
+}
+
+.mainPost {
+
+}
+
+.mainPost .mainPostHeader {
+}
+
+.mainPostHeader .mainPostCheckIn {
+  background-color: #e0e0e0;
+  padding-top: 3px;
+  padding-left: 4px;
+  padding-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mainPostHeader .mainPostInfo {
+
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoLeft {
+  margin-bottom: 6px;
+  padding-left: 6px;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoLeft .feedItemAuthor {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoLeft .feedItemDate {
+  font-size: 10px;
+  color: #666;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoRight {
+  margin-right: 8px;
+}
+
+.mainPostHeader .mainPostInfo .mainPostInfoRight .feedItemControls {
+  display: flex;
+}
+
+.secondaryPosts {
+  margin-top: 6px;
+  padding-top: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
+  display: flex;
+}
+
+.secondaryPosts .secondaryPost {
+  width: 33%;
+  margin-left: 1px;
+  margin-right: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondaryPosts .secondaryPost .postCount {
+  text-align: center;
+}
+
+.terminalSummary {
+  margin-top: 6px;
+  margin-bottom: -4px;
+}
+
+.terminalSummary .terminalsByType {
+  display: flex;
+  align-items: center;
+}
+
+.terminalSummary .terminalTypeSummary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.terminalSummary .terminalTypeSummaryArrivals {
+  flex-direction: row-reverse;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.terminalSummary .terminalTypeSummaryDepartures {
+  flex-direction: row;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.terminalSummary .terminalTypeSummary .terminalTypeValue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 5px;
+  border-right: 1px solid #e0e0e0;
+  border-left: 1px solid #e0e0e0;
+}
+
+.terminalSummary .terminalTypeSummary .terminalTypeIcon {
+  display: flex;
+  padding: 6px;
+}
+
+.terminalSummary .destinationList {
+  margin-left: 6px;
+  margin-right: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.terminalSummary .terminalsByType .summaryLabel {
+
+}
+
+.terminalSummary .terminalsByType .summaryValue {
+
+}
+
+.postSummary {
+}

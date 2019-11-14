@@ -284,18 +284,31 @@ const writeFileSync = (path, buffer) => {
 
 };
 
-const processImage = (inputFile, outputFile) => {
+const processImage = async (inputFile, outputFile) => {
 
-  const readableStream = fs.createReadStream(inputFile);;
+  return new Promise((resolve, reject) => {
 
-  const pipeline = sharp()
-    .rotate()
-    .resize(600, null)
-    .toBuffer(function (err, outputBuffer, info) {
-      writeFileSync(outputFile, outputBuffer);
-    });
+    const readableStream = fs.createReadStream(inputFile);;
 
-  readableStream.pipe(pipeline);
+    const pipeline = sharp()
+      .rotate()
+      .resize(600, null)
+      .toBuffer((err, outputBuffer, info) => {
+
+        if (err) {
+          log.error('error processing image', err, info);
+          reject(err);
+        }
+
+        writeFileSync(outputFile, outputBuffer);
+        resolve();
+
+      });
+
+    readableStream.pipe(pipeline);
+
+  });
+
 
 };
 
@@ -371,7 +384,7 @@ export const PostMutationFields = {
     resolve: async ({ request }, { mediaItem }) => {
 
       log.info(`graphql-request=upload-media-file user=${request.user ? request.user.uuid : null}`);
-      console.log("media item", mediaItem);;
+      log.info('media-item:', mediaItem);
 
       const { file } = request;
 
@@ -395,7 +408,7 @@ export const PostMutationFields = {
         const now = (new Date()).getTime();
         const entityFileName = `${now}.${extension}`;
         const entityFilePath = path.join(entityPath, entityFileName);
-        processImage(filePath, entityFilePath);
+        await processImage(filePath, entityFilePath);
 
         let entity = null;
         let entityUuid = null;
