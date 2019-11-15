@@ -14,22 +14,27 @@ import { getDiscoveries } from '../../actions/discover';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const LinksView = ({ terminals, loadedTerminals,  transportTypes }) => {
+const LinksView = ({ links, loadedLinks,  transportTypes }) => {
 
-  let  displayTerminals = ((loadedTerminals || terminals).terminals)|| [];
+  let  displayLinks = (loadedLinks || links) || [];
 
-	return (
+  return (
     <div className={s.container}>
       <div>
         {
 
-          (displayTerminals || []).map((terminal, index) => {
+          (displayLinks || []).map((link, index) => {
 
-            const { uuid } = terminal;
+            const { uuid } = link;
 
             return (
-              <div key={discovery.groupName} className={s.discoveryItem}>
-                T { uuid }
+              <div key={uuid} className={s.linkItem}>
+                <div className={s.from}>
+                  <b>From:</b> { link.from.formattedAddress }
+                </div>
+                <div className={s.to}>
+                  <b>To:</b> { link.to.formattedAddress }
+                </div>
               </div>
             )
 
@@ -44,11 +49,13 @@ const LinksView = ({ terminals, loadedTerminals,  transportTypes }) => {
 LinksView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
-  connect(state => ({
-    loadedTerminals: state.terminals.terminals,
-    fetchedFeedItems: state.posts.fetchedFeedItems || {},
-    feedUpdated: state.posts.feedUpdated
-  }), {
+  connect(state => {
+    return {
+      loadedLinks: state.links.transitLinks,
+      fetchedFeedItems: state.posts.fetchedFeedItems || {},
+      feedUpdated: state.posts.feedUpdated
+    }
+  }, {
     getDiscoveries
   })(withStyles(s)(LinksView))
 );

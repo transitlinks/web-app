@@ -40,7 +40,7 @@ const schema = new Schema({
       feed: PostQueryFields.feed,
       feedItem: PostQueryFields.feedItem,
       discover: DiscoverQueryFields.discover,
-      terminals: TerminalQueryFields.terminals,
+      transitLinks: TransitLinkQueryFields.transitLinks,
       intl
     }
   }),

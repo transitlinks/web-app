@@ -13,13 +13,14 @@ class Links extends React.Component {
 
 
   componentDidMount(props) {
-    this.props.getLinks();
+    console.log("links props", this.props);
+    this.props.getLinks(this.props.params);
   }
 
   render() {
 
     const { context, props } = this;
-    const { terminals, transportTypes } = props;
+    const { links, transportTypes } = props;
 
     context.setTitle(title);
 
@@ -31,7 +32,7 @@ class Links extends React.Component {
             <div className={s.functionBar}>
               <FunctionBar />
             </div>
-            <LinksView terminals={terminals} transportTypes={transportTypes} >
+            <LinksView links={links} transportTypes={transportTypes} >
             </LinksView>
           </div>
         </div>

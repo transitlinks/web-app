@@ -7,31 +7,45 @@ import Links from './Links';
 
 export default {
 
-  path: '/links/:locality?/:type?',
+  path: '/links',
 
-  async action({ params, context }) {
+  async action({ params, query, context }) {
 
-    let locality = params.locality;
-    let type = params.type;
-
+    const paramKeys = Object.keys(query);
+    const paramsStringElems = paramKeys.map(paramKey => `${paramKey}: "${query[paramKey]}"`);
+    const paramsString = paramsStringElems.join(', ');
     const { graphqlRequest } = context.store.helpers;
 
     try {
 
       const { data } = await graphqlRequest(
         `query {
-          terminals (locality: "${locality}", type: "${type}") {
-            uuid
+          transitLinks (${paramsString}) {
+            uuid,
+            transport,
+            transportId,
+            from {
+              latitude,
+              longitude,
+              locality,
+              formattedAddress
+            },
+            to {
+              latitude,
+              longitude,
+              locality,
+              formattedAddress
+            }
           },
           transportTypes { slug }
         }`
       );
 
-      log.info("event=received-terminals-data", data);
-      return <Links terminals={data.terminals} transportTypes={data.transportTypes} />;
+      log.info("event=received-transit-links-data", data);
+      return <Links links={data.transitLinks} params={query} transportTypes={data.transportTypes} />;
 
     } catch (error) {
-      log.info("error=route-discover", error);
+      log.info("error=route-transit-links", error);
       return <ErrorPage errors={error.errors} />
     }
 

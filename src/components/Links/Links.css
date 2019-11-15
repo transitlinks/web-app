@@ -7,6 +7,7 @@
 .container {
   max-width: 760px;
   margin: auto;
+  margin-top: 42px;
 }
 
 .sectionLinks {
@@ -40,9 +41,13 @@
 
 }
 
-.discoveryItem {
+.linkItem {
   margin-top: 6px;
   margin-bottom: 36px;
+}
+
+.linkItem .from b, .linkItem .to b {
+  font-weight: 600;
 }
 
 .discoveryItem .discoveryHeader {

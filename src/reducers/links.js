@@ -17,9 +17,9 @@ export default function reduce(state = {}, action) {
         {
           start: () => ({}),
           success: () => ({
-            terminals: action.payload.terminals
+            transitLinks: action.payload.transitLinks
           }),
-          error: () => ({ terminals: null })
+          error: () => ({ transitLinks: null })
         },
         GET_LINKS_START,
         GET_LINKS_SUCCESS,
@@ -28,6 +28,6 @@ export default function reduce(state = {}, action) {
 
   }
 
-  return propToState(action, 'terminals', { ...state });
+  return propToState(action, 'links', { ...state });
 
 }
