@@ -8,17 +8,17 @@ import { searchLinks } from '../../actions/searchLinks';
 import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 
-const LinkSearchInput = ({ 
+const LinkSearchInput = ({
   setProperty, searchLinks, navigate,
-  searchInput, location
+  searchInput, getParams, performSearch, location
 }) => {
-  
+
   const onUpdateInput = (event) => {
     const input = event.target.value;
     setProperty('searchInput', input);
     if (input && input.length > 2) {
-      searchLinks(input);
-      navigate('/search');
+      const params = getParams(input);
+      performSearch(params);
     }
   };
 
@@ -34,14 +34,14 @@ const LinkSearchInput = ({
   };
 
   if (location) {
-    
+
     if (!location.reset && location.action !== 'REPLACE' && location.pathname !== '/search') {
       location.reset = true;
       props.value = '';
     }
-    
+
   }
-  
+
   return (
     <div className={s.container}>
       <TextField id="link-search-input"

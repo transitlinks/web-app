@@ -1,17 +1,11 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.css';
-import cx from 'classnames';
 import Link from '../Link';
 import Navigation from '../Navigation';
-import LanguageSwitcher from '../LanguageSwitcher';
-import FunctionBar from '../FunctionBar';
-import logoUrl from './logo-small.png';
-import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 
 import { FormattedMessage, injectIntl } from 'react-intl';
-import msg from './messages';
 
 function Header() {
   return (

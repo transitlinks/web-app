@@ -24,14 +24,13 @@ class Links extends React.Component {
 
     context.setTitle(title);
 
+
+
     return (
 
       <div>
         <div className={s.root}>
           <div className={s.container}>
-            <div className={s.functionBar}>
-              <FunctionBar />
-            </div>
             <LinksView links={links} transportTypes={transportTypes} >
             </LinksView>
           </div>

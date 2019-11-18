@@ -9,17 +9,25 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Links.css';
 import Link from '../Link';
-import { getDiscoveries } from '../../actions/discover';
+import { getLinks } from '../../actions/links';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
+import FunctionBar from "../FunctionBar";
 
-const LinksView = ({ links, loadedLinks,  transportTypes }) => {
+const LinksView = ({ links, loadedLinks,  transportTypes, getLinks }) => {
 
   let  displayLinks = (loadedLinks || links) || [];
 
+  const getSearchParams = (input) => {
+    return { locality: input };
+  };
+
   return (
     <div className={s.container}>
+      <div className={s.functionBar}>
+        <FunctionBar getParams={getSearchParams} performSearch={getLinks} />
+      </div>
       <div>
         {
 
@@ -56,6 +64,6 @@ export default injectIntl(
       feedUpdated: state.posts.feedUpdated
     }
   }, {
-    getDiscoveries
+    getLinks
   })(withStyles(s)(LinksView))
 );

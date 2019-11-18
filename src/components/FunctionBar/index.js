@@ -10,7 +10,7 @@ import Link from '../Link';
 import msg from './messages';
 
 const FunctionBar = ({
-  links, showLinks
+  links, showLinks, getParams, performSearch
 }) => {
 
   return (
@@ -18,7 +18,7 @@ const FunctionBar = ({
       <div className={s.search}>
         <FontIcon className={cx(s.searchIcon, "material-icons")}>search</FontIcon>
         <div className={s.searchField}>
-          <LinkSearchInput />
+          <LinkSearchInput getParams={getParams} performSearch={performSearch} />
         </div>
       </div>
     </div>
