@@ -100,6 +100,30 @@ export const TransitLinkType = new GraphQLObjectType({
   })
 });
 
+export const LinkTerminalType = new GraphQLObjectType({
+  name: 'LinkTerminal',
+  description: 'Transitlink endpoint.',
+  fields: () => ({
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    locality: { type: GraphQLString },
+    formattedAddress: { type: GraphQLString },
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat }
+  })
+});
+
+export const LinkType = new GraphQLObjectType({
+  name: 'Link',
+  description: 'Transitlink between two localities.',
+  fields: () => ({
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    from: { type: LinkTerminalType },
+    to: { type: LinkTerminalType },
+    transport: { type: GraphQLString },
+    transportId: { type: GraphQLString }
+  })
+});
+
 export const TransitLinkInputType = new GraphQLInputObjectType({
   name: 'TransitLinkInput',
   description: 'Input properties for TransitLink.',

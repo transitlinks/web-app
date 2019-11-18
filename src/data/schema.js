@@ -10,6 +10,7 @@ import { AccountQueryFields } from './queries/account';
 import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
+import { TerminalQueryFields } from './queries/terminals';
 import { PostMutationFields, PostQueryFields } from './queries/posts';
 import { DiscoverMutationFields, DiscoverQueryFields } from './queries/discover';
 import { CommentMutationFields, CommentQueryFields } from './queries/comments';
@@ -39,6 +40,7 @@ const schema = new Schema({
       feed: PostQueryFields.feed,
       feedItem: PostQueryFields.feedItem,
       discover: DiscoverQueryFields.discover,
+      transitLinks: TransitLinkQueryFields.transitLinks,
       intl
     }
   }),

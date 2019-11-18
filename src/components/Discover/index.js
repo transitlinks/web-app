@@ -18,7 +18,7 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
 
   let discoveries = (loadedDiscover || discover).discoveries;
 
-  const renderTerminalsList = (terminalType, terminals) => {
+  const renderTerminalsList = (terminalType, terminals, groupName) => {
 
     /*
     const terminalLocations = {
@@ -46,7 +46,7 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
             {
               locationLabels.map((locationLabel, i) => (
                 <span>
-                <a href="#">{locationLabel}</a>
+                <a href={`/links?locality=${locationLabel}`}>{locationLabel}</a>
                   {
                     (i < locationLabels.length - 1) && (<span>, </span>)
                   }
@@ -55,7 +55,7 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
             }
           </div>
           <div className={s.terminalTypeValue}>
-            <a href="#">{terminals.length}</a>
+            <Link to={`/links?locality=${groupName}&type=${terminalType}`}>{terminals.length}</Link>
           </div>
           <div className={s.terminalTypeIcon}>
             <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{ terminalType === 'arrival' ? 'call_received' : 'call_made' }</FontIcon>
@@ -94,8 +94,8 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
                   </div>
                 </div>
                 <div className={s.terminalSummary}>
-                  { renderTerminalsList('arrival', arrivals) }
-                  { renderTerminalsList('departure', departures) }
+                  { renderTerminalsList('arrival', arrivals, discovery.groupName) }
+                  { renderTerminalsList('departure', departures, discovery.groupName) }
                 </div>
                 <div className={s.postSummary}>
                   <CheckInItem feedItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />

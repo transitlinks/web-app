@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getLog } from '../../core/log';
+import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
 import { getVideos, uploadVideo } from '../../services/youtubeDataApi';
@@ -15,11 +15,12 @@ import {
   linkRepository,
   userRepository,
   ratingRepository,
-  placesApi
+  placesApi, postRepository,
 } from '../source';
 
 import {
 	TransitLinkType,
+  LinkType,
 	TransitLinkInputType,
 	LinkInstanceType,
 	LinkInstanceInputType,
@@ -37,6 +38,7 @@ import {
 } from 'graphql';
 
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
+import { LinkTerminalType } from '../types/LinkTerminalType';
 
 const getOrCreateLocality = async (apiId) => {
 
@@ -415,6 +417,100 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, { input }) => {
       return linkRepository.getByLocalityName(input);
+    }
+
+  },
+
+  transitLinks: {
+
+    type: new GraphQLList(LinkType),
+    description: 'Search terminals',
+    args: {
+      locality: { type: GraphQLString },
+      type: { type: GraphQLString }
+    },
+    resolve: async ({ request }, params) => {
+
+      const { locality, type } = params;
+
+      log.info(graphLog(request, 'search-terminals',`locality=${locality} type=${type}`));
+
+      const checkIns = await postRepository.getCheckIns({ locality: { $like: `%${locality}%` } });
+      const checkInIds = checkIns.map(checkIn => checkIn.id);
+
+      let terminalQueryParams = {};
+      if (!type) {
+        terminalQueryParams = { checkInId: checkInIds };
+      } else {
+        terminalQueryParams = { checkInId: checkInIds, type };
+      }
+
+      const terminals = await postRepository.getTerminals(terminalQueryParams);
+      const departures = {};
+      const arrivals = {};
+      for (let i = 0; i < terminals.length; i++) {
+        const terminal = terminals[i];
+        if (terminal.type === 'departure') {
+          departures[terminal.uuid] = terminal;
+        } else {
+          arrivals[terminal.uuid] = terminal;
+        }
+      }
+
+      const terminalUuids = Object.keys(departures).concat(Object.keys(arrivals));
+
+      const links = terminalUuids.map(async terminalUuid => {
+
+        const terminal = departures[terminalUuid] || arrivals[terminalUuid];
+        let departure = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
+        if (!departure) {
+          if (terminal.linkedTerminalId) {
+            departure = await postRepository.getTerminal(terminal.linkedTerminalId);
+          }
+        }
+
+        if (!departure.checkIn) {
+          departure.checkIn = await postRepository.getCheckIn({ id: departure.checkInId });
+        }
+
+        let arrival = departure.linkedTerminal;
+        if (!arrival && departure.linkedTerminalId) {
+          arrival = await postRepository.getTerminal(departure.linkedTerminalId);
+        }
+
+        if (!arrival.checkIn) {
+          arrival.checkIn = await postRepository.getCheckIn({ id: arrival.checkInId });
+        }
+
+        if (arrival && departure) {
+          console.log('departure', departure);
+          console.log('arrival', arrival);
+          return {
+            uuid: departure.uuid,
+            transport: arrival.transport,
+            transportId: arrival.transportId,
+            from: {
+              latitude: departure.checkIn.latitude,
+              longitude: departure.checkIn.longitude,
+              locality: departure.checkIn.locality,
+              formattedAddress: departure.checkIn.formattedAddress
+            },
+            to: {
+              latitude: arrival.checkIn.latitude,
+              longitude: arrival.checkIn.longitude,
+              locality: arrival.checkIn.locality,
+              formattedAddress: arrival.checkIn.formattedAddress
+            }
+          }
+        }
+
+        console.log('no link', arrival, departure);
+        return null;
+
+      }).filter(link => link !== null);
+
+      return links;
+
     }
 
   },
