@@ -29,8 +29,8 @@
     "defaultMessage": "User links",
     "message": "",
     "files": [
-      "src/components/Account/messages.links.js",
-      "src/components/Add/messages.links.js"
+      "src/components/Add/messages.links.js",
+      "src/components/Account/messages.links.js"
     ]
   },
   {

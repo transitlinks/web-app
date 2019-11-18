@@ -26,6 +26,11 @@ function Header() {
               <FontIcon className="material-icons" style={{ fontSize: '40px' }}>explore</FontIcon>
             </Link>
           </div>
+          <div className={s.functionBar}>
+            <Link className={s.brand} to="/discover">
+              <FontIcon className="material-icons" style={{ fontSize: '40px' }}>directions</FontIcon>
+            </Link>
+          </div>
         </div>
         <div className={s.navigation}>
           <Navigation className={s.nav} />
