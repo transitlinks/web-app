@@ -253,8 +253,21 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
 
 const getLinkedCheckIns = async (checkIn) => {
 
-  const inboundCheckIns = await postRepository.getCheckIns({ nextCheckInId: checkIn.id });
-  const outboundCheckIns = await postRepository.getCheckIns({ prevCheckInId: checkIn.id });
+  const clientParams = checkIn.userId ? { userId : checkIn.userId } : { clientId: checkIn.clientId };;
+  const inboundCheckIns = await postRepository.getCheckIns({
+    ...clientParams,
+    createdAt: { $lt: checkIn.createdAt }
+  }, {
+    limit: 1,
+    order: [[ 'createdAt', 'ASC' ]]
+  });
+  const outboundCheckIns = await postRepository.getCheckIns({
+    ...clientParams,
+    createdAt: { $gt: checkIn.createdAt }
+  }, {
+    limit: 1,
+    order: [[ 'createdAt', 'DESC' ]]
+  });
 
   return {
     inbound: inboundCheckIns.map(checkIn => checkIn.toJSON()),
@@ -467,7 +480,7 @@ export const getFeedItem = async (request, checkIn) => {
   const posts = await postRepository.getPosts({ checkInId: checkIn.id });
 
   log.info(graphLog(request, 'get-feed', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
-  const linkedCheckIns = await getLinkedCheckIns(checkIn);
+  const linkedCheckIns = await getLinkedCheckIns(checkIn, request);
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
 
   let checkInUser = null;
