@@ -259,14 +259,14 @@ const getLinkedCheckIns = async (checkIn) => {
     createdAt: { $lt: checkIn.createdAt }
   }, {
     limit: 1,
-    order: [[ 'createdAt', 'ASC' ]]
+    order: [[ 'createdAt', 'DESC' ]]
   });
   const outboundCheckIns = await postRepository.getCheckIns({
     ...clientParams,
     createdAt: { $gt: checkIn.createdAt }
   }, {
     limit: 1,
-    order: [[ 'createdAt', 'DESC' ]]
+    order: [[ 'createdAt', 'ASC' ]]
   });
 
   return {
