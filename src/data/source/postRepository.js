@@ -259,7 +259,7 @@ export default {
     for (let i = 0; i < tagEntities.length; i++) {
       const tag = tagEntities[i];
       const entityTags = await EntityTag.findAll({ where: { tagId: tag.id }});
-      const checkInIds = entityTags.map(entityTag => entityTag.id);
+      const checkInIds = entityTags.map(entityTag => entityTag.checkInId);
       const taggedCheckIns = await CheckIn.findAll({
         where: { id: { $in: checkInIds } },
         order: [

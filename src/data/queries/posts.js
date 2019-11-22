@@ -588,6 +588,7 @@ export const PostQueryFields = {
       if (tags) {
         const tagsArray = tags.split(',');
         checkIns = await postRepository.getTaggedCheckIns(tagsArray);
+        console.log('result for tags', tagsArray);
       } else {
         const where = {};
         const options = {
@@ -598,7 +599,7 @@ export const PostQueryFields = {
         checkIns = await postRepository.getFeedCheckIns(where, options);
       }
 
-      console.log('returning checkins', checkIns);
+      // console.log('returning checkins', checkIns);
       const openTerminalParams = { linkedTerminalId: null };
 
       if (request.user) {
