@@ -16,12 +16,16 @@ export default {
 
     const { graphqlRequest } = context.store.helpers;
     const clientId = getClientId();
+    let paramsString = `clientId: "${clientId}"`;
+    if (query.tags) {
+      paramsString += `, tags: "${query.tags}"`;
+    }
 
     try {
 
       const { data } = await graphqlRequest(
         `query {
-          feed(clientId: "${clientId}") {
+          feed(${paramsString}) {
             feedItems {
               checkIn {
                 uuid,
@@ -99,7 +103,7 @@ export default {
       );
 
       log.info('event=received-feed-data', data);
-      return <Home feed={data.feed} transportTypes={data.transportTypes}/>;
+      return <Home feed={data.feed} transportTypes={data.transportTypes} tags={query.tags}/>;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

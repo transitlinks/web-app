@@ -576,12 +576,29 @@ export const PostQueryFields = {
     type: FeedType,
     description: 'Query feed',
     args: {
-      clientId: { type: GraphQLString }
+      clientId: { type: GraphQLString },
+      tags: { type: GraphQLString }
     },
-    resolve: async ({ request }, { clientId }) => {
+    resolve: async ({ request }, { clientId, tags }) => {
 
       log.info(graphLog(request, 'get-feed'));
-      const checkIns = await postRepository.getFeedCheckIns(request.user ? request.user.id : null);
+
+      let checkIns = [];
+
+      if (tags) {
+        const tagsArray = tags.split(',');
+        checkIns = await postRepository.getTaggedCheckIns(tagsArray);
+      } else {
+        const where = {};
+        const options = {
+          order: [
+            ['createdAt', 'DESC']
+          ]
+        };
+        checkIns = await postRepository.getFeedCheckIns(where, options);
+      }
+
+      console.log('returning checkins', checkIns);
       const openTerminalParams = { linkedTerminalId: null };
 
       if (request.user) {

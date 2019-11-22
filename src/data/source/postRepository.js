@@ -4,7 +4,7 @@ const log = getLog('data/source/postRepository');
 import Sequelize from 'sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
-import { Post, Terminal, CheckIn, User, MediaItem } from '../models';
+import { Post, Terminal, CheckIn, User, MediaItem, Tag, EntityTag } from '../models';
 
 export default {
 
@@ -176,12 +176,11 @@ export default {
 
   },
 
-  getFeedCheckIns: async (userId) => {
+  getFeedCheckIns: async (where, options = {}) => {
 
     const checkIns = await CheckIn.findAll({
-      order: [
-        ['createdAt', 'DESC']
-      ]
+      where,
+      ...options
     });
 
     return checkIns;
@@ -235,6 +234,42 @@ export default {
     //  group: ['id', 'locality']
     //});
     return localities.map(locality => locality.DISTINCT);
+
+  },
+
+  getTags: async (where, options = {}) => {
+
+    const tags = await Tag.findAll({
+      where,
+      ...options,
+      include: [ { all: true } ]
+    });
+
+    return tags;
+
+  },
+
+  getTaggedCheckIns: async (tags) => {
+
+    const tagEntities = await Tag.findAll({
+      where: { value: { $in: tags } }
+    });
+
+    let checkIns = [];
+    for (let i = 0; i < tagEntities.length; i++) {
+      const tag = tagEntities[i];
+      const entityTags = await EntityTag.findAll({ where: { tagId: tag.id }});
+      const checkInIds = entityTags.map(entityTag => entityTag.id);
+      const taggedCheckIns = await CheckIn.findAll({
+        where: { id: { $in: checkInIds } },
+        order: [
+          ['createdAt', 'DESC']
+        ]
+      });
+      checkIns = checkIns.concat(taggedCheckIns);
+    }
+
+    return checkIns;
 
   },
 

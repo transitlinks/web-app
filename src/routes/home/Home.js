@@ -14,8 +14,9 @@ const title = 'Transitlinks';
 class Home extends React.Component {
 
   componentDidMount(props) {
+    const clientId = getClientId();
     this.props.getGeolocation();
-    this.props.getFeed();
+    this.props.getFeed(clientId, this.props.tags);
   }
 
   componentDidUpdate(prevProps) {
@@ -38,14 +39,14 @@ class Home extends React.Component {
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
-        this.props.getFeed(clientId);
+        this.props.getFeed(clientId, this.props.tags);
       }
     }
 
     if (delCheckIn) {
       if (!prevDelCheckIn || prevDelCheckIn.deleted !== delCheckIn.deleted) {
         this.props.setProperty('posts.showSettings', '');
-        this.props.getFeed(clientId);
+        this.props.getFeed(clientId, this.props.tags);
       }
     }
 
@@ -54,7 +55,7 @@ class Home extends React.Component {
         console.log("post added");
         this.props.setProperty('posts.postText', '');
         this.props.setProperty('posts.mediaItems', []);
-        this.props.getFeed(clientId);
+        this.props.getFeed(clientId, this.props.tags);
       }
     }
 
@@ -62,7 +63,7 @@ class Home extends React.Component {
       if (!prevTerminal || prevTerminal.saved !== terminal.saved) {
         this.props.setProperty('posts.addType', terminal.type);
         this.props.setProperty('editTerminal.terminalProperties', null);
-        this.props.getFeed(clientId);
+        this.props.getFeed(clientId, this.props.tags);
       }
     }
 

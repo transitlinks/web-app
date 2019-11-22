@@ -10,6 +10,8 @@ import Comment from './Comment';
 import Post from './Post';
 import CheckIn from './CheckIn';
 import Terminal from './Terminal';
+import Tag from './Tag';
+import EntityTag from './EntityTag';
 
 User.hasMany(Rating, {
   foreignKey: 'userId'
@@ -100,9 +102,23 @@ Terminal.hasOne(Terminal, {
   as: 'linkedTerminal'
 });
 
+CheckIn.belongsToMany(Tag, {
+  through: 'EntityTag',
+  as: 'tags',
+  foreignKey: 'checkInId',
+  otherKey: 'tagId'
+});
+
+Tag.belongsToMany(CheckIn, {
+  through: 'EntityTag',
+  as: 'checkIns',
+  foreignKey: 'tagId',
+  otherKey: 'checkInId'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment, Post, CheckIn, Terminal };
+export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag };

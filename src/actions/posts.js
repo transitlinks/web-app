@@ -430,13 +430,18 @@ export const getDiscoveries = (search, type) => {
 
 }
 
-export const getFeed = (clientId) => {
+export const getFeed = (clientId, tags) => {
+
+  let paramsString = `clientId: "${clientId}"`;
+  if (tags) {
+    paramsString += `, tags: "${tags}"`;
+  }
 
   return async (...args) => {
 
     const query = `
       query {
-        feed (clientId:"${clientId}") {
+        feed (${paramsString}) {
           feedItems {
             checkIn {
               uuid,
