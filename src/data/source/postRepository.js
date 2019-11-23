@@ -249,7 +249,7 @@ export default {
 
   },
 
-  getTaggedCheckIns: async (tags) => {
+  getTaggedCheckIns: async (tags, options) => {
 
     const tagEntities = await Tag.findAll({
       where: { value: { $in: tags } }
@@ -262,9 +262,7 @@ export default {
       const checkInIds = entityTags.map(entityTag => entityTag.checkInId);
       const taggedCheckIns = await CheckIn.findAll({
         where: { id: { $in: checkInIds } },
-        order: [
-          ['createdAt', 'DESC']
-        ]
+        ...options
       });
       checkIns = checkIns.concat(taggedCheckIns);
     }

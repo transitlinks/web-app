@@ -179,9 +179,23 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({}),
-          success: () => ({
-            feed: action.payload.feed
-          }),
+          success: () => {
+            const { feed, variables: { add, offset, limit } } = action.payload;
+            const stateFeed = state.feed;
+            if (!add) {
+              return {
+                feed: action.payload.feed
+              };
+            } else {
+              for (let i = 0; i < feed.feedItems.length; i++) {
+                stateFeed.feedItems.push(feed.feedItems[i]);
+              }
+              return {
+                feed: stateFeed,
+                feedOffset: stateFeed.feedItems.length
+              };
+            }
+          },
           error: () => ({ feed: null })
         },
         GET_FEED_START,

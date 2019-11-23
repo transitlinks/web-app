@@ -27,7 +27,8 @@ import {
 } from '../types/PostType';
 
 import {
-  GraphQLString
+  GraphQLString,
+  GraphQLInt
 } from 'graphql';
 
 
@@ -577,26 +578,31 @@ export const PostQueryFields = {
     description: 'Query feed',
     args: {
       clientId: { type: GraphQLString },
-      tags: { type: GraphQLString }
+      tags: { type: GraphQLString },
+      offset: { type: GraphQLInt },
+      limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags }) => {
+    resolve: async ({ request }, { clientId, tags, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 
       let checkIns = [];
 
+      const options = {
+        order: [
+          ['createdAt', 'DESC']
+        ]
+      };
+
+      if (offset) options.offset = offset;
+      if (limit) options.limit = limit;
+
       if (tags) {
         const tagsArray = tags.split(',');
-        checkIns = await postRepository.getTaggedCheckIns(tagsArray);
+        checkIns = await postRepository.getTaggedCheckIns(tagsArray, options);
         console.log('result for tags', tagsArray);
       } else {
-        const where = {};
-        const options = {
-          order: [
-            ['createdAt', 'DESC']
-          ]
-        };
-        checkIns = await postRepository.getFeedCheckIns(where, options);
+        checkIns = await postRepository.getFeedCheckIns({}, options);
       }
 
       // console.log('returning checkins', checkIns);

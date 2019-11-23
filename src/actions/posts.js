@@ -430,13 +430,18 @@ export const getDiscoveries = (search, type) => {
 
 }
 
-export const getFeed = (clientId, tags) => {
+export const getFeed = (clientId, params) => {
 
   let paramsString = `clientId: "${clientId}"`;
-  if (tags) {
-    paramsString += `, tags: "${tags}"`;
-  }
+  const { add, offset, limit } = params;
+  delete params.add;
+  const paramKeys = Object.keys(params);
+  paramKeys.forEach(key => {
+    const val = isNaN(params[key]) ? `"${params[key]}"` : params[key];
+    paramsString += `, ${key}: ${val}`;
+  });
 
+  console.log('action', paramsString);
   return async (...args) => {
 
     const query = `
@@ -538,7 +543,7 @@ export const getFeed = (clientId, tags) => {
 
     return graphqlAction(
       ...args,
-      { query }, [ 'feed' ],
+      { query, variables: { add, offset, limit } }, [ 'feed' ],
       GET_FEED_START,
       GET_FEED_SUCCESS,
       GET_FEED_ERROR

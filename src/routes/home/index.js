@@ -3,8 +3,6 @@ const log = getLog('routes/home');
 
 import React from 'react';
 import Home from './Home';
-import fetch from '../../core/fetch';
-import TransitLink from "../link";
 import ErrorPage from '../../components/common/ErrorPage';
 import {getClientId} from "../../core/utils";
 
@@ -17,9 +15,16 @@ export default {
     const { graphqlRequest } = context.store.helpers;
     const clientId = getClientId();
     let paramsString = `clientId: "${clientId}"`;
-    if (query.tags) {
-      paramsString += `, tags: "${query.tags}"`;
-    }
+
+    query.limit = 8;
+    const paramKeys = Object.keys(query);
+    console.log('QUERY', query);
+    paramKeys.forEach(key => {
+      const val = isNaN(query[key]) ? `"${query[key]}"` : query[key];
+      paramsString += `, ${key}: ${val}`;
+    });
+
+    console.log('route', paramsString);
 
     try {
 
@@ -103,7 +108,7 @@ export default {
       );
 
       log.info('event=received-feed-data', data);
-      return <Home feed={data.feed} transportTypes={data.transportTypes} tags={query.tags}/>;
+      return <Home feed={data.feed} transportTypes={data.transportTypes} {...query} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />
