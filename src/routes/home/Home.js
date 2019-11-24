@@ -52,8 +52,7 @@ class Home extends React.Component {
       });
       // Checks that the page has scrolled to the bottom
       if (
-        window.innerHeight + document.documentElement.scrollTop
-        >= document.documentElement.offsetHeight
+        Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
         //let offset = (this.props.feed ? this.props.feed.feedItems.length : 0) + 3;
         //this.props.setProperty('posts.feedOffset', offset);
@@ -97,8 +96,6 @@ class Home extends React.Component {
 
     const clientId = getClientId();
     const params = getParams(this.props);
-
-    console.log(prevProps, this.props, clientId);
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
@@ -156,11 +153,12 @@ class Home extends React.Component {
         <div className={s.root}>
           <HomeView feed={feed} transportTypes={transportTypes} />
         </div>
-        <div className={s.windowStats}>
-          <div>{this.state.innerHeight}</div>
-          <div>{this.state.scrollTop}</div>
-          <div>{this.state.offsetHeight}</div>
-        </div>
+        {
+          this.props.loadingFeed &&
+          <div className={s.windowStats}>
+            Loading posts {(this.props.loadFeedOffset || 0) + 1} - {(this.props.loadFeedOffset || 0) + 1 + 8}...
+          </div>
+        }
       </div>
     );
   }
@@ -176,7 +174,9 @@ export default connect(state => ({
   savedPost: state.posts.post,
   savedTerminal: state.posts.savedTerminal,
   feedOffset: state.posts.feedOffset,
-  feedLimit: state.posts.feedLimit
+  feedLimit: state.posts.feedLimit,
+  loadingFeed: state.posts.loadingFeed,
+  loadFeedOffset: state.posts.loadFeedOffset
 }), {
   getGeolocation,
   getFeed,

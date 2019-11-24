@@ -178,12 +178,20 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({}),
+          start: () => {
+            const { feed, variables: { add, offset, limit } } = action.payload;
+            return {
+              ...state,
+              loadingFeed: state.prevResultCount > 0,
+              loadFeedOffset: offset
+            };
+          },
           success: () => {
             const { feed, variables: { add, offset, limit } } = action.payload;
             const stateFeed = state.feed;
             if (!add) {
               return {
+                loadingFeed: true,
                 feed: action.payload.feed
               };
             } else {
@@ -192,11 +200,16 @@ export default function reduce(state = {}, action) {
               }
               return {
                 feed: stateFeed,
-                feedOffset: stateFeed.feedItems.length
+                feedOffset: stateFeed.feedItems.length,
+                loadingFeed: false,
+                prevResultCount: feed.feedItems.length
               };
             }
           },
-          error: () => ({ feed: null })
+          error: () => ({
+            feed: null,
+            loadingFeed: false
+          })
         },
         GET_FEED_START,
         GET_FEED_SUCCESS,
