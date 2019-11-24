@@ -28,6 +28,8 @@ class Home extends React.Component {
 
     super(props);
 
+    this.state = {};
+
     window.onscroll = debounce(() => {
       const {
         props: {
@@ -43,10 +45,15 @@ class Home extends React.Component {
       // * there's nothing left to load
       // if (error || isLoading || !hasMore) return;
 
+      this.setState({
+        innerHeight: window.innerHeight,
+        scrollTop: document.documentElement.scrollTop,
+        offsetHeight: document.documentElement.offsetHeight
+      });
       // Checks that the page has scrolled to the bottom
       if (
         window.innerHeight + document.documentElement.scrollTop
-        === document.documentElement.offsetHeight
+        >= document.documentElement.offsetHeight
       ) {
         //let offset = (this.props.feed ? this.props.feed.feedItems.length : 0) + 3;
         //this.props.setProperty('posts.feedOffset', offset);
@@ -145,8 +152,15 @@ class Home extends React.Component {
     const { feed, transportTypes } = this.props;
 
     return (
-      <div className={s.root}>
-        <HomeView feed={feed} transportTypes={transportTypes} />
+      <div>
+        <div className={s.root}>
+          <HomeView feed={feed} transportTypes={transportTypes} />
+        </div>
+        <div className={s.windowStats}>
+          <div>{this.state.innerHeight}</div>
+          <div>{this.state.scrollTop}</div>
+          <div>{this.state.offsetHeight}</div>
+        </div>
       </div>
     );
   }

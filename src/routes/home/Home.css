@@ -40,3 +40,8 @@
   font-size: 0.8em;
   color: #777;
 }
+
+.windowStats {
+  background-color: #fff;
+  bottom: 0px;
+}
