@@ -7,204 +7,51 @@
 .container {
   max-width: 760px;
   margin: auto;
-  margin-top: 42px;
 }
 
-.sectionLinks {
+.functionBar {
   display: flex;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  position: relative;
+  margin: auto;
 }
 
-.sectionLinks .sectionLink {
-  margin-right: 12px;
-}
-
-.sectionLinks .selected a {
-  color: black;
-  text-decoration: none;
-  cursor: default;
-}
-
-.sectionContent {
-}
-
-.logOut {
-  margin-top: 12px;
-  margin-bottom: 12px;
+.functionBar .container {
   width: 100%;
-  display: flex;
-  justify-content: center;
 }
 
-.logOut .logOutLink {
+.searchFieldContainer {
+  flex-grow: 1;
+  padding-left: 8px;
+}
 
+.mapToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
 }
 
 .linkItem {
   margin-top: 6px;
   margin-bottom: 36px;
+  margin-left: 8px;
+  margin-right: 8px;
 }
 
 .linkItem .from b, .linkItem .to b {
   font-weight: 600;
 }
 
-.discoveryItem .discoveryHeader {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-left: 6px;
-  padding-right: 6px;
+.linkItem .row1 {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 4px;
 }
 
-.discoveryHeader .discoveryGroupName {
-  font-size: 28px;
-  font-weight: lighter;
-}
-
-.discoveryHeader .discoveryHeaderControls {
-
-}
-
-.discoveryHeader .discoveryHeaderControls .checkInCount {
-  display: flex;
-  align-items: center;
-}
-
-.checkInCount .checkInCountIcon {
-  display: contents;
-}
-
-.checkInCount .checkInCountValue {
-
-}
-
-.mainPost {
-
-}
-
-.mainPost .mainPostHeader {
-}
-
-.mainPostHeader .mainPostCheckIn {
-  background-color: #e0e0e0;
-  padding-top: 3px;
+.transport {
+  border: 1px solid black;
   padding-left: 4px;
-  padding-bottom: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding-right: 4px;
 }
 
-.mainPostHeader .mainPostInfo {
-
-}
-
-.mainPostHeader .mainPostInfo .mainPostInfoLeft {
-  margin-bottom: 6px;
-  padding-left: 6px;
-}
-
-.mainPostHeader .mainPostInfo .mainPostInfoLeft .feedItemAuthor {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.mainPostHeader .mainPostInfo .mainPostInfoLeft .feedItemDate {
-  font-size: 10px;
-  color: #666;
-}
-
-.mainPostHeader .mainPostInfo .mainPostInfoRight {
-  margin-right: 8px;
-}
-
-.mainPostHeader .mainPostInfo .mainPostInfoRight .feedItemControls {
-  display: flex;
-}
-
-.secondaryPosts {
-  margin-top: 6px;
-  padding-top: 4px;
-  padding-left: 6px;
-  padding-right: 6px;
-  display: flex;
-}
-
-.secondaryPosts .secondaryPost {
-  width: 33%;
-  margin-left: 1px;
-  margin-right: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.secondaryPosts .secondaryPost .postCount {
-  text-align: center;
-}
-
-.terminalSummary {
-  margin-top: 6px;
-  margin-bottom: -4px;
-}
-
-.terminalSummary .terminalsByType {
-  display: flex;
-  align-items: center;
-}
-
-.terminalSummary .terminalTypeSummary {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.terminalSummary .terminalTypeSummaryArrivals {
-  flex-direction: row-reverse;
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.terminalSummary .terminalTypeSummaryDepartures {
-  flex-direction: row;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.terminalSummary .terminalTypeSummary .terminalTypeValue {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  padding: 5px;
-  border-right: 1px solid #e0e0e0;
-  border-left: 1px solid #e0e0e0;
-}
-
-.terminalSummary .terminalTypeSummary .terminalTypeIcon {
-  display: flex;
-  padding: 6px;
-}
-
-.terminalSummary .destinationList {
-  margin-left: 6px;
-  margin-right: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.terminalSummary .terminalsByType .summaryLabel {
-
-}
-
-.terminalSummary .terminalsByType .summaryValue {
-
-}
-
-.postSummary {
+.linkItem .row2 {
 }

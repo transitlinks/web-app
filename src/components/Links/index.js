@@ -10,12 +10,14 @@ import cx from 'classnames';
 import s from './Links.css';
 import Link from '../Link';
 import { getLinks } from '../../actions/links';
+import { setProperty } from '../../actions/properties';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
+import msgTransport from '../common/messages/transport';
 import FunctionBar from "../FunctionBar";
 
-const LinksView = ({ links, loadedLinks,  transportTypes, getLinks }) => {
+const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, setProperty }) => {
 
   let  displayLinks = (loadedLinks || links) || [];
 
@@ -26,7 +28,19 @@ const LinksView = ({ links, loadedLinks,  transportTypes, getLinks }) => {
   return (
     <div className={s.container}>
       <div className={s.functionBar}>
-        <FunctionBar getParams={getSearchParams} performSearch={getLinks} />
+        <div className={s.searchFieldContainer}>
+          <FunctionBar getParams={getSearchParams} performSearch={getLinks} />
+        </div>
+        <div className={s.mapToggle}>
+          {
+            (viewMode === 'map') ?
+              <FontIcon className="material-icons" style={{ fontSize: '24px' }}
+                        onClick={() => setProperty('links.viewMode', 'list')}>list</FontIcon> :
+              <FontIcon className="material-icons" style={{ fontSize: '24px' }}
+                        onClick={() => setProperty('links.viewMode', 'map')}>map</FontIcon>
+          }
+
+        </div>
       </div>
       <div>
         {
@@ -34,14 +48,23 @@ const LinksView = ({ links, loadedLinks,  transportTypes, getLinks }) => {
           (displayLinks || []).map((link, index) => {
 
             const { uuid } = link;
-
             return (
               <div key={uuid} className={s.linkItem}>
-                <div className={s.from}>
-                  <b>From:</b> { link.from.formattedAddress }
+                <div className={s.row1}>
+                  <div className={s.transport}>
+                    <FormattedMessage { ...msgTransport[link.transport] } />
+                  </div>
+                  <div className={s.transportId}>
+                    {link.transportId}
+                  </div>
                 </div>
-                <div className={s.to}>
-                  <b>To:</b> { link.to.formattedAddress }
+                <div className={s.row2}>
+                  <div className={s.from}>
+                    <b>From:</b> { link.from.formattedAddress }
+                  </div>
+                  <div className={s.to}>
+                    <b>To:</b> { link.to.formattedAddress }
+                  </div>
                 </div>
               </div>
             )
@@ -61,9 +84,11 @@ export default injectIntl(
     return {
       loadedLinks: state.links.transitLinks,
       fetchedFeedItems: state.posts.fetchedFeedItems || {},
-      feedUpdated: state.posts.feedUpdated
+      feedUpdated: state.posts.feedUpdated,
+      viewMode: state.links.viewMode
     }
   }, {
-    getLinks
+    getLinks,
+    setProperty
   })(withStyles(s)(LinksView))
 );
