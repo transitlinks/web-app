@@ -154,9 +154,8 @@ class Home extends React.Component {
           <HomeView feed={feed} transportTypes={transportTypes} />
         </div>
         {
-          this.props.loadingFeed &&
           <div className={s.windowStats}>
-            Loading posts {(this.props.loadFeedOffset || 0) + 1} - {(this.props.loadFeedOffset || 0) + 1 + 8}...
+            Loading posts {(this.props.feedOffset || 0) + 1} - {(this.props.feedOffset || 0) + 1 + 8}...
           </div>
         }
       </div>
