@@ -16,6 +16,16 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 import msgTransport from '../common/messages/transport';
 import FunctionBar from "../FunctionBar";
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
+
+const LinksMap = withGoogleMap(props => (
+  <GoogleMap
+    ref={props.onMapLoad}
+    defaultZoom={12}
+    defaultCenter={{...props.latLng}}
+    onClick={props.onMapClick}>
+  </GoogleMap>
+));
 
 const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, setProperty }) => {
 
@@ -24,6 +34,71 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
   const getSearchParams = (input) => {
     return { locality: input };
   };
+
+  const listView = (
+    <div>
+      {
+
+        (displayLinks || []).map((link, index) => {
+
+          const { uuid } = link;
+          return (
+            <div key={uuid} className={s.linkItem}>
+              <div className={s.row1}>
+                <div className={s.transport}>
+                  <FormattedMessage { ...msgTransport[link.transport] } />
+                </div>
+                <div className={s.transportId}>
+                  {link.transportId}
+                </div>
+              </div>
+              <div className={s.row2}>
+                <div className={s.from}>
+                  <b>From:</b> { link.from.formattedAddress }
+                </div>
+                <div className={s.to}>
+                  <b>To:</b> { link.to.formattedAddress }
+                </div>
+              </div>
+            </div>
+          );
+
+        })
+      }
+    </div>
+  );
+
+  let defaultCenter = {
+    lat: 60.16952,
+    lng: 24.93545
+  };
+
+  if (displayLinks.length > 0) {
+    defaultCenter = {
+      lat: displayLinks[0].from.latitude,
+      lng: displayLinks[0].from.longitude
+    }
+  }
+
+  const mapView = (
+    <div>
+      <LinksMap
+        containerElement={
+          <div style={{ height: `400px` }} />
+        }
+        mapElement={
+          <div style={{ height: `100%` }} />
+        }
+        latLng={defaultCenter}
+        onMapLoad={() => {
+          console.log('map loaded');
+        }}
+        onMapClick={() => {
+          console.log('map clicked');
+        }}
+      />
+    </div>
+  );
 
   return (
     <div className={s.container}>
@@ -39,39 +114,11 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
               <FontIcon className="material-icons" style={{ fontSize: '24px' }}
                         onClick={() => setProperty('links.viewMode', 'map')}>map</FontIcon>
           }
-
         </div>
       </div>
-      <div>
-        {
-
-          (displayLinks || []).map((link, index) => {
-
-            const { uuid } = link;
-            return (
-              <div key={uuid} className={s.linkItem}>
-                <div className={s.row1}>
-                  <div className={s.transport}>
-                    <FormattedMessage { ...msgTransport[link.transport] } />
-                  </div>
-                  <div className={s.transportId}>
-                    {link.transportId}
-                  </div>
-                </div>
-                <div className={s.row2}>
-                  <div className={s.from}>
-                    <b>From:</b> { link.from.formattedAddress }
-                  </div>
-                  <div className={s.to}>
-                    <b>To:</b> { link.to.formattedAddress }
-                  </div>
-                </div>
-              </div>
-            )
-
-          })
-        }
-      </div>
+      {
+        (viewMode === 'map') ? mapView : listView
+      }
     </div>
   );
 
