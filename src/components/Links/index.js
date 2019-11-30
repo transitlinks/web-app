@@ -16,7 +16,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 import msgTransport from '../common/messages/transport';
 import FunctionBar from "../FunctionBar";
-import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Marker, Polyline, withGoogleMap } from 'react-google-maps';
 
 const LinksMap = withGoogleMap(props => (
   <GoogleMap
@@ -24,6 +24,14 @@ const LinksMap = withGoogleMap(props => (
     defaultZoom={12}
     defaultCenter={{...props.latLng}}
     onClick={props.onMapClick}>
+    {
+      (props.links || []).map(link => {
+        return <Polyline geodesic={true} jointType={2} path={[
+          { lat: link.from.latitude, lng: link.from.longitude },
+          { lat: link.to.latitude, lng: link.to.longitude }
+        ]} />;
+      })
+    }
   </GoogleMap>
 ));
 
@@ -96,6 +104,7 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
         onMapClick={() => {
           console.log('map clicked');
         }}
+        links={displayLinks}
       />
     </div>
   );
