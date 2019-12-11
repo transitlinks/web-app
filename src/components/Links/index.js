@@ -1,19 +1,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/RaisedButton';
-import PostCollection from './PostCollection';
-import Terminal from '../Terminal';
-import CheckInItem from '../CheckInItem';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import cx from 'classnames';
 import s from './Links.css';
-import Link from '../Link';
 import { getLinks } from '../../actions/links';
 import { setProperty } from '../../actions/properties';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
-import msg from './messages';
 import msgTransport from '../common/messages/transport';
 import FunctionBar from "../FunctionBar";
 import { GoogleMap, Marker, Polyline, withGoogleMap } from 'react-google-maps';
@@ -26,10 +19,17 @@ const LinksMap = withGoogleMap(props => (
     onClick={props.onMapClick}>
     {
       (props.links || []).map(link => {
-        return <Polyline geodesic={true} jointType={2} path={[
+
+        const strokeColor = '#FF0000';
+        return <Polyline path={[
           { lat: link.from.latitude, lng: link.from.longitude },
           { lat: link.to.latitude, lng: link.to.longitude }
-        ]} />;
+        ]} options={{
+          geodesic: true,
+          strokeColor,
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        }} />;
       })
     }
   </GoogleMap>
@@ -87,6 +87,8 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
       lng: displayLinks[0].from.longitude
     }
   }
+
+  console.log('display links', displayLinks);
 
   const mapView = (
     <div>

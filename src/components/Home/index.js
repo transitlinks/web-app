@@ -11,8 +11,9 @@ import Link from '../Link';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
+import RaisedButton from 'material-ui/RaisedButton';
 
-const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes }) => {
+const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, error }) => {
 
   const select = (section) => {
     setProperty('breakdownSelected', section);
@@ -46,6 +47,21 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes }
     singleText = shareText;
   }
 
+  const errorClasses = {
+    'PrelaunchError': s.prelaunchError
+  };
+
+  const errorElems = !error ? [] : error.errors.map(err => {
+    return (
+      <div className={errorClasses[err.name]}>
+        <div>{ err.text }</div>
+        <div className={s.okButton}>
+          <RaisedButton label="OK" onClick={() => setProperty('posts.error', null)} />
+        </div>
+      </div>
+    );
+  });
+
 	return (
     <div className={s.container}>
       {
@@ -59,6 +75,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes }
         <CheckIn />
       </div>
       <div>
+        {errorElems}
         <Feed feed={feed} transportTypes={transportTypes} />
       </div>
 
@@ -121,7 +138,8 @@ HomeView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
   connect(state => ({
-    breakdownSelected: state.home.breakdownSelected
+    breakdownSelected: state.home.breakdownSelected,
+    error: state.posts.error
   }), {
     setProperty
   })(withStyles(s)(HomeView))

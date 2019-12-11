@@ -137,7 +137,9 @@ export const initEndpoints = (app) => {
       rootValue: { request: req },
       formatError: error => {
         log.debug("gql error", error);
+        const { name, text, statusCode } = error.extensions;
         return {
+          name, text, statusCode,
           message: error.message,
           locations: error.locations,
           stack: error.stack

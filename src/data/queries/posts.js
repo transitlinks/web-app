@@ -34,6 +34,15 @@ import {
 
 import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
+const throwPrelaunchError = () => {
+  throw Object.assign(new Error('Access error'), {
+    extensions: {
+      name: 'PrelaunchError',
+      text: 'Publishing content will be available to everyone soon! Right now we are still preparing for launch and publishing is limited.',
+      statusCode: 401
+    }
+  });
+};
 
 const requireOwnership = async (request, clientId, entity) => {
 
@@ -41,14 +50,20 @@ const requireOwnership = async (request, clientId, entity) => {
 
   let userId = null;
 
+  if (!request.user || request.user.email !== 'vhalme@gmail.com') {
+    throwPrelaunchError();
+  }
+
+  /*
   if (request.user) {
     userId = await userRepository.getUserIdByUuid(request.user.uuid);
     if (entity.userId !== userId) {
       throw new Error('Access not allowed for user id');
     }
-  }  else if (!(clientId && clientId === entity.clientId)) {
+  } else if (!(clientId && clientId === entity.clientId)) {
     throw new Error('Access not allowed for client id');
   }
+  */
 
   return userId;
 
@@ -178,6 +193,10 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   if (checkInInput.uuid) {
     const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
     userId = await requireOwnership(request, clientId, savedCheckIn);
+  }
+
+  if (!request.user) {
+    throwPrelaunchError();
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [

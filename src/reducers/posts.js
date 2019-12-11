@@ -125,9 +125,9 @@ export default function reduce(state = {}, action) {
                 feedProperties['frame-add'] = {};
               }
             }
-            return { checkIn, feedProperties };
+            return { checkIn, feedProperties, error: null };
           },
-          error: () => ({ checkIn: null })
+          error: () => ({ checkIn: null, error: action.payload.error })
         },
         SAVE_CHECKIN_START,
         SAVE_CHECKIN_SUCCESS,
