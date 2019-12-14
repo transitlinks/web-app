@@ -137,7 +137,9 @@ const CheckInItem = (
           //</div>
         }
         <div className={s.feedItemDisplay}>
-          { checkIn.formattedAddress }
+          <a href="#" onClick={() => setProperty('posts.checkIn', checkIn)}>
+            { checkIn.formattedAddress }
+          </a>
         </div>
         <div className={s.feedItemControls}>
           {

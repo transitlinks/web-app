@@ -30,6 +30,10 @@
   flex-grow: 1;
 }
 
+.feedItemDisplay a {
+  color: black;
+}
+
 .feedItemContainer .feedItemControls {
   min-width: 64px;
   display: flex;

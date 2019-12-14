@@ -11,10 +11,13 @@ export const getLinks = (params) => {
 
     const paramKeys = Object.keys(params);
     const paramsStringElems = paramKeys.map(paramKey => `${paramKey}: "${params[paramKey]}"`);
-    const paramsString = paramsStringElems.join(', ');
+    let paramsString = paramsStringElems.join(', ');
+    if (paramsString.length > 0) {
+      paramsString = '(' + paramsString + ')';
+    }
 
     const query = `query {
-          transitLinks (${paramsString}) {
+          transitLinks ${paramsString} {
              uuid,
              transport,
              transportId,

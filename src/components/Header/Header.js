@@ -21,7 +21,7 @@ function Header() {
             </Link>
           </div>
           <div className={s.functionBar}>
-            <Link className={s.brand} to="/discover">
+            <Link className={s.brand} to="/links">
               <FontIcon className="material-icons" style={{ fontSize: '40px' }}>directions</FontIcon>
             </Link>
           </div>

@@ -12,15 +12,20 @@ export default {
   async action({ params, query, context }) {
 
     const paramKeys = Object.keys(query);
+    if (!paramKeys.locality) paramKeys.locality = 'ant';
     const paramsStringElems = paramKeys.map(paramKey => `${paramKey}: "${query[paramKey]}"`);
-    const paramsString = paramsStringElems.join(', ');
+    let paramsString = paramsStringElems.join(', ');
     const { graphqlRequest } = context.store.helpers;
+
+    if (paramsString.length > 0) {
+      paramsString = '(' + paramsString + ')';
+    }
 
     try {
 
       const { data } = await graphqlRequest(
         `query {
-          transitLinks (${paramsString}) {
+          transitLinks ${paramsString} {
             uuid,
             transport,
             transportId,
