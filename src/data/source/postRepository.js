@@ -2,6 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/postRepository');
 
 import Sequelize from 'sequelize';
+import sequelize from '../sequelize';
 import fetch from '../../core/fetch';
 import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { Post, Terminal, CheckIn, User, MediaItem, Tag, EntityTag } from '../models';
@@ -235,6 +236,12 @@ export default {
     //});
     return localities.map(locality => locality.DISTINCT);
 
+  },
+
+  getConnectionsByLocality: async(locality, type) => {
+    const query = `SELECT ci1.locality FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2.locality = '${locality}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
+    const connections = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT});
+    return connections.map(c => c.locality);
   },
 
   getTags: async (where, options = {}) => {

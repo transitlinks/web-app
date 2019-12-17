@@ -60,17 +60,22 @@ export const DiscoverQueryFields = {
       //const checkIns = await postRepository.getCheckIns({});;
       console.log("locs", localities);
 
-      let discoveries = [];;
+      let discoveries = [];
       for (let i = 0; i < localities.length; i++) {
+
         const checkInsByLoc = await postRepository.getCheckIns({ locality: localities[i] });
         console.log("CHECKINS BY LOC", checkInsByLoc[0].id);
+        const connectionsFrom = await postRepository.getConnectionsByLocality(localities[i], 'arrival');
+        const connectionsTo = await postRepository.getConnectionsByLocality(localities[i], 'departure');
+        console.log(localities[i], '->', connectionsTo);
+        console.log(localities[i], '<-', connectionsFrom);
+
         let locPosts = [];
-        let locDepartures = [];
-        let locArrivals = [];
+
         for (let j = 0; j < checkInsByLoc.length; j++) {
           const posts = await postRepository.getPosts({ checkInId: checkInsByLoc[j].id });
-          const departures = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'departure' });
-          const arrivals = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'arrival' });
+          //const departures = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'departure' });
+          //const arrivals = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'arrival' });
           locPosts = locPosts.concat(posts.map(async post => {
             const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
             let userName = null;
@@ -86,6 +91,7 @@ export const DiscoverQueryFields = {
             };
           }));
 
+          /*
           locDepartures = locDepartures.concat(departures.map(async terminal => {
 
             let linkedTerminal = null;
@@ -123,7 +129,10 @@ export const DiscoverQueryFields = {
             };
 
           }));
+           */
+
         }
+
         discoveries = discoveries.concat([
           {
             groupType: 'locality',
@@ -131,8 +140,8 @@ export const DiscoverQueryFields = {
             checkInCount: checkInsByLoc.length,
             feedItem: await getFeedItem(request, checkInsByLoc[0]),
             posts: locPosts,
-            departures: locDepartures,
-            arrivals: locArrivals
+            connectionsFrom,
+            connectionsTo
           }
         ]);
       }

@@ -18,7 +18,7 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
 
   let discoveries = (loadedDiscover || discover).discoveries;
 
-  const renderTerminalsList = (terminalType, terminals, groupName) => {
+  const renderTerminalsList = (terminalType, locations, groupName) => {
 
     /*
     const terminalLocations = {
@@ -30,32 +30,23 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
     };
     */
 
-    const terminalLocations = {};
-    terminals.forEach(terminal => {
-      if (terminal.linkedTerminal) {
-        terminalLocations[terminal.linkedTerminal.checkIn.locality  || 'Unnamed'] = 1;
-      }
-    });
-
-    const locationLabels = Object.keys(terminalLocations);
-
     return (
       <div className={s.terminalsByType}>
         <div className={cx(s.terminalTypeSummary, terminalType === 'arrival' ? s.terminalTypeSummaryArrivals : s.terminalTypeSummaryDepartures)}>
           <div className={s.destinationList}>
             {
-              locationLabels.map((locationLabel, i) => (
+              locations.map((location, i) => (
                 <span>
-                <a href={`/links?locality=${locationLabel}`}>{locationLabel}</a>
+                <a href={`/links?locality=${location}`}>{location}</a>
                   {
-                    (i < locationLabels.length - 1) && (<span>, </span>)
+                    (i < locations.length - 1) && (<span>, </span>)
                   }
               </span>
               ))
             }
           </div>
           <div className={s.terminalTypeValue}>
-            <Link to={`/links?locality=${groupName}&type=${terminalType}`}>{terminals.length}</Link>
+            <Link to={`/links?locality=${groupName}&type=${terminalType}`}>{locations.length}</Link>
           </div>
           <div className={s.terminalTypeIcon}>
             <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{ terminalType === 'arrival' ? 'call_received' : 'call_made' }</FontIcon>
@@ -94,8 +85,8 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
                   </div>
                 </div>
                 <div className={s.terminalSummary}>
-                  { renderTerminalsList('arrival', arrivals, discovery.groupName) }
-                  { renderTerminalsList('departure', departures, discovery.groupName) }
+                  { renderTerminalsList('arrival', discovery.connectionsFrom, discovery.groupName) }
+                  { renderTerminalsList('departure', discovery.connectionsTo, discovery.groupName) }
                 </div>
                 <div className={s.postSummary}>
                   <CheckInItem feedItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />

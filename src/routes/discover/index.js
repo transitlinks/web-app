@@ -10,13 +10,13 @@ export default {
   path: '/discover/:search?/:type?',
 
   async action({ params, context }) {
-    
+
     let search = params.search;
     let type = params.type;
 
     const { graphqlRequest } = context.store.helpers;
- 
-    try { 
+
+    try {
 
       const { data } = await graphqlRequest(
         `query {
@@ -108,74 +108,8 @@ export default {
                   formattedAddress
                 }
               },
-              departures {
-                uuid,
-                type,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                checkIn {
-                  uuid,
-                  formattedAddress,
-                  locality
-                },
-                linkedTerminal {
-                  uuid,
-                  type,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  priceAmount,
-                  priceCurrency,
-                  checkIn {
-                    uuid,
-                    latitude,
-                    longitude,
-                    placeId,
-                    formattedAddress,
-                    locality,
-                    country
-                  }
-                }
-              },
-              arrivals {
-                uuid,
-                type,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                checkIn {
-                  uuid,
-                  formattedAddress,
-                  locality
-                },
-                linkedTerminal {
-                  uuid,
-                  type,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  priceAmount,
-                  priceCurrency,
-                  checkIn {
-                    uuid,
-                    latitude,
-                    longitude,
-                    placeId,
-                    formattedAddress,
-                    locality,
-                    country
-                  }
-                }
-              }
+              connectionsFrom,
+              connectionsTo
             }
           },
           transportTypes { slug }
@@ -184,7 +118,7 @@ export default {
 
       log.info("event=received-discoveries-data", data);
       return <Discover discover={data.discover} transportTypes={data.transportTypes} />;
-    
+
     } catch (error) {
       log.info("error=route-discover", error);
       return <ErrorPage errors={error.errors} />

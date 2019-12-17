@@ -20,8 +20,8 @@ export const DiscoveryItemType = new GraphQLObjectType({
     checkInCount: { type: GraphQLInt },
     feedItem: { type: FeedItemType },
     posts: { type: new GraphQLList(PostType) },
-    departures: { type: new GraphQLList(TerminalType) },
-    arrivals: { type: new GraphQLList(TerminalType) }
+    connectionsFrom: { type: new GraphQLList(GraphQLString) },
+    connectionsTo: { type: new GraphQLList(GraphQLString) }
   })
 });
 

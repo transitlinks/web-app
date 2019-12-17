@@ -101,74 +101,8 @@ export const getDiscoveries = (search, type) => {
                   formattedAddress
                 }
               },
-              departures {
-                uuid,
-                type,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                checkIn {
-                  uuid,
-                  formattedAddress,
-                  locality
-                },
-                linkedTerminal {
-                  uuid,
-                  type,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  priceAmount,
-                  priceCurrency,
-                  checkIn {
-                    uuid,
-                    latitude,
-                    longitude,
-                    placeId,
-                    formattedAddress,
-                    locality,
-                    country
-                  }
-                }
-              },
-              arrivals {
-                uuid,
-                type,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                checkIn {
-                  uuid,
-                  formattedAddress,
-                  locality
-                },
-                linkedTerminal {
-                  uuid,
-                  type,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  priceAmount,
-                  priceCurrency,
-                  checkIn {
-                    uuid,
-                    latitude,
-                    longitude,
-                    placeId,
-                    formattedAddress,
-                    locality,
-                    country
-                  }
-                }
-              }
+              connectionsFrom,
+              connectionsTo
             }
           }
         }`

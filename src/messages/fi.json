@@ -41,9 +41,9 @@
     "defaultMessage": "E-mail",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -52,9 +52,9 @@
     "defaultMessage": "User photo",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -65,9 +65,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -78,9 +78,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -91,9 +91,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -104,9 +104,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -117,9 +117,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -130,9 +130,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -143,9 +143,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -154,9 +154,9 @@
     "defaultMessage": "Add link",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -394,9 +394,9 @@
     "defaultMessage": "New password",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -405,9 +405,9 @@
     "defaultMessage": "CHANGE",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -416,9 +416,9 @@
     "defaultMessage": "Save",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -436,9 +436,9 @@
     "defaultMessage": "Error! Failed saving new password :(",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -447,9 +447,9 @@
     "defaultMessage": "Password changed",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -458,9 +458,9 @@
     "defaultMessage": "Error! Failed saving profile :(",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -469,9 +469,9 @@
     "defaultMessage": "Profile saved",
     "message": "",
     "files": [
+      "src/components/Account/messages.profile.js",
       "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js",
-      "src/components/Account/messages.profile.js"
+      "src/components/Add/messages.terminal.js"
     ]
   },
   {
@@ -480,9 +480,9 @@
     "defaultMessage": "Experience",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -491,9 +491,9 @@
     "defaultMessage": "Research",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -504,9 +504,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -517,9 +517,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -530,9 +530,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -543,9 +543,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -556,9 +556,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -569,9 +569,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -582,9 +582,9 @@
     "files": [
       "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditTrip/messages.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -593,8 +593,8 @@
     "defaultMessage": "Log out",
     "message": "",
     "files": [
-      "src/components/Add/messages.js",
       "src/components/Account/messages.js",
+      "src/components/Add/messages.js",
       "src/components/CheckIn/messages.js",
       "src/components/Discover/messages.js",
       "src/components/Links/messages.js"
