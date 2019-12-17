@@ -229,15 +229,23 @@ export default {
   },
 
   getCheckInLocalities: async (options) => {
-
-    //const localities = await CheckIn.aggregate('locality', 'DISTINCT', { plain: false, ...options });
-    console.log('query with OPTIONS >>>', options);
     let query = `SELECT DISTINCT locality FROM "CheckIn"`;
     if (options.limit) query += ' LIMIT ' + options.limit;
     if (options.offset) query += ' OFFSET ' + options.offset;
     const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return localities.map(locality => locality.locality);
+  },
 
+  getCheckInCount: async (locality) => {
+    const query = `SELECT COUNT(id) FROM "CheckIn" WHERE locality = '${locality}'`;
+    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return checkInCount[0].count;
+  },
+
+  getPostsByLocality: async (locality) => {
+    const query = `SELECT * FROM "Post" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}');`;
+    const posts = await sequelize.query(query, { model: Post, mapToModel: true });
+    return posts;
   },
 
   getConnectionsByLocality: async(locality, type) => {

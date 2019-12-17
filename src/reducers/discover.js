@@ -19,21 +19,21 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => {
-            const { feed, variables: { add, offset, limit } } = action.payload;
             return {
               ...state,
               loadingDiscover: !state.prevResultCount || state.prevResultCount > 0
             };
           },
           success: () => {
-            const { discover, variables: { add, offset, limit } } = action.payload;
-            const stateDiscover = state.discover;
+            const { discover } = action.payload;
+            const stateDiscover = state.discover || { discoveries: [] };
+            console.log('in reducer', discover, stateDiscover);
             for (let i = 0; i < discover.discoveries.length; i++) {
               stateDiscover.discoveries.push(discover.discoveries[i]);
             }
             return {
               discover: stateDiscover,
-              discoverOffset: stateDiscover.discoveries.length,
+              offset: stateDiscover.discoveries.length,
               loadingDiscover: false,
               prevResultCount: discover.discoveries.length
             };

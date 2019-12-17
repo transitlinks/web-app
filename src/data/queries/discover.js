@@ -59,99 +59,45 @@ export const DiscoverQueryFields = {
 
       log.info(graphLog(request, 'discover',`search=${search} type=${type} offset=${offset} limit=${limit}`));
 
-      const options = {
-        order: [
-          ['createdAt', 'DESC']
-        ]
-      };
-
+      const options = {};
       if (offset) options.offset = offset;
       if (limit) options.limit = limit;
 
       const localities = await postRepository.getCheckInLocalities(options);
-      //const checkIns = await postRepository.getCheckIns({});;
       console.log("locs", localities);
 
       let discoveries = [];
       for (let i = 0; i < localities.length; i++) {
-
-        const checkInsByLoc = []; //await postRepository.getCheckIns({ locality: localities[i] });
-        //console.log("CHECKINS BY LOC", checkInsByLoc[0].id);
 
         const connectionsFrom = await postRepository.getConnectionsByLocality(localities[i], 'arrival');
         const connectionsTo = await postRepository.getConnectionsByLocality(localities[i], 'departure');
         console.log(localities[i], '->', connectionsTo);
         console.log(localities[i], '<-', connectionsFrom);
         const firstCheckIn = await postRepository.getCheckIn({ locality: localities[i] });
+        const checkInCount = await postRepository.getCheckInCount(localities[i]);
 
-        let locPosts = [];
-
-        for (let j = 0; j < checkInsByLoc.length; j++) {
-          const posts = await postRepository.getPosts({ checkInId: checkInsByLoc[j].id });
-          //const departures = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'departure' });
-          //const arrivals = await postRepository.getTerminals({ checkInId: checkInsByLoc[j].id, type: 'arrival' });
-          locPosts = locPosts.concat(posts.map(async post => {
-            const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
-            let userName = null;
-            if (post.userId) {
-              const user = await userRepository.getById(post.userId);
-              userName = user.firstName + ' ' + user.lastName;
-            }
-            return {
-              ...post.json(),
-              user: userName,
-              checkIn: checkInsByLoc[j],
-              mediaItems: mediaItems.map(mediaItem => mediaItem.json())
-            };
-          }));
-
-          /*
-          locDepartures = locDepartures.concat(departures.map(async terminal => {
-
-            let linkedTerminal = null;
-
-            if (terminal.linkedTerminalId) {
-              linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
-              const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
-              linkedTerminal = linkedTerminal.json();
-              linkedTerminal.checkIn = linkedTerminalCheckIn.json();
-            }
-
-            return {
-              ...terminal.json(),
-              checkIn: checkInsByLoc[j].json(),
-              linkedTerminal
-            };
-
-          }));
-
-          locArrivals = locArrivals.concat(arrivals.map(async terminal => {
-
-            let linkedTerminal = null;
-
-            if (terminal.linkedTerminalId) {
-              linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
-              const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
-              linkedTerminal = linkedTerminal.json();
-              linkedTerminal.checkIn = linkedTerminalCheckIn.json();
-            }
-
-            return {
-              ...terminal.json(),
-              checkIn: checkInsByLoc[j].json(),
-              linkedTerminal
-            };
-
-          }));
-           */
-
-        }
+        const posts = await postRepository.getPostsByLocality(localities[i]);
+        const locPosts = posts.map(async post => {
+          const checkIn = await postRepository.getCheckIn({ id: post.checkInId });
+          const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
+          let userName = null;
+          if (post.userId) {
+            const user = await userRepository.getById(post.userId);
+            userName = user.firstName + ' ' + user.lastName;
+          }
+          return {
+            ...post.json(),
+            user: userName,
+            checkIn: checkIn.json(),
+            mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+          };
+        });
 
         discoveries = discoveries.concat([
           {
             groupType: 'locality',
             groupName: localities[i],
-            checkInCount: 9, //checkInsByLoc.length,
+            checkInCount,
             feedItem: await getFeedItem(request, firstCheckIn),
             posts: locPosts,
             connectionsFrom,

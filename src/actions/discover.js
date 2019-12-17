@@ -97,8 +97,7 @@ export const getDiscoveries = (params) => {
                   url
                 },
                 checkIn {
-                  uuid,
-                  formattedAddress
+                  uuid
                 }
               },
               connectionsFrom,

@@ -18,7 +18,7 @@ export default {
 
       const { data } = await graphqlRequest(
         `query {
-          discover ${createParamString({ ...params, limit: 6 })} {
+          discover ${createParamString({ ...params, offset: 0 })} {
             discoveries {
               groupType,
               groupName,
@@ -102,8 +102,7 @@ export default {
                   url
                 },
                 checkIn {
-                  uuid,
-                  formattedAddress
+                  uuid
                 }
               },
               connectionsFrom,

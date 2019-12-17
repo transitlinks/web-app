@@ -24,10 +24,13 @@ const getParams = (props) => {
 class Discover extends React.Component {
 
   constructor(props) {
-
     super(props);
-
     this.state = {};
+  }
+
+  componentDidMount() {
+
+    const { search, type, offset } = this.props;
 
     window.onscroll = debounce(() => {
       this.setState({
@@ -40,16 +43,13 @@ class Discover extends React.Component {
       if (
         Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
-        const { search, type, offset, limit } = this.props;
-        this.props.getDiscoveries(search, type, offset || 0, limit || 1);
+        const { search, type, offset } = this.props;
+        this.props.getDiscoveries({ search, type, offset: offset || 0, limit: 6 });
       }
     }, 100);
 
-  }
+    this.props.getDiscoveries({ search, type, offset: offset || 0, limit: 6 });
 
-  componentDidMount(props) {
-    const { search, type, offset, limit } = this.props;
-    this.props.getDiscoveries(search, type, offset || 0, limit || 1);
   }
 
   render() {
@@ -70,8 +70,9 @@ class Discover extends React.Component {
             <DiscoverView discover={discover} transportTypes={transportTypes} >
             </DiscoverView>
             {
+              this.props.loadingDiscover &&
               <div className={s.windowStats}>
-                Loading discoveries {(this.props.discoverOffset || 0) + 1} - {(this.props.discoverOffset || 0) + 1 + 6}...
+                Loading discoveries {(this.props.offset || 0) + 1} - {(this.props.offset || 0) + 1 + 6}...
               </div>
             }
           </div>
@@ -87,10 +88,9 @@ class Discover extends React.Component {
 Discover.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
-  discoverOffset: state.discover.discoverOffset,
-  discoverLimit: state.discover.discoverLimit,
-  loadingDiscover: state.discover.loadingDiscover,
-  loadDiscoverOffset: state.discover.loadDiscoverOffset
+  offset: state.discover.offset,
+  limit: state.discover.limit,
+  loadingDiscover: state.discover.loadingDiscover
 }), {
   getDiscoveries,
   setProperty
