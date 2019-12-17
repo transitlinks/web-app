@@ -63,12 +63,14 @@ export const DiscoverQueryFields = {
       let discoveries = [];
       for (let i = 0; i < localities.length; i++) {
 
-        const checkInsByLoc = await postRepository.getCheckIns({ locality: localities[i] });
-        console.log("CHECKINS BY LOC", checkInsByLoc[0].id);
+        const checkInsByLoc = []; //await postRepository.getCheckIns({ locality: localities[i] });
+        //console.log("CHECKINS BY LOC", checkInsByLoc[0].id);
+
         const connectionsFrom = await postRepository.getConnectionsByLocality(localities[i], 'arrival');
         const connectionsTo = await postRepository.getConnectionsByLocality(localities[i], 'departure');
         console.log(localities[i], '->', connectionsTo);
         console.log(localities[i], '<-', connectionsFrom);
+        const firstCheckIn = await postRepository.getCheckIn({ locality: localities[i] });
 
         let locPosts = [];
 
@@ -137,8 +139,8 @@ export const DiscoverQueryFields = {
           {
             groupType: 'locality',
             groupName: localities[i],
-            checkInCount: checkInsByLoc.length,
-            feedItem: await getFeedItem(request, checkInsByLoc[0]),
+            checkInCount: 9, //checkInsByLoc.length,
+            feedItem: await getFeedItem(request, firstCheckIn),
             posts: locPosts,
             connectionsFrom,
             connectionsTo
