@@ -182,8 +182,7 @@ export default function reduce(state = {}, action) {
             const { feed, variables: { add, offset, limit } } = action.payload;
             return {
               ...state,
-              loadingFeed: !state.prevResultCount || state.prevResultCount > 0,
-              //loadFeedOffset: offset
+              loadingFeed: !state.prevResultCount || state.prevResultCount > 0
             };
           },
           success: () => {

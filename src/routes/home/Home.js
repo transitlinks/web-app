@@ -39,12 +39,6 @@ class Home extends React.Component {
         },
       } = this;
 
-      // Bails early if:
-      // * there's an error
-      // * it's already loading
-      // * there's nothing left to load
-      // if (error || isLoading || !hasMore) return;
-
       this.setState({
         innerHeight: window.innerHeight,
         scrollTop: document.documentElement.scrollTop,

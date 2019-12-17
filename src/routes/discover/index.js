@@ -4,6 +4,7 @@ const log = getLog('routes/discover');
 import React from 'react';
 import ErrorPage from '../../components/common/ErrorPage';
 import Discover from './Discover';
+import { createParamString } from "../../core/utils";
 
 export default {
 
@@ -11,16 +12,13 @@ export default {
 
   async action({ params, context }) {
 
-    let search = params.search;
-    let type = params.type;
-
     const { graphqlRequest } = context.store.helpers;
 
     try {
 
       const { data } = await graphqlRequest(
         `query {
-          discover (search: "${search}", type: "${type}") {
+          discover ${createParamString({ ...params, limit: 6 })} {
             discoveries {
               groupType,
               groupName,

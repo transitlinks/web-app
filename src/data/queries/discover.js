@@ -33,6 +33,7 @@ import {
 } from '../types/DiscoverType';
 
 import {
+  GraphQLInt,
   GraphQLString
 } from 'graphql';
 
@@ -50,13 +51,24 @@ export const DiscoverQueryFields = {
     description: 'Query content by location',
     args: {
       search: { type: GraphQLString },
-      type: { type: GraphQLString }
+      type: { type: GraphQLString },
+      offset: { type: GraphQLInt },
+      limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { search, type }) => {
+    resolve: async ({ request }, { search, type, offset, limit }) => {
 
-      log.info(graphLog(request, 'discover',`search=${search} type=${type}`));
+      log.info(graphLog(request, 'discover',`search=${search} type=${type} offset=${offset} limit=${limit}`));
 
-      const localities = await postRepository.getCheckInLocalities();
+      const options = {
+        order: [
+          ['createdAt', 'DESC']
+        ]
+      };
+
+      if (offset) options.offset = offset;
+      if (limit) options.limit = limit;
+
+      const localities = await postRepository.getCheckInLocalities(options);
       //const checkIns = await postRepository.getCheckIns({});;
       console.log("locs", localities);
 

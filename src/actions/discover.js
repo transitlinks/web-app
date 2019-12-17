@@ -1,19 +1,19 @@
 import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import { geocode, extractPlaceFields } from '../services/linkService';
-
+import { createParamString } from "../core/utils";
 import {
   GET_DISCOVER_START,
   GET_DISCOVER_SUCCESS,
   GET_DISCOVER_ERROR
 } from '../constants';
 
-export const getDiscoveries = (search, type) => {
+export const getDiscoveries = (params) => {
 
   return async (...args) => {
 
     const query = `query {
-          discover (search: "${search}", type: "${type}") {
+          discover ${createParamString(params)} {
             discoveries {
               groupType,
               groupName,

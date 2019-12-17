@@ -3,7 +3,7 @@ const uuid = require('uuid/v1');
 export const toGraphQLObject = (object) => {
   const json = JSON.stringify(object);
   json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
-  return json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\""); 
+  return json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\"");
 };
 
 export function emailValid(email) {
@@ -16,51 +16,51 @@ export function emailValid(email) {
   }
 
   const at = email.indexOf('@');
-  
+
   if (at === -1) {
     return {
       text: 'missing-at',
       style: { color: 'orange' }
     };
   }
-   
+
   if (at === 0) {
     return {
       text: 'missing-prefix',
       style: { color: 'orange' }
     };
   }
-  
+
   const domain = email.substring(at + 1);
-  
+
   if (domain.indexOf('@') !== -1) {
     return {
       text: 'too-many-ats',
       style: { color: 'orange' }
     };
   }
-  
+
   if (domain === '') {
     return {
       text: 'missing-domain',
       style: { color: 'orange' }
-    }; 
+    };
   }
-  
+
   const dot = domain.indexOf('.');
 
   if (dot === -1) {
     return {
       text: 'missing-postfix',
       style: { color: 'orange' }
-    }; 
+    };
   }
-  
+
   if (domain.substring(dot + 1).length < 2) {
     return {
       text: 'postfix-too-short',
       style: { color: 'orange' }
-    }; 
+    };
   }
 
   return {
@@ -70,16 +70,16 @@ export function emailValid(email) {
   };
 
 }
-  
+
 export function passwordValid(password) {
-  
+
   if (!password) {
     return {
       text: 'password',
       style: {}
     }
   }
-  
+
   if (password.length < 4) {
     return {
       text: 'password-too-short',
@@ -92,7 +92,7 @@ export function passwordValid(password) {
     style: { color: 'green' },
     pass: true
   };
-  
+
 
 }
 
@@ -106,5 +106,23 @@ export function getClientId() {
   }
 
   return clientId;
+
+}
+
+export function createParamString(params) {
+
+  let paramsString = '';
+
+  const paramKeys = Object.keys(params);
+  paramKeys.forEach(key => {
+    const val = isNaN(params[key]) ? `"${params[key]}"` : params[key];
+    paramsString += `, ${key}: ${val}`;
+  });
+
+  if (paramsString.length > 0) {
+    paramsString = '(' + paramsString + ')';
+  }
+
+  return paramsString;
 
 }

@@ -4,7 +4,7 @@ const log = getLog('routes/home');
 import React from 'react';
 import Home from './Home';
 import ErrorPage from '../../components/common/ErrorPage';
-import {getClientId} from "../../core/utils";
+import {getClientId, createParamString} from "../../core/utils";
 
 export default {
 
@@ -14,15 +14,8 @@ export default {
 
     const { graphqlRequest } = context.store.helpers;
     const clientId = getClientId();
-    let paramsString = `clientId: "${clientId}"`;
-
-    query.limit = 8;
-    const paramKeys = Object.keys(query);
-    console.log('QUERY', query);
-    paramKeys.forEach(key => {
-      const val = isNaN(query[key]) ? `"${query[key]}"` : query[key];
-      paramsString += `, ${key}: ${val}`;
-    });
+    const queryParams = { clientId, limit: 8, ...query };
+    const paramsString = createParamString(queryParams);
 
     console.log('route', paramsString);
 
@@ -30,7 +23,7 @@ export default {
 
       const { data } = await graphqlRequest(
         `query {
-          feed(${paramsString}) {
+          feed${paramsString} {
             feedItems {
               checkIn {
                 uuid,

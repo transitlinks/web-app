@@ -228,13 +228,15 @@ export default {
 
   },
 
-  getCheckInLocalities: async () => {
+  getCheckInLocalities: async (options) => {
 
-    const localities = await CheckIn.aggregate('locality', 'DISTINCT', { plain: false });
-    //const localities = await CheckIn.findAll({
-    //  group: ['id', 'locality']
-    //});
-    return localities.map(locality => locality.DISTINCT);
+    //const localities = await CheckIn.aggregate('locality', 'DISTINCT', { plain: false, ...options });
+    console.log('query with OPTIONS >>>', options);
+    let query = `SELECT DISTINCT locality FROM "CheckIn"`;
+    if (options.limit) query += ' LIMIT ' + options.limit;
+    if (options.offset) query += ' OFFSET ' + options.offset;
+    const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return localities.map(locality => locality.locality);
 
   },
 
@@ -244,11 +246,6 @@ export default {
     return connections.map(c => c.locality);
   },
 
-  getFirstCheckInByLocality: async(locality) => {
-    const query = `SELECT DISTINCT ci1.locality FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2.locality = '${locality}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
-    const connections = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return connections.map(c => c.locality);
-  },
 
   getTags: async (where, options = {}) => {
 
