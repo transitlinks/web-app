@@ -595,8 +595,8 @@
     "files": [
       "src/components/Account/messages.js",
       "src/components/Add/messages.js",
-      "src/components/Discover/messages.js",
       "src/components/CheckIn/messages.js",
+      "src/components/Discover/messages.js",
       "src/components/Links/messages.js"
     ]
   },

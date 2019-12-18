@@ -18,7 +18,7 @@ export default {
 
       const { data } = await graphqlRequest(
         `query {
-          discover ${createParamString({ ...params, offset: 0 })} {
+          discover ${createParamString({ ...params, offset: 0, limit: 6 })} {
             discoveries {
               groupType,
               groupName,

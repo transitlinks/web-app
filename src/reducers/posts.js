@@ -179,31 +179,23 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => {
-            const { feed, variables: { add, offset, limit } } = action.payload;
             return {
               ...state,
               loadingFeed: !state.prevResultCount || state.prevResultCount > 0
             };
           },
           success: () => {
-            const { feed, variables: { add, offset, limit } } = action.payload;
-            const stateFeed = state.feed;
-            if (!add) {
-              return {
-                loadingFeed: true,
-                feed: action.payload.feed
-              };
-            } else {
-              for (let i = 0; i < feed.feedItems.length; i++) {
-                stateFeed.feedItems.push(feed.feedItems[i]);
-              }
-              return {
-                feed: stateFeed,
-                feedOffset: stateFeed.feedItems.length,
-                loadingFeed: false,
-                prevResultCount: feed.feedItems.length
-              };
+            const { feed } = action.payload;
+            const stateFeed = state.feed || { feedItems: [] };
+            for (let i = 0; i < feed.feedItems.length; i++) {
+              stateFeed.feedItems.push(feed.feedItems[i]);
             }
+            return {
+              feed: stateFeed,
+              feedOffset: stateFeed.feedItems.length,
+              loadingFeed: false,
+              prevResultCount: feed.feedItems.length
+            };
           },
           error: () => ({
             feed: null,
