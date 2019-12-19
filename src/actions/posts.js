@@ -661,7 +661,7 @@ export const uploadFiles = (mediaItem, files) => {
 
     return graphqlAction(
       ...args,
-      { query, files }, [ 'mediaItem' ],
+      { query, files, variables: { files } }, [ 'mediaItem' ],
       MEDIA_FILE_UPLOAD_START,
       MEDIA_FILE_UPLOAD_SUCCESS,
       MEDIA_FILE_UPLOAD_ERROR

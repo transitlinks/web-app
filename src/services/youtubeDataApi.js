@@ -24,7 +24,7 @@ export const getVideos = async (id) => {
 const getAuth = () => {
 
   return new Promise((resolve, reject) => {
-    
+
     fs.readFile(TOKEN_DIR + '/youtube_client_secret.json', (err, content) => {
 
       if (err) {
@@ -42,7 +42,7 @@ const getAuth = () => {
 };
 
 const authorize = async (credentials) => {
-  
+
   return new Promise((resolve, reject) => {
 
     const clientSecret = credentials.installed.client_secret;
@@ -70,17 +70,17 @@ const list = (auth, q, pageToken) => {
   return new Promise((resolve, reject) => {
 
     const service = googleApis.youtube('v3');
-    
+
     const params = {
       auth: auth,
       part: 'snippet',
       channelId: 'UCU_-N-nyH4pgBPHbNUXnHeQ',
       maxResults: 5
     };
-    
+
     if (q) params.q = q;
     if (pageToken) params.pageToken = pageToken;
-    
+
     service.search.list(params, (err, response) => {
 
       if (err) {
@@ -98,34 +98,34 @@ const list = (auth, q, pageToken) => {
 };
 
 const listAll = async (auth, q) => {
-  
+
   let videos = [];
   let response = await list(auth, q);
   videos = videos.concat(response.items);
   while (response.nextPageToken) {
     response = await list(auth, q, response.nextPageToken);
-    videos = videos.concat(response.items); 
+    videos = videos.concat(response.items);
   }
-  
+
   return videos;
 
 };
 
 const insert = (auth, uuid, filePath) => {
-  
+
   return new Promise((resolve, reject) => {
 
     const youtube = googleApis.youtube({
       version: 'v3',
       auth
     });
-  
+
     const fileName = filePath.replace(/^.*[\\\/]/, '');
-    
+
     let intervalId = 0;
-    
+
     const req = youtube.videos.insert({
-      
+
       part: 'id,snippet,status',
       notifySubscribers: false,
       resource: {
@@ -134,7 +134,7 @@ const insert = (auth, uuid, filePath) => {
           description: `txlinks-${uuid}`
         },
         status: {
-          privacyStatus: 'private'
+          privacyStatus: 'unlisted'
         }
       },
       media: {
@@ -142,7 +142,7 @@ const insert = (auth, uuid, filePath) => {
       }
 
     }, (err, data) => {
-      
+
       clearInterval(intervalId);
 
       if (err) {
@@ -154,10 +154,10 @@ const insert = (auth, uuid, filePath) => {
       }
 
     });
-    
+
     /*
-    const fileSize = fs.statSync(filePath).size;  
-    //console.log("file size", filePath, fileSize); 
+    const fileSize = fs.statSync(filePath).size;
+    //console.log("file size", filePath, fileSize);
     intervalId = setInterval(() => {
       let uploadedBytes = req.req.connection._bytesDispatched;
       console.log("Uploaded bytes", uploadedBytes);

@@ -162,11 +162,20 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({}),
+          start: () => {
+            const { variables: { files } } = action.payload;
+            console.log('files', files[0].type);
+            return {
+              uploadingMedia: true
+            };
+          },
           success: () => ({
-            mediaItems
+            mediaItems,
+            uploadingMedia: false
           }),
-          error: () => ({})
+          error: () => ({
+            uploadingMedia: false
+          })
         },
         MEDIA_FILE_UPLOAD_START,
         MEDIA_FILE_UPLOAD_SUCCESS,
@@ -185,7 +194,16 @@ export default function reduce(state = {}, action) {
             };
           },
           success: () => {
-            const { feed } = action.payload;
+            const { feed, variables: { add } } = action.payload;
+
+            if (!add) {
+              return {
+                feed: feed,
+                loadingFeed: false,
+                feedOffset: feed.feedItems.length
+              };
+            }
+
             const stateFeed = state.feed || { feedItems: [] };
             for (let i = 0; i < feed.feedItems.length; i++) {
               stateFeed.feedItems.push(feed.feedItems[i]);

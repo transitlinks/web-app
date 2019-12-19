@@ -68,7 +68,7 @@ const getTabContent = (type, props) => {
 
   const {
     feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env,
-    savePost, uploadFiles, setProperty
+    savePost, uploadFiles, setProperty, uploadingMedia
   } = props;
 
   const onFileInputChange = (event) => {
@@ -88,10 +88,19 @@ const getTabContent = (type, props) => {
         <div className={s.contentEditor}>
           <div className={s.mediaContent}>
             {
+              uploadingMedia &&
+                <div>Uploading media, please wait...</div>
+            }
+            {
               (mediaItems || []).map(mediaItem => {
                 return (
                   <div>
-                    <img src={env.MEDIA_URL + mediaItem.url} width="100%"/>
+                    {
+                      mediaItem.type === 'image' ?
+                        <img src={env.MEDIA_URL + mediaItem.url} width="100%" /> :
+                        <img src={mediaItem.thumbnail} width="100%"/>
+
+                    }
                   </div>
                 );
               })
@@ -165,7 +174,7 @@ const AddView = (props) => {
 
   const {
     type, transportTypes, feedItem, openTerminals, intl, geolocation, postText, mediaItems,
-    setProperty, getGeolocation, savePost, saveCheckIn
+    setProperty, getGeolocation, savePost, saveCheckIn, uploadingMedia
   } = props;
 
   console.log("add props", props);
@@ -258,6 +267,7 @@ export default injectIntl(
     savedCheckIn: state.posts.checkIn,
     type: state.posts.addType,
     mediaItems: state.posts.mediaItems,
+    uploadingMedia: state.posts.uploadingMedia,
     env: state.env
   }), {
     setProperty,

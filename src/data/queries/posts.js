@@ -334,6 +334,8 @@ const processImage = async (inputFile, outputFile) => {
         }
 
         writeFileSync(outputFile, outputBuffer);
+        fs.unlinkSync(inputFile);
+
         resolve();
 
       });
@@ -342,6 +344,17 @@ const processImage = async (inputFile, outputFile) => {
 
   });
 
+
+};
+
+const processVideo = async (inputFile, outputFile, entityUuid) => {
+
+  fs.copyFileSync(inputFile, outputFile);
+  const upload = await uploadVideo(entityUuid, outputFile);
+  fs.unlinkSync(inputFile);
+  fs.unlinkSync(outputFile);
+
+  return upload;
 
 };
 
@@ -421,6 +434,7 @@ export const PostMutationFields = {
 
       const { file } = request;
 
+      console.log('uploading file', file);
       const nameParts = file.originalname.split('.');
       const extension = nameParts[nameParts.length - 1];
       const savePath = STORAGE_PATH || path.join(__dirname, 'public');
@@ -441,7 +455,6 @@ export const PostMutationFields = {
         const now = (new Date()).getTime();
         const entityFileName = `${now}.${extension}`;
         const entityFilePath = path.join(entityPath, entityFileName);
-        await processImage(filePath, entityFilePath);
 
         let entity = null;
         let entityUuid = null;
@@ -459,6 +472,8 @@ export const PostMutationFields = {
 
           log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${entityFileName}`);
 
+          await processImage(filePath, entityFilePath);
+
           savedMediaItem = await postRepository.saveMediaItem({
             entityUuid: entity.uuid,
             type: 'image',
@@ -468,8 +483,7 @@ export const PostMutationFields = {
 
         } else {
 
-          const upload = await uploadVideo(entityUuid, entityFilePath);
-          const thumbnail = upload.snippet.thumbnails.medium.url;
+          const upload = await processVideo(filePath, entityFilePath, entityUuid);
           log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} video-id=${upload.id}`);
 
           savedMediaItem = await postRepository.saveMediaItem({
@@ -477,7 +491,7 @@ export const PostMutationFields = {
             type: 'video',
             flag: false,
             url: upload.id,
-            thumbnail
+            thumbnail: upload.snippet.thumbnails.medium.url
           });
 
         }

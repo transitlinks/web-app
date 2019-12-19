@@ -43,7 +43,7 @@ class Home extends React.Component {
         const clientId = getClientId();
         const params = getParams(this.props);
         console.log('get feed', params);
-        this.props.getFeed(clientId, getParams(this.props));
+        this.props.getFeed(clientId, { ...params, add: true });
       }
     }, 100);
 
@@ -73,6 +73,7 @@ class Home extends React.Component {
 
     const clientId = getClientId();
     const params = getParams(this.props);
+    params.offset = 0;
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
