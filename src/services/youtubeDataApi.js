@@ -3,6 +3,7 @@ import readline from 'readline';
 import googleApis from 'googleapis';
 import googleAuth from 'google-auth-library';
 import prettyBytes from 'pretty-bytes';
+import postRepository from "../data/source/postRepository";
 
 import { FILE_PATH } from '../config';
 
@@ -11,9 +12,9 @@ const TOKEN_DIR = (FILE_PATH || path.join(__dirname, 'public'))
   + '/.credentials';
 const TOKEN_PATH = TOKEN_DIR + '/youtube.json';
 
-export const uploadVideo = async (uuid, filePath) => {
+export const uploadVideo = async (entityUuid, mediaItemUuid, filePath) => {
     const auth = await authorize(await getAuth());
-    return await insert(auth, uuid, filePath);
+    return await insert(auth, entityUuid, mediaItemUuid, filePath);
 };
 
 export const getVideos = async (id) => {
@@ -111,7 +112,7 @@ const listAll = async (auth, q) => {
 
 };
 
-const insert = (auth, uuid, filePath) => {
+const insert = (auth, entityUuid, mediaItemUuid, filePath) => {
 
   return new Promise((resolve, reject) => {
 
@@ -124,6 +125,21 @@ const insert = (auth, uuid, filePath) => {
 
     let intervalId = 0;
 
+    const fake = {
+      insert: (file, callback) => {
+        const request = { req: { connection: { _bytesDispatched: 0 } } };
+        intervalId = setInterval(() => {
+          request.req.connection._bytesDispatched += 1;
+          if (request.req.connection._bytesDispatched > 20) {
+            clearInterval(intervalId);
+            callback(null, { id: '321321312', snippet: { thumbnails: { medium: { url: 'https://kjhkjh.com/hhkj.jpg' } } } });
+          }
+        }, 1000);
+        return request;
+      }
+    };
+
+    //const req = fake.insert({
     const req = youtube.videos.insert({
 
       part: 'id,snippet,status',
@@ -131,7 +147,7 @@ const insert = (auth, uuid, filePath) => {
       resource: {
         snippet: {
           title: `${fileName}`,
-          description: `txlinks-${uuid}`
+          description: `txlinks-${entityUuid}`
         },
         status: {
           privacyStatus: 'unlisted'
@@ -143,8 +159,6 @@ const insert = (auth, uuid, filePath) => {
 
     }, (err, data) => {
 
-      clearInterval(intervalId);
-
       if (err) {
         console.error('Youtube upload error: ', err);
         reject(err);
@@ -155,27 +169,27 @@ const insert = (auth, uuid, filePath) => {
 
     });
 
-    /*
     const fileSize = fs.statSync(filePath).size;
-    //console.log("file size", filePath, fileSize);
-    intervalId = setInterval(() => {
+    console.log("file size", filePath, fileSize);
+    postRepository.saveMediaItem({ uuid: mediaItemUuid, fileSize: fileSize, uploadStatus: 'uploading' });
+
+    const calcProgress = () => {
+
       let uploadedBytes = req.req.connection._bytesDispatched;
       console.log("Uploaded bytes", uploadedBytes);
       let uploadedMBytes = uploadedBytes / 1000000;
-      let progress = uploadedBytes > fileSize
-        ? 100 : (uploadedBytes / fileSize) * 100;
-      //process.stdout.clearLine();
-      //process.stdout.cursorTo(0);
-      //process.stdout.write(uploadedMBytes.toFixed(2) + ' MBs uploaded. ' +
-      //  progress.toFixed(2) + '% completed.');
-      console.log(uploadedMBytes.toFixed(2) + ' MBs uploaded. ' +
-        progress.toFixed(2) + '% completed.');
+      let progress = uploadedBytes > fileSize ? 100 : (uploadedBytes / fileSize) * 100;
+      postRepository.saveMediaItem({ uuid: mediaItemUuid, uploadProgress: progress.toFixed(2) });
+      console.log(uploadedMBytes.toFixed(2) + ' MBs uploaded. ' + progress.toFixed(2) + '% completed.');
       if (progress === 100) {
         console.log('\nDone uploading, waiting for response...\n');
-        clearInterval(id);
+      } else {
+        setTimeout(calcProgress, 1000);
       }
-    }, 1000);
-    */
+
+    };
+
+    setTimeout(calcProgress, 1000);
 
   });
 

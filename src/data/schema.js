@@ -39,6 +39,7 @@ const schema = new Schema({
       posts: PostQueryFields.posts,
       feed: PostQueryFields.feed,
       feedItem: PostQueryFields.feedItem,
+      mediaItem: PostQueryFields.mediaItem,
       discover: DiscoverQueryFields.discover,
       transitLinks: TransitLinkQueryFields.transitLinks,
       intl

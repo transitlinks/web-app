@@ -324,6 +324,17 @@ export default {
 
   },
 
+  getMediaItem: async (where, options = {}) => {
+
+    const mediaItem = await MediaItem.findOne({
+      where,
+      ...options
+    });
+
+    return mediaItem;
+
+  },
+
   saveMediaItem: async (mediaItem) => {
 
     console.log("save media item", mediaItem.uuid);
@@ -351,5 +362,17 @@ export default {
     return created;
 
   },
+
+  deleteMediaItems: async (where, options = {}) => {
+
+    const deleteResult = await MediaItem.destroy({
+      where,
+      ...options
+    });
+
+    console.log("delete media items result", deleteResult);
+    return deleteResult;
+
+  }
 
 };

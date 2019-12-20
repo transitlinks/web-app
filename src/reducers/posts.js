@@ -27,6 +27,9 @@ import {
   GET_FEEDITEM_START,
   GET_FEEDITEM_SUCCESS,
   GET_FEEDITEM_ERROR,
+  GET_MEDIAITEM_START,
+  GET_MEDIAITEM_SUCCESS,
+  GET_MEDIAITEM_ERROR,
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -155,23 +158,18 @@ export default function reduce(state = {}, action) {
     case MEDIA_FILE_UPLOAD_START:
     case MEDIA_FILE_UPLOAD_SUCCESS:
     case MEDIA_FILE_UPLOAD_ERROR:
-      const mediaItems = state.mediaItems || [];
-      if (action.type === MEDIA_FILE_UPLOAD_SUCCESS) {
-        mediaItems.push(action.payload.mediaItem);
-      }
       return graphqlReduce(
         state, action,
         {
           start: () => {
-            const { variables: { files } } = action.payload;
-            console.log('files', files[0].type);
             return {
               uploadingMedia: true
             };
           },
           success: () => ({
-            mediaItems,
-            uploadingMedia: false
+            loadMediaItem: action.payload.mediaItem,
+            uploadingMedia: false,
+            loadedMediaItemChanged: true
           }),
           error: () => ({
             uploadingMedia: false
@@ -255,6 +253,44 @@ export default function reduce(state = {}, action) {
         GET_FEEDITEM_START,
         GET_FEEDITEM_SUCCESS,
         GET_FEEDITEM_ERROR
+      );
+    case GET_MEDIAITEM_START:
+    case GET_MEDIAITEM_SUCCESS:
+    case GET_MEDIAITEM_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({
+            loadingMediaItem: true
+          }),
+          success: () => {
+
+            const { mediaItem } = action.payload;
+            const stateMediaItem = state.mediaItem || { uploadProgress: 0 };
+
+            if (mediaItem.uploadStatus === 'uploaded') {
+              const mediaItems = state.mediaItems || [];
+              mediaItems.push(action.payload.mediaItem);
+              return {
+                loadMediaItem: null,
+                mediaItems
+              };
+            } else {
+              return {
+                loadMediaItem: mediaItem,
+                loadedMediaItemChanged: mediaItem.uploadProgress > stateMediaItem.uploadProgress
+              };
+            }
+          },
+          error: () => ({
+            loadMediaItemError: action.payload.error,
+            loadMediaItem: null,
+            loadedMediaItemChanged: false
+          })
+        },
+        GET_MEDIAITEM_START,
+        GET_MEDIAITEM_SUCCESS,
+        GET_MEDIAITEM_ERROR
       );
 
   }

@@ -8,7 +8,7 @@ import s from './Add.css';
 import Terminal from './Terminal';
 import FeedItemContent from '../FeedItemContent';
 import { getGeolocation } from '../../actions/global';
-import { savePost, saveCheckIn, uploadFiles } from '../../actions/posts';
+import { savePost, saveCheckIn, uploadFiles, getMediaItem } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl, FormattedMessage } from 'react-intl';
@@ -68,7 +68,7 @@ const getTabContent = (type, props) => {
 
   const {
     feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env,
-    savePost, uploadFiles, setProperty, uploadingMedia
+    savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia, loadedMediaItemChanged, loadMediaItem, loadMediaItemError
   } = props;
 
   const onFileInputChange = (event) => {
@@ -78,18 +78,26 @@ const getTabContent = (type, props) => {
     }, event.target.files);
   };
 
+  console.log('loadMediaItem', loadMediaItem);
+  if (loadedMediaItemChanged && loadMediaItem) {
+    setProperty('posts.loadedMediaItemChanged', false);
+    setTimeout(() => {
+      getMediaItem(loadMediaItem.uuid);
+    }, 1000);
+  }
+
   switch (type) {
 
     case 'reaction':
 
-      console.log("MEDIA ITEMS", mediaItems);
+      console.log("MEDIA ITEMS", mediaItems, loadMediaItem);
 
       return (
         <div className={s.contentEditor}>
           <div className={s.mediaContent}>
             {
-              uploadingMedia &&
-                <div>Uploading media, please wait...</div>
+              loadMediaItem &&
+                <div>Uploading media, please wait... {loadMediaItem.uploadProgress}</div>
             }
             {
               (mediaItems || []).map(mediaItem => {
@@ -268,12 +276,16 @@ export default injectIntl(
     type: state.posts.addType,
     mediaItems: state.posts.mediaItems,
     uploadingMedia: state.posts.uploadingMedia,
+    loadMediaItem: state.posts.loadMediaItem,
+    loadMediaItemError: state.posts.loadMediaItemError,
+    loadedMediaItemChanged: state.posts.loadedMediaItemChanged,
     env: state.env
   }), {
     setProperty,
     getGeolocation,
     savePost,
     uploadFiles,
-    saveCheckIn
+    saveCheckIn,
+    getMediaItem
   })(withStyles(s)(AddView))
 );

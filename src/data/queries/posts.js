@@ -347,10 +347,27 @@ const processImage = async (inputFile, outputFile) => {
 
 };
 
-const processVideo = async (inputFile, outputFile, entityUuid) => {
+const processVideo = async (inputFile, outputFile, entityUuid, mediaItemUuid) => {
 
   fs.copyFileSync(inputFile, outputFile);
-  const upload = await uploadVideo(entityUuid, outputFile);
+  const upload = await uploadVideo(entityUuid, mediaItemUuid, outputFile);
+
+  try {
+
+    log.info(`video-upload-complete video-id=${upload.id}`);
+
+    await postRepository.saveMediaItem({
+      uuid: mediaItemUuid,
+      url: upload.id,
+      thumbnail: upload.snippet.thumbnails.medium.url,
+      uploadStatus: 'uploaded'
+    });
+
+  } catch(err) {
+    await postRepository.deleteMediaItems({ uuid: mediaItemUuid });
+    throw err;
+  }
+
   fs.unlinkSync(inputFile);
   fs.unlinkSync(outputFile);
 
@@ -478,21 +495,21 @@ export const PostMutationFields = {
             entityUuid: entity.uuid,
             type: 'image',
             flag: false,
-            url: `/instance-media/${entityUuid}/${entityFileName}`
+            url: `/instance-media/${entityUuid}/${entityFileName}`,
+            uploadStatus: 'uploaded'
           });
 
         } else {
 
-          const upload = await processVideo(filePath, entityFilePath, entityUuid);
-          log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} video-id=${upload.id}`);
+          log.info(`graphql-request=upload-instance-file-video user=${request.user ? request.user.uuid : null}`);
 
           savedMediaItem = await postRepository.saveMediaItem({
             entityUuid: entity.uuid,
             type: 'video',
-            flag: false,
-            url: upload.id,
-            thumbnail: upload.snippet.thumbnails.medium.url
+            flag: false
           });
+
+          processVideo(filePath, entityFilePath, entityUuid, savedMediaItem.uuid);
 
         }
 
@@ -679,6 +696,27 @@ export const PostQueryFields = {
       log.info(graphLog(request, 'get-feed-item', 'uuid=' + checkInUuid));
       const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
       return await getFeedItem(request, checkIn);
+
+    }
+
+  },
+
+  mediaItem: {
+
+    type: MediaItemType,
+    description: 'Query media item',
+    args: {
+      uuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid }) => {
+
+      log.info(graphLog(request, 'get-media-item', 'uuid=' + uuid));
+      const mediaItem = await postRepository.getMediaItem({ uuid });
+      if (!mediaItem) {
+        throw new Error(`MediaItem (uuid ${uuid}) not found`);
+      }
+
+      return mediaItem.json();
 
     }
 

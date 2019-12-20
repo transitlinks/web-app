@@ -125,7 +125,10 @@ export const MediaItemInputType = new GraphQLInputObjectType({
     uuid: { type: GraphQLString },
     type: { type: GraphQLString },
     url: { type: GraphQLString },
-    thumbnail: { type: GraphQLString }
+    thumbnail: { type: GraphQLString },
+    uploadStatus: { type: GraphQLString },
+    uploadProgress: { type: GraphQLFloat },
+    fileSize: { type: GraphQLFloat }
   })
 });
 
@@ -136,7 +139,10 @@ export const MediaItemType = new GraphQLObjectType({
     uuid: { type: GraphQLString },
     type: { type: GraphQLString },
     thumbnail: { type: GraphQLString },
-    url: { type: GraphQLString }
+    url: { type: GraphQLString },
+    uploadStatus: { type: GraphQLString },
+    uploadProgress: { type: GraphQLFloat },
+    fileSize: { type: GraphQLFloat }
   })
 });
 

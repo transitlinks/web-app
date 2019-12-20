@@ -8,7 +8,7 @@ const MediaItem = Model.define('MediaItem', {
     autoIncrement: true,
     primaryKey: true
   },
-  
+
   uuid: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
@@ -18,7 +18,7 @@ const MediaItem = Model.define('MediaItem', {
   entityUuid: {
     type: DataType.STRING
   },
-    
+
   type: {
     type: DataType.STRING
   },
@@ -26,15 +26,29 @@ const MediaItem = Model.define('MediaItem', {
   url: {
     type: DataType.STRING
   },
-  
+
   thumbnail: {
     type: DataType.STRING
   },
 
   flag: {
     type: DataType.BOOLEAN
+  },
+
+  uploadStatus: {
+    type: DataType.STRING
+  },
+
+  uploadProgress: {
+    type: DataType.FLOAT,
+    defaultValue: 0
+  },
+
+  fileSize: {
+    type: DataType.FLOAT,
+    defaultValue: 0
   }
-  
+
 
 }, {
 

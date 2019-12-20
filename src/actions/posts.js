@@ -36,7 +36,10 @@ import {
   GET_FEEDITEM_ERROR,
   INSTANCE_FILE_UPLOAD_START,
   INSTANCE_FILE_UPLOAD_SUCCESS,
-  INSTANCE_FILE_UPLOAD_ERROR
+  INSTANCE_FILE_UPLOAD_ERROR,
+  GET_MEDIAITEM_START,
+  GET_MEDIAITEM_SUCCESS,
+  GET_MEDIAITEM_ERROR,
 } from '../constants';
 
 export const saveCheckIn = ({ checkIn }) => {
@@ -638,6 +641,36 @@ export const getFeedItem = (checkInUuid, frameId, target) => {
       GET_FEEDITEM_START,
       GET_FEEDITEM_SUCCESS,
       GET_FEEDITEM_ERROR
+    );
+
+  };
+
+}
+
+
+export const getMediaItem = (uuid) => {
+
+  return async (...args) => {
+
+    const query = `
+      query {
+        mediaItem (uuid:"${uuid}") {
+          uuid,
+          url,
+          thumbnail,
+          uploadStatus,
+          uploadProgress,
+          fileSize
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'mediaItem' ],
+      GET_MEDIAITEM_START,
+      GET_MEDIAITEM_SUCCESS,
+      GET_MEDIAITEM_ERROR
     );
 
   };
