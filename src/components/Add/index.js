@@ -68,7 +68,8 @@ const getTabContent = (type, props) => {
 
   const {
     feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env,
-    savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia, loadedMediaItemChanged, loadMediaItem, loadMediaItemError
+    savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia,
+    loadedMediaItemChanged, loadMediaItem, loadMediaItemError
   } = props;
 
   const onFileInputChange = (event) => {
@@ -78,26 +79,35 @@ const getTabContent = (type, props) => {
     }, event.target.files);
   };
 
-  console.log('loadMediaItem', loadMediaItem);
-  if (loadedMediaItemChanged && loadMediaItem) {
-    setProperty('posts.loadedMediaItemChanged', false);
+  if (loadMediaItem && loadedMediaItemChanged > -1) {
+    const loadTimeout = loadedMediaItemChanged === 1 ? 1000 : 10000;
+    setProperty('posts.loadedMediaItemChanged', -1);
     setTimeout(() => {
       getMediaItem(loadMediaItem.uuid);
-    }, 1000);
+    }, loadTimeout);
   }
 
   switch (type) {
 
     case 'reaction':
 
-      console.log("MEDIA ITEMS", mediaItems, loadMediaItem);
-
       return (
         <div className={s.contentEditor}>
           <div className={s.mediaContent}>
             {
               loadMediaItem &&
-                <div>Uploading media, please wait... {loadMediaItem.uploadProgress}</div>
+                <div className={s.uploadingVideo}>
+                  Uploading media, please wait... {loadMediaItem.uploadProgress || 0}%
+                </div>
+            }
+            {
+              loadMediaItemError &&
+              <div className={s.uploadingVideo}>
+                Upload error :( &nbsp;
+                <a onClick={() => setProperty('posts.loadMediaItemError', null)}>
+                  OK
+                </a>
+              </div>
             }
             {
               (mediaItems || []).map(mediaItem => {
@@ -185,8 +195,6 @@ const AddView = (props) => {
     setProperty, getGeolocation, savePost, saveCheckIn, uploadingMedia
   } = props;
 
-  console.log("add props", props);
-
   let positionElem = null;
   if (geolocation) {
     if (geolocation.status === 'located') {
@@ -218,13 +226,9 @@ const AddView = (props) => {
     } else if (openDepartures.length > 0) {
       defaultType = 'arrival';
     }
-
-    console.log("debug", openArrivals, openDepartures, defaultType);
-
   }
 
   const selectedType = type || defaultType;
-  console.log("adding....", geolocation);
 
 	return (
 	  <div className={s.root}>

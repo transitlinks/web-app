@@ -350,10 +350,10 @@ const processImage = async (inputFile, outputFile) => {
 const processVideo = async (inputFile, outputFile, entityUuid, mediaItemUuid) => {
 
   fs.copyFileSync(inputFile, outputFile);
-  const upload = await uploadVideo(entityUuid, mediaItemUuid, outputFile);
 
   try {
 
+    const upload = await uploadVideo(entityUuid, mediaItemUuid, outputFile);
     log.info(`video-upload-complete video-id=${upload.id}`);
 
     await postRepository.saveMediaItem({
@@ -363,15 +363,13 @@ const processVideo = async (inputFile, outputFile, entityUuid, mediaItemUuid) =>
       uploadStatus: 'uploaded'
     });
 
-  } catch(err) {
+  } catch (err) {
+    console.log('process video error', err);
     await postRepository.deleteMediaItems({ uuid: mediaItemUuid });
-    throw err;
   }
 
   fs.unlinkSync(inputFile);
   fs.unlinkSync(outputFile);
-
-  return upload;
 
 };
 
@@ -496,7 +494,8 @@ export const PostMutationFields = {
             type: 'image',
             flag: false,
             url: `/instance-media/${entityUuid}/${entityFileName}`,
-            uploadStatus: 'uploaded'
+            uploadStatus: 'uploaded',
+            uploadProgress: 100
           });
 
         } else {
@@ -506,7 +505,8 @@ export const PostMutationFields = {
           savedMediaItem = await postRepository.saveMediaItem({
             entityUuid: entity.uuid,
             type: 'video',
-            flag: false
+            flag: false,
+            uploadProgress: 0
           });
 
           processVideo(filePath, entityFilePath, entityUuid, savedMediaItem.uuid);

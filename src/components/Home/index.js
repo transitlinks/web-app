@@ -53,6 +53,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
 
   const errorElems = !error ? [] : error.errors.map(err => {
     return (
+      errorClasses[err.name] &&
       <div className={errorClasses[err.name]}>
         <div>{ err.text }</div>
         <div className={s.okButton}>

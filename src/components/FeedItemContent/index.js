@@ -40,7 +40,6 @@ const FeedItemContent = ({
 
   if (posts.length > 0 && contentType === 'reaction') {
 
-    console.log("feed props", frameId, feedProperties);
     let activePost = ((feedProperties && feedProperties[frameId]) && feedProperties[frameId]['activePost']) || 0;
     if (activePost > posts.length - 1) {
       console.log("post out of bounds", feedProperties, activePost, frameId, posts);

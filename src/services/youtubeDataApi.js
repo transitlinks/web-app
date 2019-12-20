@@ -130,9 +130,9 @@ const insert = (auth, entityUuid, mediaItemUuid, filePath) => {
         const request = { req: { connection: { _bytesDispatched: 0 } } };
         intervalId = setInterval(() => {
           request.req.connection._bytesDispatched += 1;
-          if (request.req.connection._bytesDispatched > 20) {
+          if (request.req.connection._bytesDispatched > 10) {
             clearInterval(intervalId);
-            callback(null, { id: '321321312', snippet: { thumbnails: { medium: { url: 'https://kjhkjh.com/hhkj.jpg' } } } });
+            callback({ blah: 'blah' }, { id: '321321312', snippet: { thumbnails: { medium: { url: 'https://kjhkjh.com/hhkj.jpg' } } } });
           }
         }, 1000);
         return request;
@@ -162,30 +162,36 @@ const insert = (auth, entityUuid, mediaItemUuid, filePath) => {
       if (err) {
         console.error('Youtube upload error: ', err);
         reject(err);
+        return;
       }
-      if (data) {
-        resolve(data);
-      }
+
+      resolve(data);
 
     });
 
     const fileSize = fs.statSync(filePath).size;
+    let uploadedBytes = 0;
     console.log("file size", filePath, fileSize);
     postRepository.saveMediaItem({ uuid: mediaItemUuid, fileSize: fileSize, uploadStatus: 'uploading' });
 
     const calcProgress = () => {
 
-      let uploadedBytes = req.req.connection._bytesDispatched;
-      console.log("Uploaded bytes", uploadedBytes);
+      const uploadedMoreBytes = req.req.connection._bytesDispatched > uploadedBytes;
+      uploadedBytes = req.req.connection._bytesDispatched;
+
       let uploadedMBytes = uploadedBytes / 1000000;
       let progress = uploadedBytes > fileSize ? 100 : (uploadedBytes / fileSize) * 100;
-      postRepository.saveMediaItem({ uuid: mediaItemUuid, uploadProgress: progress.toFixed(2) });
-      console.log(uploadedMBytes.toFixed(2) + ' MBs uploaded. ' + progress.toFixed(2) + '% completed.');
-      if (progress === 100) {
-        console.log('\nDone uploading, waiting for response...\n');
-      } else {
-        setTimeout(calcProgress, 1000);
-      }
+
+        if (uploadedMoreBytes) {
+          postRepository.saveMediaItem({ uuid: mediaItemUuid, uploadProgress: progress.toFixed(2) });
+          console.log(uploadedMBytes.toFixed(2) + ' MBs (' + uploadedBytes + ' Bs) uploaded. ' + progress.toFixed(2) + '% completed.');
+        }
+
+        if (progress < 100) {
+          setTimeout(calcProgress, 1000);
+        } else {
+          console.log('\nDone uploading, waiting for response...\n');
+        }
 
     };
 

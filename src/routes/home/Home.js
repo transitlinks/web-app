@@ -14,7 +14,6 @@ import debounce from "lodash.debounce";
 const title = 'Transitlinks';
 
 const getParams = (props) => {
-  console.log('props', props);
   const { tags, offset } = props;
   const params = { limit: 8, offset: offset || 0 };
   if (tags) params.tags = tags;

@@ -5,9 +5,9 @@ export const graphqlAction = async (
   { query, variables, files }, responseKeys,
   START_CODE, SUCCESS_CODE, ERROR_CODE
 ) => {
-   
+
   const logger = getLog('actions/utils');
-  
+
   dispatch({
     type: START_CODE,
     payload: {
@@ -27,7 +27,7 @@ export const graphqlAction = async (
         { response }
       );
     }
-    
+
     const payload = {
       query,
       variables
@@ -43,7 +43,7 @@ export const graphqlAction = async (
     });
 
   } catch (error) {
-      
+    console.error('dispatching gql error', error);
     dispatch({
       type: ERROR_CODE,
       payload: {
@@ -54,9 +54,9 @@ export const graphqlAction = async (
     });
 
     return false;
-    
+
   }
 
   return true;
-  
+
 };

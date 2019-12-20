@@ -687,7 +687,8 @@ export const uploadFiles = (mediaItem, files) => {
           uuid,
           type,
           thumbnail,
-          url
+          url,
+          uploadProgress
         }
       }
     `;

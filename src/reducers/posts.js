@@ -169,7 +169,7 @@ export default function reduce(state = {}, action) {
           success: () => ({
             loadMediaItem: action.payload.mediaItem,
             uploadingMedia: false,
-            loadedMediaItemChanged: true
+            loadedMediaItemChanged: 1
           }),
           error: () => ({
             uploadingMedia: false
@@ -261,12 +261,13 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({
-            loadingMediaItem: true
+            loadingMediaItem: true,
+            loadMediaItemError: null
           }),
           success: () => {
 
             const { mediaItem } = action.payload;
-            const stateMediaItem = state.mediaItem || { uploadProgress: 0 };
+            const stateMediaItem = state.loadMediaItem;
 
             if (mediaItem.uploadStatus === 'uploaded') {
               const mediaItems = state.mediaItems || [];
@@ -276,16 +277,18 @@ export default function reduce(state = {}, action) {
                 mediaItems
               };
             } else {
+              console.log(mediaItem.uploadProgress, stateMediaItem.uploadProgress);
               return {
                 loadMediaItem: mediaItem,
-                loadedMediaItemChanged: mediaItem.uploadProgress > stateMediaItem.uploadProgress
+                loadedMediaItemChanged: mediaItem.uploadProgress > stateMediaItem.uploadProgress ? 1 : 0
               };
             }
           },
           error: () => ({
+            error: null,
             loadMediaItemError: action.payload.error,
             loadMediaItem: null,
-            loadedMediaItemChanged: false
+            loadedMediaItemChanged: -1
           })
         },
         GET_MEDIAITEM_START,
