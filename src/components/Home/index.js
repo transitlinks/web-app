@@ -13,7 +13,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 import RaisedButton from 'material-ui/RaisedButton';
 
-const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, error }) => {
+const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, post, error }) => {
 
   const select = (section) => {
     setProperty('breakdownSelected', section);
@@ -51,7 +51,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
     'PrelaunchError': s.prelaunchError
   };
 
-  const errorElems = !error ? [] : error.errors.map(err => {
+  const errorElems = (!error || !error.errors) ? [] : error.errors.map(err => {
     return (
       errorClasses[err.name] &&
       <div className={errorClasses[err.name]}>
@@ -77,7 +77,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
       </div>
       <div>
         {errorElems}
-        <Feed feed={feed} transportTypes={transportTypes} />
+        <Feed post={post} feed={feed} transportTypes={transportTypes} post={post}/>
       </div>
 
       {

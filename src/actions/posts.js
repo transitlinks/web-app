@@ -657,6 +657,7 @@ export const getMediaItem = (uuid) => {
         mediaItem (uuid:"${uuid}") {
           uuid,
           url,
+          type,
           thumbnail,
           uploadStatus,
           uploadProgress,
@@ -688,6 +689,8 @@ export const uploadFiles = (mediaItem, files) => {
           type,
           thumbnail,
           url,
+          uploadStatus,
+          fileSize,
           uploadProgress
         }
       }

@@ -8,13 +8,32 @@ import {getClientId, createParamString} from "../../core/utils";
 
 export default {
 
-  path: '/',
+  path: ['/', '/:type/:uuid'],
 
   async action({ params, context, query }) {
 
     const { graphqlRequest } = context.store.helpers;
     const clientId = getClientId();
     const queryParams = { clientId, limit: 8, ...query };
+
+    const { type, uuid } = params;
+
+    let contentQuery = '';
+    if (type === 'post') {
+      contentQuery = `
+        post (uuid: "${uuid}") {
+          uuid,
+          text,
+          user,
+          mediaItems {
+            uuid,
+            type,
+            url
+          }
+        }
+      `;
+    }
+
     const paramsString = createParamString(queryParams);
 
     console.log('route', paramsString);
@@ -96,12 +115,14 @@ export default {
               }
             }
           },
-          transportTypes { slug }
+          transportTypes { slug },
+          ${contentQuery}
         }`
       );
 
+      const { post } = data;
       log.info('event=received-feed-data', data);
-      return <Home feed={data.feed} transportTypes={data.transportTypes} {...query} />;
+      return <Home feed={data.feed} transportTypes={data.transportTypes} post={post} {...query} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

@@ -8,7 +8,7 @@ import CheckInItem from '../CheckInItem';
 
 
 const FeedView = ({
-  feed, transportTypes, loadedFeed, savedCheckIn, fetchedFeedItems, feedUpdated
+  feed, transportTypes, post, loadedFeed, savedCheckIn, fetchedFeedItems, feedUpdated
 }) => {
 
   const currentFeed = (loadedFeed || feed) || {};
@@ -41,10 +41,11 @@ const FeedView = ({
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
                 {
-                  editable ?
+                  (post || editable) ?
                     <Add feedItem={feedItem}
                          openTerminals={openTerminals}
-                         transportTypes={transportTypes} />
+                         transportTypes={transportTypes}
+                         post={post} />
                     : <CheckInItem feedItem={(fetchedFeedItem || feedItem)} frameId={frameId} transportTypes={transportTypes} />
                 }
               </div>

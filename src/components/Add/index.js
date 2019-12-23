@@ -45,8 +45,13 @@ const createCheckIn = (geolocation) => {
 
 const createPost = (props) =>  {
 
-  const { postText, feedItem: { checkIn }, mediaItems } = props;
+  const { postText, post, feedItem: { checkIn }, mediaItems } = props;
   const clientId = getClientId();
+
+  if (post) {
+    console.log("//TODO: Update post");
+    return;
+  }
 
   (mediaItems || []).forEach(mediaItem => {
     if (!mediaItem.thumbnail) delete mediaItem.thumbnail;
@@ -67,7 +72,7 @@ const createPost = (props) =>  {
 const getTabContent = (type, props) => {
 
   const {
-    feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env,
+    feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env, post,
     savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia,
     loadedMediaItemChanged, loadMediaItem, loadMediaItemError
   } = props;
@@ -127,7 +132,7 @@ const getTabContent = (type, props) => {
           <div className={s.contentHorizontal}>
             <div className={s.commentContainer}>
               <TextField id="post-text"
-                         value={postText}
+                         value={(post && post.text) || postText}
                          multiLine={true}
                          fullWidth={true}
                          rows={2}
@@ -191,7 +196,7 @@ const getTabContent = (type, props) => {
 const AddView = (props) => {
 
   const {
-    type, transportTypes, feedItem, openTerminals, intl, geolocation, postText, mediaItems,
+    type, transportTypes, feedItem, openTerminals, intl, geolocation, post, postText, mediaItems,
     setProperty, getGeolocation, savePost, saveCheckIn, uploadingMedia
   } = props;
 

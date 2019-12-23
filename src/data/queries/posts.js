@@ -482,7 +482,7 @@ export const PostMutationFields = {
 
 
         let savedMediaItem = null;
-
+        console.log('file mimetype', file.mimetype);
         if (file.mimetype.indexOf('image') !== -1) {
 
           log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${entityFileName}`);

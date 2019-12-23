@@ -37,6 +37,7 @@ const schema = new Schema({
       ratings: RatingQueryFields.ratings,
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
+      post: PostQueryFields.post,
       feed: PostQueryFields.feed,
       feedItem: PostQueryFields.feedItem,
       mediaItem: PostQueryFields.mediaItem,
