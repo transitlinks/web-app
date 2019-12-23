@@ -25,6 +25,7 @@ export default {
           uuid,
           text,
           user,
+          checkInUuid,
           mediaItems {
             uuid,
             type,
@@ -120,9 +121,9 @@ export default {
         }`
       );
 
-      const { post } = data;
+      const { feed, transportTypes, post } = data;
       log.info('event=received-feed-data', data);
-      return <Home feed={data.feed} transportTypes={data.transportTypes} post={post} {...query} />;
+      return <Home feed={feed} transportTypes={transportTypes} post={post} {...query} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

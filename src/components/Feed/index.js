@@ -21,6 +21,7 @@ const FeedView = ({
 
 
   let editOpen = false;
+  console.log('has post', post);
 
   return (
     <div className={s.container}>
@@ -41,7 +42,7 @@ const FeedView = ({
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
                 {
-                  (post || editable) ?
+                  ((post && post.checkInUuid === checkIn.uuid) || editable) ?
                     <Add feedItem={feedItem}
                          openTerminals={openTerminals}
                          transportTypes={transportTypes}

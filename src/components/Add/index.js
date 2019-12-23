@@ -48,17 +48,13 @@ const createPost = (props) =>  {
   const { postText, post, feedItem: { checkIn }, mediaItems } = props;
   const clientId = getClientId();
 
-  if (post) {
-    console.log("//TODO: Update post");
-    return;
-  }
-
   (mediaItems || []).forEach(mediaItem => {
     if (!mediaItem.thumbnail) delete mediaItem.thumbnail;
   });
 
   return {
     post: {
+      uuid: post ? post.uuid : null,
       text: postText,
       mediaItems,
       checkInUuid: checkIn.uuid,
@@ -132,7 +128,7 @@ const getTabContent = (type, props) => {
           <div className={s.contentHorizontal}>
             <div className={s.commentContainer}>
               <TextField id="post-text"
-                         value={(post && post.text) || postText}
+                         value={postText || (post && post.text) || ''}
                          multiLine={true}
                          fullWidth={true}
                          rows={2}

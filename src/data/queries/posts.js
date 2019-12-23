@@ -594,11 +594,13 @@ export const PostQueryFields = {
 
       log.info(graphLog(request, 'find-post-by-uuid','uuid=${uuid}'));
       const post = await postRepository.getPost({ uuid });
+      console.log('post', post.checkInUuid, post.checkInId);
       if (!post) {
         throw new Error(`Post (uuid ${uuid}) not found`);
       }
 
-      return post.toJSON();
+      const checkIn = await postRepository.getCheckIn({ id: post.checkInId });
+      return { ...post.toJSON(), checkInUuid: checkIn.uuid };
 
     }
 

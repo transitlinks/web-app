@@ -13,6 +13,7 @@ export const PostType = new GraphQLObjectType({
     text: { type: GraphQLString },
     user: { type: GraphQLString },
     mediaItems: { type: new GraphQLList(MediaItemType) },
+    checkInUuid: { type: GraphQLString },
     checkIn: { type: CheckInType }
   })
 });
@@ -30,6 +31,7 @@ export const PostInputType = new GraphQLInputObjectType({
   name: 'PostInput',
   description: 'Input properties of Transitlinks Post object',
   fields: () => ({
+    uuid: { type: GraphQLString },
     checkInUuid: { type: GraphQLString },
     text: { type: GraphQLString },
     type: { type: GraphQLString },
