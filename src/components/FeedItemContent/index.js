@@ -13,10 +13,10 @@ import { setDeepProperty, setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
 import terminalMsg from '../Add/messages.terminal';
-import Link from "../Header";
+import Link from "../Link";
 
 const FeedItemContent = ({
-  feedItem, contentType, feedProperties, frameId, env,
+  feedItem, contentType, feedProperties, frameId, env, post, feedItemIndex,
   setDeepProperty, setProperty
 }) => {
 
@@ -38,9 +38,19 @@ const FeedItemContent = ({
     setDeepProperty('posts', ['feedProperties', frameId, 'activePost'], postIndex);
   };
 
+  let editUrl = null;
+
   if (posts.length > 0 && contentType === 'reaction') {
 
     let activePost = ((feedProperties && feedProperties[frameId]) && feedProperties[frameId]['activePost']) || 0;
+    if (post) {
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i].uuid === post.uuid) {
+          activePost = i;
+        }
+      }
+    }
+
     if (activePost > posts.length - 1) {
       console.log("post out of bounds", feedProperties, activePost, frameId, posts);
       activePost = 0;
@@ -80,6 +90,8 @@ const FeedItemContent = ({
           </div>
         </div>
       );
+
+      editUrl = `/post/${posts[activePost || 0].uuid}?frame=${feedItemIndex}`;
 
     } else {
 
@@ -123,6 +135,15 @@ const FeedItemContent = ({
           </div>
         </div>
         <div className={s.contentHeaderRight}>
+          {
+            editUrl &&
+              <Link to={editUrl}>
+                <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
+                  console.log('clicked edit', feedItemIndex);
+                  document.getElementById(`feed-item-${feedItemIndex}`).scrollIntoView(true);
+                }}>edit</FontIcon>
+              </Link>
+          }
         </div>
       </div>
       {content}

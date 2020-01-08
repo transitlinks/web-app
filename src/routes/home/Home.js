@@ -58,6 +58,9 @@ class Home extends React.Component {
 
   componentDidUpdate(prevProps) {
 
+    const prevFrame = prevProps.frame;
+    const frame = this.props.frame;
+
     const prevCheckIn = prevProps.savedCheckIn;
     const checkIn = this.props.savedCheckIn;
 
@@ -103,6 +106,13 @@ class Home extends React.Component {
         this.props.setProperty('editTerminal.terminalProperties', null);
         this.props.getFeed(clientId, params);
       }
+    }
+
+    if (frame && frame !== prevFrame) {
+      console.log('scroll', frame, 'into view');
+      setTimeout(() => {
+        document.getElementById(`feed-item-${frame}`).scrollIntoView(true);
+      }, 100);
     }
 
   }

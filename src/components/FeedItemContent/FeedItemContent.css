@@ -69,7 +69,9 @@
 }
 
 .contentHeader .contentHeaderRight {
-
+  padding-right: 6px;
+  display: flex;
+  align-items: center;
 }
 
 .contentHeader .contentHeaderLeft .userIcon {

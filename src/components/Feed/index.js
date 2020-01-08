@@ -40,14 +40,14 @@ const FeedView = ({
             const fetchedFeedItem = fetchedFeedItems[frameId];
 
             return (
-              <div className={s.feedItem} key={`${checkIn.uuid}-${index}`}>
+              <div className={s.feedItem} key={`${checkIn.uuid}-${index}`} id={`feed-item-${index}`}>
                 {
                   ((post && post.checkInUuid === checkIn.uuid) || editable) ?
                     <Add feedItem={feedItem}
                          openTerminals={openTerminals}
                          transportTypes={transportTypes}
                          post={post} />
-                    : <CheckInItem feedItem={(fetchedFeedItem || feedItem)} frameId={frameId} transportTypes={transportTypes} />
+                    : <CheckInItem feedItem={(fetchedFeedItem || feedItem)} feedItemIndex={index} frameId={frameId} transportTypes={transportTypes} />
                 }
               </div>
             );

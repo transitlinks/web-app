@@ -128,7 +128,7 @@ const getTabContent = (type, props) => {
           <div className={s.contentHorizontal}>
             <div className={s.commentContainer}>
               <TextField id="post-text"
-                         value={postText || (post && post.text) || ''}
+                         value={postText === undefined ? ((post && post.text) || '') : postText}
                          multiLine={true}
                          fullWidth={true}
                          rows={2}
@@ -260,7 +260,7 @@ const AddView = (props) => {
           { getTabContent(selectedType, props) }
         </div>
       </div>
-      <FeedItemContent transportTypes={transportTypes} feedItem={feedItem} contentType={selectedType} frameId={'frame-add'} />
+      <FeedItemContent transportTypes={transportTypes} feedItem={feedItem} contentType={selectedType} frameId={'frame-add'} post={post} />
     </div>
   );
 

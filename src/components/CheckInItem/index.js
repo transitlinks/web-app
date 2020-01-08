@@ -25,7 +25,8 @@ const typeSelector = (iconName, isSelected, onClick) => {
 
 const CheckInItem = (
   {
-    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated, showLinks, showSettings, updateFeedItem, updatedCheckInDate,
+    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated,
+    showLinks, showSettings, updateFeedItem, updatedCheckInDate, post, feedItemIndex,
     navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn
   }) => {
 
@@ -229,7 +230,7 @@ const CheckInItem = (
         </div>
       </div>
 
-      <FeedItemContent feedItem={feedItem} frameId={frameId} contentType={contentType} />
+      <FeedItemContent feedItem={feedItem} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} post={post} />
 
     </div>
   );

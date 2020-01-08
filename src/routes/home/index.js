@@ -14,6 +14,8 @@ export default {
 
     const { graphqlRequest } = context.store.helpers;
     const clientId = getClientId();
+    const { frame } = query;
+    if (frame) delete query.frame;
     const queryParams = { clientId, limit: 8, ...query };
 
     const { type, uuid } = params;
@@ -123,7 +125,7 @@ export default {
 
       const { feed, transportTypes, post } = data;
       log.info('event=received-feed-data', data);
-      return <Home feed={feed} transportTypes={transportTypes} post={post} {...query} />;
+      return <Home feed={feed} transportTypes={transportTypes} post={post} frame={frame} {...query} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />
