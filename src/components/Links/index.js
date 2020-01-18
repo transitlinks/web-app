@@ -68,6 +68,11 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
                   <b>To:</b> { link.to.formattedAddress }
                 </div>
               </div>
+              <div className={s.row3}>
+                <div className={s.description}>
+                  { link.to.description || link.from.description }
+                </div>
+              </div>
             </div>
           );
 

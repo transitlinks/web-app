@@ -53,5 +53,18 @@
   padding-right: 4px;
 }
 
+.transportId {
+  margin-left: 6px;
+}
+
+.description {
+  font-size: 14px;
+  color: #3a3a3a;
+}
+
 .linkItem .row2 {
+}
+
+.linkItem .row3 {
+  margin-top: 6px;
 }

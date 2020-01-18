@@ -33,13 +33,15 @@ export default {
               latitude,
               longitude,
               locality,
-              formattedAddress
+              formattedAddress,
+              description
             },
             to {
               latitude,
               longitude,
               locality,
-              formattedAddress
+              formattedAddress,
+              description
             }
           },
           transportTypes { slug }

@@ -25,13 +25,15 @@ export const getLinks = (params) => {
               latitude,
               longitude,
               locality,
-              formattedAddress
+              formattedAddress,
+              description
              },
              to {
               latitude,
               longitude,
               locality,
-              formattedAddress
+              formattedAddress,
+              description
              }
           }
         }`

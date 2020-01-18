@@ -108,7 +108,8 @@ export const LinkTerminalType = new GraphQLObjectType({
     locality: { type: GraphQLString },
     formattedAddress: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
-    longitude: { type: GraphQLFloat }
+    longitude: { type: GraphQLFloat },
+    description: { type: GraphQLString }
   })
 });
 

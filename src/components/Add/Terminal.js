@@ -106,7 +106,7 @@ const Terminal = (props) => {
       linkedTerminalUuid = typedOpenTerminals[0].uuid;
     }
   }
-  
+
   let linkedTerminal = null;
   if (linkedTerminalUuid !== 'not-linked') {
     if (typedOpenTerminals.length > 0) {
@@ -146,11 +146,14 @@ const Terminal = (props) => {
 
   let transport = getTerminalProperty('transport');
   let transportId = getTerminalProperty('transportId');
+  let description = getTerminalProperty('description');
   let date = getTerminalProperty('date');
   let time = getTerminalProperty('time');
   const now  = new Date();;
   let priceCurrency = getTerminalProperty('priceCurrency');
   let priceAmount = getTerminalProperty('priceAmount');
+
+  console.log('terminal date time', date, time, linkedTerminal);
 
   const linkedTerminalLabel = type === 'arrival' ? 'Link to departure' : 'Link to arrival';
 
@@ -160,7 +163,8 @@ const Terminal = (props) => {
       checkInUuid: checkIn.uuid,
       type,
       transport,
-      transportId
+      transportId,
+      description
     };
 
     if (terminal) {
@@ -194,6 +198,9 @@ const Terminal = (props) => {
 
   };
 
+  const linkedTerminalDate = date ? new Date(date) : new Date();
+  const linkedTerminalTime = time ? new Date(time) : new Date();
+
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
@@ -206,8 +213,8 @@ const Terminal = (props) => {
                              fullWidth={true}
                              value={linkedTerminalUuid || ((typedOpenTerminals && typedOpenTerminals.length > 0) && typedOpenTerminals[0].uuid)}
                              onChange={(event, index, value) => setTerminalProperties(type,
-                               ['linkedTerminalUuid', 'transport', 'transportId', 'date', 'time', 'priceAmount', 'priceCurrency'],
-                               [value, null, null, null, null, null, null])}
+                               ['linkedTerminalUuid', 'transport', 'transportId', 'description', 'date', 'time', 'priceAmount', 'priceCurrency'],
+                               [value, null, null, null, null, null, null, null])}
                              floatingLabelText={linkedTerminalLabel}
                              floatingLabelFixed={true}
                              hintText="Select terminal"
@@ -225,8 +232,8 @@ const Terminal = (props) => {
                 <div className={s.linkedRow1}>
                   <div className={s.unlink}>
                     <a href="#" onClick={(event, index, value) => setTerminalProperties(type,
-                      ['linkedTerminalUuid', 'transport', 'transportId', 'date', 'time', 'priceAmount', 'priceCurrency'],
-                      ['not-linked', null, null, null, null, null, null])}>
+                      ['linkedTerminalUuid', 'transport', 'transportId', 'description', 'date', 'time', 'priceAmount', 'priceCurrency'],
+                      ['not-linked', null, null, null, null, null, null, null])}>
                       Unlink
                     </a>
                   </div>
@@ -234,7 +241,7 @@ const Terminal = (props) => {
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
                                   hintText={labels[type].dateInputTitle}
-                                  value={date || terminal.date || now}
+                                  value={linkedTerminalDate}
                                   floatingLabelText={labels[type].dateInputTitle}
                                   floatingLabelFixed={true}
                                   floatingLabelStyle={{ width: "120px" }}
@@ -247,7 +254,7 @@ const Terminal = (props) => {
                       <TimePicker id={`${type}-time-picker`}
                                   format="24hr"
                                   hintText={labels[type].timeInputTitle}
-                                  value={time || terminal.time || now}
+                                  value={linkedTerminalTime}
                                   floatingLabelText="Time"
                                   floatingLabelFixed={true}
                                   autoOk={true}
@@ -255,6 +262,18 @@ const Terminal = (props) => {
                                   onChange={(event, value) => setTerminalProperties(type, ['time'], [value])}
                       />
                     </div>
+                  </div>
+                </div>
+                <div className={s.linkedRow1}>
+                  <div className={s.transportId}>
+                    <TextField id="description"
+                               value={description || terminal.description || linkedTerminal.description || ''}
+                               fullWidth={true}
+                               floatingLabelText="Description"
+                               floatingLabelFixed={true}
+                               onChange={(e) => setTerminalProperties(type, ['description'], [e.target.value])}
+                               hintText={(!description) ? "Other info" : null}
+                    />
                   </div>
                 </div>
                 <div className={s.inputRow3}>
@@ -312,6 +331,18 @@ const Terminal = (props) => {
                                floatingLabelFixed={true}
                                onChange={(e) => setTerminalProperties(type, ['transportId'], [e.target.value])}
                                hintText={(!transportId) ? "Number, company..." : null}
+                    />
+                  </div>
+                </div>
+                <div className={s.inputRow2}>
+                  <div className={s.transportId}>
+                    <TextField id="description"
+                               value={description || terminal.description || ''}
+                               fullWidth={true}
+                               floatingLabelText="Description"
+                               floatingLabelFixed={true}
+                               onChange={(e) => setTerminalProperties(type, ['description'], [e.target.value])}
+                               hintText={(!description) ? "Other info" : null}
                     />
                   </div>
                 </div>

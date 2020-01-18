@@ -488,18 +488,20 @@ export const TransitLinkQueryFields = {
           return {
             uuid: departure.uuid,
             transport: arrival.transport,
-            transportId: arrival.transportId,
+            transportId: departure.transportId,
             from: {
               latitude: departure.checkIn.latitude,
               longitude: departure.checkIn.longitude,
               locality: departure.checkIn.locality,
-              formattedAddress: departure.checkIn.formattedAddress
+              formattedAddress: departure.checkIn.formattedAddress,
+              description: departure.description
             },
             to: {
               latitude: arrival.checkIn.latitude,
               longitude: arrival.checkIn.longitude,
               locality: arrival.checkIn.locality,
-              formattedAddress: arrival.checkIn.formattedAddress
+              formattedAddress: arrival.checkIn.formattedAddress,
+              description: arrival.description
             }
           }
         }

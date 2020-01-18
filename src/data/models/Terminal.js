@@ -31,6 +31,10 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  description: {
+    type: DataType.STRING
+  },
+
   date: {
     type: DataType.DATE
   },

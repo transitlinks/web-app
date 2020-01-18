@@ -129,13 +129,13 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     terminal.time = new Date(terminalInput.time);
   }
 
-  copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
+  copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
   await addUserId(terminal, request);
 
   const saved = await postRepository.saveTerminal(terminal);
 
   if (linkedTerminal) {
-    const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
+    const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency', 'description' ]);
     postRepository.saveTerminal({ uuid: linkedTerminal.uuid, linkedTerminalId: saved.id, ...linkedTerminalUpdate });
   }
 
