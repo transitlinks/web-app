@@ -39,9 +39,15 @@ class Home extends React.Component {
       if (
         Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
+        console.log('state offset', this.state.fetchedOffset, this.props.offset);
+        if (this.state.fetchedOffset === this.props.offset) {
+          return;
+        }
+        
         const clientId = getClientId();
         const params = getParams(this.props);
         console.log('get feed', params);
+        this.setState({ fetchedOffset: params.offset });
         this.props.getFeed(clientId, { ...params, add: true });
       }
     }, 100);
@@ -52,7 +58,9 @@ class Home extends React.Component {
 
     const clientId = getClientId();
     this.props.getGeolocation();
-    this.props.getFeed(clientId, getParams(this.props));
+    const params = getParams(this.props);
+    params.offset = 0;
+    this.props.getFeed(clientId, params);
 
   }
 
