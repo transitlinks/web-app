@@ -435,7 +435,7 @@ export const TransitLinkQueryFields = {
 
       log.info(graphLog(request, 'search-terminals',`locality=${locality} type=${type}`));
 
-      const checkIns = await postRepository.getCheckIns({ locality: { $like: `%${locality}%` } });
+      const checkIns = await postRepository.getCheckIns({ locality: { $ilike: `%${locality}%` } });
       const checkInIds = checkIns.map(checkIn => checkIn.id);
 
       let terminalQueryParams = {};

@@ -43,7 +43,7 @@ class Home extends React.Component {
         if (this.state.fetchedOffset === this.props.offset) {
           return;
         }
-        
+
         const clientId = getClientId();
         const params = getParams(this.props);
         console.log('get feed', params);
