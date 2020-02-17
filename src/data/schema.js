@@ -12,6 +12,7 @@ import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
 import { TerminalQueryFields } from './queries/terminals';
 import { PostMutationFields, PostQueryFields } from './queries/posts';
+import { CheckInQueryFields } from './queries/checkIns';
 import { DiscoverMutationFields, DiscoverQueryFields } from './queries/discover';
 import { CommentMutationFields, CommentQueryFields } from './queries/comments';
 import { UserMutationFields, UserQueryFields } from './queries/users';
@@ -38,6 +39,7 @@ const schema = new Schema({
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
       post: PostQueryFields.post,
+      checkIn: CheckInQueryFields.checkIn,
       feed: PostQueryFields.feed,
       feedItem: PostQueryFields.feedItem,
       mediaItem: PostQueryFields.mediaItem,

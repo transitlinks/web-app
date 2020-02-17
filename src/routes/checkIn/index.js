@@ -4,7 +4,7 @@ const log = getLog('routes/linkInstance');
 import React from 'react';
 import CheckIn from './CheckIn';
 import ErrorPage from '../../components/common/ErrorPage';
-import fetch from '../../core/fetch';
+import { createQuery, getFeedItemQuery } from '../../data/queries/queries';
 
 export default {
 
@@ -25,72 +25,19 @@ export default {
 
       if (params.uuid) {
 
-        const { data } = await graphqlRequest(
-          `query {
-            linkInstance(uuid: "${params.uuid}") {
-              uuid,
-              privateUuid,
-              link {
-                uuid,
-                from { apiId, name, description, countryLong, lat, lng },
-                to { apiId, name, description, countryLong, lat, lng} 
-              },
-              transport { slug },
-              mode, identifier,
-              departureDate, departureHour, departureMinute, departureDescription,
-              departureLat, departureLng, departureAddress,
-              arrivalDate, arrivalHour, arrivalMinute, arrivalDescription,
-              arrivalLat, arrivalLng, arrivalAddress,
-              priceAmount, priceCurrency,
-              description,
-              upVotes, downVotes,
-              durationMinutes,
-              isPrivate
-            },
-            transportTypes { slug },
-            ratings(userUuid: "${userUuid || ''}", linkInstanceUuid: "${params.uuid}") {
-              userUuid,
-              linkInstanceUuid,
-              avgRating,
-              avgAvailabilityRating,
-              avgDepartureRating,
-              avgArrivalRating,
-              avgAwesomeRating,
-              userAvailabilityRating,
-              userDepartureRating,
-              userArrivalRating,
-              userAwesomeRating
-            },
-            linkInstanceMedia(linkInstanceUuid: "${params.uuid}") {
-              uuid,
-              type,
-              thumbnail,
-              url
-            },
-            comments(linkInstanceUuid: "${params.uuid}") {
-              uuid,
-              replyToUuid,
-              text,
-              up, down,
-              user {
-                uuid,
-                username,
-                firstName,
-                lastName
-              }
-            }
-          }`
-        );
+        const query = createQuery([
+          getFeedItemQuery(params.uuid),
+          'transportTypes { slug }'
+        ]);
+
+        const { data } = await graphqlRequest(query);
 
         log.info("event=received-check-in", "data:", data);
 
         const edit = params.action === 'edit';
         const props = {
           edit,
-          checkIn: data.linkInstance,
-          ratings: data.ratings,
-          checkInMedia: data.linkInstanceMedia,
-          comments: data.comments
+          checkIn: data.checkIn
         };
 
         if (edit) {
@@ -101,11 +48,7 @@ export default {
 
       } else {
 
-        const { data } = await graphqlRequest(
-          `query {
-            transportTypes { slug },
-          }`
-        );
+        const { data } = await graphqlRequest(createQuery(['transportTypes { slug }']));
 
         return <CheckIn edit={true}
           checkIn={{}}

@@ -2,6 +2,7 @@ import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import { geocode, extractPlaceFields } from '../services/linkService';
 import { getClientId } from "../core/utils";
+import { createQuery, getFeedItemQuery } from '../data/queries/queries';
 
 import {
   SAVE_POST_START,
@@ -571,82 +572,7 @@ export const getFeedItem = (checkInUuid, frameId, target) => {
 
   return async (...args) => {
 
-    const query = `
-      query {
-        feedItem (checkInUuid:"${checkInUuid}") {
-          checkIn {
-            uuid,
-            user,
-            date,
-            latitude,
-            longitude
-            placeId,
-            formattedAddress,
-            locality,
-            country
-          },
-          inbound {
-            uuid,
-            latitude,
-            longitude,
-            placeId,
-            formattedAddress,
-            locality,
-            country
-          },
-          outbound {
-            uuid,
-            latitude,
-            longitude,
-            placeId,
-            formattedAddress,
-            locality,
-            country
-          },
-          posts {
-            uuid,
-            text,
-            user,
-            mediaItems {
-              uuid,
-              type,
-              url
-            }
-          },
-          terminals {
-            uuid,
-            type,
-            transport,
-            transportId,
-            description,
-            date,
-            time,
-            priceAmount,
-            priceCurrency,
-            linkedTerminal {
-              uuid,
-              type,
-              transport,
-              transportId,
-              description,
-              date,
-              time,
-              priceAmount,
-              priceCurrency,
-              checkIn {
-                uuid,
-                latitude,
-                longitude,
-                placeId,
-                formattedAddress,
-                locality,
-                country
-              }
-            }
-          }
-        }
-      }
-    `;
+    const query = createQuery([getFeedItemQuery(checkInUuid)]);
 
     return graphqlAction(
       ...args,
