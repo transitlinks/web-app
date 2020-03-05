@@ -12,6 +12,12 @@ export default {
 
   async action({ params, context }) {
 
+      /*
+      return (<div>
+        CHECK IN
+      </div>);
+*/
+
     const { graphqlRequest } = context.store.helpers;
 
     let userUuid = null;
@@ -55,6 +61,7 @@ export default {
           transportTypes={data.transportTypes} />;
 
       }
+
 
     } catch (error) {
       log.error(error);
