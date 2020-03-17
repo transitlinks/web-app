@@ -8,15 +8,9 @@ import { createQuery, getFeedItemQuery } from '../../data/queries/queries';
 
 export default {
 
-  path: '/check-in/:uuid?/:action?',
+  path: '/check-in/:uuid',
 
   async action({ params, context }) {
-
-      /*
-      return (<div>
-        CHECK IN
-      </div>);
-*/
 
     const { graphqlRequest } = context.store.helpers;
 
@@ -43,7 +37,7 @@ export default {
         const edit = params.action === 'edit';
         const props = {
           edit,
-          checkIn: data.checkIn
+          checkInItem: data.feedItem
         };
 
         if (edit) {

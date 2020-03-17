@@ -76,7 +76,7 @@ class CheckIn extends React.Component {
 
     this.context.setTitle(title);
     const {
-      checkIn,
+      checkInItem,
       transportTypes
     }  = this.props;
 
@@ -86,10 +86,10 @@ class CheckIn extends React.Component {
           {
             !this.state.edit ?
               <ViewCheckIn
-                checkIn={checkIn} /> :
+                checkInItem={checkInItem} transportTypes={transportTypes} /> :
               <EditCheckIn
                 transportTypes={transportTypes}
-                checkIn={checkIn} />
+                checkIn={checkInItem} />
           }
           <div>
 

@@ -6,7 +6,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Add.css';
 import Terminal from './Terminal';
-import FeedItemContent from '../FeedItemContent';
+import FeedItemContent from '../CheckInItemContent';
 import { getGeolocation } from '../../actions/global';
 import { savePost, saveCheckIn, uploadFiles, getMediaItem } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';

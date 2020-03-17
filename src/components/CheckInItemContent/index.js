@@ -1,38 +1,23 @@
 import React from 'react';
 import cx from 'classnames';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { extractLinkAreas, getDateString, getTimeString } from '../utils';
 import Post from '../Post';
 import Terminal from '../Terminal';
-import s from './FeedItemContent.css';
+import s from './CheckInItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
-import { setDeepProperty, setProperty } from "../../actions/properties";
-import { getFeedItem } from "../../actions/posts";
+import { setDeepProperty, setProperty } from '../../actions/properties';
+import Link from '../Link';
+import PropTypes from 'prop-types';
 
-import terminalMsg from '../Add/messages.terminal';
-import Link from "../Link";
-
-const FeedItemContent = ({
-  feedItem, contentType, feedProperties, frameId, env, post, feedItemIndex,
-  setDeepProperty, setProperty
+const CheckInItemContent = ({
+  checkInItem, contentType, feedProperties, frameId, post, feedItemIndex,
+  setDeepProperty, editable
 }) => {
 
-  const { checkIn, posts, terminals } = feedItem;
+  const { checkIn, posts, terminals } = checkInItem;
   let content = null;
-
-  const formatDate = (date) => {
-
-    if (date) {
-      return (new Date(date)).toDateString().substring(4);
-    }
-
-    return '-';
-
-  };
-
 
   const scrollToPost = (postIndex) => {
     setDeepProperty('posts', ['feedProperties', frameId, 'activePost'], postIndex);
@@ -52,7 +37,7 @@ const FeedItemContent = ({
     }
 
     if (activePost > posts.length - 1) {
-      console.log("post out of bounds", feedProperties, activePost, frameId, posts);
+      console.log('post out of bounds', feedProperties, activePost, frameId, posts);
       activePost = 0;
     }
 
@@ -70,7 +55,7 @@ const FeedItemContent = ({
 
       content = (
         <div className={s.posts}>
-          <Post post={posts[activePost || 0]}/>
+          <Post post={posts[activePost || 0]} />
           {
             activePost > 0 &&
               <div className={s.navLeft} onClick={() => scrollToPost(activePost - 1)}>
@@ -79,9 +64,9 @@ const FeedItemContent = ({
           }
           {
             activePost < posts.length - 1 &&
-            <div className={s.navRight} onClick={() => scrollToPost(activePost + 1)}>
-              <FontIcon className="material-icons" style={{ fontSize: '40px' }}>keyboard_arrow_right</FontIcon>
-            </div>
+              <div className={s.navRight} onClick={() => scrollToPost(activePost + 1)}>
+                <FontIcon className="material-icons" style={{ fontSize: '40px' }}>keyboard_arrow_right</FontIcon>
+              </div>
           }
           <div className={s.navIndicatorContainer}>
             <div className={s.navIndicator}>
@@ -90,8 +75,6 @@ const FeedItemContent = ({
           </div>
         </div>
       );
-
-      editUrl = `/post/${posts[activePost || 0].uuid}?frame=${feedItemIndex}`;
 
     } else {
 
@@ -103,22 +86,19 @@ const FeedItemContent = ({
 
   } else if (contentType === 'arrival') {
 
-    content = terminals.filter(terminal => terminal.type === 'arrival').map(terminal => {
-      return <Terminal terminal={terminal} />;
-    });
+    content = terminals.filter(terminal => terminal.type === 'arrival')
+      .map(terminal => <Terminal terminal={terminal} />);
 
   } else if (contentType === 'departure') {
 
-    content = terminals.filter(terminal => terminal.type === 'departure').map(terminal => {
-      return <Terminal terminal={terminal} />;
-    });
-
-  } else if (contentType === 'lodging') {
+    content = terminals.filter(terminal => terminal.type === 'departure')
+      .map(terminal => <Terminal terminal={terminal} />);
 
   }
 
   const userName = checkIn.user || 'Anonymoyus';
   const dateStr = (new Date(checkIn.date)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
   return (
     <div className={s.feedItemContent} id={`content-${frameId}`}>
       <div className={s.contentHeader}>
@@ -136,13 +116,11 @@ const FeedItemContent = ({
         </div>
         <div className={s.contentHeaderRight}>
           {
-            editUrl &&
-              <Link to={editUrl}>
-                <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
-                  console.log('clicked edit', feedItemIndex);
-                  document.getElementById(`feed-item-${feedItemIndex}`).scrollIntoView(true);
-                }}>edit</FontIcon>
-              </Link>
+            editable &&
+              <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
+                console.log('clicked edit', feedItemIndex);
+                document.getElementById(`feed-item-${feedItemIndex}`).scrollIntoView(true);
+              }}>edit</FontIcon>
           }
         </div>
       </div>
@@ -152,11 +130,16 @@ const FeedItemContent = ({
 
 };
 
+CheckInItemContent.propTypes = {
+  checkInItem: PropTypes.object,
+  contentType: PropTypes.string
+};
+
 export default injectIntl(
   connect(state => ({
     env: state.env,
     feedProperties: state.posts.feedProperties || {}
   }), {
     setDeepProperty, setProperty
-  })(withStyles(s)(FeedItemContent))
+  })(withStyles(s)(CheckInItemContent))
 );

@@ -47,7 +47,7 @@ const FeedView = ({
                          openTerminals={openTerminals}
                          transportTypes={transportTypes}
                          post={post} />
-                    : <CheckInItem feedItem={(fetchedFeedItem || feedItem)} feedItemIndex={index} frameId={frameId} transportTypes={transportTypes} />
+                    : <CheckInItem checkInItem={(fetchedFeedItem || feedItem)} feedItemIndex={index} frameId={frameId} transportTypes={transportTypes} editable={false} />
                 }
               </div>
             );

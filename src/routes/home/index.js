@@ -8,7 +8,7 @@ import {getClientId, createParamString} from "../../core/utils";
 
 export default {
 
-  path: ['/', '/:type/:uuid'],
+  path: ['/'],
 
   async action({ params, context, query }) {
 

@@ -1,17 +1,14 @@
 import React from 'react';
 import cx from 'classnames';
-import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { extractLinkAreas } from '../utils';
 import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
-import FeedItemContent from '../FeedItemContent';
-import { setProperty, setDeepProperty } from "../../actions/properties";
-import { getFeedItem, deleteCheckIn, saveCheckIn } from "../../actions/posts";
-
-import msg from './messages';
+import CheckInItemContent from '../CheckInItemContent';
+import { setProperty, setDeepProperty } from '../../actions/properties';
+import { getFeedItem, deleteCheckIn, saveCheckIn } from '../../actions/posts';
+import Link from '../Link';
 
 const typeSelector = (iconName, isSelected, onClick) => {
   return (
@@ -25,18 +22,22 @@ const typeSelector = (iconName, isSelected, onClick) => {
 
 const CheckInItem = (
   {
-    feedItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated,
+    checkInItem, frameId, target, feedProperties, fetchedFeedItems, loadingFeedItem, propertyUpdated,
     showLinks, showSettings, updateFeedItem, updatedCheckInDate, post, feedItemIndex,
-    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn
+    navigate, setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn, editable, editCheckIn
   }) => {
 
-  const { checkIn, inbound, outbound } = feedItem;
+  const { checkIn, inbound, outbound } = checkInItem;
 
   const selectCheckIn = (checkInUuid, frameId) => {
     getFeedItem(checkInUuid, frameId, target);
   };
 
   const getStateClass = (links) => {
+
+    if (editable) {
+      return s.open;
+    }
 
     if (showLinks === frameId && links.length > 0) {
 
@@ -55,13 +56,9 @@ const CheckInItem = (
 
   };
 
-  const getInboundClassnames = () => {
-    return cx(getStateClass(inbound), s.inboundContainer);
-  };
+  const getInboundClassnames = () => cx(getStateClass(inbound), s.inboundContainer);
 
-  const getOutboundClassnames = () => {
-    return cx(getStateClass(outbound), s.outboundContainer);
-  };
+  const getOutboundClassnames = () => cx(getStateClass(outbound), s.outboundContainer);
 
   let contentType = 'reaction';
 
@@ -75,18 +72,18 @@ const CheckInItem = (
 
   let typeSelectors = [];
   let defaultContentType = null;
-  if (feedItem.posts.length > 0) {
+  if (checkInItem.posts.length > 0) {
     typeSelectors.push(typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction')));
     defaultContentType = 'reaction';
   }
 
-  const departures = feedItem.terminals.filter(terminal => terminal.type === 'departure');
+  const departures = checkInItem.terminals.filter(terminal => terminal.type === 'departure');
   if (departures.length > 0) {
     typeSelectors.push(typeSelector('call_made', contentType === 'departure', () => selectContentType('departure')));
     defaultContentType = 'departure';
   }
 
-  const arrivals = feedItem.terminals.filter(terminal => terminal.type === 'arrival');
+  const arrivals = checkInItem.terminals.filter(terminal => terminal.type === 'arrival');
   if (arrivals.length > 0) {
     typeSelectors.push(typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival')));
     defaultContentType = 'arrival';
@@ -100,8 +97,6 @@ const CheckInItem = (
     typeSelectors = null;
   }
 
-  //{ typeSelector('hotel', contentType === 'lodging', () => selectContentType('lodging')) }
-
   return (
     <div className={s.container} id={`checkin-${frameId}`}>
       {
@@ -109,7 +104,7 @@ const CheckInItem = (
           <div className={s.inboundCheckIns}>
             {
               inbound.map(inboundCheckIn => {
-                const {uuid, latitude, longitude, formattedAddress } = inboundCheckIn;
+                const {uuid, formattedAddress } = inboundCheckIn;
                 return (
                   <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, frameId)}>
                     <div className={s.linkedCheckInDisplay}>
@@ -138,30 +133,31 @@ const CheckInItem = (
           //</div>
         }
         <div className={s.feedItemDisplay}>
-          <a href="#" onClick={() => setProperty('posts.checkIn', checkIn)}>
+          <Link to={`/check-in/${checkIn.uuid}`}>
             { checkIn.formattedAddress }
-          </a>
+          </Link>
         </div>
         <div className={s.feedItemControls}>
           {
-            (showLinks === frameId || showSettings === frameId) &&
+            ((editable && editCheckIn) || (!editable && (showLinks === frameId || showSettings === frameId))) &&
             <div className={s.linksButton} onClick={() => {
               setProperty('posts.showLinks', '');
-              setProperty('posts.showSettings', '');
+              setProperty('posts.showSettings', false);
+              setProperty('posts.editCheckIn', false);
             }}>
               <FontIcon className="material-icons" style={{ fontSize: '20px' }}>close</FontIcon>
             </div>
           }
           {
-            (showLinks !== frameId && showSettings !== frameId) &&
-            <div className={s.settingsButton} onClick={() => setProperty('posts.showSettings', frameId)}>
-              <FontIcon className="material-icons" style={{ fontSize: '20px' }}>settings</FontIcon>
+            (!editable && showLinks !== frameId && showSettings !== frameId) &&
+            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', frameId)}>
+              <FontIcon className="material-icons" style={{ fontSize: '20px' }}>unfold_more</FontIcon>
             </div>
           }
           {
-            (showLinks !== frameId && showSettings !== frameId) &&
-            <div className={s.linksButton} onClick={() => setProperty('posts.showLinks', frameId)}>
-              <FontIcon className="material-icons" style={{ fontSize: '20px' }}>unfold_more</FontIcon>
+            (editable && !editCheckIn) &&
+            <div className={s.linksButton} onClick={() => setProperty('posts.editCheckIn', true)}>
+              <FontIcon className="material-icons" style={{ fontSize: '20px' }}>settings</FontIcon>
             </div>
           }
         </div>
@@ -178,7 +174,7 @@ const CheckInItem = (
           <div className={s.outboundCheckIns}>
             {
               outbound.map(outboundCheckIn => {
-                const { uuid, latitude, longitude, formattedAddress } = outboundCheckIn;
+                const { uuid, formattedAddress } = outboundCheckIn;
                 return (
                   <div className={s.linkedCheckIn} onClick={() => selectCheckIn(uuid, frameId)}>
                     <div className={s.linkedCheckInDisplay}>
@@ -194,33 +190,32 @@ const CheckInItem = (
       }
 
       {
-        showSettings === frameId &&
+        (editable && showSettings) &&
         (
           !updateFeedItem ?
-          <div className={s.feedItemSettings}>
-            <div className={s.feedItemSetting}>
-              <FontIcon className="material-icons" style={{fontSize: '20px'}} onClick={() => {
-                deleteCheckIn({ checkInUuid: checkIn.uuid });
-              }}>delete</FontIcon>
+            <div className={s.feedItemSettings}>
+              <div className={s.feedItemSetting}>
+                <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
+                  deleteCheckIn({ checkInUuid: checkIn.uuid });
+                }}>delete</FontIcon>
+              </div>
+              <div className={s.feedItemSetting}>
+                <FontIcon className="material-icons" style={{ fontSize: '20px' }}>share</FontIcon>
+                <div className={s.updateFeedItem} onClick={() => {
+                  setProperty('posts.updateFeedItem', true);
+                }}></div>
+              </div>
+            </div> :
+            <div>
+              <input type="text" value={updatedCheckInDate || checkIn.date} onChange={(event) => {
+                setProperty('posts.updatedCheckInDate', event.target.value);
+              }}/>
+              <button onClick={() => {
+                setProperty('posts.updateFeedItem', false);
+                const updatedDate = new Date(updatedCheckInDate);
+                saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: updatedDate } });
+              }}>OK</button>
             </div>
-            <div className={s.feedItemSetting}>
-              <FontIcon className="material-icons" style={{fontSize: '20px'}}>share</FontIcon>
-              <div className={s.updateFeedItem} onClick={() => {
-                setProperty('posts.updateFeedItem', true);
-              }}></div>
-            </div>
-          </div> :
-          <div>
-            <input type="text" value={updatedCheckInDate || checkIn.date} onChange={(event) => {
-              console.log("event target val", event.target.value, "]"+updatedCheckInDate+"[");
-              setProperty('posts.updatedCheckInDate', event.target.value);
-            }}/>
-            <button onClick={() => {
-              setProperty('posts.updateFeedItem', false);
-              const updatedDate = new Date(updatedCheckInDate);
-              saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: updatedDate } });
-            }}>OK</button>
-          </div>
         )
       }
 
@@ -230,7 +225,7 @@ const CheckInItem = (
         </div>
       </div>
 
-      <FeedItemContent feedItem={feedItem} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} post={post} />
+      <CheckInItemContent checkInItem={checkInItem} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} post={post} editable={editable} />
 
     </div>
   );
@@ -245,7 +240,8 @@ export default connect(state => ({
   loadingFeedItem: state.posts.loadingFeedItem,
   propertyUpdated: state.posts.propertyUpdated,
   updateFeedItem: state.posts.updateFeedItem,
-  updatedCheckInDate: state.posts.updatedCheckInDate
+  updatedCheckInDate: state.posts.updatedCheckInDate,
+  editCheckIn: state.posts.editCheckIn
 }), {
   navigate,
   setProperty,
