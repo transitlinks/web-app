@@ -5,13 +5,49 @@ import {
   SAVE_TERMINAL_SUCCESS,
   GET_TERMINALS_ERROR,
   GET_TERMINALS_START,
-  GET_TERMINALS_SUCCESS
-} from "../constants";
+  GET_TERMINALS_SUCCESS,
+  GET_FEED_START,
+  GET_FEED_SUCCESS,
+  GET_FEED_ERROR, SAVE_CHECKIN_START, SAVE_CHECKIN_SUCCESS, SAVE_CHECKIN_ERROR,
+} from '../constants';
 
 export default function reduce(state = {}, action) {
 
   switch (action.type) {
 
+    case GET_FEED_START:
+    case GET_FEED_SUCCESS:
+    case GET_FEED_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => {
+            return {
+              ...state,
+              savedTerminal: null
+            };
+          },
+          success: () => state,
+          error: () => state
+        },
+        GET_FEED_START,
+        GET_FEED_SUCCESS,
+        GET_FEED_ERROR
+      );
+    case SAVE_CHECKIN_START:
+    case SAVE_CHECKIN_SUCCESS:
+    case SAVE_CHECKIN_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => state,
+          success: () => ({ ...state, terminalProperties: {}, terminal: null }),
+          error: () => state
+        },
+        SAVE_CHECKIN_START,
+        SAVE_CHECKIN_SUCCESS,
+        SAVE_CHECKIN_ERROR
+      );
     case SAVE_TERMINAL_START:
     case SAVE_TERMINAL_SUCCESS:
     case SAVE_TERMINAL_ERROR:
@@ -20,6 +56,7 @@ export default function reduce(state = {}, action) {
         {
           start: () => ({}),
           success: () => ({
+            terminal: null,
             savedTerminal: Object.assign(
               action.payload.terminal,
               { saved: (new Date()).getTime() }

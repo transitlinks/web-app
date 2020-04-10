@@ -20,11 +20,9 @@ import discover from './discover';
 import links from './links';
 import search from './search';
 import link from './link';
-import linkInstance from './linkInstance';
 import checkIn from './checkIn';
 import login from './login';
 import account from './account';
-import add from './add';
 import content from './content';
 import error from './error';
 
@@ -41,12 +39,9 @@ const routes = {
     links,
     login,
     account,
-    add,
     search,
     link,
-    linkInstance,
     checkIn,
-    // place new routes before...
     content,
     error,
   ],

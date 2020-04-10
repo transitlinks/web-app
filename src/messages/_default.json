@@ -32,7 +32,7 @@
     "message": "",
     "files": [
       "src/components/Account/messages.links.js",
-      "src/components/Add/messages.links.js"
+      "src/components/EditCheckInItem/messages.links.js"
     ]
   },
   {
@@ -42,8 +42,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -53,8 +53,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -63,9 +63,9 @@
     "defaultMessage": "Biking",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -76,9 +76,9 @@
     "defaultMessage": "Bus",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -89,9 +89,9 @@
     "defaultMessage": "Hitch-hiking (autostop)",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -102,9 +102,9 @@
     "defaultMessage": "Shared taxi",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -115,9 +115,9 @@
     "defaultMessage": "Train",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -128,9 +128,9 @@
     "defaultMessage": "Van (mini bus, marshrutka)",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -141,9 +141,9 @@
     "defaultMessage": "Walking",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -395,8 +395,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -406,8 +406,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -417,8 +417,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -437,8 +437,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -448,8 +448,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -459,8 +459,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -470,8 +470,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/Add/messages.profile.js",
-      "src/components/Add/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.profile.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -502,9 +502,9 @@
     "defaultMessage": "Ship or boat",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -515,9 +515,9 @@
     "defaultMessage": "Car",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -528,9 +528,9 @@
     "defaultMessage": "Taxi",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -541,9 +541,9 @@
     "defaultMessage": "Helicopter",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -554,9 +554,9 @@
     "defaultMessage": "Airplane",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -567,9 +567,9 @@
     "defaultMessage": "Running",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -580,9 +580,9 @@
     "defaultMessage": "Swimming",
     "message": "",
     "files": [
-      "src/components/Add/messages.terminal.js",
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
+      "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditLinkInstance/messages.js",
       "src/components/EditTrip/messages.js"
     ]
@@ -594,10 +594,10 @@
     "message": "",
     "files": [
       "src/components/Account/messages.js",
-      "src/components/Add/messages.js",
-      "src/components/CheckIn/messages.js",
       "src/components/Discover/messages.js",
-      "src/components/Links/messages.js"
+      "src/components/EditCheckInItem/messages.js",
+      "src/components/Links/messages.js",
+      "src/components/NewCheckIn/messages.js"
     ]
   },
   {
@@ -606,8 +606,8 @@
     "defaultMessage": "Link",
     "message": "",
     "files": [
-      "src/components/Add/messages.js",
-      "src/components/CheckIn/messages.js"
+      "src/components/EditCheckInItem/messages.js",
+      "src/components/NewCheckIn/messages.js"
     ]
   },
   {
@@ -616,8 +616,8 @@
     "defaultMessage": "Place",
     "message": "",
     "files": [
-      "src/components/Add/messages.js",
-      "src/components/CheckIn/messages.js"
+      "src/components/EditCheckInItem/messages.js",
+      "src/components/NewCheckIn/messages.js"
     ]
   }
 ]

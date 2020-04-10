@@ -150,23 +150,26 @@
 .linkedRow1 {
   display: flex;
   justify-content: space-evenly;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .linkedControls {
-  width: 100%;
-  padding-right: 8px;
-  padding-left: 8px;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.linkedControls .editArrival {
+  margin-right: 24px;
+}
+
+.linkedControls .unlink {
+  margin-top: 8px;
 }
 
 .linkedDateTime {
   display: flex;
   margin-top: -18px;
-}
-
-.unlink {
-  margin-top: 8px;
 }
 
 

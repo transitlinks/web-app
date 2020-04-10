@@ -4,8 +4,8 @@ import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Home.css';
-import Add from '../Add';
-import CheckIn from '../CheckIn';
+import Add from '../EditCheckInItem';
+import NewCheckIn from '../NewCheckIn';
 import Feed from '../Feed';
 import Link from '../Link';
 
@@ -53,8 +53,7 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
 
   const errorElems = (!error || !error.errors) ? [] : error.errors.map(err => {
     return (
-      errorClasses[err.name] &&
-      <div className={errorClasses[err.name]}>
+      <div className={errorClasses[err.name] || s.defaultError}>
         <div>{ err.text }</div>
         <div className={s.okButton}>
           <RaisedButton label="OK" onClick={() => setProperty('posts.error', null)} />
@@ -73,10 +72,12 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
         </div>
       }
       <div>
-        <CheckIn />
+        <NewCheckIn />
       </div>
       <div>
-        {errorElems}
+        <div className={s.errors}>
+          {errorElems}
+        </div>
         <Feed post={post} feed={feed} transportTypes={transportTypes} post={post}/>
       </div>
 

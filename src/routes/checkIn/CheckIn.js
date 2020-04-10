@@ -1,13 +1,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { resetCheckIn } from '../../actions/editCheckIn';
+import { getFeedItem } from '../../actions/posts';
 import { getComments } from '../../actions/viewCheckIn';
+import { setProperty } from '../../actions/properties';
 import { navigate } from '../../actions/route';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './CheckIn.css';
-import ViewCheckIn from '../../components/ViewCheckIn';
-import EditCheckIn from '../../components/EditCheckIn';
-import { FormattedRelative } from 'react-intl';
+import CheckInView from '../../components/CheckIn';
 
 const title = 'Transitlinks - Check In';
 
@@ -17,14 +16,16 @@ class CheckIn extends React.Component {
 
     super(props);
     this.state = {
-      edit: props.edit,
-      checkIn: props.checkIn,
+      checkInItem: props.checkInItem,
       updated: 0
     };
 
   }
 
   componentDidMount() {
+    this.props.setProperty('posts.editPost', {});
+    this.props.setProperty('editTerminal.terminal', {});
+    this.props.setProperty('editTerminal.terminalProperties', {});
     this.updateComponent(this.props);
   }
 
@@ -34,40 +35,21 @@ class CheckIn extends React.Component {
 
   updateComponent(props) {
 
-    if (props.deleted && props.deleted.uuid === props.checkIn.uuid) {
-      props.resetCheckIn();
-      props.navigate(`/link/${props.checkIn.link.uuid}?deleted=1`);
+    if (props.deleted) {
+      props.setProperty('posts.deletedCheckIn', null);
+      props.setProperty('posts.editCheckIn', false);
+      props.navigate('/');
       return;
     }
 
-    // Transition to link when save is detected
-    const stateUpdated = this.state.updated;
-    const propUpdated = props.saved ? props.saved.saved : stateUpdated;
-
-    const state = {
-      edit: props.edit,
-      checkIn: (propUpdated > stateUpdated) ? props.saved : props.checkIn,
-      updated: propUpdated
-    };
-
-    const { savedCommentUuid } = this.state;
-    if (props.savedComment) {
-      if (!savedCommentUuid || savedCommentUuid !== props.savedComment.uuid) {
-        props.getComments(this.state.checkIn.uuid);
-      }
-      state.savedCommentUuid = props.savedComment.uuid;
+    if (props.savedTerminal) {
+      props.setProperty('posts.savedTerminal', null);
+      props.getFeedItem(props.checkInItem.checkIn.uuid, 'frame-edit');
     }
 
-    this.setState(state);
-
-    if (propUpdated > stateUpdated) {
-      props.resetCheckIn();
-      props.navigate(`/link-instance/${props.saved.privateUuid}`);
-      return;
-    }
-
-    if (props.edit) {
-      props.resetCheckIn(props.checkIn);
+    if (props.savedPost) {
+      props.setProperty('posts.savedPost', null);
+      props.getFeedItem(props.checkInItem.checkIn.uuid, 'frame-edit');
     }
 
   }
@@ -75,25 +57,17 @@ class CheckIn extends React.Component {
   render() {
 
     this.context.setTitle(title);
+
     const {
       checkInItem,
-      transportTypes
-    }  = this.props;
+      transportTypes,
+      openTerminals
+    } = this.props;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
-          {
-            !this.state.edit ?
-              <ViewCheckIn
-                checkInItem={checkInItem} transportTypes={transportTypes} /> :
-              <EditCheckIn
-                transportTypes={transportTypes}
-                checkIn={checkInItem} />
-          }
-          <div>
-
-          </div>
+          <CheckInView checkInItem={checkInItem} openTerminals={openTerminals} transportTypes={transportTypes} />;
         </div>
       </div>
     );
@@ -103,15 +77,15 @@ class CheckIn extends React.Component {
 }
 
 CheckIn.propTypes = {
-  checkIn: PropTypes.object.isRequired
+  checkInItem: PropTypes.object.isRequired
 };
 CheckIn.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
   saved: state.editCheckIn.checkIn,
-  deleted: state.editCheckIn.deleteCheckIn,
-  savedComment: state.viewCheckIn.savedComment,
-  stateComments: state.viewCheckIn.comments,
+  deleted: state.posts.deletedCheckIn,
+  savedTerminal: state.editTerminal.savedTerminal,
+  savedPost: state.posts.savedPost
 }), {
-  resetCheckIn, getComments, navigate
+  getFeedItem, getComments, navigate, setProperty
 })(withStyles(s)(CheckIn));

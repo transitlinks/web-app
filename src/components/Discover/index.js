@@ -89,7 +89,7 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
                   { renderTerminalsList('departure', discovery.connectionsTo, discovery.groupName) }
                 </div>
                 <div className={s.postSummary}>
-                  <CheckInItem feedItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+                  <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
                   <PostCollection posts={posts} frameId={frameId} transportTypes={transportTypes} />
                 </div>
               </div>

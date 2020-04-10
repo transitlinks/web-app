@@ -109,7 +109,7 @@ export const saveCheckIn = ({ checkIn }) => {
 
 };
 
-export const deleteCheckIn = ({ checkInUuid }) => {
+export const deleteCheckIn = (uuid) => {
 
   return async (...args) => {
 
@@ -118,7 +118,7 @@ export const deleteCheckIn = ({ checkInUuid }) => {
 
     const query = `
       mutation deleteCheckIn {
-        deleteCheckIn(checkInUuid:"${checkInUuid}", clientId:"${clientId}") {
+        deleteCheckIn(checkInUuid:"${uuid}", clientId:"${clientId}") {
           uuid,
           latitude,
           longitude,
@@ -152,7 +152,12 @@ export const savePost = ({ post }) => {
       mutation savePost {
         post(post:${toGraphQLObject(post)}, clientId:"${clientId}") {
           uuid,
-          text
+          text,
+          mediaItems {
+            uuid,
+            type,
+            url
+          }
         }
       }
     `;

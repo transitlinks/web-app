@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Feed.css';
-import Add from '../Add';
+import EditCheckInItem from '../EditCheckInItem';
 import CheckInItem from '../CheckInItem';
 
 
@@ -21,7 +21,6 @@ const FeedView = ({
 
 
   let editOpen = false;
-  console.log('has post', post);
 
   return (
     <div className={s.container}>
@@ -32,22 +31,23 @@ const FeedView = ({
           feedItems.map((feedItem, index) => {
 
             const { checkIn } = feedItem;
-            const frameId = `feed-${checkIn.uuid}`;
 
             const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid && !editOpen;
             if (editable) editOpen = true;
 
+            const frameId = editable ? 'frame-new' : `feed-${checkIn.uuid}`;
             const fetchedFeedItem = fetchedFeedItems[frameId];
 
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`} id={`feed-item-${index}`}>
                 {
                   ((post && post.checkInUuid === checkIn.uuid) || editable) ?
-                    <Add feedItem={feedItem}
+                    <EditCheckInItem checkInItem={(fetchedFeedItem || feedItem)}
                          openTerminals={openTerminals}
                          transportTypes={transportTypes}
-                         post={post} />
-                    : <CheckInItem checkInItem={(fetchedFeedItem || feedItem)} feedItemIndex={index} frameId={frameId} transportTypes={transportTypes} editable={false} />
+                         frameId
+                         newCheckIn />
+                    : <CheckInItem checkInItem={(fetchedFeedItem || feedItem)} feedItemIndex={index} frameId={frameId} transportTypes={transportTypes} editable={false} feedItem />
                 }
               </div>
             );

@@ -161,6 +161,20 @@
 
 }
 
+.errors {
+  margin-bottom: 16px;
+}
+
+.defaultError {
+  padding: 6px;
+  text-align: center;
+}
+
+.defaultError .okButton {
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
 .prelaunchError {
   background-color: goldenrod;
   padding: 6px;

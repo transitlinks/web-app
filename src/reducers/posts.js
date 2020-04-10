@@ -6,9 +6,6 @@ import {
   GET_POSTS_ERROR,
   GET_POSTS_START,
   GET_POSTS_SUCCESS,
-  SAVE_TERMINAL_ERROR,
-  SAVE_TERMINAL_START,
-  SAVE_TERMINAL_SUCCESS,
   GET_TERMINALS_ERROR,
   GET_TERMINALS_START,
   GET_TERMINALS_SUCCESS,
@@ -43,12 +40,16 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({}),
-          success: () => ({
-            post: Object.assign(
-              action.payload.post,
-              { saved: (new Date()).getTime() }
-            )
-          }),
+          success: () => {
+            return {
+              post: Object.assign(
+                action.payload.post,
+                { saved: (new Date()).getTime() }
+              ),
+              editPost: {},
+              savedPost: action.payload.post
+            };
+          },
           error: () => ({ post: null })
         },
         SAVE_POST_START,
@@ -70,25 +71,6 @@ export default function reduce(state = {}, action) {
         GET_POSTS_START,
         GET_POSTS_SUCCESS,
         GET_POSTS_ERROR
-      );
-    case SAVE_TERMINAL_START:
-    case SAVE_TERMINAL_SUCCESS:
-    case SAVE_TERMINAL_ERROR:
-      return graphqlReduce(
-        state, action,
-        {
-          start: () => ({}),
-          success: () => ({
-            savedTerminal: Object.assign(
-              action.payload.terminal,
-              { saved: (new Date()).getTime() }
-            )
-          }),
-          error: () => ({ savedTerminal: null })
-        },
-        SAVE_TERMINAL_START,
-        SAVE_TERMINAL_SUCCESS,
-        SAVE_TERMINAL_ERROR
       );
     case GET_TERMINALS_START:
     case GET_TERMINALS_SUCCESS:
@@ -114,12 +96,13 @@ export default function reduce(state = {}, action) {
         {
           start: () => ({}),
           success: () => {
+
             const checkIn = Object.assign(
               action.payload.checkIn,
               { saved: (new Date()).getTime() }
             );
+
             const { feedProperties } = state;
-            console.log(feedProperties);
             if (feedProperties) {
               if (feedProperties['frame-add']) {
                 if (feedProperties['feed-1']) {
@@ -128,7 +111,17 @@ export default function reduce(state = {}, action) {
                 feedProperties['frame-add'] = {};
               }
             }
-            return { checkIn, feedProperties, error: null };
+
+            const fetchedFeedItems = state.fetchedFeedItems || {};
+            fetchedFeedItems['frame-new'] = null; //{ checkIn };
+            return {
+              checkIn,
+              feedProperties,
+              editPost: {},
+              fetchedFeedItem: null,
+              fetchedFeedItems,
+              error: null
+            };
           },
           error: () => ({ checkIn: null, error: action.payload.error })
         },
@@ -192,11 +185,12 @@ export default function reduce(state = {}, action) {
             };
           },
           success: () => {
+
             const { feed, variables: { add } } = action.payload;
 
             if (!add) {
               return {
-                feed: feed,
+                feed,
                 loadingFeed: false,
                 feedOffset: feed.feedItems.length
               };
@@ -206,6 +200,7 @@ export default function reduce(state = {}, action) {
             for (let i = 0; i < feed.feedItems.length; i++) {
               stateFeed.feedItems.push(feed.feedItems[i]);
             }
+
             return {
               feed: stateFeed,
               feedOffset: stateFeed.feedItems.length,
@@ -232,14 +227,14 @@ export default function reduce(state = {}, action) {
             loadingFeedItem: 'loading'
           }),
           success: () => {
-
             let { fetchedFeedItems } = state;
             if (!fetchedFeedItems) fetchedFeedItems = {};
             const { feedItem, variables } = action.payload;
             fetchedFeedItems[variables.frameId] = feedItem;
-
+            const fetchedFeedItem = variables.frameId === 'frame-edit' ? feedItem : null;
             return {
               fetchedFeedItems,
+              fetchedFeedItem,
               loadingFeedItem: 'loaded',
               feedUpdated: (new Date()).getTime()
             };

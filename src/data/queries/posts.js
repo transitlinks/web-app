@@ -4,12 +4,11 @@ import sharp from 'sharp';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
 
-import { getVideos, uploadVideo } from '../../services/youtubeDataApi';
+import { uploadVideo } from '../../services/youtubeDataApi';
 
 import {
   postRepository,
-  userRepository,
-  placesApi, linkRepository
+  userRepository
 } from '../source';
 
 import {
@@ -28,11 +27,11 @@ import {
 
 import {
   GraphQLString,
-  GraphQLInt
+  GraphQLInt, GraphQLList,
 } from 'graphql';
 
 
-import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
+import { STORAGE_PATH, MEDIA_PATH } from '../../config';
 
 const throwPrelaunchError = () => {
   throw Object.assign(new Error('Access error'), {
@@ -44,17 +43,28 @@ const throwPrelaunchError = () => {
   });
 };
 
+const throwMustBeLoggedInError = () => {
+  throw Object.assign(new Error('Not logged in'), {
+    extensions: {
+      name: 'NotLoggedIn',
+      text: 'Please, log in to create content :)',
+      statusCode: 401
+    }
+  });
+};
+
 const requireOwnership = async (request, clientId, entity) => {
 
   if (!entity.uuid) return null;
 
-  let userId = null;
-
+  /*
   if (!request.user || request.user.email !== 'vhalme@gmail.com') {
     throwPrelaunchError();
   }
+  */
 
-  /*
+  let userId = null;
+
   if (request.user) {
     userId = await userRepository.getUserIdByUuid(request.user.uuid);
     if (entity.userId !== userId) {
@@ -63,9 +73,28 @@ const requireOwnership = async (request, clientId, entity) => {
   } else if (!(clientId && clientId === entity.clientId)) {
     throw new Error('Access not allowed for client id');
   }
-  */
 
   return userId;
+
+};
+
+const getEntityCredentials = async (request, entity) => {
+
+  const credentials = {
+    userAccess: 'view'
+  };
+
+  if (entity.userId) {
+    const checkInUser = await userRepository.getById(entity.userId);
+    if (checkInUser) {
+      credentials.ownerFullName = `${checkInUser.firstName} ${checkInUser.lastName}`;
+    }
+    if (request.user && request.user.uuid === checkInUser.uuid) {
+      credentials.userAccess = 'edit';
+    }
+  }
+
+  return credentials;
 
 };
 
@@ -166,22 +195,28 @@ const savePost = async (postInput, clientId, request) => {
   await addUserId(post, request);
 
   let saved = await postRepository.savePost(post);
+  //let savedMediaItems = await postRepository.getMediaItems({ entityUuid: saved.uuid });
+  //const savedMediaItemUuids = savedMediaItems.map(mediaItem => mediaItem.uuid);
 
   const { mediaItems } = postInput;
   if (mediaItems && mediaItems.length > 0) {
     for (let i = 0; i < mediaItems.length; i++) {
-      const { thumbnail, type, url } = mediaItems[i];
-      postRepository.saveMediaItem({
-        thumbnail, type, url,
-        entityUuid: saved.uuid,
-        entityType: 'Post'
-      });
+      const { thumbnail, type, url, uuid } = mediaItems[i];
+      //if (!savedMediaItemUuids.includes(uuid)) {
+        postRepository.saveMediaItem({
+          uuid, thumbnail, type, url,
+          entityUuid: saved.uuid,
+          entityType: 'Post'
+        });
+      //}
+
     }
   }
 
 
   saved = saved.json();
-  saved.mediaItems = mediaItems;
+  const savedMediaItems = await postRepository.getMediaItems({ entityUuid: saved.uuid });
+  saved.mediaItems = savedMediaItems.map(mediaItem => mediaItem.json());
 
   return saved;
 
@@ -189,14 +224,14 @@ const savePost = async (postInput, clientId, request) => {
 
 const saveCheckIn = async (checkInInput, clientId, request) => {
 
+  if (!request.user) {
+    throwMustBeLoggedInError();
+  }
+
   let userId = null;
   if (checkInInput.uuid) {
     const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
     userId = await requireOwnership(request, clientId, savedCheckIn);
-  }
-
-  if (!request.user) {
-    throwPrelaunchError();
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [
@@ -533,30 +568,23 @@ export const getFeedItem = async (request, checkIn) => {
   log.info(graphLog(request, 'get-feed-item', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
   const linkedCheckIns = await getLinkedCheckIns(checkIn, request);
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
+  const credentials = await getEntityCredentials(request, checkIn);
 
-  let checkInUser = null;
-  if (checkIn.userId) {
-    checkInUser = await userRepository.getById(checkIn.userId);
-    checkInUser = checkInUser.firstName + ' ' + checkInUser.lastName;
-  }
+  log.info('check in cred', credentials);
 
   return {
+    userAccess: credentials.userAccess,
     checkIn: {
       ...(checkIn.json()),
-      user: checkInUser,
+      user: credentials.ownerFullName,
       date: checkIn.createdAt
     },
     ...linkedCheckIns,
     posts: posts.map(async (post) => {
       const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
-      let userName = null;
-      if (post.userId) {
-        const user = await userRepository.getById(post.userId);
-        userName = user.firstName + ' ' + user.lastName;
-      }
       return {
         ...post.json(),
-        user: userName,
+        user: credentials.ownerFullName,
         mediaItems: mediaItems.map(mediaItem => mediaItem.json())
       };
     }),
@@ -681,6 +709,41 @@ export const PostQueryFields = {
           };
         })
       };
+
+    }
+
+  },
+
+  openTerminals: {
+
+    type: new GraphQLList(TerminalType),
+    description: 'Open terminals for user',
+    args: {
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { clientId }) => {
+
+      const openTerminalParams = { linkedTerminalId: null };
+
+      if (request.user) {
+        const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+        openTerminalParams.userId = userId;
+      } else if (clientId) {
+        openTerminalParams.clientId = clientId;
+      }
+
+      const openTerminals = await postRepository.getTerminals(openTerminalParams);
+
+      const result = openTerminals.map(async (terminal) => {
+        const terminalCheckIn = await postRepository.getCheckIn({ id: terminal.checkInId });
+        return {
+          ...terminal.json(),
+          checkIn: terminalCheckIn.json()
+        };
+      });
+
+      console.log("OPEN TERMINALS", result);
+      return result;
 
     }
 

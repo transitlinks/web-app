@@ -64,6 +64,7 @@ export const TerminalInputType = new GraphQLInputObjectType({
   name: 'TerminalInput',
   description: 'Input properties of Transitlinks Terminal object',
   fields: {
+    uuid: { type: GraphQLString },
     checkInUuid: { type: GraphQLString },
     linkedTerminalUuid: { type: GraphQLString },
     clientId: { type: GraphQLString },
@@ -154,6 +155,7 @@ export const FeedItemType = new GraphQLObjectType({
   name: 'FeedItem',
   description: 'Transitlinks FeedItem object',
   fields: {
+    userAccess: { type: GraphQLString },
     checkIn: { type: CheckInType },
     inbound: { type: new GraphQLList(CheckInType) },
     outbound: { type: new GraphQLList(CheckInType) },

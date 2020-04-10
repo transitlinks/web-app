@@ -11,7 +11,7 @@ import FontIcon from 'material-ui/FontIcon';
 import { setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
-import terminalMsg from '../Add/messages.terminal';
+import terminalMsg from '../EditCheckInItem/messages.terminal';
 
 const Post = ({
   post, header, env

@@ -10,7 +10,8 @@ import FontIcon from 'material-ui/FontIcon';
 import { setProperty } from "../../actions/properties";
 import { getFeedItem } from "../../actions/posts";
 
-import terminalMsg from '../Add/messages.terminal';
+import terminalMsg from '../EditCheckInItem/messages.terminal';
+import Link from '../Link';
 
 const Terminal = ({
   terminal, env
@@ -22,7 +23,7 @@ const Terminal = ({
       linkedTerminalAddress = (
         <div className={s.terminalEntryAddress}>
           { direction }:&nbsp;
-          <a href="">{ terminal.linkedTerminal.checkIn.formattedAddress }</a>
+          <Link to={`/check-in/${terminal.linkedTerminal.checkIn.uuid}`}>{ terminal.linkedTerminal.checkIn.formattedAddress }</Link>
         </div>
       );
   }

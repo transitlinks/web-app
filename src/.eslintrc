@@ -4,6 +4,7 @@
     "global-require": 0,
     "no-shadow": 0,
     "comma-dangle": 0,
-    "dot-notation": 0
+    "dot-notation": 0,
+    "react/jsx-closing-bracket-location": 0
   }
 }

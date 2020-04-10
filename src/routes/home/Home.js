@@ -5,7 +5,7 @@ import HomeView from '../../components/Home';
 
 import { connect } from "react-redux";
 import { getGeolocation } from "../../actions/global";
-import { getFeed } from "../../actions/posts";
+import { getFeed, getFeedItem } from "../../actions/posts";
 import { setProperty } from "../../actions/properties";
 import {getClientId} from "../../core/utils";
 
@@ -54,9 +54,18 @@ class Home extends React.Component {
 
   }
 
-  componentDidMount(props) {
+  componentDidMount() {
 
     const clientId = getClientId();
+    this.props.setProperty('posts.editPost', {});
+    this.props.setProperty('editTerminal.terminal', {});
+    this.props.setProperty('editTerminal.terminalProperties', {});
+    const checkIn = this.props.savedCheckIn;
+    console.log('is editing checkin', checkIn);
+    if (checkIn) {
+      this.props.getFeedItem(checkIn.uuid, 'frame-new');
+    }
+
     this.props.getGeolocation();
     const params = getParams(this.props);
     params.offset = 0;
@@ -74,9 +83,6 @@ class Home extends React.Component {
 
     const prevPost = prevProps.savedPost;
     const post = this.props.savedPost;
-
-    const prevTerminal = prevProps.savedTerminal;
-    const terminal = this.props.savedTerminal;
 
     const prevDelCheckIn = prevProps.deletedCheckIn;
     const delCheckIn = this.props.deletedCheckIn;
@@ -101,18 +107,9 @@ class Home extends React.Component {
 
     if (post) {
       if (!prevPost || prevPost.saved !== post.saved) {
-        console.log("post added");
         this.props.setProperty('posts.postText', '');
         this.props.setProperty('posts.mediaItems', []);
-        this.props.getFeed(clientId, params);
-      }
-    }
-
-    if (terminal) {
-      if (!prevTerminal || prevTerminal.saved !== terminal.saved) {
-        this.props.setProperty('posts.addType', terminal.type);
-        this.props.setProperty('editTerminal.terminalProperties', null);
-        this.props.getFeed(clientId, params);
+        this.props.getFeedItem(checkIn.uuid, 'frame-new');
       }
     }
 
@@ -121,6 +118,12 @@ class Home extends React.Component {
       setTimeout(() => {
         document.getElementById(`feed-item-${frame}`).scrollIntoView(true);
       }, 100);
+    }
+
+
+    const savedTerminal = this.props.savedTerminal;
+    if (savedTerminal) {
+      this.props.getFeedItem(checkIn.uuid, 'frame-new');
     }
 
   }
@@ -155,12 +158,13 @@ export default connect(state => ({
   savedCheckIn: state.posts.checkIn,
   deletedCheckIn: state.posts.deletedCheckIn,
   savedPost: state.posts.post,
-  savedTerminal: state.posts.savedTerminal,
+  savedTerminal: state.editTerminal.savedTerminal,
   offset: state.posts.feedOffset,
   loadingFeed: state.posts.loadingFeed,
   loadFeedOffset: state.posts.loadFeedOffset
 }), {
   getGeolocation,
   getFeed,
+  getFeedItem,
   setProperty
 })(withStyles(s)(Home));

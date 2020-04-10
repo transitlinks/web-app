@@ -1,10 +1,11 @@
 import { getLog } from '../../core/log';
-const log = getLog('routes/linkInstance');
+const log = getLog('routes/checkIn');
 
 import React from 'react';
 import CheckIn from './CheckIn';
 import ErrorPage from '../../components/common/ErrorPage';
 import { createQuery, getFeedItemQuery } from '../../data/queries/queries';
+import { getClientId } from '../../core/utils';
 
 export default {
 
@@ -27,7 +28,27 @@ export default {
 
         const query = createQuery([
           getFeedItemQuery(params.uuid),
-          'transportTypes { slug }'
+          'transportTypes { slug }',
+          `openTerminals {
+              uuid,
+              type,
+              transport,
+              transportId,
+              description,
+              date,
+              time,
+              priceAmount,
+              priceCurrency,
+              checkIn {
+                uuid,
+                latitude,
+                longitude,
+                placeId,
+                formattedAddress,
+                locality,
+                country
+              }
+          }`
         ]);
 
         const { data } = await graphqlRequest(query);
@@ -37,12 +58,10 @@ export default {
         const edit = params.action === 'edit';
         const props = {
           edit,
-          checkInItem: data.feedItem
+          checkInItem: data.feedItem,
+          transportTypes: data.transportTypes,
+          openTerminals: data.openTerminals
         };
-
-        if (edit) {
-          props.transportTypes = data.transportTypes;
-        }
 
         return <CheckIn {...props} />;
 

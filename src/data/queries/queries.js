@@ -11,6 +11,7 @@ export const getFeedItemQuery = (checkInUuid) => {
 
   const query = `
         feedItem (checkInUuid:"${checkInUuid}") {
+          userAccess,
           checkIn {
             uuid,
             user,

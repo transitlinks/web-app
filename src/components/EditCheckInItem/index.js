@@ -4,24 +4,22 @@ import TextField from 'material-ui/TextField';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
-import s from './Add.css';
+import s from './EditCheckInItem.css';
 import Terminal from './Terminal';
-import FeedItemContent from '../CheckInItemContent';
+import CheckInItemContent from '../CheckInItemContent';
 import { getGeolocation } from '../../actions/global';
-import { savePost, saveCheckIn, uploadFiles, getMediaItem } from '../../actions/posts';
+import { savePost, saveCheckIn, deleteCheckIn, uploadFiles, getMediaItem } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
-import { injectIntl, FormattedMessage } from 'react-intl';
-import msg from './messages';
-
-const formatCoords = (coords) => {
-  const { latitude, longitude } = coords;
-  return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
-};
+import { injectIntl } from 'react-intl';
 
 const typeSelector = (iconName, isSelected, onClick) => {
   return (
-    <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})} onClick={() => onClick()}>
+    <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})} onClick={() => {
+      setProperty('editTerminal.terminal', {});
+      setProperty('posts.editPost', {});
+      onClick();
+    }}>
       <div>
         <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{iconName}</FontIcon>
       </div>
@@ -45,7 +43,7 @@ const createCheckIn = (geolocation) => {
 
 const createPost = (props) =>  {
 
-  const { postText, post, feedItem: { checkIn }, mediaItems } = props;
+  const { editPost, checkInItem: { checkIn }, mediaItems } = props;
   const clientId = getClientId();
 
   (mediaItems || []).forEach(mediaItem => {
@@ -54,8 +52,8 @@ const createPost = (props) =>  {
 
   return {
     post: {
-      uuid: post ? post.uuid : null,
-      text: postText,
+      uuid: editPost.uuid,
+      text: editPost.text,
       mediaItems,
       checkInUuid: checkIn.uuid,
       clientId
@@ -68,9 +66,9 @@ const createPost = (props) =>  {
 const getTabContent = (type, props) => {
 
   const {
-    feedItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env, post,
+    checkInItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
     savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia,
-    loadedMediaItemChanged, loadMediaItem, loadMediaItemError
+    loadedMediaItemChanged, loadMediaItem, loadMediaItemError, newCheckIn, savedTerminal
   } = props;
 
   const onFileInputChange = (event) => {
@@ -87,6 +85,8 @@ const getTabContent = (type, props) => {
       getMediaItem(loadMediaItem.uuid);
     }, loadTimeout);
   }
+
+  const terminal = (editTerminal && editTerminal.type === type) ? editTerminal : { type };
 
   switch (type) {
 
@@ -128,12 +128,14 @@ const getTabContent = (type, props) => {
           <div className={s.contentHorizontal}>
             <div className={s.commentContainer}>
               <TextField id="post-text"
-                         value={postText === undefined ? ((post && post.text) || '') : postText}
-                         multiLine={true}
-                         fullWidth={true}
+                         value={editPost.text || ''}
+                         multiLine
+                         fullWidth
                          rows={2}
-                         onChange={(e) => setProperty('posts.postText', e.target.value)}
-                         hintText={(!postText) ? "What's up?" : null}
+                         onChange={(e) => {
+                           setProperty('posts.editPost', { ...editPost, text: e.target.value });
+                         }}
+                         hintText={!editPost.text ? "What's up?" : null}
                          hintStyle={{ bottom: '36px'}}
               />
             </div>
@@ -157,13 +159,13 @@ const getTabContent = (type, props) => {
     case 'arrival':
       return (
         <div className={s.contentEditor}>
-          <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="arrival" terminal={{ type: 'arrival '}} />
+          <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="arrival" terminal={terminal} />
         </div>
       );
     case 'departure':
       return (
         <div className={s.contentEditor}>
-          <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="departure" terminal={{ type: 'departure '}} />
+          <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="departure" terminal={terminal} />
         </div>
       );
     case 'lodging':
@@ -189,18 +191,19 @@ const getTabContent = (type, props) => {
 };
 
 
-const AddView = (props) => {
+const EditCheckInItemView = (props) => {
 
   const {
-    type, transportTypes, feedItem, openTerminals, intl, geolocation, post, postText, mediaItems,
-    setProperty, getGeolocation, savePost, saveCheckIn, uploadingMedia
+    type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost, postText, mediaItems,
+    setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, uploadingMedia, newCheckIn, savedTerminal, frameId
   } = props;
 
+  console.log("editpost", editPost);
   let positionElem = null;
   if (geolocation) {
     if (geolocation.status === 'located') {
       const { position } = geolocation;
-      positionElem = feedItem.checkIn.formattedAddress;
+      positionElem = checkInItem.checkIn.formattedAddress;
     } else if (geolocation.status === 'locating') {
       positionElem = (
         <div>
@@ -213,13 +216,15 @@ const AddView = (props) => {
           { geolocation.error }
         </div>
       );
+    } else if (checkInItem.checkIn.formattedAddress) {
+      positionElem = checkInItem.checkIn.formattedAddress;
     }
   }
 
-  const { checkIn } = feedItem;
+  const { checkIn } = checkInItem;
 
   let defaultType = 'reaction';
-  if (openTerminals && openTerminals.length > 0) {
+  if (!editPost.uuid && openTerminals && openTerminals.length > 0) {
     const openArrivals = openTerminals.filter(terminal => (terminal.type === 'arrival' && terminal.checkIn.uuid !== checkIn.uuid));
     const openDepartures = openTerminals.filter(terminal => (terminal.type === 'departure' && terminal.checkIn.uuid !== checkIn.uuid));
     if (openArrivals.length > 0) {
@@ -231,15 +236,34 @@ const AddView = (props) => {
 
   const selectedType = type || defaultType;
 
-	return (
+  const departures = checkInItem.terminals.filter(terminal => terminal.type === 'departure');
+  const arrivals = checkInItem.terminals.filter(terminal => terminal.type === 'arrival');
+
+  const showSavedTerminal = (
+    (departures.length > 0 && selectedType === 'departure') ||
+    (arrivals.length > 0 && selectedType === 'arrival')
+  ) && !editTerminal.uuid;
+  const showContent = (!editTerminal.uuid && selectedType !== 'reaction') ||
+    (!editPost.uuid && selectedType === 'reaction') || showSavedTerminal;
+  const showEditor = !showSavedTerminal;
+
+  return (
 	  <div className={s.root}>
       <div className={s.container}>
         <div className={s.placeSelector}>
           <div className={s.positionContainer}>
             <div className={s.positionSelector}>
-              <div className={s.editPositionButton} onClick={() => {
-                saveCheckIn({ checkIn: createCheckIn(geolocation) });
-              }}>
+              <div className={s.editControls}>
+                {
+                  newCheckIn ?
+                    <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                      deleteCheckIn(checkIn.uuid);
+                    }}>delete</FontIcon> :
+                    <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                      setProperty('editTerminal.terminal', {});
+                      setProperty('posts.editPost', {});
+                    }}>close</FontIcon>
+                }
 
               </div>
               <div className={s.positionValue}>
@@ -249,24 +273,30 @@ const AddView = (props) => {
           </div>
         </div>
         <div className={s.postContent}>
-          <div className={s.contentTypeContainer}>
-            <div className={s.contentTypeSelectors}>
-              { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
-              { typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
-              { typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
-              { typeSelector('hotel', selectedType === 'lodging', () => setProperty('posts.addType', 'lodging')) }
+          {
+            ((!editPost.uuid && !editTerminal.uuid && !addPost) || newCheckIn) &&
+            <div className={s.contentTypeContainer}>
+              <div className={s.contentTypeSelectors}>
+                { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
+                { typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
+                { typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
+                { typeSelector('hotel', selectedType === 'lodging', () => setProperty('posts.addType', 'lodging')) }
+              </div>
             </div>
-          </div>
-          { getTabContent(selectedType, props) }
+          }
+          { showEditor && getTabContent(selectedType, props) }
         </div>
       </div>
-      <FeedItemContent transportTypes={transportTypes} feedItem={feedItem} contentType={selectedType} frameId={'frame-add'} post={post} />
+      {
+        showContent &&
+          <CheckInItemContent transportTypes={transportTypes} checkInItem={checkInItem} contentType={selectedType} frameId={frameId} editPost={editPost} editable />
+      }
     </div>
   );
 
 };
 
-AddView.contextTypes = { setTitle: PropTypes.func.isRequired };
+EditCheckInItemView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
   connect(state => ({
@@ -284,6 +314,10 @@ export default injectIntl(
     loadMediaItem: state.posts.loadMediaItem,
     loadMediaItemError: state.posts.loadMediaItemError,
     loadedMediaItemChanged: state.posts.loadedMediaItemChanged,
+    editPost: state.posts.editPost || {},
+    addPost: state.posts.addPost,
+    editTerminal: state.editTerminal.terminal || {},
+    savedTerminal: state.editTerminal.savedTerminal,
     env: state.env
   }), {
     setProperty,
@@ -291,6 +325,7 @@ export default injectIntl(
     savePost,
     uploadFiles,
     saveCheckIn,
-    getMediaItem
-  })(withStyles(s)(AddView))
+    getMediaItem,
+    deleteCheckIn,
+  })(withStyles(s)(EditCheckInItemView))
 );
