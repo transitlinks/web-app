@@ -50,7 +50,7 @@ const AddressAutocomplete = ({
   env,
   endpoint, location, className, compact,
   initialValue, predictions, input, id,
-  mapDialog, geocodeAddress, geocodeLatLng,
+  mapDialog, geocodeAddress, geocodePlaceId, geocodeLatLng,
   setProperty, searchAddresses, selectAddress
 }) => {
 
@@ -65,7 +65,8 @@ const AddressAutocomplete = ({
 	const selectLocation = () => {
 		setProperty(endpoint, {
 			...parseLocation(geocodeLatLng),
-			description: geocodeAddress
+			description: geocodeAddress,
+      placeId: geocodePlaceId
 		});
 		setProperty('mapDialog', null);
     setProperty('posts.searchLocation', false);
@@ -73,6 +74,7 @@ const AddressAutocomplete = ({
 
 	const setCoords = (place) => {
 
+	  console.log('place', place);
     if (env.offline) return;
 
     reverseGeocode(place.id, (result) => {
@@ -80,7 +82,8 @@ const AddressAutocomplete = ({
       setProperty(endpoint, {
         lat: location.lat(),
         lng: location.lng(),
-        description: place.text
+        description: place.text,
+        placeId: place.id
       });
     });
 
@@ -145,6 +148,7 @@ const AddressAutocomplete = ({
 
 		geocode(latLng, (result) => {
 			setProperty('geocodeAddress', result.formatted_address);
+      setProperty('geocodePlaceId', result.place_id);
 			setProperty('geocodeLatLng', latLng.lat + ',' + latLng.lng);
 		});
 
@@ -236,6 +240,7 @@ export default connect(state => ({
   predictions: state.autocomplete.localities,
   mapDialog: state.editLink.mapDialog,
 	geocodeAddress: state.editLink.geocodeAddress,
+  geocodePlaceId: state.editLink.geocodePlaceId,
 	geocodeLatLng: state.editLink.geocodeLatLng
 }), {
   setProperty,

@@ -3,60 +3,43 @@ import { connect } from 'react-redux';
 import FontIcon from 'material-ui/FontIcon';
 import AddressAutocomplete from './AddressAutocomplete';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import cx from 'classnames';
 import s from './CheckIn.css';
 import { getGeolocation } from '../../actions/global';
 import { saveCheckIn } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
-import { getClientId } from "../../core/utils";
+import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
-import msg from './messages';
-import {geocode} from "../../services/linkService";
 
-const formatCoords = (coords) => {
-  const { latitude, longitude } = coords;
-  return `${latitude}`.substring(0, 6) + '/' + `${longitude}`.substring(0, 6);
+const createCheckIn = (geolocation, selectedLocation) => {
+
+  if (!geolocation) return null;
+
+  const { position } = geolocation;
+  const locationValues = selectedLocation ? {
+    latitude: selectedLocation.lat,
+    longitude: selectedLocation.lng,
+    placeId: selectedLocation.placeId,
+    formattedAddress: selectedLocation.description
+  } : {
+    latitude: position.coords.latitude,
+    longitude: position.coords.longitude,
+    placeId: position.placeId,
+    formattedAddress: position.formattedAddress
+  };
+
+  const checkIn =  { clientId: getClientId(), ...locationValues };
+  console.log('created check-in', checkIn);
+  return checkIn;
+
 };
 
-const createCheckIn = (coords) => {
-  if (!coords) return null;
-  const { latitude, longitude } = coords;
-  return { clientId: getClientId(), latitude, longitude };
-};
 
-
-const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation, setProperty, getGeolocation, saveCheckIn }) => {
+const CheckInView = ({ geolocation, searchLocation, selectedLocation, setProperty, getGeolocation, saveCheckIn }) => {
 
   let positionElem = null;
 
-  const autocompleteProps = {
-    fullWidth: true
-  };
-
-  const searchTriggered = (input) => {
-    return input && input.length > 2;
-  };
-
-  const dataSource = () => {
-
-    if (!searchTriggered(input)) {
-      return [];
-    }
-
-    return (predictions || []).map(place => {
-      return {
-        id: place.apiId,
-        text: place.description,
-        value: place,
-        elem: (
-          <MenuItem id={place.apiId} style={{ "WebkitAppearance": "initial" }}
-                    primaryText={place.description} />
-        )
-      };
-    });
-  };
-
   if (geolocation) {
+
     if (geolocation.status === 'located') {
       const { position } = geolocation;
       let coordsStr = '';
@@ -64,21 +47,20 @@ const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation,
         coordsStr = position.coords.latitude + ',' + position.coords.longitude;
       }
 
-      const locationText = selectedLocation ?
-        selectedLocation.description : position.formattedAddress;
-        positionElem = !searchLocation ? (
-          <div className={s.positionValue}>
-            <span onClick={() => setProperty('posts.searchLocation', true)}>{ locationText }</span>
-          </div>
-        ) : (
-          <div className={s.addressAutocomplete}>
-            <AddressAutocomplete id={"checkin-autocomplete"}
-                                 initialValue={position.coords}
-                                 endpoint="departure"
-                                 location={coordsStr}
-                                 className={s.autocomplete} />
-          </div>
-        );
+      const formattedAddress = selectedLocation ? selectedLocation.description : position.formattedAddress;
+      positionElem = !searchLocation ? (
+        <div className={s.positionValue}>
+          <span onClick={() => setProperty('posts.searchLocation', true)}>{ formattedAddress }</span>
+        </div>
+      ) : (
+        <div className={s.addressAutocomplete}>
+          <AddressAutocomplete id={"checkin-autocomplete"}
+                               initialValue={position.coords}
+                               endpoint="departure"
+                               location={coordsStr}
+                               className={s.autocomplete} />
+        </div>
+      );
     } else if (geolocation.status === 'locating') {
       positionElem = (
         <div className={s.locating}>
@@ -104,7 +86,7 @@ const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation,
     locationCoords = geolocation.position.coords;
   }
 
-  console.log("selected location", selectedLocation);
+  console.log("selected location", selectedLocation, geolocation);
 
 	return (
 	  <div className={s.root}>
@@ -121,7 +103,7 @@ const CheckInView = ({ intl, env, geolocation, searchLocation, selectedLocation,
             <div className={s.positionSelector}>
               <div className={s.editPositionButton} onClick={() => {
                 setProperty('posts.addType', null);
-                saveCheckIn({ checkIn: createCheckIn(locationCoords) });
+                saveCheckIn({ checkIn: createCheckIn(geolocation, selectedLocation) });
               }}>
                 <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
               </div>

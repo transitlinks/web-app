@@ -35,9 +35,6 @@ import {
   GET_FEEDITEM_START,
   GET_FEEDITEM_SUCCESS,
   GET_FEEDITEM_ERROR,
-  INSTANCE_FILE_UPLOAD_START,
-  INSTANCE_FILE_UPLOAD_SUCCESS,
-  INSTANCE_FILE_UPLOAD_ERROR,
   GET_MEDIAITEM_START,
   GET_MEDIAITEM_SUCCESS,
   GET_MEDIAITEM_ERROR,
@@ -45,7 +42,7 @@ import {
 
 export const saveCheckIn = ({ checkIn }) => {
 
-  const geocodeCheckIn = async () => {
+  const geocodeCheckInLocation = async () => {
     return new Promise((resolve, reject) => {
       geocode({ lat: checkIn.latitude, lng: checkIn.longitude }, (location) => {
         resolve(location);
@@ -55,12 +52,12 @@ export const saveCheckIn = ({ checkIn }) => {
 
   return async (...args) => {
 
-    let placeFields = {};
-
+    let completedCheckIn = checkIn;
     if (checkIn.latitude && checkIn.longitude) {
-      const location = await geocodeCheckIn();
-      console.log("geocoded location", location);
-      placeFields = extractPlaceFields(location);
+      const checkInLocation = await geocodeCheckInLocation();
+      completedCheckIn.locality = checkInLocation.locality;
+      completedCheckIn.country = checkInLocation.country;
+      console.log('geocoded locality', checkInLocation);
     }
 
 
@@ -85,7 +82,7 @@ export const saveCheckIn = ({ checkIn }) => {
 
     const query = `
       mutation saveCheckIn {
-        checkIn(checkIn:${toGraphQLObject({ ...placeFields, ...checkIn })}, clientId:"${clientId}") {
+        checkIn(checkIn:${toGraphQLObject(completedCheckIn)}, clientId:"${clientId}") {
           uuid,
           latitude,
           longitude,

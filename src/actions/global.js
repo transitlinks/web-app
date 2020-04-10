@@ -9,7 +9,7 @@ import {geocode} from "../services/linkService";
 const geocodePosition = async (lat, lng) => {
   return new Promise((resolve, reject) => {
     geocode({ lat, lng }, (location) => {
-      resolve(location);
+      resolve(location.result);
     })
   });
 };
@@ -39,6 +39,7 @@ export function getGeolocation() {
       const location = await geocodePosition(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
       console.log("LOC", location);
       position.formattedAddress = location.formatted_address || location.address_components.formatted_address;
+      position.placeId = location.place_id;
       dispatch({
         type: GET_GEOLOCATION_SUCCESS,
         payload: position,
