@@ -12,9 +12,6 @@ export default function global(state = {}, action) {
     case GET_GEOLOCATION_START:
       endState['geolocation.status'] = 'locating';
       return endState;
-    case GET_GEOLOCATION_START:
-      endState['geolocation.status'] = 'locating';
-      return endState;
     case GET_GEOLOCATION_SUCCESS:
       endState['geolocation.status'] = 'located';
       endState['geolocation.position'] = action.payload;

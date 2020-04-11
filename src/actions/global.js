@@ -33,9 +33,15 @@ export function getGeolocation() {
       type: GET_GEOLOCATION_START
     });
 
+    console.log('navigator log:');
+    console.log('navigator', navigator);
+    console.log('navigator.geolocation', navigator.geolocation);
+    console.log('getCurrentPosition', navigator.geolocation.getCurrentPosition);
     navigator.geolocation.getCurrentPosition(async (position) => {
 
-      console.log("geocode", parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
+      console.log('geocode results:', position);
+      console.log('coords:', position.coords);
+      console.log('coords lat lng', position.coords.latitude, position.coords.longitude);
       const location = await geocodePosition(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
       console.log("LOC", location);
       position.formattedAddress = location.formatted_address || location.address_components.formatted_address;
