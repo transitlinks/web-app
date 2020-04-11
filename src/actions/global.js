@@ -53,6 +53,8 @@ export function getGeolocation() {
 
     }, (error) => {
       console.log('navigator.geolocation error', error);
+      console.log('navigator.geolocation error code', error.code);
+      console.log('navigator.geolocation error message', error.message);
     }, { enableHighAccuracy: true, timeout: 60000, maximumAge: 0 });
 
     return true;

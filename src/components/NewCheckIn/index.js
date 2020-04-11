@@ -76,17 +76,7 @@ const CheckInView = ({ geolocation, searchLocation, selectedLocation, setPropert
     }
   }
 
-  let locationCoords = null;
-  if (selectedLocation) {
-    locationCoords = {
-      latitude: selectedLocation.lat,
-      longitude: selectedLocation.lng
-    };
-  } else if (geolocation && geolocation.position) {
-    locationCoords = geolocation.position.coords;
-  }
-
-  console.log("selected location", selectedLocation, geolocation);
+  console.log('selected location', selectedLocation, geolocation);
 
 	return (
 	  <div className={s.root}>
