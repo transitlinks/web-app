@@ -51,7 +51,9 @@ export function getGeolocation() {
         payload: position,
       });
 
-    });
+    }, (error) => {
+      console.log('navigator.geolocation error', error);
+    }, { enableHighAccuracy: true, timeout: 60000, maximumAge: 0 });
 
     return true;
 
