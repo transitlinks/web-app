@@ -253,3 +253,53 @@ export const getAvailableCurrencies = (destination) => {
   return currencyCodes;
 
 };
+
+export const getMapBounds = (linkStats, linkMode) => {
+  let terminals = [];
+  linkStats.forEach(linkStat => {
+    if (linkMode !== 'internal') {
+      terminals = terminals.concat(terminals, linkStat.departures);
+      terminals = terminals.concat(terminals, linkStat.arrivals);
+    }
+    terminals = terminals.concat(terminals, linkStat.internal);
+  });
+  const bounds = new google.maps.LatLngBounds();
+  terminals.forEach(t => {
+    bounds.extend(new google.maps.LatLng({ lat: t.latitude, lng: t.longitude }));
+    if (linkStats.length === 1) {
+      bounds.extend(new google.maps.LatLng({ lat: t.linkedTerminal.latitude, lng: t.linkedTerminal.longitude }));
+    }
+  });
+  return bounds;
+};
+
+export const getBoundsZoomLevel = (bounds, mapDim) => {
+
+  const WORLD_DIM = { height: 256, width: 256 };
+  const ZOOM_MAX = 10;
+
+  const latRad = (lat) => {
+    const sin = Math.sin(lat * Math.PI / 180);
+    const radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+    return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+  };
+
+  const zoom = (mapPx, worldPx, fraction) => {
+    return Math.floor(Math.log(Math.abs(mapPx / worldPx / fraction)) / Math.LN2);
+  };
+
+  const ne = bounds.getNorthEast();
+  const sw = bounds.getSouthWest();
+
+  const latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
+
+  const lngDiff = ne.lng() - sw.lng();
+  const lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+  const latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+  const lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+  const zoomLevel = Math.min(latZoom, lngZoom, ZOOM_MAX);
+  return zoomLevel;
+
+};
+

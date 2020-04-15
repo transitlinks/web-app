@@ -1,14 +1,9 @@
 @import '../../components/variables.css';
 
 .root {
-  
+
 }
 
 .container {
-  
-}
 
-.functionBar {
-  width: calc(100% - 24px);
-  margin: auto;
 }

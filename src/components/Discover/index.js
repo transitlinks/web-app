@@ -1,8 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/RaisedButton';
 import PostCollection from './PostCollection';
-import Terminal from '../Terminal';
 import CheckInItem from '../CheckInItem';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -10,25 +8,19 @@ import cx from 'classnames';
 import s from './Discover.css';
 import Link from '../Link';
 import { getDiscoveries } from '../../actions/discover';
+import { setProperty } from '../../actions/properties';
 
-import { injectIntl, FormattedMessage } from 'react-intl';
-import msg from './messages';
+import { injectIntl } from 'react-intl';
+import TextField from 'material-ui/TextField';
 
-const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated, transportTypes, children, intl }) => {
+const DiscoverView = ({
+  getDiscoveries, setProperty,
+  discover, searchTerm, fetchedFeedItems, loadedDiscover, transportTypes
+}) => {
 
   let discoveries = (loadedDiscover || discover).discoveries;
 
   const renderTerminalsList = (terminalType, locations, groupName) => {
-
-    /*
-    const terminalLocations = {
-      "St. Petersburg": 1,
-      "New York": 1,
-      "Calcutta": 1,
-      "Paris": 1,
-      "Minneapolis": 1
-    };
-    */
 
     return (
       <div className={s.terminalsByType}>
@@ -54,10 +46,36 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
         </div>
       </div>
     );
+
   };
 
-	return (
+  return (
     <div className={s.container}>
+      <div className={s.functionBar}>
+        <div className={s.searchFieldContainer}>
+          <div className={s.search}>
+            <FontIcon className={cx(s.searchIcon, 'material-icons')}>search</FontIcon>
+            <div className={s.searchField}>
+              <TextField id="discover-search-input"
+                         value={searchTerm}
+                         fullWidth
+                         style={{ height: '46px' }}
+                         hintText="Origin or destination"
+                         onChange={(event) => {
+                           const input = event.target.value;
+                           setProperty('discover.searchTerm', input);
+                           if (input.length > 2) {
+                             setProperty('discover.discover', { discoveries: [] });
+                             getDiscoveries({ search: input });
+                           } else if (input.length === 0) {
+                             setProperty('discover.discover', { discoveries: [] });
+                             getDiscoveries({});
+                           }
+                         }} />
+            </div>
+          </div>
+        </div>
+      </div>
       <div>
         {
 
@@ -65,7 +83,7 @@ const DiscoverView = ({ discover, fetchedFeedItems, loadedDiscover, feedUpdated,
 
             const frameId = `discover-${index}`;
 
-            const { posts, departures, arrivals, feedItem } = discovery;
+            const { posts, feedItem } = discovery;
 
             return (
               <div key={discovery.groupName} className={s.discoveryItem}>
@@ -108,9 +126,11 @@ DiscoverView.contextTypes = { setTitle: PropTypes.func.isRequired };
 export default injectIntl(
   connect(state => ({
     loadedDiscover: state.discover.discover,
+    searchTerm: state.discover.searchTerm,
     fetchedFeedItems: state.posts.fetchedFeedItems || {},
     feedUpdated: state.posts.feedUpdated
   }), {
-    getDiscoveries
+    getDiscoveries,
+    setProperty
   })(withStyles(s)(DiscoverView))
 );

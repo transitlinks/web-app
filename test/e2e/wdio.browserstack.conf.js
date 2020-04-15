@@ -4,18 +4,17 @@ const buildName = process.env.TRAVIS_BUILD_NUMBER ?
   ('transitlinks #' + process.env.TRAVIS_BUILD_NUMBER + '.' + process.env.TRAVIS_JOB_NUMBER) : ('transitlinks local ' + (new Date()).toJSON());
 
 exports.config = {
-    
+
     user: process.env.BROWSERSTACK_USERNAME,
     key: process.env.BROWSERSTACK_ACCESS_KEY,
 		specs: [
         './test/e2e/specs/**/*.js'
-        //'./test/e2e/specs/viewLinkInstance.js'
     ],
-    
+
     exclude: [
         // 'path/to/excluded/files'
     ],
- 
+
     maxInstances: 10,
     capabilities: [{
         maxInstances: 5,
@@ -37,7 +36,7 @@ exports.config = {
     services: ['browserstack'],
     framework: 'mocha',
     reporters: ['spec'],
-    
+
     mochaOpts: {
       compilers: ['js:babel-register'],
       timeout: 360000,

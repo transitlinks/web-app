@@ -2,20 +2,19 @@ var selenium = require('selenium-standalone');
 var seleniumServer;
 
 exports.config = {
-   
+
   host: 'localhost',
-  port: 4444, 
+  port: 4444,
   specs: [
     //'./test/e2e/specs/**/*.js'
     //'./test/e2e/specs/editLinkInstance.js'
     //'./test/e2e/specs/account.js'
-    './test/e2e/specs/viewLinkInstance.js'
   ],
-  
+
   // Patterns to exclude.
   exclude: [
   ],
-  
+
   maxInstances: 1,
   capabilities: [{
     maxInstances: 1,
@@ -23,7 +22,7 @@ exports.config = {
   }],
 
   sync: true,
-  
+
   logLevel: 'verbose',
   coloredLogs: true,
   screenshotPath: './test/e2e/screenshots',
@@ -31,10 +30,10 @@ exports.config = {
   waitforTimeout: 10000,
   connectionRetryTimeout: 90000,
   connectionRetryCount: 3,
-  
+
   framework: 'mocha',
   reporters: ['spec'],
-    
+
   mochaOpts: {
     compilers: ['js:babel-register'],
     timeout: 120000,
@@ -55,6 +54,6 @@ exports.config = {
 
   onComplete: function(exitCode) {
     seleniumServer.kill();
-  }    
-      
+  }
+
 }

@@ -1,10 +1,7 @@
 import { getLog } from '../../core/log';
 const log = getLog('data/source/postRepository');
 
-import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
-import fetch from '../../core/fetch';
-import { PLACES_API_URL, PLACES_API_KEY } from '../../config';
 import { Post, Terminal, CheckIn, User, MediaItem, Tag, EntityTag } from '../models';
 
 export default {
@@ -228,14 +225,6 @@ export default {
 
   },
 
-  getCheckInLocalities: async (options) => {
-    let query = `SELECT DISTINCT locality FROM "CheckIn"`;
-    if (options.limit) query += ' LIMIT ' + options.limit;
-    if (options.offset) query += ' OFFSET ' + options.offset;
-    const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return localities.map(locality => locality.locality);
-  },
-
   getCheckInCount: async (locality) => {
     const query = `SELECT COUNT(id) FROM "CheckIn" WHERE locality = '${locality}'`;
     const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
@@ -243,7 +232,7 @@ export default {
   },
 
   getPostsByLocality: async (locality) => {
-    const query = `SELECT * FROM "Post" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}');`;
+    const query = `SELECT * FROM "Post" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') ORDER BY "createdAt" DESC;`;
     const posts = await sequelize.query(query, { model: Post, mapToModel: true });
     return posts;
   },

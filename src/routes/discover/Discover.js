@@ -2,24 +2,12 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Discover.css';
 import DiscoverView from '../../components/Discover';
-import FunctionBar from '../../components/FunctionBar';
-import { getDiscoveries } from "../../actions/discover";
-import {connect} from "react-redux";
-import {getGeolocation} from "../../actions/global";
-import {getFeed} from "../../actions/posts";
-import {setProperty} from "../../actions/properties";
-import {getClientId} from "../../core/utils";
-import debounce from "lodash.debounce";
+import { getDiscoveries } from '../../actions/discover';
+import { connect } from 'react-redux';
+import { setProperty } from '../../actions/properties';
+import debounce from 'lodash.debounce';
 
 const title = 'Transitlinks - Discover';
-
-const getParams = (props) => {
-  const { limit, offset } = props;
-  const params = {};
-  if (limit) params.limit = 6;
-  if (offset) params.offset = offset;
-  return params;
-};
 
 class Discover extends React.Component {
 
@@ -44,6 +32,7 @@ class Discover extends React.Component {
         Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
         const { search, type, offset } = this.props;
+        console.log('debounce search', this.props);
         this.props.getDiscoveries({ search, type, offset: offset || 0, limit: 6 });
       }
     }, 100);
@@ -64,9 +53,6 @@ class Discover extends React.Component {
       <div>
         <div className={s.root}>
           <div className={s.container}>
-            <div className={s.functionBar}>
-              <FunctionBar />
-            </div>
             <DiscoverView discover={discover} transportTypes={transportTypes} >
             </DiscoverView>
             {
@@ -90,6 +76,7 @@ Discover.contextTypes = { setTitle: PropTypes.func.isRequired };
 export default connect(state => ({
   offset: state.discover.offset,
   limit: state.discover.limit,
+  search: state.discover.searchTerm,
   loadingDiscover: state.discover.loadingDiscover
 }), {
   getDiscoveries,

@@ -10,14 +10,11 @@ import { AccountQueryFields } from './queries/account';
 import transportTypes from './queries/transportTypes';
 import intl from './queries/intl';
 import { TransitLinkMutationFields, TransitLinkQueryFields } from './queries/links';
-import { TerminalQueryFields } from './queries/terminals';
 import { PostMutationFields, PostQueryFields } from './queries/posts';
 import { CheckInQueryFields } from './queries/checkIns';
-import { DiscoverMutationFields, DiscoverQueryFields } from './queries/discover';
+import { DiscoverQueryFields } from './queries/discover';
 import { CommentMutationFields, CommentQueryFields } from './queries/comments';
 import { UserMutationFields, UserQueryFields } from './queries/users';
-import { RatingQueryFields, RatingMutationFields, VoteMutationFields } from './queries/ratings';
-import * as links from './queries/links';
 
 const schema = new Schema({
 
@@ -30,12 +27,8 @@ const schema = new Schema({
       profile: AccountQueryFields.profile,
       userLinks: AccountQueryFields.links,
       transportTypes,
-      link: TransitLinkQueryFields.link,
-      linkInstance: TransitLinkQueryFields.linkInstance,
-      links: TransitLinkQueryFields.links,
       linkInstanceMedia: TransitLinkQueryFields.linkInstanceMedia,
       user: UserQueryFields.user,
-      ratings: RatingQueryFields.ratings,
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
       post: PostQueryFields.post,
@@ -53,14 +46,10 @@ const schema = new Schema({
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
-      linkInstance: TransitLinkMutationFields.linkInstance,
-      deleteLinkInstance: TransitLinkMutationFields.deleteLinkInstance,
-      votes: TransitLinkMutationFields.votes,
       instanceFiles: TransitLinkMutationFields.instanceFiles,
       user: UserMutationFields.user,
       comment: CommentMutationFields.comment,
       commentVote: CommentMutationFields.commentVote,
-      rating: RatingMutationFields.rating,
       post: PostMutationFields.post,
       checkIn: PostMutationFields.checkIn,
       deleteCheckIn: PostMutationFields.deleteCheckIn,

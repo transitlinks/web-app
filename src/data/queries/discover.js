@@ -1,44 +1,23 @@
-import fs from 'fs';
-import path from 'path';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/discover');
-
-import { getVideos, uploadVideo } from '../../services/youtubeDataApi';
 
 import {
   postRepository,
   userRepository,
-  placesApi
+  localityRepository
 } from '../source';
 
-import {
-	PostType,
-  PostsType,
-	PostInputType,
-  TerminalType,
-  TerminalInputType,
-  CheckInType,
-  CheckInInputType,
-  MediaItemType,
-  MediaItemInputType,
-  FeedItemType,
-  FeedType
-} from '../types/PostType';
 
 import { getFeedItem } from './posts';
 
 import {
-  DiscoveryResultType,
-  DiscoveryItemType
+  DiscoveryResultType
 } from '../types/DiscoverType';
 
 import {
   GraphQLInt,
   GraphQLString
 } from 'graphql';
-
-
-import { STORAGE_PATH, MEDIA_PATH, MEDIA_URL, APP_URL } from '../../config';
 
 export const DiscoverMutationFields = {
 };
@@ -60,11 +39,11 @@ export const DiscoverQueryFields = {
       log.info(graphLog(request, 'discover',`search=${search} type=${type} offset=${offset} limit=${limit}`));
 
       const options = {};
+      if (search) options.search = search;
       if (offset) options.offset = offset;
       if (limit) options.limit = limit;
 
-      const localities = await postRepository.getCheckInLocalities(options);
-      console.log("locs", localities);
+      const localities = await localityRepository.getCheckInLocalities(options);
 
       let discoveries = [];
       for (let i = 0; i < localities.length; i++) {
@@ -73,13 +52,13 @@ export const DiscoverQueryFields = {
         const connectionsTo = await postRepository.getConnectionsByLocality(localities[i], 'departure');
         console.log(localities[i], '->', connectionsTo);
         console.log(localities[i], '<-', connectionsFrom);
-        const firstCheckIn = await postRepository.getCheckIn({ locality: localities[i] });
+        const firstCheckIn = await postRepository.getCheckIn({ locality: localities[i] }, { order: [['createdAt', 'desc']] });
         const checkInCount = await postRepository.getCheckInCount(localities[i]);
 
         const posts = await postRepository.getPostsByLocality(localities[i]);
         const locPosts = posts.map(async post => {
           const checkIn = await postRepository.getCheckIn({ id: post.checkInId });
-          const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
+          const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid }, { order: [['createdAt', 'desc']] });
           let userName = null;
           if (post.userId) {
             const user = await userRepository.getById(post.userId);

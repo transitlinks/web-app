@@ -65,9 +65,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -78,9 +76,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -91,9 +87,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -104,9 +98,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -117,9 +109,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -130,9 +120,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -143,9 +131,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -154,9 +140,7 @@
     "defaultMessage": "Add link",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -167,8 +151,6 @@
     "files": [
       "src/components/CheckInItem/messages.js",
       "src/components/Feed/messages.js",
-      "src/components/FunctionBar/messages.js",
-      "src/components/LinkSearch/messages.js",
       "src/components/Navigation/messages.js"
     ]
   },
@@ -480,9 +462,7 @@
     "defaultMessage": "Experience",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -491,9 +471,7 @@
     "defaultMessage": "Research",
     "message": "",
     "files": [
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -504,9 +482,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -517,9 +493,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -530,9 +504,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -543,9 +515,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -556,9 +526,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -569,9 +537,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {
@@ -582,9 +548,7 @@
     "files": [
       "src/components/common/messages/transport.js",
       "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js",
-      "src/components/EditLinkInstance/messages.js",
-      "src/components/EditTrip/messages.js"
+      "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
   {

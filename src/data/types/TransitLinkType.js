@@ -105,11 +105,26 @@ export const LinkTerminalType = new GraphQLObjectType({
   description: 'Transitlink endpoint.',
   fields: () => ({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
+    type: { type: GraphQLString },
     locality: { type: GraphQLString },
     formattedAddress: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat },
-    description: { type: GraphQLString }
+    description: { type: GraphQLString },
+    linkedTerminal: { type: LinkTerminalType }
+  })
+});
+
+export const LinkSearchResultType = new GraphQLObjectType({
+  name: 'LinkSearchResult',
+  description: 'Transitlink between two localities.',
+  fields: () => ({
+    locality: { type: GraphQLString },
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat },
+    departures: { type: new GraphQLList(LinkTerminalType) },
+    arrivals: { type: new GraphQLList(LinkTerminalType) },
+    internal: { type: new GraphQLList(LinkTerminalType) }
   })
 });
 

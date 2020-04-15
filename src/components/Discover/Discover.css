@@ -9,6 +9,38 @@
   margin: auto;
 }
 
+.functionBar {
+  display: flex;
+  position: relative;
+  margin: auto;
+}
+
+.functionBar .container {
+  width: 100%;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  width: 100%;
+}
+
+.search .searchIcon {
+  margin-top: 4px;
+}
+
+.search .searchField {
+  margin-left: 6px;
+  padding-right: 12px;
+  flex-grow: 1;
+}
+
+.searchFieldContainer {
+  flex-grow: 1;
+  padding-left: 8px;
+}
+
 .sectionLinks {
   display: flex;
   padding-top: 6px;

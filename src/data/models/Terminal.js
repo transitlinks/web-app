@@ -35,6 +35,22 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  locality: {
+    type: DataType.STRING
+  },
+
+  latitude: {
+    type: DataType.FLOAT
+  },
+
+  longitude: {
+    type: DataType.FLOAT
+  },
+
+  linkedLocality: {
+    type: DataType.STRING
+  },
+
   date: {
     type: DataType.DATE
   },
@@ -62,7 +78,7 @@ const Terminal = Model.define('Terminal', {
   },
 
   indexes: [
-    { fields: ['id', 'uuid', 'type', 'transport'] },
+    { fields: ['id', 'uuid', 'type', 'transport', 'locality', 'latitude', 'longitude'] },
   ],
 
 });

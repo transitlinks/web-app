@@ -2,46 +2,98 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import { compose, withProps } from 'recompose';
+import cx from 'classnames';
 import s from './Links.css';
-import { getLinks } from '../../actions/links';
+import { getLinks, setZoomLevel } from '../../actions/links';
 import { setProperty } from '../../actions/properties';
-
 import { injectIntl, FormattedMessage } from 'react-intl';
-import msgTransport from '../common/messages/transport';
-import FunctionBar from "../FunctionBar";
-import { GoogleMap, Marker, Polyline, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, OverlayView, Polyline, withGoogleMap } from 'react-google-maps';
+import TextField from 'material-ui/TextField';
 
-const LinksMap = withGoogleMap(props => (
+const LinksMap = compose(
+  withProps({
+    googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
+    loadingElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `400px` }} />,
+    mapElement: <div style={{ height: `100%` }} />,
+  }),
+  withGoogleMap
+)((props) => (
   <GoogleMap
     ref={props.onMapLoad}
-    defaultZoom={12}
-    defaultCenter={{...props.latLng}}
-    onClick={props.onMapClick}>
-    {
-      (props.links || []).map(link => {
-
-        const strokeColor = '#FF0000';
-        return <Polyline path={[
-          { lat: link.from.latitude, lng: link.from.longitude },
-          { lat: link.to.latitude, lng: link.to.longitude }
-        ]} options={{
-          geodesic: true,
-          strokeColor,
-          strokeOpacity: 1.0,
-          strokeWeight: 2
-        }} />;
-      })
-    }
+    defaultZoom={props.zoom}
+    zoom={props.zoom}
+    defaultCenter={props.center}
+    center={props.center}
+    onClick={props.onMapClick}
+    options={{
+      streetViewControl: false,
+      mapTypeControl: false
+    }}>
+    { props.content }
   </GoogleMap>
 ));
 
-const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, setProperty }) => {
+const renderLinkStatsOverlays = (linkStats, onSelect) => {
+  return (linkStats || []).map(linkStat => {
+    return (
+      <OverlayView position={{ lat: linkStat.latitude, lng: linkStat.longitude }}
+                   mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+        <div className={s.localityOverlay}>
+          <div className={s.localityName} onClick={() => onSelect(linkStat.locality)}>
+            {linkStat.locality}
+          </div>
+          <div className={s.localityStats}>
+            <span className="material-icons">call_made</span> {linkStat.departures.length}
+          </div>
+          <div className={s.localityStats}>
+            <span className="material-icons">call_received</span> {linkStat.arrivals.length}
+          </div>
+          <div className={s.localityStats}>
+            <span className="material-icons">cached</span> {linkStat.internal.length}
+          </div>
+        </div>
+      </OverlayView>
+    );
+  });
+};
+
+const drawLines = (terminals) => {
+  return (terminals || []).map(terminal => {
+    const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
+    return (
+      <Polyline
+        path={
+          [
+            { lat: terminal.latitude, lng: terminal.longitude },
+            { lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }
+          ]
+        }
+        options={{
+          geodesic: true,
+          strokeColor: color,
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        }} />
+    );
+  });
+};
+
+const renderLinks = (links, linkMode) => {
+  return (
+      linkMode === 'internal' ?
+        drawLines(links.internal) :
+        [
+          drawLines(links.departures),
+          drawLines(links.arrivals)
+        ]
+  );
+};
+
+const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom, getLinks, setProperty }) => {
 
   let  displayLinks = (loadedLinks || links) || [];
-
-  const getSearchParams = (input) => {
-    return { locality: input };
-  };
 
   const listView = (
     <div>
@@ -53,25 +105,16 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
           return (
             <div key={uuid} className={s.linkItem}>
               <div className={s.row1}>
-                <div className={s.transport}>
-                  <FormattedMessage { ...msgTransport[link.transport] } />
-                </div>
-                <div className={s.transportId}>
-                  {link.transportId}
-                </div>
-              </div>
-              <div className={s.row2}>
-                <div className={s.from}>
-                  <b>From:</b> { link.from.formattedAddress }
-                </div>
-                <div className={s.to}>
-                  <b>To:</b> { link.to.formattedAddress }
-                </div>
+                {link.locality}
               </div>
               <div className={s.row3}>
-                <div className={s.description}>
-                  { link.to.description || link.from.description }
-                </div>
+                Departures: {link.departures.length}
+              </div>
+              <div className={s.row3}>
+                Arrivals: {link.arrivals.length}
+              </div>
+              <div className={s.row3}>
+                Internal: {link.internal.length}
               </div>
             </div>
           );
@@ -81,22 +124,53 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
     </div>
   );
 
-  let defaultCenter = {
+  let mapCenter = {
     lat: 60.16952,
     lng: 24.93545
   };
 
   if (displayLinks.length > 0) {
-    defaultCenter = {
-      lat: displayLinks[0].from.latitude,
-      lng: displayLinks[0].from.longitude
+    mapCenter = {
+      lat: displayLinks[0].latitude,
+      lng: displayLinks[0].longitude
+    };
+  }
+
+  const showControls = displayLinks.length === 1 &&
+    (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals > 0) && displayLinks[0].internal.length > 0;
+  let actualLinkMode = linkMode;
+  if (displayLinks.length === 1 && !showControls) {
+    if (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals > 0) {
+      actualLinkMode = 'external';
+    } else if (displayLinks[0].internal.length > 0) {
+      actualLinkMode = 'internal';
     }
   }
 
-  console.log('display links', displayLinks);
+  let content = null;
+  if (displayLinks.length === 1) {
+    content = renderLinks(displayLinks[0], actualLinkMode);
+  } else {
+    content = renderLinkStatsOverlays(displayLinks, (locality) => {
+      setProperty('links.searchTerm', locality);
+      setProperty('links.linkMode', 'external');
+      getLinks({ locality });
+    });
+  }
+
+  console.log('default center', mapCenter, mapZoom);
 
   const mapView = (
     <div>
+      {
+        showControls &&
+        <div className={s.mapControls}>
+          <div className={s.selector}>
+            <div className={s.selectorElement} style={linkMode === 'external' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'external')}>External</div>
+            <div className={s.selectorElement} style={linkMode === 'internal' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'internal')}>Internal</div>
+          </div>
+        </div>
+      }
       <LinksMap
         containerElement={
           <div style={{ height: `400px` }} />
@@ -104,14 +178,22 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
         mapElement={
           <div style={{ height: `100%` }} />
         }
-        latLng={defaultCenter}
-        onMapLoad={() => {
-          console.log('map loaded');
+        center={mapCenter}
+        zoom={mapZoom ? mapZoom.zoomLevel : 10}
+        onMapLoad={(map) => {
+          if (map) {
+
+            if (mapZoom) {
+              console.log('fit bounds', map);
+              map.fitBounds(mapZoom.bounds);
+            }
+
+          }
         }}
         onMapClick={() => {
           console.log('map clicked');
         }}
-        links={displayLinks}
+        content={content}
       />
     </div>
   );
@@ -120,7 +202,24 @@ const LinksView = ({ links, loadedLinks, viewMode, transportTypes, getLinks, set
     <div className={s.container}>
       <div className={s.functionBar}>
         <div className={s.searchFieldContainer}>
-          <FunctionBar getParams={getSearchParams} performSearch={getLinks} />
+          <div className={s.search}>
+            <FontIcon className={cx(s.searchIcon, 'material-icons')}>search</FontIcon>
+            <div className={s.searchField}>
+              <TextField id="link-search-input"
+                         value={searchTerm}
+                         fullWidth
+                         style={{ height: '46px' }}
+                         hintText="Origin or destination"
+                         onChange={(event) => {
+                           const input = event.target.value;
+                           setProperty('links.searchTerm', input);
+                           if (input.length > 2) {
+                             setProperty('links.linkMode', 'external');
+                             getLinks({ locality: input });
+                           }
+                         }} />
+            </div>
+          </div>
         </div>
         <div className={s.mapToggle}>
           {
@@ -148,10 +247,14 @@ export default injectIntl(
       loadedLinks: state.links.transitLinks,
       fetchedFeedItems: state.posts.fetchedFeedItems || {},
       feedUpdated: state.posts.feedUpdated,
-      viewMode: state.links.viewMode
+      viewMode: state.links.viewMode,
+      linkMode: state.links.linkMode || 'external',
+      searchTerm: state.links.searchTerm,
+      mapZoom: state.links.mapZoom
     }
   }, {
     getLinks,
+    setZoomLevel,
     setProperty
   })(withStyles(s)(LinksView))
 );

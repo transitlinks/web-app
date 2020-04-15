@@ -1,7 +1,0 @@
-@import '../../variables.css';
-
-.container {
-  display: inline;
-  font-size: 1.5em; /* ~24px */
-  padding: 6px;
-}

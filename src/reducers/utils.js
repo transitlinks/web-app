@@ -1,4 +1,4 @@
-import { SET_PROPERTY, SET_DEEP_PROPERTY } from "../constants";
+import { SET_PROPERTY, SET_DEEP_PROPERTY } from '../constants';
 
 export function propToState(action, prefix, state) {
 

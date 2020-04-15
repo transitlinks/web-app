@@ -18,7 +18,6 @@ import App from '../components/App';
 import home from './home';
 import discover from './discover';
 import links from './links';
-import search from './search';
 import link from './link';
 import checkIn from './checkIn';
 import login from './login';
@@ -39,7 +38,6 @@ const routes = {
     links,
     login,
     account,
-    search,
     link,
     checkIn,
     content,

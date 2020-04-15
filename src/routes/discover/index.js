@@ -4,11 +4,11 @@ const log = getLog('routes/discover');
 import React from 'react';
 import ErrorPage from '../../components/common/ErrorPage';
 import Discover from './Discover';
-import { createParamString } from "../../core/utils";
+import { createParamString } from '../../core/utils';
 
 export default {
 
-  path: '/discover/:search?/:type?',
+  path: '/discover',
 
   async action({ params, context }) {
 
@@ -115,11 +115,11 @@ export default {
         }`
       );
 
-      log.info("event=received-discoveries-data", data);
+      log.info('event=received-discoveries-data', data);
       return <Discover discover={data.discover} transportTypes={data.transportTypes} />;
 
     } catch (error) {
-      log.info("error=route-discover", error);
+      log.info('error=route-discover', error);
       return <ErrorPage errors={error.errors} />
     }
 

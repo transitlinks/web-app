@@ -2,9 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import emptyFunction from 'fbjs/lib/emptyFunction';
 import s from './App.css';
 import Header from '../Header';
-import FunctionBar from '../FunctionBar';
 import Footer from '../Footer';
-import TimePicker from 'material-ui/TimePicker';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 

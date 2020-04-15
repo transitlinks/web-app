@@ -8,7 +8,6 @@ import env from './env';
 import login from './login';
 import autocomplete from './autocomplete';
 import editLink from './editLink';
-import viewLinkInstance from './viewLinkInstance';
 import editCheckIn from './editCheckIn';
 import viewCheckIn from './viewCheckIn';
 import editTerminal from './editTerminal';
@@ -29,7 +28,6 @@ export default combineReducers({
   login,
   autocomplete,
   editLink,
-  viewLinkInstance,
   editCheckIn,
   viewCheckIn,
   editTerminal,

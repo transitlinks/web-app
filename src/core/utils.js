@@ -115,8 +115,10 @@ export function createParamString(params) {
 
   const paramKeys = Object.keys(params);
   paramKeys.forEach(key => {
-    const val = isNaN(params[key]) ? `"${params[key]}"` : params[key];
-    paramsString += `, ${key}: ${val}`;
+    if (params[key]) {
+      const val = isNaN(params[key]) ? `"${params[key]}"` : params[key];
+      paramsString += `, ${key}: ${val}`;
+    }
   });
 
   if (paramsString.length > 0) {

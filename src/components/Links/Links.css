@@ -19,6 +19,22 @@
   width: 100%;
 }
 
+.search {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  width: 100%;
+}
+
+.search .searchIcon {
+  margin-top: 4px;
+}
+
+.search .searchField {
+  margin-left: 6px;
+  flex-grow: 1;
+}
+
 .searchFieldContainer {
   flex-grow: 1;
   padding-left: 8px;
@@ -67,4 +83,43 @@
 
 .linkItem .row3 {
   margin-top: 6px;
+}
+
+.localityOverlay {
+  background-color: white;
+  border: 1px solid #666666;
+  border-radius: 8px;
+}
+
+.localityOverlay .localityName {
+  padding: 6px;
+  color: white;
+  background-color: #3b5999;
+}
+
+.localityOverlay .localityStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 4px;
+  padding-left: 4px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.localityOverlay .localityStats span {
+  font-size: 18px;
+}
+
+.mapControls {
+  margin-bottom: 2px;
+}
+
+.mapControls .selector {
+  display: flex;
+}
+
+.mapControls .selector .selectorElement {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
 }

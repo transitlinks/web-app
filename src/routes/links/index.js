@@ -26,22 +26,50 @@ export default {
       const { data } = await graphqlRequest(
         `query {
           transitLinks ${paramsString} {
-            uuid,
-            transport,
-            transportId,
-            from {
+            locality,
+            latitude,
+            longitude,
+            departures {
               latitude,
               longitude,
               locality,
               formattedAddress,
-              description
+              description,
+              linkedTerminal {
+                latitude,
+                longitude,
+                locality,
+                formattedAddress,
+                description
+              }
             },
-            to {
+            arrivals {
               latitude,
               longitude,
               locality,
               formattedAddress,
-              description
+              description,
+              linkedTerminal {
+                latitude,
+                longitude,
+                locality,
+                formattedAddress,
+                description
+              }
+            },
+            internal {
+              latitude,
+              longitude,
+              locality,
+              formattedAddress,
+              description,
+              linkedTerminal {
+                latitude,
+                longitude,
+                locality,
+                formattedAddress,
+                description
+              }
             }
           },
           transportTypes { slug }

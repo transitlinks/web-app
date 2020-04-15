@@ -2,10 +2,7 @@ import { graphqlReduce, propToState } from "./utils";
 import {
   GET_DISCOVER_START,
   GET_DISCOVER_SUCCESS,
-  GET_DISCOVER_ERROR,
-  GET_FEEDITEM_START,
-  GET_FEEDITEM_SUCCESS,
-  GET_FEEDITEM_ERROR
+  GET_DISCOVER_ERROR
 } from "../constants";
 
 export default function reduce(state = {}, action) {
