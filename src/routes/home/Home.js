@@ -14,9 +14,10 @@ import debounce from "lodash.debounce";
 const title = 'Transitlinks';
 
 const getParams = (props) => {
-  const { tags, offset } = props;
+  const { tags, offset, query } = props;
   const params = { limit: 8, offset: offset || 0 };
   if (tags) params.tags = tags;
+  if (query && query.locality) params.locality = query.locality;
   return params;
 };
 

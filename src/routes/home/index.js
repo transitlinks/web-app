@@ -127,7 +127,7 @@ export default {
 
       const { feed, transportTypes, post } = data;
       log.info('event=received-feed-data', data);
-      return <Home feed={feed} transportTypes={transportTypes} post={post} frame={frame} {...query} />;
+      return <Home feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

@@ -89,7 +89,7 @@ const DiscoverView = ({
               <div key={discovery.groupName} className={s.discoveryItem}>
                 <div className={s.discoveryHeader}>
                   <div className={s.discoveryGroupName}>
-                    { discovery.groupName || 'Unnamed' }
+                    <Link to={`/?locality=${discovery.groupName}`}>{ discovery.groupName || 'Unnamed' }</Link>
                   </div>
                   <div className={s.discoveryHeaderControls}>
                     <div className={s.checkInCount}>
@@ -108,7 +108,7 @@ const DiscoverView = ({
                 </div>
                 <div className={s.postSummary}>
                   <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
-                  <PostCollection posts={posts} frameId={frameId} transportTypes={transportTypes} />
+                  <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
                 </div>
               </div>
             )

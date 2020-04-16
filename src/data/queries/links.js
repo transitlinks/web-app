@@ -123,7 +123,9 @@ export const TransitLinkQueryFields = {
 
       const linkStats = [];
 
-      const localityQuery = {};
+      const localityQuery = {
+        limit: 16
+      };
       if (locality) localityQuery.search = locality;
       const localities = await localityRepository.getCheckInLocalities(localityQuery);
 

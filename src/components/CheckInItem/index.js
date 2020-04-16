@@ -60,42 +60,47 @@ const CheckInItem = (
 
   const getOutboundClassnames = () => cx(getStateClass(outbound), s.outboundContainer);
 
-  let contentType = 'reaction';
+  let contentType = null;
+  if (feedProperties[frameId] && feedProperties[frameId]['contentType']) {
+    contentType = feedProperties[frameId]['contentType'];
+  }
+
+
+  const departures = item.terminals.filter(terminal => terminal.type === 'departure');
+  const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
+
+  if (!contentType) {
+    if (arrivals.length > 0) contentType = 'arrival';
+    if (departures.length > 0) contentType = 'departure';
+    if (item.posts.length > 0) contentType = 'reaction';
+  }
 
   const selectContentType = (value) => {
     setDeepProperty('posts', ['feedProperties', frameId, 'contentType'], value);
   };
 
-  if (feedProperties[frameId] && feedProperties[frameId]['contentType']) {
-    contentType = feedProperties[frameId]['contentType'];
-  }
-
   let typeSelectors = [];
-  let defaultContentType = null;
   if ((editable && showSettings) || item.posts.length > 0) {
     typeSelectors.push(typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction'), 'reaction'));
-    defaultContentType = 'reaction';
   }
 
-  const departures = item.terminals.filter(terminal => terminal.type === 'departure');
   if ((editable && showSettings) || departures.length > 0) {
     typeSelectors.push(typeSelector('call_made', contentType === 'departure', () => selectContentType('departure'), 'departure'));
-    defaultContentType = 'departure';
   }
 
-  const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
   if ((editable && showSettings) || arrivals.length > 0) {
     typeSelectors.push(typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival'), 'arrival'));
-    defaultContentType = 'arrival';
   }
 
 
+  /*
   if (typeSelectors.length < 2) {
     if (typeSelectors.length === 1) {
       contentType = defaultContentType;
     }
     typeSelectors = null;
   }
+  */
 
   let showAddTerminal = null;
   if (editable && showSettings) {

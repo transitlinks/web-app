@@ -676,10 +676,11 @@ export const PostQueryFields = {
     args: {
       clientId: { type: GraphQLString },
       tags: { type: GraphQLString },
+      locality: { type: GraphQLString },
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags, offset, limit }) => {
+    resolve: async ({ request }, { clientId, tags, locality, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 
@@ -699,7 +700,9 @@ export const PostQueryFields = {
         checkIns = await postRepository.getTaggedCheckIns(tagsArray, options);
         console.log('result for tags', tagsArray);
       } else {
-        checkIns = await postRepository.getFeedCheckIns({}, options);
+        const query = {};
+        if (locality) query.locality = locality;
+        checkIns = await postRepository.getFeedCheckIns(query, options);
       }
 
       // console.log('returning checkins', checkIns);

@@ -67,7 +67,7 @@ class CheckIn extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <CheckInView checkInItem={checkInItem} openTerminals={openTerminals} transportTypes={transportTypes} />;
+          <CheckInView checkInItem={checkInItem} openTerminals={openTerminals} transportTypes={transportTypes} />
         </div>
       </div>
     );

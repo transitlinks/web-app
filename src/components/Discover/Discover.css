@@ -92,6 +92,10 @@
   font-weight: lighter;
 }
 
+.discoveryHeader .discoveryGroupName a {
+  color: black;
+}
+
 .discoveryHeader .discoveryHeaderControls {
 
 }

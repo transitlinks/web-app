@@ -63,7 +63,7 @@ const renderLinkStatsOverlays = (linkStats, onSelect) => {
   });
 };
 
-const drawLines = (terminals, onHighlight, onSelect, intl) => {
+const renderLinkInfo = (terminal, intl, wrapperClass) => {
 
   const renderDateTime = (terminal, label) => {
 
@@ -71,7 +71,7 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
       return (
         <div className={s.dateTime}>
           <div className={s.dateTimeHeader}>
-            {label}
+            <b>{label}</b>
           </div>
           <div className={s.dateTimeValue}>
             <div className={s.dateValue}>
@@ -88,6 +88,54 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
     return null;
 
   };
+
+  return (
+    <div className={cx(s.linkInfo, wrapperClass)}>
+      <div className={s.transportRow}>
+        <div className={s.transportType}>
+          { intl.formatMessage(msgTransport[terminal.transport]) }
+        </div>
+        <div className={s.transportId}>
+          {terminal.transportId || terminal.linkedTerminal.transportId}
+        </div>
+      </div>
+      <div className={s.fromRow}>
+        <b>From:</b>&nbsp;
+        <Link to={`/check-in/${terminal.checkInUuid}`}>{terminal.formattedAddress}</Link>
+      </div>
+      <div className={s.toRow}>
+        <b>To:</b>&nbsp;
+        <Link to={`/check-in/${terminal.linkedTerminal.checkInUuid}`}>{terminal.linkedTerminal.formattedAddress}</Link>&nbsp;
+        [<Link to={`/links?locality=${terminal.linkedTerminal.locality}`}>{terminal.linkedTerminal.locality}</Link>]
+      </div>
+      {
+        (terminal.date || terminal.time || terminal.linkedTerminal.date || terminal.linkedTerminal.time) &&
+        <div className={s.dateTimeRow}>
+          {[
+            renderDateTime(terminal, 'Departure'),
+            renderDateTime(terminal.linkedTerminal, 'Arrival')
+          ]}
+        </div>
+      }
+      {
+        (terminal.description || terminal.linkedTerminal.description) &&
+        <div className={s.linkDescription}>
+          <p>{terminal.description}</p>
+          <p>{terminal.linkedTerminal.description}</p>
+        </div>
+      }
+      {
+        terminal.priceAmount &&
+        <div className={s.linkCost}>
+          <b>Cost:</b> {terminal.priceAmount} {terminal.priceCurrency}
+        </div>
+      }
+    </div>
+  );
+
+};
+
+const drawLines = (terminals, onHighlight, onSelect, intl) => {
 
   return (terminals || []).map(terminal => {
     const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
@@ -129,47 +177,7 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
             terminal.selected = false;
             onSelect(terminal);
           }}>
-          <div className={s.mapLinkInfo}>
-            <div className={s.transportRow}>
-              <div className={s.transportType}>
-                { intl.formatMessage(msgTransport[terminal.transport]) }
-              </div>
-              <div className={s.transportId}>
-                {terminal.transportId}
-              </div>
-            </div>
-            <div className={s.fromRow}>
-              <b>From:</b>&nbsp;
-              <Link to={`/check-in/${terminal.checkInUuid}`}>{terminal.formattedAddress}</Link>
-            </div>
-            <div className={s.toRow}>
-              <b>To:</b>&nbsp;
-              <Link to={`/check-in/${terminal.linkedTerminal.checkInUuid}`}>{terminal.linkedTerminal.formattedAddress}</Link>&nbsp;
-              [<Link to={`/links?locality=${terminal.linkedTerminal.locality}`}>{terminal.linkedTerminal.locality}</Link>]
-            </div>
-            {
-              (terminal.date || terminal.time || terminal.linkedTerminal.date || terminal.linkedTerminal.time) &&
-                <div className={s.dateTimeRow}>
-                  {[
-                    renderDateTime(terminal, 'Departure'),
-                    renderDateTime(terminal.linkedTerminal, 'Arrival')
-                  ]}
-                </div>
-            }
-            {
-              (terminal.description || terminal.linkedTerminal.description) &&
-                <div className={s.linkDescription}>
-                  <p>{terminal.description}</p>
-                  <p>{terminal.linkedTerminal.description}</p>
-                </div>
-            }
-            {
-              terminal.priceAmount &&
-              <div className={s.linkCost}>
-                <b>Cost:</b> {terminal.priceAmount} {terminal.priceCurrency}
-              </div>
-            }
-          </div>
+          { renderLinkInfo(terminal, intl, s.mapLinkInfo) }
         </InfoWindow>
       );
     }
@@ -206,7 +214,7 @@ const renderLinkStatsList = (linkStats, onSelect) => {
             (terminals || []).map((terminal, index) => (
               <span>
                 <span>
-                  <Link to={'/links'}>
+                  <Link to={`/links?locality=${terminal.linkedTerminal.locality}`}>
                     {terminal.linkedTerminal.locality}
                   </Link>
                 </span>
@@ -274,29 +282,14 @@ const renderLinkStatsList = (linkStats, onSelect) => {
 
 };
 
-const renderLinksList = (links, linkMode) => {
+const renderLinksList = (links, linkMode, intl) => {
 
   const { uuid } = links;
 
   console.log('links', links);
 
   const renderLink = (terminal) => {
-    return (
-      <div>
-        <div>
-          {terminal.formattedAddress}
-        </div>
-        <div>
-          {terminal.transport}
-        </div>
-        <div>
-          {terminal.transportId}
-        </div>
-        <div>
-          {terminal.linkedTerminal.formattedAddress}
-        </div>
-      </div>
-    );
+    return renderLinkInfo(terminal, intl, s.listLinkInfo);
   };
 
   return (
@@ -378,7 +371,7 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
       if (terminal.selected) setProperty('links.selectedLink', terminal);
       else setProperty('links.selectedLink', null);
     }, intl);
-    listContent = renderLinksList(displayLinks[0], actualLinkMode);
+    listContent = renderLinksList(displayLinks[0], actualLinkMode, intl);
   } else {
     mapContent = renderLinkStatsOverlays(displayLinks, onSelectLocality);
     listContent = renderLinkStatsList(displayLinks, onSelectLocality);

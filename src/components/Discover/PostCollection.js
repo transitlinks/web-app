@@ -12,7 +12,7 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const PostCollection = ({ transportTypes, posts, env, children, intl }) => {
+const PostCollection = ({ transportTypes, groupName, posts, env, children, intl }) => {
 
   if (posts.length === 0) {
     return null;
@@ -39,10 +39,10 @@ const PostCollection = ({ transportTypes, posts, env, children, intl }) => {
         }
         <div className={s.secondaryPost}>
           <div className={s.postCount}>
-            <a href="#">
+            <Link to={`/?locality=${groupName}`}>
               <div>{ posts.length }</div>
               <div>posts</div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -138,17 +138,29 @@
   cursor: pointer;
 }
 
+.listLinkInfo {
+  font-size: 15px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 12px;
+  margin-top: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
 .mapLinkInfo {
   max-width: 280px;
 }
 
-.mapLinkInfo .transportRow {
+.linkInfo {
+}
+
+.linkInfo .transportRow {
   display: flex;
   align-items: center;
   margin-bottom: 6px;
 }
 
-.mapLinkInfo .transportRow .transportType {
+.linkInfo .transportRow .transportType {
   border: 1px solid black;
   padding-left: 6px;
   padding-right: 6px;
@@ -156,16 +168,20 @@
   padding-bottom: 4px;
 }
 
-.mapLinkInfo .transportRow .transportId {
+.linkInfo .transportRow .transportId {
 
 }
 
-.mapLinkInfo .fromRow {
+.linkInfo .fromRow {
   max-width: 280px;
   margin-bottom: 4px;
 }
 
-.mapLinkInfo .toRow {
+.listLinkInfo b {
+  font-weight: 600;
+}
+
+.linkInfo .toRow {
   max-width: 280px;
 }
 
@@ -180,7 +196,6 @@
 }
 
 .dateTimeRow .dateTime .dateTimeHeader {
-  font-weight: 400;
 }
 
 .dateTimeRow .dateTime .dateTimeValue {
