@@ -15,6 +15,8 @@ export const getFeedItemQuery = (checkInUuid) => {
           checkIn {
             uuid,
             user,
+            userUuid,
+            userImage,
             date,
             latitude,
             longitude

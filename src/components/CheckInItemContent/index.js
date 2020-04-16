@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Post from '../Post';
 import Terminal from '../Terminal';
+import Link from '../Link';
 import s from './CheckInItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setDeepProperty, setProperty } from '../../actions/properties';
@@ -112,12 +113,20 @@ const CheckInItemContent = ({
         showHeader &&
         <div className={s.contentHeader}>
           <div className={s.contentHeaderLeft}>
-            <div className={s.userIcon}>
-            </div>
+            {
+              checkIn.userImage &&
+                <Link to={`/?user=${checkIn.userUuid}`}>
+                  <div className={s.userIcon}>
+                    <img src={checkIn.userImage} />
+                  </div>
+                </Link>
+            }
             <div className={s.contentInfo}>
-              <div className={s.contentUser}>
-                { userName }
-              </div>
+              <Link to={`/?user=${checkIn.userUuid}`}>
+                <div className={s.contentUser}>
+                  { userName }
+                </div>
+              </Link>
               <div className={s.contentDate}>
                 { dateStr }
               </div>

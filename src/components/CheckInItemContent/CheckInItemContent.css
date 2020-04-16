@@ -76,7 +76,17 @@
 }
 
 .contentHeader .contentHeaderLeft .userIcon {
+  width: 35px;
+  height: 35px;
+  margin-right: 8px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 2px;
+}
 
+.contentHeader .contentHeaderLeft .userIcon img {
+  width: 100%;
+  height: 100%;
 }
 
 .contentHeader .contentHeaderLeft .contentInfo {

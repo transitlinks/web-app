@@ -86,6 +86,8 @@ export const CheckInType = new GraphQLObjectType({
     uuid: {type: new GraphQLNonNull(GraphQLString)},
     clientId: {type: GraphQLString},
     user: { type: GraphQLString },
+    userUuid: { type: GraphQLString },
+    userImage: { type: GraphQLString },
     latitude: {type: GraphQLFloat},
     longitude: {type: GraphQLFloat},
     placeId: {type: GraphQLString},

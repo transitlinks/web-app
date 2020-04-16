@@ -88,6 +88,8 @@ const getEntityCredentials = async (request, entity) => {
     const checkInUser = await userRepository.getById(entity.userId);
     if (checkInUser) {
       credentials.ownerFullName = `${checkInUser.firstName} ${checkInUser.lastName}`;
+      credentials.userUuid = checkInUser.uuid;
+      credentials.userImage = checkInUser.photo;
     }
     if (request.user && request.user.uuid === checkInUser.uuid) {
       credentials.userAccess = 'edit';
@@ -594,6 +596,8 @@ export const getFeedItem = async (request, checkIn) => {
     checkIn: {
       ...(checkIn.json()),
       user: credentials.ownerFullName,
+      userImage: credentials.userImage,
+      userUuid: credentials.userUuid,
       date: checkIn.createdAt
     },
     ...linkedCheckIns,

@@ -49,6 +49,8 @@ export default {
                 uuid,
                 clientId,
                 user,
+                userUuid,
+                userImage,
                 date,
                 latitude,
                 longitude

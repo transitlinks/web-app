@@ -84,6 +84,8 @@ export const saveCheckIn = ({ checkIn }) => {
       mutation saveCheckIn {
         checkIn(checkIn:${toGraphQLObject(completedCheckIn)}, clientId:"${clientId}") {
           uuid,
+          userUuid,
+          userImage,
           latitude,
           longitude,
           placeId,
@@ -301,6 +303,8 @@ export const getDiscoveries = (search, type) => {
               feedItem {
                 checkIn {
                   uuid,
+                  userUuid,
+                  userImage,
                   latitude,
                   longitude
                   placeId,
@@ -465,6 +469,8 @@ export const getFeed = (clientId, params) => {
               uuid,
               clientId,
               user,
+              userUuid,
+              userImage,
               date,
               latitude,
               longitude,
