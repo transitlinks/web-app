@@ -40,14 +40,13 @@ class Home extends React.Component {
       if (
         Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
-        console.log('state offset', this.state.fetchedOffset, this.props.offset);
+
         if (this.state.fetchedOffset === this.props.offset) {
           return;
         }
 
         const clientId = getClientId();
         const params = getParams(this.props);
-        console.log('get feed', params);
         this.setState({ fetchedOffset: params.offset });
         this.props.getFeed(clientId, { ...params, add: true });
       }
@@ -62,7 +61,6 @@ class Home extends React.Component {
     this.props.setProperty('editTerminal.terminal', {});
     this.props.setProperty('editTerminal.terminalProperties', {});
     const checkIn = this.props.savedCheckIn;
-    console.log('is editing checkin', checkIn);
     if (checkIn) {
       this.props.getFeedItem(checkIn.uuid, 'frame-new');
     }
@@ -115,7 +113,6 @@ class Home extends React.Component {
     }
 
     if (frame && frame !== prevFrame) {
-      console.log('scroll', frame, 'into view');
       setTimeout(() => {
         document.getElementById(`feed-item-${frame}`).scrollIntoView(true);
       }, 100);

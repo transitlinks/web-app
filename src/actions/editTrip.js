@@ -12,9 +12,9 @@ import {
 } from '../constants';
 
 export function setProperty(name, value) {
-  
+
   return async (dispatch) => {
-    
+
     dispatch({
       type: SET_PROPERTY,
       payload: {
@@ -24,27 +24,15 @@ export function setProperty(name, value) {
     });
 
     return true;
-  
+
   };
 
-}
-
-export function resetTrip(trip) {
-  console.log("resetting trip", trip);
-  return async (dispatch) => {
-    dispatch({
-      type: TRIP_RESET,
-      payload: {
-        trip
-      }
-    });
-  };
 }
 
 export function saveTrip({ trip }) {
-  
+
   return async (...args) => {
-    
+
     const query = `
       mutation saveTrip {
         trip(trip:${toGraphQLObject(trip)}) {
@@ -53,23 +41,23 @@ export function saveTrip({ trip }) {
         }
       }
     `;
-    
+
     return graphqlAction(
-      ...args, 
+      ...args,
       { query }, [ 'trip' ],
       SAVE_TRIP_START,
       SAVE_TRIP_SUCCESS,
       SAVE_TRIP_ERROR
     );
-  
+
   };
 
 }
 
 export function deleteTrip(uuid) {
-  
+
   return async (...args) => {
-    
+
     const query = `
       mutation deleteTrip {
         deleteTrip(uuid:"${uuid}") {
@@ -77,15 +65,15 @@ export function deleteTrip(uuid) {
         }
       }
     `;
-    
+
     return graphqlAction(
-      ...args, 
+      ...args,
       { query }, [ 'deleteTrip' ],
       DELETE_TRIP_START,
       DELETE_TRIP_SUCCESS,
       DELETE_TRIP_ERROR
     );
-  
+
   };
 
 }

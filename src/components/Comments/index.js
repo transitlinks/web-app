@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { 
+import {
   saveComment,
-  voteComment 
+  voteComment
 } from '../../actions/viewLinkInstance';
 import { setProperty } from '../../actions/properties';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
@@ -15,7 +15,7 @@ import TextField from 'material-ui/TextField';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate, getCookie } from '../utils';
 import CommentInput from './CommentInput';
- 
+
 const Comments = ({
   user,
   comments, savedComment,
@@ -26,7 +26,7 @@ const Comments = ({
 }) => {
 
   const formatCommentText = (text) => {
-    return text.replace(/\n/g, '<br/>'); 
+    return text.replace(/\n/g, '<br/>');
   };
 
   const submitCommentVote = (commentUuid, value) => {
@@ -35,34 +35,34 @@ const Comments = ({
   };
 
   const getLikeStyle = (commentUuid, value) => {
-    
+
     if (!canUseDOM) return null;
-    
+
     const cookie = getCookie(`txlinks-comment-vote-${commentUuid}`);
     if (!cookie) {
       return { cursor: 'pointer', fontSize: '18px' };
     }
-    
+
     if (parseInt(cookie) === value) {
       return { color: '#0074c2', fontSize: '18px' };
     } else {
       return { color: '#c0c0c0', fontSize: '18px' };
     }
-  
+
   };
-  
+
   const openReplyInput = (comment) => {
     setProperty('replyToText', '');
     setProperty('replyTo', comment);
   };
-  
+
   const commentByUuid = {};
   (comments || []).forEach(comment => {
     commentByUuid[comment.uuid] = comment;
     commentByUuid[comment.uuid].replys = [];
   });
-  
-  const replyUuids = []; 
+
+  const replyUuids = [];
   Object.keys(commentByUuid).forEach(commentUuid => {
     const comment = commentByUuid[commentUuid];
     if (comment.replyToUuid) {
@@ -70,19 +70,18 @@ const Comments = ({
       replyUuids.push(commentUuid);
     }
   });
-  
+
   replyUuids.forEach(replyUuid => { delete commentByUuid[replyUuid]; });
 
-  console.log("ordered comments", commentByUuid); 
   const renderComment = (comment) => {
-    
+
     if (commentVote && commentVote.uuid === comment.uuid) {
       comment.up = commentVote.up;
       comment.down = commentVote.down;
     }
-    
+
     const secondLevel = comment.replyToUuid && commentByUuid[comment.replyToUuid];
-    
+
     return (
       <div className={cx("comment", s.comment, secondLevel ? s.reply : null)}>
         <div className={cx("commentText", s.commentText)}>
@@ -95,13 +94,13 @@ const Comments = ({
         </div>
         <div className={s.commentControls}>
           <div className={s.commentReply}>
-            { 
+            {
               (!replyTo || replyTo.uuid !== comment.uuid) &&
               <span onClick={() => openReplyInput(comment)}>
                 Reply
               </span>
             }
-            { 
+            {
               (replyTo && replyTo.uuid === comment.uuid) &&
               <span onClick={() => setProperty('replyTo', null)}>
                 Cancel reply
@@ -111,7 +110,7 @@ const Comments = ({
           <div className={s.commentLikes}>
             <div className={s.likeBlock}>
               <span>{comment.up}</span>
-              <FontIcon className="material-icons" 
+              <FontIcon className="material-icons"
                 onClick={() => submitCommentVote(comment.uuid, 1)}
                 style={getLikeStyle(comment.uuid, 1)}>
                 add
@@ -119,7 +118,7 @@ const Comments = ({
             </div>
             <div className={s.likeBlock}>
               <span>{comment.down}</span>
-              <FontIcon className="material-icons" 
+              <FontIcon className="material-icons"
                 onClick={() => submitCommentVote(comment.uuid, -1)}
                 style={getLikeStyle(comment.uuid, -1)}>
                 remove
@@ -127,24 +126,24 @@ const Comments = ({
             </div>
           </div>
         </div>
-        { 
+        {
           (replyTo && replyTo.uuid === comment.uuid) &&
           <div>
-            <CommentInput linkInstance={linkInstance} 
+            <CommentInput linkInstance={linkInstance}
               replyTo={comment} />
           </div>
         }
         {comment.replys.map(reply => renderComment(reply))}
       </div>
     );
-  
+
   };
- 
-  const commentElems = (Object.keys(commentByUuid)).map(commentUuid => { 
+
+  const commentElems = (Object.keys(commentByUuid)).map(commentUuid => {
     const comment = commentByUuid[commentUuid];
     return renderComment(comment);
   });
- 
+
   return (
     <div className={s.container}>
       <div className={s.comments}>

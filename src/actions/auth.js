@@ -3,10 +3,9 @@ import {
 } from '../constants';
 
 export const setAuth = (auth) => {
-  
-  console.log("TRY AUTH", auth); 
+
   return async (dispatch) => {
-    
+
     dispatch({
       type: SET_AUTH,
       payload: {
@@ -15,7 +14,7 @@ export const setAuth = (auth) => {
     });
 
     return true;
-  
+
   }
 
 };

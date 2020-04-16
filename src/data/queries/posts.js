@@ -762,7 +762,6 @@ export const PostQueryFields = {
         };
       });
 
-      console.log("OPEN TERMINALS", result);
       return result;
 
     }

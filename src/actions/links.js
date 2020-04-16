@@ -127,11 +127,8 @@ export function setZoomLevel(linkStats, linkMode) {
 
   return async (dispatch) => {
 
-    console.log('get bounds...');
     const bounds = getMapBounds(linkStats, linkMode);
-    console.log('calc zoom...');
     const zoomLevel = getBoundsZoomLevel(bounds, { width: 400, height: 400 });
-    console.log('dispatch zoom and bounds');
     dispatch({
       type: SET_PROPERTY,
       payload: {

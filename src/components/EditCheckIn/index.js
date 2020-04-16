@@ -199,7 +199,6 @@ const EditCheckIn = ({
     toInputValue = to.description;
   }
 
-  console.log("edit check-in", uuid, from, to, fromInputValue, checkIn, departure, arrival, departureValue, arrivalValue);
   return (
     <div className={s.container}>
       <div className={s.header}>

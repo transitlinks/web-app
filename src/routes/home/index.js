@@ -39,8 +39,6 @@ export default {
 
     const paramsString = createParamString(queryParams);
 
-    console.log('route', paramsString);
-
     try {
 
       const { data } = await graphqlRequest(

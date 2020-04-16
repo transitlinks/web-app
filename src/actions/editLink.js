@@ -15,9 +15,9 @@ import {
 } from '../constants';
 
 export function selectLocality({ endpoint, locality }) {
-  
+
   return async (dispatch, getState) => {
-    
+
     dispatch({
       type: SELECTED_LOCALITY,
       payload: {
@@ -27,15 +27,15 @@ export function selectLocality({ endpoint, locality }) {
     });
 
     return true;
-  
+
   };
 
 }
 
 export function selectAddress({ endpoint, locality }) {
-  
+
   return async (dispatch, getState) => {
-    
+
     dispatch({
       type: SELECTED_ADDRESS,
       payload: {
@@ -45,15 +45,15 @@ export function selectAddress({ endpoint, locality }) {
     });
 
     return true;
-  
+
   };
 
 }
 
 export function setProperty(name, value) {
-  
+
   return async (dispatch) => {
-    
+
     dispatch({
       type: SET_PROPERTY,
       payload: {
@@ -63,15 +63,15 @@ export function setProperty(name, value) {
     });
 
     return true;
-  
+
   };
 
 }
 
 export function setTransport(transport) {
-  
+
   return async (dispatch) => {
-    
+
     dispatch({
       type: SET_TRANSPORT,
       payload: {
@@ -80,13 +80,12 @@ export function setTransport(transport) {
     });
 
     return true;
-  
+
   };
 
 }
 
 export function resetLink(linkInstance) {
-  console.log("resetyting link", linkInstance);
   return async (dispatch) => {
     dispatch({
       type: LINK_RESET,
@@ -98,9 +97,9 @@ export function resetLink(linkInstance) {
 }
 
 export function saveLinkInstance({ linkInstance }) {
-  
+
   return async (...args) => {
-    
+
     const query = `
       mutation saveLinkInstance {
         linkInstance(linkInstance:${toGraphQLObject(linkInstance)}) {
@@ -117,23 +116,23 @@ export function saveLinkInstance({ linkInstance }) {
         }
       }
     `;
-    
+
     return graphqlAction(
-      ...args, 
+      ...args,
       { query }, [ 'linkInstance' ],
       SAVE_LINK_START,
       SAVE_LINK_SUCCESS,
       SAVE_LINK_ERROR
     );
-  
+
   };
 
 }
 
 export function deleteLinkInstance(uuid) {
-  
+
   return async (...args) => {
-    
+
     const query = `
       mutation deleteLinkInstance {
         deleteLinkInstance(uuid:"${uuid}") {
@@ -141,15 +140,15 @@ export function deleteLinkInstance(uuid) {
         }
       }
     `;
-    
+
     return graphqlAction(
-      ...args, 
+      ...args,
       { query }, [ 'deleteLinkInstance' ],
       DELETE_LINK_START,
       DELETE_LINK_SUCCESS,
       DELETE_LINK_ERROR
     );
-  
+
   };
 
 }

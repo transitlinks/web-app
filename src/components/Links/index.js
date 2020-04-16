@@ -301,8 +301,6 @@ const renderLinksList = (links, linkMode, intl) => {
 
   const { uuid } = links;
 
-  console.log('links', links);
-
   const renderLink = (terminal) => {
     return renderLinkInfo(terminal, intl, s.listLinkInfo);
   };
@@ -392,8 +390,6 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
     mapContent = renderLinkStatsOverlays(displayLinks, onSelectLocality);
     listContent = renderLinkStatsList(displayLinks, onSelectLocality);
   }
-
-  console.log('default center', mapCenter, mapZoom);
 
   const mapView = (
     <div>

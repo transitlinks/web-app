@@ -13,7 +13,6 @@ export function propToState(action, prefix, state) {
     if (store === prefix) {
       let endPath = state;
       for (let i = 0; i < path.length; i++) {
-        console.log(endPath, path[i]);
         if (i === path.length - 1) {
           endPath[path[i]] = value;
         } else if (!endPath[path[i]]) {

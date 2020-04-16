@@ -15,15 +15,15 @@ import {
 } from '../constants';
 
 const formatTime = (hour, minute) => {
-  
+
   let time = '';
-  
+
   if (hour) {
     time += ((hour < 10 ? '0' : '') + hour);
   } else {
     time += '00';
   }
-  
+
   if (minute) {
     time += ':' + ((minute < 10 ? '0' : '') + minute);
   } else {
@@ -35,17 +35,16 @@ const formatTime = (hour, minute) => {
 };
 
 export default function editLink(state = {}, action) {
-  
+
   const endState = { ...state };
 
   switch (action.type) {
-    
+
     case SELECTED_LOCALITY:
       endState[action.payload.endpoint] = action.payload.locality;
-      return endState;    
+      return endState;
     case SELECTED_ADDRESS:
       endState[action.payload.endpoint] = action.payload.locality;
-      console.log("end state", endState, action);
       return endState;
     case SET_TRANSPORT:
       return { ...state, transport: action.payload.transport };
@@ -54,33 +53,33 @@ export default function editLink(state = {}, action) {
       return endState;
     case LINK_RESET:
       if (action.payload.linkInstance && action.payload.linkInstance.link) {
-        
+
         const { linkInstance } = action.payload;
         const { link } = linkInstance;
-        
+
         let departureDate = null;
         if (linkInstance.departureDate) {
           departureDate = new Date(linkInstance.departureDate);
           departureDate.setHours(linkInstance.departureHour || 0);
           departureDate.setMinutes(linkInstance.departureMinute || 0);
         }
-        
-        let arrivalDate = null;        
+
+        let arrivalDate = null;
         if (linkInstance.arrivalDate) {
           arrivalDate = new Date(linkInstance.arrivalDate);
           arrivalDate.setHours(linkInstance.arrivalHour || 0);
           arrivalDate.setMinutes(linkInstance.arrivalMinute || 0);
         }
 
-        return { 
+        return {
           ...state,
-          uuid: linkInstance.uuid, 
-          from: link.from, 
+          uuid: linkInstance.uuid,
+          from: link.from,
           to: link.to,
-          transport: linkInstance.transport.slug, 
-          identifier: linkInstance.identifier, 
-          mode: linkInstance.mode, 
-          departureDate: departureDate, departureTime: departureDate, 
+          transport: linkInstance.transport.slug,
+          identifier: linkInstance.identifier,
+          mode: linkInstance.mode,
+          departureDate: departureDate, departureTime: departureDate,
           departureDescription: linkInstance.departureDescription,
           departureAddress: linkInstance.departureAddress,
           departureLat: linkInstance.departureLat,
@@ -89,7 +88,7 @@ export default function editLink(state = {}, action) {
           departureRating: linkInstance.departureRating,
           arrivalRating: linkInstance.arrivalRating,
           awesomeRating: linkInstance.awesomeRating,
-          arrivalDate: arrivalDate, arrivalTime: arrivalDate, 
+          arrivalDate: arrivalDate, arrivalTime: arrivalDate,
           arrivalDescription: linkInstance.arrivalDescription || '',
           arrivalAddress: linkInstance.arrivalAddress,
           arrivalLat: linkInstance.arrivalLat,
@@ -100,11 +99,11 @@ export default function editLink(state = {}, action) {
 
       } else {
 
-        return { 
-          ...state, 
+        return {
+          ...state,
           mode: 'research',
-          to: null, from: null, 
-          transport: null, identifier: '', 
+          to: null, from: null,
+          transport: null, identifier: '',
           departureDate: null, departureTime: null, departureDescription: '',
           departureAddress: '', departureLat: null, departureLng: null,
           arrivalDate: null, arrivalTime: null, arrivalDescription: '',
@@ -115,37 +114,37 @@ export default function editLink(state = {}, action) {
         };
 
       }
-  
+
     case SAVE_LINK_START:
     case SAVE_LINK_SUCCESS:
     case SAVE_LINK_ERROR:
       return graphqlReduce(
         state, action,
-        { 
-          start: () => ({ linkInstance: null }), 
-          success: () => ({ 
+        {
+          start: () => ({ linkInstance: null }),
+          success: () => ({
             linkInstance: Object.assign(
-              action.payload.linkInstance, 
+              action.payload.linkInstance,
               { saved: (new Date()).getTime() }
             )
-          }), 
+          }),
           error: () => ({ linkInstance: null })
         },
         SAVE_LINK_START,
         SAVE_LINK_SUCCESS,
         SAVE_LINK_ERROR
-      ); 
-    
+      );
+
     case DELETE_LINK_START:
     case DELETE_LINK_SUCCESS:
     case DELETE_LINK_ERROR:
       return graphqlReduce(
         state, action,
-        { 
-          start: () => ({ deleteLinkInstance: null }), 
-          success: () => ({ 
+        {
+          start: () => ({ deleteLinkInstance: null }),
+          success: () => ({
             deleteLinkInstance: action.payload.deleteLinkInstance
-          }), 
+          }),
           error: () => ({ deleteLinkInstance: null })
         },
         DELETE_LINK_START,
@@ -157,6 +156,6 @@ export default function editLink(state = {}, action) {
       return state;
 
   }
-  
+
 
 }

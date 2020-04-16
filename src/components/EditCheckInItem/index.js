@@ -198,7 +198,6 @@ const EditCheckInItemView = (props) => {
     setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, uploadingMedia, newCheckIn, savedTerminal, frameId
   } = props;
 
-  console.log("editpost", editPost);
   let positionElem = null;
   if (geolocation) {
     if (geolocation.status === 'located') {

@@ -12,7 +12,6 @@ class Links extends React.Component {
 
 
   componentDidMount() {
-    console.log('links props', this.props);
     const { query } = this.props;
     this.props.setProperty('links.selectedLink', null);
     this.props.getLinks(query || {});
@@ -21,16 +20,14 @@ class Links extends React.Component {
   componentDidUpdate(prevProps) {
 
     const { loadedLinks, mapRef, query } = this.props;
-    console.log('loaded links', loadedLinks, mapRef);
     if (loadedLinks) {
       console.log('set zoom level');
       this.props.setZoomLevel(loadedLinks, this.props.linkMode);
     }
 
     const prevQuery = prevProps.query;
-    console.log('check query change');
     if ((!prevQuery && query.locality) || (prevQuery && query.locality && prevQuery.locality !== query.locality)) {
-      console.log('get links with new query');
+      console.log('get links with new query', query);
       this.props.setProperty('links.selectedLink', null);
       this.props.getLinks({ locality: query.locality });
     }

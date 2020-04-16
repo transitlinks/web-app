@@ -455,7 +455,6 @@ export const getFeed = (clientId, params) => {
     paramsString += `, ${key}: ${val}`;
   });
 
-  console.log('action', paramsString);
   return async (...args) => {
 
     const query = `

@@ -45,7 +45,6 @@ export default function editLink(state = {}, action) {
       return endState;
     case SELECTED_ADDRESS:
       endState[action.payload.endpoint] = action.payload.locality;
-      console.log("end state", endState, action);
       return endState;
     case SET_TRANSPORT:
       return { ...state, transport: action.payload.transport };
@@ -57,8 +56,6 @@ export default function editLink(state = {}, action) {
 
         const { checkIn } = action.payload;
         const { link } = checkIn;
-
-        console.log("CHECK IN LINK", link);
 
         let departureDate = null;
         if (checkIn.departureDate) {

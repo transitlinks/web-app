@@ -86,7 +86,6 @@ export function setTransport(transport) {
 }
 
 export function resetCheckIn(checkIn) {
-  console.log("resetting check-in", checkIn);
   return async (dispatch) => {
     dispatch({
       type: CHECKIN_RESET,

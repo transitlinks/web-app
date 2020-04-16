@@ -43,7 +43,7 @@ export function getGeolocation() {
       console.log('coords:', position.coords);
       console.log('coords lat lng', position.coords.latitude, position.coords.longitude);
       const location = await geocodePosition(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
-      console.log("LOC", location);
+      console.log('geocoded location', location);
       position.formattedAddress = location.formatted_address || location.address_components.formatted_address;
       position.placeId = location.place_id;
       dispatch({

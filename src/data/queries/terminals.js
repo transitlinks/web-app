@@ -32,7 +32,6 @@ export const TerminalQueryFields = {
       log.info(graphLog(request, 'search-terminals',`locality=${locality} type=${type}`));
 
       const checkIns = await postRepository.getCheckIns({ locality: { $like: `%${locality}%` } });
-      console.log('got checkins', checkIns);
       const checkInIds = checkIns.map(checkIn => checkIn.id);
 
       let terminalQueryParams = {};
@@ -43,7 +42,6 @@ export const TerminalQueryFields = {
       }
 
       const terminals = await postRepository.getTerminals(terminalQueryParams);
-      console.log('got terminals', terminals);
       return terminals.map(terminal => {
         const { checkIn, linkedTerminal } = terminal;
         return {
