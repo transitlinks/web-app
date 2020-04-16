@@ -16,7 +16,7 @@ const title = 'Transitlinks';
 const getParams = (props) => {
   const { tags, offset, query } = props;
   const params = { limit: 8, offset: offset || 0 };
-  if (tags) params.tags = tags;
+  if (query && query.tags) params.tags = query.tags;
   if (query && query.locality) params.locality = query.locality;
   if (query && query.user) params.user = query.user;
   return params;

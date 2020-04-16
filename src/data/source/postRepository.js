@@ -243,6 +243,27 @@ export default {
     return connections.map(c => c.locality);
   },
 
+  saveTag: async (entity, entityId, tagValue) => {
+
+    let tag = await Tag.findOne({ value: tagValue });
+    if (!tag) {
+      tag = await Tag.create({ value: tagValue });
+    }
+
+    if (entity === 'Post') {
+      const post = await Post.findById(entityId);
+      const checkIn = await CheckIn.findById(post.checkInId);
+      const entityTag = await EntityTag.findOne({ checkInId: checkIn.id, tagId: tag.id });
+      if (!entityTag) {
+        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id });
+        console.log('Tagged entity', entity, entityId, 'with', tagValue);
+      } else {
+        console.log(entity, entityId, 'already tagged with', tagValue);
+      }
+
+    }
+
+  },
 
   getTags: async (where, options = {}) => {
 
@@ -258,10 +279,21 @@ export default {
 
   getTaggedCheckIns: async (tags, options) => {
 
-    const tagEntities = await Tag.findAll({
+    const valueTags = await Tag.findAll({
       where: { value: { $in: tags } }
     });
 
+    const valueTagIds = valueTags.map(tag => tag.id);
+    const entityTags = await EntityTag.findAll({ where: { tagId: { $in: valueTagIds } } });
+    const checkInIds = entityTags.map(entityTag => entityTag.checkInId);
+    const taggedCheckIns = await CheckIn.findAll({
+      where: { id: { $in: checkInIds } },
+      ...options
+    });
+
+    return taggedCheckIns;
+
+    /*
     let checkIns = [];
     for (let i = 0; i < tagEntities.length; i++) {
       const tag = tagEntities[i];
@@ -275,6 +307,7 @@ export default {
     }
 
     return checkIns;
+    */
 
   },
 

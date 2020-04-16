@@ -209,6 +209,15 @@ const savePost = async (postInput, clientId, request) => {
   await addUserId(post, request);
 
   let saved = await postRepository.savePost(post);
+  const splitByTags = saved.text.split('#');
+  if (splitByTags.length > 0) {
+    for (let i = 1; i < splitByTags.length; i++) {
+      const tag = splitByTags[i].split(' ')[0];
+      await postRepository.saveTag('Post', saved.id, tag);
+      console.log('Saved tag:', tag);
+    }
+  }
+
   //let savedMediaItems = await postRepository.getMediaItems({ entityUuid: saved.uuid });
   //const savedMediaItemUuids = savedMediaItems.map(mediaItem => mediaItem.uuid);
 
