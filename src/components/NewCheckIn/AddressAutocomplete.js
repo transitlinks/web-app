@@ -147,8 +147,9 @@ const AddressAutocomplete = ({
     if (env.offline) return;
 
 		geocode(latLng, (result) => {
-			setProperty('geocodeAddress', result.formatted_address);
-      setProperty('geocodePlaceId', result.place_id);
+		  console.log('map reverse geocode result', result);
+			setProperty('geocodeAddress', result.result.formatted_address);
+      setProperty('geocodePlaceId', result.result.place_id);
 			setProperty('geocodeLatLng', latLng.lat + ',' + latLng.lng);
 		});
 
