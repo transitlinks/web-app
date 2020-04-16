@@ -126,6 +126,7 @@ export const TransitLinkQueryFields = {
       const localityQuery = {};
       if (locality) localityQuery.search = locality;
       const localities = await localityRepository.getCheckInLocalities(localityQuery);
+
       for (let i = 0; i < localities.length; i++) {
         const locality = localities[i];
         const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality);

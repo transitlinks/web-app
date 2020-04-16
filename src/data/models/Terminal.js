@@ -19,6 +19,10 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  checkInUuid: {
+    type: DataType.STRING
+  },
+
   type: {
     type: DataType.STRING
   },
@@ -47,7 +51,15 @@ const Terminal = Model.define('Terminal', {
     type: DataType.FLOAT
   },
 
+  formattedAddress: {
+    type: DataType.STRING
+  },
+
   linkedLocality: {
+    type: DataType.STRING
+  },
+
+  linkedFormattedAddress: {
     type: DataType.STRING
   },
 
@@ -78,7 +90,7 @@ const Terminal = Model.define('Terminal', {
   },
 
   indexes: [
-    { fields: ['id', 'uuid', 'type', 'transport', 'locality', 'latitude', 'longitude'] },
+    { fields: ['id', 'uuid', 'type', 'transport', 'locality', 'latitude', 'longitude', 'checkInUuid'] },
   ],
 
 });

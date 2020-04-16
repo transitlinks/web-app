@@ -12,7 +12,6 @@ export default {
   async action({ params, query, context }) {
 
     const paramKeys = Object.keys(query);
-    if (!paramKeys.locality) paramKeys.locality = 'ant';
     const paramsStringElems = paramKeys.map(paramKey => `${paramKey}: "${query[paramKey]}"`);
     let paramsString = paramsStringElems.join(', ');
     const { graphqlRequest } = context.store.helpers;
@@ -77,7 +76,7 @@ export default {
       );
 
       log.info("event=received-transit-links-data", data);
-      return <Links links={data.transitLinks} params={query} transportTypes={data.transportTypes} />;
+      return <Links links={data.transitLinks} query={query} transportTypes={data.transportTypes} />;
 
     } catch (error) {
       log.info("error=route-transit-links", error);

@@ -50,17 +50,10 @@
 .linkItem {
   margin-top: 6px;
   margin-bottom: 36px;
-  margin-left: 8px;
-  margin-right: 8px;
 }
 
 .linkItem .from b, .linkItem .to b {
   font-weight: 600;
-}
-
-.linkItem .row1 {
-  display: flex;
-  margin-bottom: 4px;
 }
 
 .transport {
@@ -76,13 +69,6 @@
 .description {
   font-size: 14px;
   color: #3a3a3a;
-}
-
-.linkItem .row2 {
-}
-
-.linkItem .row3 {
-  margin-top: 6px;
 }
 
 .localityOverlay {
@@ -122,4 +108,97 @@
   display: flex;
   justify-content: center;
   flex-grow: 1;
+}
+
+.terminalsListing {
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+  margin-right: 8px;
+}
+
+.terminalsListing .linkedLocalities {
+
+}
+
+.terminalsListing .terminalTypeIcon {
+  margin-top: 4px;
+  margin-right: 4px;
+}
+
+.linkItem .localityHeader {
+  background-color: #e0e0e0;
+  padding-left: 8px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  text-decoration: underline;
+}
+
+.linkItem .localityHeader span {
+  cursor: pointer;
+}
+
+.mapLinkInfo {
+  max-width: 280px;
+}
+
+.mapLinkInfo .transportRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.mapLinkInfo .transportRow .transportType {
+  border: 1px solid black;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.mapLinkInfo .transportRow .transportId {
+
+}
+
+.mapLinkInfo .fromRow {
+  max-width: 280px;
+  margin-bottom: 4px;
+}
+
+.mapLinkInfo .toRow {
+  max-width: 280px;
+}
+
+.dateTimeRow {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dateTimeRow .dateTime {
+
+}
+
+.dateTimeRow .dateTime .dateTimeHeader {
+  font-weight: 400;
+}
+
+.dateTimeRow .dateTime .dateTimeValue {
+  display: flex;
+}
+
+.dateTimeValue .dateValue {
+
+}
+
+.dateTimeValue .timeValue {
+  margin-left: 4px;
+}
+
+.linkDescription {
+
+}
+
+.linkCost {
+
 }

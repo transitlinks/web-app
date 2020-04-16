@@ -2,7 +2,8 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/terminalRepository');
 
 import sequelize from '../sequelize';
-import { Terminal } from '../models';
+import { Terminal, CheckIn } from '../models';
+import postRepository from './postRepository';
 
 export default {
 

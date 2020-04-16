@@ -146,12 +146,14 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     checkInId: checkIn.id,
     locality: checkIn.locality,
     latitude: checkIn.latitude,
-    longitude: checkIn.longitude
+    longitude: checkIn.longitude,
+    formattedAddress: checkIn.formattedAddress
   };
 
   if (linkedTerminal) {
     terminal.linkedTerminalId = linkedTerminal.id;
     terminal.linkedLocality = linkedTerminal.locality;
+    terminal.linkedFormattedAddress = linkedTerminal.formattedAddress;
   }
 
   if (terminalInput.date) {
@@ -169,7 +171,13 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   if (linkedTerminal) {
     const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency', 'description' ]);
-    postRepository.saveTerminal({ uuid: linkedTerminal.uuid, linkedTerminalId: saved.id, linkedLocality: saved.locality, ...linkedTerminalUpdate });
+    postRepository.saveTerminal({
+      uuid: linkedTerminal.uuid,
+      linkedTerminalId: saved.id,
+      linkedLocality: saved.locality,
+      linkedFormattedAddress: saved.formattedAddress,
+      ...linkedTerminalUpdate
+    });
   }
 
   return saved.toJSON();
@@ -298,7 +306,12 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
     if (terminals[i].linkedTerminalId) {
       const linkedTerminal = await postRepository.getTerminal({ id: terminals[i].linkedTerminalId });
       if (linkedTerminal) {
-        await postRepository.saveTerminal({ uuid: linkedTerminal.uuid, linkedTerminalId: null, linkedLocality: null });
+        await postRepository.saveTerminal({
+          uuid: linkedTerminal.uuid,
+          linkedTerminalId: null,
+          linkedLocality: null,
+          linkedFormattedAddress: null
+        });
       }
     }
   }

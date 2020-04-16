@@ -8,8 +8,12 @@ import s from './Links.css';
 import { getLinks, setZoomLevel } from '../../actions/links';
 import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { GoogleMap, OverlayView, Polyline, withGoogleMap } from 'react-google-maps';
+import Link from '../Link';
+import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
+import msgTransport from '../common/messages/transport';
+import msg from '../EditCheckInItem/messages.terminal';
+import { getDateString, getTimeString } from '../utils';
 
 const LinksMap = compose(
   withProps({
@@ -59,70 +63,279 @@ const renderLinkStatsOverlays = (linkStats, onSelect) => {
   });
 };
 
-const drawLines = (terminals) => {
+const drawLines = (terminals, onHighlight, onSelect, intl) => {
+
+  const renderDateTime = (terminal, label) => {
+
+    if (terminal.date || terminal.time) {
+      return (
+        <div className={s.dateTime}>
+          <div className={s.dateTimeHeader}>
+            {label}
+          </div>
+          <div className={s.dateTimeValue}>
+            <div className={s.dateValue}>
+              { terminal.date && getDateString(terminal.date) }
+            </div>
+            <div className={s.timeValue}>
+              { terminal.time && getTimeString(terminal.time) }
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+
+  };
+
   return (terminals || []).map(terminal => {
     const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
-    return (
-      <Polyline
-        path={
-          [
-            { lat: terminal.latitude, lng: terminal.longitude },
-            { lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }
-          ]
-        }
-        options={{
-          geodesic: true,
-          strokeColor: color,
-          strokeOpacity: 1.0,
-          strokeWeight: 2
-        }} />
-    );
+    const polyLine = {
+      line: (
+        <Polyline
+          path={
+            [
+              { lat: terminal.latitude, lng: terminal.longitude },
+              { lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }
+            ]
+          }
+          onMouseOver={(event) => {
+            terminal.highlighted = true;
+            onHighlight(terminal);
+          }}
+          onMouseOut={(event) => {
+            terminal.highlighted = false;
+            onHighlight(terminal);
+          }}
+          onClick={(event) => {
+            terminal.selected = true;
+            onSelect(terminal);
+          }}
+          options={{
+            geodesic: true,
+            strokeColor: color,
+            strokeOpacity: terminal.highlighted ? 1.0 : 0.5,
+            strokeWeight: 4
+          }} />
+      )
+    };
+
+    if (terminal.selected) {
+      polyLine.info = (
+        <InfoWindow position={{ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }}
+          options={{ maxWidth: '200px' }}
+          onCloseClick={() => {
+            terminal.selected = false;
+            onSelect(terminal);
+          }}>
+          <div className={s.mapLinkInfo}>
+            <div className={s.transportRow}>
+              <div className={s.transportType}>
+                { intl.formatMessage(msgTransport[terminal.transport]) }
+              </div>
+              <div className={s.transportId}>
+                {terminal.transportId}
+              </div>
+            </div>
+            <div className={s.fromRow}>
+              <b>From:</b>&nbsp;
+              <Link to={`/check-in/${terminal.checkInUuid}`}>{terminal.formattedAddress}</Link>
+            </div>
+            <div className={s.toRow}>
+              <b>To:</b>&nbsp;
+              <Link to={`/check-in/${terminal.linkedTerminal.checkInUuid}`}>{terminal.linkedTerminal.formattedAddress}</Link>&nbsp;
+              [<Link to={`/links?locality=${terminal.linkedTerminal.locality}`}>{terminal.linkedTerminal.locality}</Link>]
+            </div>
+            {
+              (terminal.date || terminal.time || terminal.linkedTerminal.date || terminal.linkedTerminal.time) &&
+                <div className={s.dateTimeRow}>
+                  {[
+                    renderDateTime(terminal, 'Departure'),
+                    renderDateTime(terminal.linkedTerminal, 'Arrival')
+                  ]}
+                </div>
+            }
+            {
+              (terminal.description || terminal.linkedTerminal.description) &&
+                <div className={s.linkDescription}>
+                  <p>{terminal.description}</p>
+                  <p>{terminal.linkedTerminal.description}</p>
+                </div>
+            }
+            {
+              terminal.priceAmount &&
+              <div className={s.linkCost}>
+                <b>Cost:</b> {terminal.priceAmount} {terminal.priceCurrency}
+              </div>
+            }
+          </div>
+        </InfoWindow>
+      );
+    }
+    return polyLine;
   });
 };
 
-const renderLinks = (links, linkMode) => {
+const renderMapLinks = (links, linkMode, onHighlight, onSelect, intl) => {
   return (
       linkMode === 'internal' ?
-        drawLines(links.internal) :
+        drawLines(links.internal, onHighlight, onSelect, intl).map(line => [line.line, line.info]) :
         [
-          drawLines(links.departures),
-          drawLines(links.arrivals)
+          drawLines(links.departures, onHighlight, onSelect, intl).map(line => [line.line, line.info]),
+          drawLines(links.arrivals, onHighlight, onSelect, intl).map(line => [line.line, line.info])
         ]
   );
 };
 
-const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom, getLinks, setProperty }) => {
+const renderLinkStatsList = (linkStats, onSelect) => {
 
-  let  displayLinks = (loadedLinks || links) || [];
+  const renderTerminalsListing = (terminals, icon, text) => {
+    return (
+      <div className={s.terminalsListing}>
+        <div className={s.terminalTypeIcon}>
+          <FontIcon className="material-icons" style={{ fontSize: '24px' }}>
+            {icon}
+          </FontIcon>
+        </div>
+        <div>
+          {terminals.length} {text} &nbsp;
+        </div>
+        <div className={s.linkedLocalities}>
+          {
+            (terminals || []).map((terminal, index) => (
+              <span>
+                <span>
+                  <Link to={'/links'}>
+                    {terminal.linkedTerminal.locality}
+                  </Link>
+                </span>
+                {
+                  index < terminals.length - 1 &&
+                  <span>, </span>
+                }
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    );
+  };
 
-  const listView = (
+  return (
     <div>
       {
 
-        (displayLinks || []).map((link, index) => {
+        (linkStats || []).map((linkStat) => {
 
-          const { uuid } = link;
+          const { uuid } = linkStat;
           return (
             <div key={uuid} className={s.linkItem}>
-              <div className={s.row1}>
-                {link.locality}
+              <div className={s.localityHeader}>
+                <span onClick={() => onSelect(linkStat.locality)}>{linkStat.locality}</span>
               </div>
-              <div className={s.row3}>
-                Departures: {link.departures.length}
-              </div>
-              <div className={s.row3}>
-                Arrivals: {link.arrivals.length}
-              </div>
-              <div className={s.row3}>
-                Internal: {link.internal.length}
-              </div>
+              {
+                linkStat.departures.length > 0 &&
+                <div>
+                  <div>
+                    { renderTerminalsListing(linkStat.departures, 'call_made', 'departures to') }
+                  </div>
+                </div>
+              }
+              {
+                linkStat.arrivals.length > 0 &&
+                <div>
+                  <div>
+                    { renderTerminalsListing(linkStat.arrivals, 'call_received', 'arrivals from') }
+                  </div>
+                </div>
+              }
+              {
+                linkStat.internal.length > 0 &&
+                <div>
+                  <div className={s.terminalsListing}>
+                    <div className={s.terminalTypeIcon}>
+                      <FontIcon className="material-icons" style={{ fontSize: '24px' }}>
+                        cached
+                      </FontIcon>
+                    </div>
+                    <div>
+                      {linkStat.internal.length} internal connections
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
           );
-
         })
       }
     </div>
   );
+
+};
+
+const renderLinksList = (links, linkMode) => {
+
+  const { uuid } = links;
+
+  console.log('links', links);
+
+  const renderLink = (terminal) => {
+    return (
+      <div>
+        <div>
+          {terminal.formattedAddress}
+        </div>
+        <div>
+          {terminal.transport}
+        </div>
+        <div>
+          {terminal.transportId}
+        </div>
+        <div>
+          {terminal.linkedTerminal.formattedAddress}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      {
+        <div key={uuid} className={s.linkItem}>
+          <div className={s.localityHeader}>
+            {links.locality}
+          </div>
+          {
+            linkMode === 'internal' ?
+              <div>
+                { (links.internal || []).map(terminal => renderLink(terminal)) }
+              </div> :
+              <div>
+                <div>
+                  { (links.departures || []).map(terminal => renderLink(terminal)) }
+                </div>
+                <div>
+                  { (links.arrivals || []).map(terminal => renderLink(terminal)) }
+                </div>
+              </div>
+          }
+        </div>
+      }
+    </div>
+  );
+
+};
+
+const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, linkMode, mapZoom, selectedLink, getLinks, setProperty }) => {
+
+  let  displayLinks = (loadedLinks || links) || [];
+
+  const onSelectLocality = (locality) => {
+    setProperty('links.searchTerm', locality);
+    setProperty('links.linkMode', 'external');
+    getLinks({ locality });
+  };
 
   let mapCenter = {
     lat: 60.16952,
@@ -130,10 +343,17 @@ const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom
   };
 
   if (displayLinks.length > 0) {
-    mapCenter = {
-      lat: displayLinks[0].latitude,
-      lng: displayLinks[0].longitude
-    };
+    if (!selectedLink) {
+      mapCenter = {
+        lat: displayLinks[0].latitude,
+        lng: displayLinks[0].longitude
+      };
+    } else {
+      mapCenter = {
+        lat: selectedLink.linkedTerminal.latitude,
+        lng: selectedLink.linkedTerminal.longitude
+      }
+    }
   }
 
   const showControls = displayLinks.length === 1 &&
@@ -147,30 +367,27 @@ const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom
     }
   }
 
-  let content = null;
+  let mapContent = null;
+  let listContent = null;
   if (displayLinks.length === 1) {
-    content = renderLinks(displayLinks[0], actualLinkMode);
+    mapContent = renderMapLinks(displayLinks[0], actualLinkMode, (terminal) => {
+      if (terminal.highlighted) setProperty('links.highlightedTerminal', terminal.uuid);
+      else if (!selectedLink) setProperty('links.highlightedTerminal', null);
+    }, (terminal) => {
+      if (selectedLink) selectedLink.selected = false;
+      if (terminal.selected) setProperty('links.selectedLink', terminal);
+      else setProperty('links.selectedLink', null);
+    }, intl);
+    listContent = renderLinksList(displayLinks[0], actualLinkMode);
   } else {
-    content = renderLinkStatsOverlays(displayLinks, (locality) => {
-      setProperty('links.searchTerm', locality);
-      setProperty('links.linkMode', 'external');
-      getLinks({ locality });
-    });
+    mapContent = renderLinkStatsOverlays(displayLinks, onSelectLocality);
+    listContent = renderLinkStatsList(displayLinks, onSelectLocality);
   }
 
   console.log('default center', mapCenter, mapZoom);
 
   const mapView = (
     <div>
-      {
-        showControls &&
-        <div className={s.mapControls}>
-          <div className={s.selector}>
-            <div className={s.selectorElement} style={linkMode === 'external' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'external')}>External</div>
-            <div className={s.selectorElement} style={linkMode === 'internal' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'internal')}>Internal</div>
-          </div>
-        </div>
-      }
       <LinksMap
         containerElement={
           <div style={{ height: `400px` }} />
@@ -183,7 +400,7 @@ const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom
         onMapLoad={(map) => {
           if (map) {
 
-            if (mapZoom) {
+            if (mapZoom && !selectedLink) {
               console.log('fit bounds', map);
               map.fitBounds(mapZoom.bounds);
             }
@@ -193,7 +410,7 @@ const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom
         onMapClick={() => {
           console.log('map clicked');
         }}
-        content={content}
+        content={mapContent}
       />
     </div>
   );
@@ -232,7 +449,16 @@ const LinksView = ({ links, loadedLinks, searchTerm, viewMode, linkMode, mapZoom
         </div>
       </div>
       {
-        (viewMode === 'map') ? mapView : listView
+        showControls &&
+        <div className={s.mapControls}>
+          <div className={s.selector}>
+            <div className={s.selectorElement} style={linkMode === 'external' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'external')}>External</div>
+            <div className={s.selectorElement} style={linkMode === 'internal' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'internal')}>Internal</div>
+          </div>
+        </div>
+      }
+      {
+        (viewMode === 'map') ? mapView : listContent
       }
     </div>
   );
@@ -250,7 +476,8 @@ export default injectIntl(
       viewMode: state.links.viewMode,
       linkMode: state.links.linkMode || 'external',
       searchTerm: state.links.searchTerm,
-      mapZoom: state.links.mapZoom
+      mapZoom: state.links.mapZoom,
+      selectedLink: state.links.selectedLink
     }
   }, {
     getLinks,

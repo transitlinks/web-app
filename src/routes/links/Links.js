@@ -13,22 +13,30 @@ class Links extends React.Component {
 
   componentDidMount() {
     console.log('links props', this.props);
-    this.props.getLinks({});
+    const { query } = this.props;
+    this.props.getLinks(query || {});
   }
 
   componentDidUpdate(prevProps) {
 
-    const { loadedLinks, mapRef } = this.props;
+    const { loadedLinks, mapRef, query } = this.props;
     console.log('loaded links', loadedLinks, mapRef);
     if (loadedLinks) {
       this.props.setZoomLevel(loadedLinks, this.props.linkMode);
     }
+
+    const prevQuery = prevProps.query;
+    if ((!prevQuery && query.locality) || (prevQuery && query.locality && prevQuery.locality !== query.locality)) {
+      this.props.setProperty('links.selectedLink', null);
+      this.props.getLinks({ locality: query.locality });
+    }
+
   }
 
   render() {
 
     const { context, props } = this;
-    const { links, transportTypes } = props;
+    const { links, transportTypes, query } = props;
 
     context.setTitle(title);
 
@@ -39,7 +47,7 @@ class Links extends React.Component {
       <div>
         <div className={s.root}>
           <div className={s.container}>
-            <LinksView links={links} transportTypes={transportTypes} >
+            <LinksView links={links} query={query} transportTypes={transportTypes} >
             </LinksView>
           </div>
         </div>
