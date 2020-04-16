@@ -681,10 +681,11 @@ export const PostQueryFields = {
       clientId: { type: GraphQLString },
       tags: { type: GraphQLString },
       locality: { type: GraphQLString },
+      user: { type: GraphQLString },
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags, locality, offset, limit }) => {
+    resolve: async ({ request }, { clientId, tags, locality, user, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 
@@ -706,6 +707,10 @@ export const PostQueryFields = {
       } else {
         const query = {};
         if (locality) query.locality = locality;
+        if (user) {
+          const userId = await userRepository.getUserIdByUuid(user);
+          query.userId = userId;
+        }
         checkIns = await postRepository.getFeedCheckIns(query, options);
       }
 

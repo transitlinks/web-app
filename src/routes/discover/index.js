@@ -27,6 +27,8 @@ export default {
                 checkIn {
                   uuid,
                   user,
+                  userUuid,
+                  userImage,
                   date,
                   latitude,
                   longitude

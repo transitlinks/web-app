@@ -22,6 +22,8 @@ export const getDiscoveries = (params) => {
                 checkIn {
                   uuid,
                   user,
+                  userUuid,
+                  userImage,
                   date,
                   latitude,
                   longitude
