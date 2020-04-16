@@ -89,45 +89,60 @@ const renderLinkInfo = (terminal, intl, wrapperClass) => {
 
   };
 
+  const departureTerminal = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
+  const arrivalTerminal = terminal.type === 'arrival' ? terminal : terminal.linkedTerminal;
+
   return (
     <div className={cx(s.linkInfo, wrapperClass)}>
       <div className={s.transportRow}>
         <div className={s.transportType}>
-          { intl.formatMessage(msgTransport[terminal.transport]) }
+          { intl.formatMessage(msgTransport[departureTerminal.transport]) }
         </div>
         <div className={s.transportId}>
-          {terminal.transportId || terminal.linkedTerminal.transportId}
+          {departureTerminal.transportId || arrivalTerminal.transportId}
         </div>
       </div>
       <div className={s.fromRow}>
         <b>From:</b>&nbsp;
-        <Link to={`/check-in/${terminal.checkInUuid}`}>{terminal.formattedAddress}</Link>
+        <Link to={`/check-in/${departureTerminal.checkInUuid}`}>{departureTerminal.formattedAddress}</Link>
+        {
+          terminal.type === 'arrival' &&
+            <span>&nbsp;[<Link to={`/links?locality=${departureTerminal.locality}`}>{departureTerminal.locality}</Link>]</span>
+        }
       </div>
       <div className={s.toRow}>
         <b>To:</b>&nbsp;
-        <Link to={`/check-in/${terminal.linkedTerminal.checkInUuid}`}>{terminal.linkedTerminal.formattedAddress}</Link>&nbsp;
-        [<Link to={`/links?locality=${terminal.linkedTerminal.locality}`}>{terminal.linkedTerminal.locality}</Link>]
+        <Link to={`/check-in/${arrivalTerminal.checkInUuid}`}>{arrivalTerminal.formattedAddress}</Link>
+        {
+          terminal.type === 'departure' &&
+          <span>&nbsp;[<Link to={`/links?locality=${arrivalTerminal.locality}`}>{arrivalTerminal.locality}</Link>]</span>
+        }
       </div>
       {
-        (terminal.date || terminal.time || terminal.linkedTerminal.date || terminal.linkedTerminal.time) &&
+        (arrivalTerminal.date || arrivalTerminal.time || departureTerminal.date || departureTerminal.time) &&
         <div className={s.dateTimeRow}>
           {[
-            renderDateTime(terminal, 'Departure'),
-            renderDateTime(terminal.linkedTerminal, 'Arrival')
+            renderDateTime(departureTerminal, 'Departure'),
+            renderDateTime(arrivalTerminal, 'Arrival')
           ]}
         </div>
       }
       {
-        (terminal.description || terminal.linkedTerminal.description) &&
+        (departureTerminal.description || arrivalTerminal.description) &&
         <div className={s.linkDescription}>
-          <p>{terminal.description}</p>
-          <p>{terminal.linkedTerminal.description}</p>
+          <p>{departureTerminal.description}</p>
+          <p>{arrivalTerminal.description}</p>
         </div>
       }
       {
-        terminal.priceAmount &&
+        (departureTerminal.priceAmount || arrivalTerminal.priceAmount) &&
         <div className={s.linkCost}>
-          <b>Cost:</b> {terminal.priceAmount} {terminal.priceCurrency}
+          <b>Cost:</b>&nbsp;
+          {
+            arrivalTerminal.priceAmount ?
+              <span>{arrivalTerminal.priceAmount} {arrivalTerminal.priceCurrency}</span> :
+              <span>{departureTerminal.priceAmount} {departureTerminal.priceCurrency}</span>
+          }
         </div>
       }
     </div>
@@ -172,7 +187,7 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
     if (terminal.selected) {
       polyLine.info = (
         <InfoWindow position={{ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }}
-          options={{ maxWidth: '200px' }}
+          options={{ maxWidth: '320px' }}
           onCloseClick={() => {
             terminal.selected = false;
             onSelect(terminal);
@@ -325,6 +340,7 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
   let  displayLinks = (loadedLinks || links) || [];
 
   const onSelectLocality = (locality) => {
+    setProperty('links.selectedLink', null);
     setProperty('links.searchTerm', locality);
     setProperty('links.linkMode', 'external');
     getLinks({ locality });
@@ -425,6 +441,7 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
                            setProperty('links.searchTerm', input);
                            if (input.length > 2) {
                              setProperty('links.linkMode', 'external');
+                             setProperty('links.selectedLink', null);
                              getLinks({ locality: input });
                            }
                          }} />

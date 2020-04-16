@@ -256,20 +256,26 @@ export const getAvailableCurrencies = (destination) => {
 
 export const getMapBounds = (linkStats, linkMode) => {
   let terminals = [];
+  console.log('concat terminals');
   linkStats.forEach(linkStat => {
     if (linkMode !== 'internal') {
-      terminals = terminals.concat(terminals, linkStat.departures);
-      terminals = terminals.concat(terminals, linkStat.arrivals);
+      terminals = terminals.concat(linkStat.departures);
+      terminals = terminals.concat(linkStat.arrivals);
     }
-    terminals = terminals.concat(terminals, linkStat.internal);
+    terminals = terminals.concat(linkStat.internal);
   });
+  console.log('init google maps bounds');
   const bounds = new google.maps.LatLngBounds();
+  console.log('start extending bounds');
   terminals.forEach(t => {
+    console.log('extend ext bounds');
     bounds.extend(new google.maps.LatLng({ lat: t.latitude, lng: t.longitude }));
     if (linkStats.length === 1) {
+      console.log('extend int bounds');
       bounds.extend(new google.maps.LatLng({ lat: t.linkedTerminal.latitude, lng: t.linkedTerminal.longitude }));
     }
   });
+  console.log('bounds complete');
   return bounds;
 };
 

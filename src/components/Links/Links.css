@@ -148,7 +148,7 @@
 }
 
 .mapLinkInfo {
-  max-width: 280px;
+  width: 300px;
 }
 
 .linkInfo {
@@ -173,7 +173,6 @@
 }
 
 .linkInfo .fromRow {
-  max-width: 280px;
   margin-bottom: 4px;
 }
 
@@ -182,7 +181,6 @@
 }
 
 .linkInfo .toRow {
-  max-width: 280px;
 }
 
 .dateTimeRow {
