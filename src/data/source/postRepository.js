@@ -277,6 +277,7 @@ export default {
       const checkIn = await CheckIn.findById(post.checkInId);
       const entityTag = await EntityTag.findOne({ where: { checkInId: checkIn.id, tagId: tag.id } });
       if (!entityTag) {
+        console.log('CREATE ENTITY TAG', checkIn.id, tagValue + '(' + tag.id + ')', userUuid);
         await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id, userUuid });
         console.log('Tagged entity', entity, entityId, 'with', tagValue);
       } else {
