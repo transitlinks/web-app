@@ -147,3 +147,60 @@
   text-align: center;
 }
 
+.tags {
+  display: flex;
+  margin-bottom: 6px;
+  margin-left: 4px;
+}
+
+.tags .tag {
+  margin-right: 4px;
+  border-radius: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.tags .enabledTag {
+  background-color: #e0e0e0;
+  border: 1px solid #e0e0e0;
+}
+
+.tags .disabledTag {
+  border: 1px solid #e0e0e0;
+  color: #a0a0a0;
+}
+
+.tags .tag .tagValue {
+
+}
+
+.tags .tag .toggleTag {
+  margin-left: 6px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.checkInTags {
+  width: 100%;
+  display: flex;
+  margin-bottom: 8px;
+  justify-content: flex-end;
+}
+
+.checkInTags .tag {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.checkInTags .tag a {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+

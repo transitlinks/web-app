@@ -105,15 +105,13 @@ Terminal.hasOne(Terminal, {
 CheckIn.belongsToMany(Tag, {
   through: 'EntityTag',
   as: 'tags',
-  foreignKey: 'checkInId',
-  otherKey: 'tagId'
+  foreignKey: 'checkInId'
 });
 
 Tag.belongsToMany(CheckIn, {
   through: 'EntityTag',
   as: 'checkIns',
-  foreignKey: 'tagId',
-  otherKey: 'checkInId'
+  foreignKey: 'tagId'
 });
 
 function sync(...args) {

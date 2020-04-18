@@ -158,7 +158,8 @@ export default {
 
     const checkIns = await CheckIn.findAll({
       where,
-      ...options
+      ...options,
+      include: { all: true }
     });
 
     return checkIns;
@@ -176,9 +177,30 @@ export default {
 
   getFeedCheckIns: async (where, options = {}) => {
 
+    /*
+    let query = `SELECT * FROM "CheckIn" ci`;
+    const whereKeys = Object.keys(where);
+    if (whereKeys.length > 0) {
+      query += ' WHERE';
+    }
+    whereKeys.forEach(key => {
+      query += ` ${key} = ${whereKeys[key]}`;
+    });
+
+    //if (options.search) query += ` WHERE locality ILIKE '%${options.search}%'`;
+    if (options.limit) query += ' LIMIT ' + options.limit;
+    if (options.offset) query += ' OFFSET ' + options.offset;
+    const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
+
+    return checkIns;
+     */
+
     const checkIns = await CheckIn.findAll({
       where,
-      ...options
+      ...options,
+      include: {
+        all: true
+      }
     });
 
     return checkIns;
@@ -243,9 +265,9 @@ export default {
     return connections.map(c => c.locality);
   },
 
-  saveTag: async (entity, entityId, tagValue) => {
+  saveTag: async (entity, entityId, tagValue, userUuid) => {
 
-    let tag = await Tag.findOne({ value: tagValue });
+    let tag = await Tag.findOne({ where: { value: tagValue } });
     if (!tag) {
       tag = await Tag.create({ value: tagValue });
     }
@@ -253,9 +275,9 @@ export default {
     if (entity === 'Post') {
       const post = await Post.findById(entityId);
       const checkIn = await CheckIn.findById(post.checkInId);
-      const entityTag = await EntityTag.findOne({ checkInId: checkIn.id, tagId: tag.id });
+      const entityTag = await EntityTag.findOne({ where: { checkInId: checkIn.id, tagId: tag.id } });
       if (!entityTag) {
-        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id });
+        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id, userUuid });
         console.log('Tagged entity', entity, entityId, 'with', tagValue);
       } else {
         console.log(entity, entityId, 'already tagged with', tagValue);
@@ -267,18 +289,32 @@ export default {
 
   getTags: async (where, options = {}) => {
 
-    const tags = await Tag.findAll({
+    /*
+    const tags = await EntityTag.findAll({
       where,
       ...options,
-      include: [ { all: true } ]
+      include: [{
+        all: true
+      }]
+
+    });
+    */
+
+    const tags = Tag.findAll({
+      where: {},
+      ...options,
+      include: {
+        all: true
+      }
     });
 
     return tags;
 
   },
 
-  getTaggedCheckIns: async (tags, options) => {
+  getTaggedCheckIns: async (query, options) => {
 
+    const { tags, userId } = query;
     const valueTags = await Tag.findAll({
       where: { value: { $in: tags } }
     });
@@ -286,9 +322,14 @@ export default {
     const valueTagIds = valueTags.map(tag => tag.id);
     const entityTags = await EntityTag.findAll({ where: { tagId: { $in: valueTagIds } } });
     const checkInIds = entityTags.map(entityTag => entityTag.checkInId);
+    const where = { id: { $in: checkInIds } };
+    if (userId) where.userId = userId;
     const taggedCheckIns = await CheckIn.findAll({
-      where: { id: { $in: checkInIds } },
-      ...options
+      where,
+      ...options,
+      include: {
+        all: true
+      }
     });
 
     return taggedCheckIns;

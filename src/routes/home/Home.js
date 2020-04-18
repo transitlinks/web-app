@@ -61,6 +61,7 @@ class Home extends React.Component {
     this.props.setProperty('posts.editPost', {});
     this.props.setProperty('editTerminal.terminal', {});
     this.props.setProperty('editTerminal.terminalProperties', {});
+    this.props.setProperty('posts.disabledTags', []);
     const checkIn = this.props.savedCheckIn;
     if (checkIn) {
       this.props.getFeedItem(checkIn.uuid, 'frame-new');
@@ -77,6 +78,9 @@ class Home extends React.Component {
 
     const prevFrame = prevProps.frame;
     const frame = this.props.frame;
+
+    const prevQuery = prevProps.query;
+    const query = this.props.query;
 
     const prevCheckIn = prevProps.savedCheckIn;
     const checkIn = this.props.savedCheckIn;
@@ -123,6 +127,10 @@ class Home extends React.Component {
     const savedTerminal = this.props.savedTerminal;
     if (savedTerminal) {
       this.props.getFeedItem(checkIn.uuid, 'frame-new');
+    }
+
+    if (prevQuery.tags !== query.tags || prevQuery.user !== query.user) {
+      this.props.getFeed(clientId, params);
     }
 
   }

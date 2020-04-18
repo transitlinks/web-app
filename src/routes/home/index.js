@@ -57,7 +57,8 @@ export default {
                 placeId,
                 formattedAddress,
                 locality,
-                country
+                country,
+                tags
               },
               inbound {
                 uuid,
@@ -66,7 +67,8 @@ export default {
                 placeId,
                 formattedAddress,
                 locality,
-                country
+                country,
+                tags
               },
               outbound {
                 uuid,

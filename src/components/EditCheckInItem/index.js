@@ -12,6 +12,7 @@ import { savePost, saveCheckIn, deleteCheckIn, uploadFiles, getMediaItem } from 
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
+import Link from '../Link';
 
 const typeSelector = (iconName, isSelected, onClick) => {
   return (
@@ -43,7 +44,7 @@ const createCheckIn = (geolocation) => {
 
 const createPost = (props) =>  {
 
-  const { editPost, checkInItem: { checkIn }, mediaItems } = props;
+  const { editPost, checkInItem: { checkIn }, mediaItems, tags } = props;
   const clientId = getClientId();
 
   (mediaItems || []).forEach(mediaItem => {
@@ -56,7 +57,8 @@ const createPost = (props) =>  {
       text: editPost.text,
       mediaItems,
       checkInUuid: checkIn.uuid,
-      clientId
+      clientId,
+      tags
     }
   };
 
@@ -66,9 +68,9 @@ const createPost = (props) =>  {
 const getTabContent = (type, props) => {
 
   const {
-    checkInItem: { checkIn }, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
+    checkInItem: { checkIn, inbound }, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
     savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia,
-    loadedMediaItemChanged, loadMediaItem, loadMediaItemError, newCheckIn, savedTerminal
+    loadedMediaItemChanged, loadMediaItem, loadMediaItemError, disabledTags, newCheckIn, savedTerminal
   } = props;
 
   const onFileInputChange = (event) => {
@@ -87,6 +89,30 @@ const getTabContent = (type, props) => {
   }
 
   const terminal = (editTerminal && editTerminal.type === type) ? editTerminal : { type };
+
+  const findTags = (text) => {
+
+    const allTags = [];
+
+    if (text) {
+      let match;
+      const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
+      while ((match = regex.exec(text))) {
+        console.log('match', match);
+        allTags.push(match[1]);
+      }
+    }
+
+    console.log('TAGS', checkIn);
+    const inboundTags = (inbound && inbound.length > 0) ? inbound[0].tags : [];
+    const distinct = (value, index, self) => self.indexOf(value) === index;
+    return allTags.concat(inboundTags).filter(distinct).filter(tag => tag && tag.length > 0);
+
+  };
+
+  const tagEnabled = (tag) => !disabledTags.includes(tag);
+
+  const tags = findTags(editPost.text);
 
   switch (type) {
 
@@ -140,6 +166,33 @@ const getTabContent = (type, props) => {
               />
             </div>
           </div>
+          <div className={s.tags}>
+            {
+              tags.map(tag => (
+                <div className={cx(s.tag, tagEnabled(tag) ? s.enabledTag : s.disabledTag)}>
+                  <div className={s.tagValue}>#{tag}</div>
+                  {
+                    tagEnabled(tag) ?
+                      <div className={s.toggleTag} onClick={() => {
+                        setProperty('posts.disabledTags', disabledTags.concat([tag]));
+                      }}>
+                        <FontIcon className="material-icons" style={{ fontSize: '16px', color: 'white' }}>
+                          remove_circle_outline
+                        </FontIcon>
+                      </div> :
+                      <div className={s.toggleTag} onClick={() => {
+                        setProperty('posts.disabledTags', disabledTags.filter(disabledTag => disabledTag !== tag));
+                      }}>
+                        <FontIcon className="material-icons" style={{ fontSize: '16px', color: 'black' }}>
+                          add_circle
+                        </FontIcon>
+                      </div>
+                  }
+
+                </div>
+              ))
+            }
+          </div>
           <div className={s.contentControls}>
             <div className={s.addMediaContainer}>
               <div className={s.addMediaButton}>
@@ -150,7 +203,12 @@ const getTabContent = (type, props) => {
               </div>
             </div>
             <div className={s.sendButton}>
-              <FontIcon className="material-icons" onClick={() => savePost(createPost(props))}>send</FontIcon>
+              <FontIcon className="material-icons" onClick={() => savePost(
+                createPost({
+                  ...props,
+                  tags: tags.filter(tag => tagEnabled(tag))
+                })
+              )}>send</FontIcon>
             </div>
           </div>
         </div>
@@ -195,7 +253,7 @@ const EditCheckInItemView = (props) => {
 
   const {
     type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost, postText, mediaItems,
-    setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, uploadingMedia, newCheckIn, savedTerminal, frameId
+    setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, uploadingMedia, newCheckIn, savedTerminal, frameId, disabledTags
   } = props;
 
   let positionElem = null;
@@ -315,6 +373,7 @@ export default injectIntl(
     loadedMediaItemChanged: state.posts.loadedMediaItemChanged,
     editPost: state.posts.editPost || {},
     addPost: state.posts.addPost,
+    disabledTags: state.posts.disabledTags || [],
     editTerminal: state.editTerminal.terminal || {},
     savedTerminal: state.editTerminal.savedTerminal,
     env: state.env

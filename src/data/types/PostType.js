@@ -36,7 +36,8 @@ export const PostInputType = new GraphQLInputObjectType({
     text: { type: GraphQLString },
     type: { type: GraphQLString },
     clientId: { type: GraphQLString },
-    mediaItems: { type: new GraphQLList(MediaItemInputType) }
+    mediaItems: { type: new GraphQLList(MediaItemInputType) },
+    tags: { type: new GraphQLList(GraphQLString) }
   })
 });
 
@@ -94,7 +95,8 @@ export const CheckInType = new GraphQLObjectType({
     locality: {type: GraphQLString},
     country: {type: GraphQLString},
     formattedAddress: {type: GraphQLString},
-    date: {type: GraphQLString}
+    date: {type: GraphQLString},
+    tags: {type: new GraphQLList(GraphQLString)}
   },
 });
 
@@ -119,7 +121,8 @@ export const CheckInInputType = new GraphQLInputObjectType({
     placeId: {type: GraphQLString},
     locality: {type: GraphQLString},
     country: {type: GraphQLString},
-    formattedAddress: {type: GraphQLString}
+    formattedAddress: {type: GraphQLString},
+    tags: {type: new GraphQLList(GraphQLString)}
   }
 });
 

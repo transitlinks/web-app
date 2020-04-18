@@ -26,6 +26,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.editPost', {});
     this.props.setProperty('editTerminal.terminal', {});
     this.props.setProperty('editTerminal.terminalProperties', {});
+    this.props.setProperty('posts.disabledTags', []);
     this.updateComponent(this.props);
   }
 

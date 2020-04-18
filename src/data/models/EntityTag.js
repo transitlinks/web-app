@@ -17,6 +17,10 @@ const EntityTag = Model.define('EntityTag', {
 
   entity: {
     type: DataType.STRING
+  },
+
+  userUuid: {
+    type: DataType.STRING
   }
 
 }, {
@@ -32,7 +36,7 @@ const EntityTag = Model.define('EntityTag', {
   },
 
   indexes: [
-    { fields: [ 'id', 'uuid', 'entity' ] },
+    { fields: [ 'id', 'uuid', 'entity', 'userUuid' ] },
   ],
 
 });

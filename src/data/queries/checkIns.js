@@ -57,7 +57,7 @@ const addUserId = async (object, request) => {
 
 const getLinkedCheckIns = async (checkIn) => {
 
-  const clientParams = checkIn.userId ? { userId: checkIn.userId } : { clientId: checkIn.clientId };;
+  const clientParams = checkIn.userId ? { userId: checkIn.userId } : { clientId: checkIn.clientId };
   const inboundCheckIns = await postRepository.getCheckIns({
     ...clientParams,
     createdAt: { $lt: checkIn.createdAt }
@@ -73,9 +73,19 @@ const getLinkedCheckIns = async (checkIn) => {
     order: [[ 'createdAt', 'ASC' ]]
   });
 
+  const mapCheckInTags = (checkIns) => {
+    return checkIns.map(checkIn => {
+      console.log(checkIn.tags.map(tag => tag.value));
+      return {
+        ...checkIn.toJSON(),
+        tags: checkIn.tags.map(tag => tag.value)
+      };
+    });
+  };
+
   return {
-    inbound: inboundCheckIns.map(checkIn => checkIn.toJSON()),
-    outbound: outboundCheckIns.map(checkIn => checkIn.toJSON())
+    inbound: mapCheckInTags(inboundCheckIns),
+    outbound: mapCheckInTags(outboundCheckIns)
   };
 
 };

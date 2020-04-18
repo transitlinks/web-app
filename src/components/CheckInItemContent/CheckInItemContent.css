@@ -11,7 +11,8 @@
 }
 
 .feedItemContent {
-  margin-bottom: 12px;
+  margin: auto;
+  padding-bottom: 12px;
   max-width: 460px;
 }
 

@@ -209,12 +209,22 @@ const savePost = async (postInput, clientId, request) => {
   await addUserId(post, request);
 
   let saved = await postRepository.savePost(post);
+
+  /*
   const splitByTags = saved.text.split('#');
   if (splitByTags.length > 0) {
     for (let i = 1; i < splitByTags.length; i++) {
       const tag = splitByTags[i].split(' ')[0];
       await postRepository.saveTag('Post', saved.id, tag);
       console.log('Saved tag:', tag);
+    }
+  }
+  */
+
+  if (postInput.tags) {
+    for (let i = 0; i < postInput.tags.length; i++) {
+      const tag = postInput.tags[i];
+      await postRepository.saveTag('Post', saved.id, tag, request.user.uuid);
     }
   }
 
@@ -353,8 +363,8 @@ const getLinkedCheckIns = async (checkIn) => {
   });
 
   return {
-    inbound: inboundCheckIns.map(checkIn => checkIn.toJSON()),
-    outbound: outboundCheckIns.map(checkIn => checkIn.toJSON())
+    inbound: inboundCheckIns.map(checkIn => checkIn.json()),
+    outbound: outboundCheckIns.map(checkIn => checkIn.json())
   };
 
 };
@@ -595,6 +605,7 @@ export const getFeedItem = async (request, checkIn) => {
 
   log.info(graphLog(request, 'get-feed-item', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
   const linkedCheckIns = await getLinkedCheckIns(checkIn, request);
+  console.log('checkin terminals', checkIn.terminals);
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
   const credentials = await getEntityCredentials(request, checkIn);
 
@@ -709,17 +720,20 @@ export const PostQueryFields = {
       if (offset) options.offset = offset;
       if (limit) options.limit = limit;
 
+      let userId = null;
+      if (user) {
+        userId = await userRepository.getUserIdByUuid(user);
+      }
+
       if (tags) {
         const tagsArray = tags.split(',');
-        checkIns = await postRepository.getTaggedCheckIns(tagsArray, options);
+        const query = { tags: tagsArray, userId };
+        checkIns = await postRepository.getTaggedCheckIns(query, options);
         console.log('result for tags', tagsArray);
       } else {
         const query = {};
         if (locality) query.locality = locality;
-        if (user) {
-          const userId = await userRepository.getUserIdByUuid(user);
-          query.userId = userId;
-        }
+        if (userId) query.userId = userId;
         checkIns = await postRepository.getFeedCheckIns(query, options);
       }
 

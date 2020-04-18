@@ -51,7 +51,10 @@ const CheckIn = Model.define('CheckIn', {
 
   instanceMethods: {
     json: function() {
-      const json = { ...this.toJSON() };
+      const json = {
+        ...this.toJSON(),
+        tags: (this.tags || []).map(tag => tag.value)
+      };
       delete json.id;
       return json;
     }

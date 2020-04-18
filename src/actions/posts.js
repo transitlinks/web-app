@@ -316,7 +316,8 @@ export const getDiscoveries = (search, type) => {
                   uuid,
                   latitude,
                   longitude,
-                  formattedAddress
+                  formattedAddress,
+                  tags
                 },
                 outbound {
                   uuid,
@@ -477,7 +478,8 @@ export const getFeed = (clientId, params) => {
               placeId,
               formattedAddress,
               locality,
-              country
+              country,
+              tags
             },
             inbound {
               uuid,
@@ -486,7 +488,8 @@ export const getFeed = (clientId, params) => {
               placeId,
               formattedAddress,
               locality,
-              country
+              country,
+              tags
             },
             outbound {
               uuid,

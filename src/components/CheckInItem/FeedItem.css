@@ -207,3 +207,25 @@
   right: 0px;
   cursor: default;
 }
+
+.tags {
+  width: 100%;
+  display: flex;
+  margin-bottom: 8px;
+  justify-content: flex-end;
+}
+
+.tags .tag {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.tags .tag a {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

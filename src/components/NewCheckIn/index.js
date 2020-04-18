@@ -76,8 +76,6 @@ const CheckInView = ({ geolocation, searchLocation, selectedLocation, setPropert
     }
   }
 
-  console.log('selected location', selectedLocation, geolocation);
-
 	return (
 	  <div className={s.root}>
       <div className={s.container}>

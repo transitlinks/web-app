@@ -19,9 +19,6 @@ const FeedView = ({
     return { ...terminal, id: terminal.uuid };
   });
 
-
-  let editOpen = false;
-
   return (
     <div className={s.container}>
       <div className={s.header}>
@@ -32,8 +29,7 @@ const FeedView = ({
 
             const { checkIn } = feedItem;
 
-            const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid && !editOpen;
-            if (editable) editOpen = true;
+            const editable = savedCheckIn && savedCheckIn.uuid === checkIn.uuid;
 
             const frameId = editable ? 'frame-new' : `feed-${checkIn.uuid}`;
             const fetchedFeedItem = fetchedFeedItems[frameId];

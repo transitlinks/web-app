@@ -10,7 +10,7 @@ export const getUserIdByUuid = async (uuid) => {
     where: { uuid }
   });
 
-  return user.id;
+  return user ? user.id : null;
 
 };
 

@@ -41,7 +41,8 @@ export default {
                   uuid,
                   latitude,
                   longitude,
-                  formattedAddress
+                  formattedAddress,
+                  tags
                 },
                 outbound {
                   uuid,

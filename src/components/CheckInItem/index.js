@@ -257,6 +257,14 @@ const CheckInItem = (
           <CheckInItemContent checkInItem={item} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} editPost={{}} editable={editable} />
       }
 
+      <div className={s.tags}>
+        {
+          (checkIn.tags || []).map(tag => (
+            <div className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
+          ))
+        }
+      </div>
+
     </div>
   );
 
