@@ -37,7 +37,7 @@ import {
   GET_FEEDITEM_ERROR,
   GET_MEDIAITEM_START,
   GET_MEDIAITEM_SUCCESS,
-  GET_MEDIAITEM_ERROR,
+  GET_MEDIAITEM_ERROR, DELETE_MEDIAITEM_START, DELETE_MEDIAITEM_SUCCESS, DELETE_MEDIAITEM_ERROR,
 } from '../constants';
 
 export const saveCheckIn = ({ checkIn }) => {
@@ -651,6 +651,36 @@ export const uploadFiles = (mediaItem, files) => {
       MEDIA_FILE_UPLOAD_START,
       MEDIA_FILE_UPLOAD_SUCCESS,
       MEDIA_FILE_UPLOAD_ERROR
+    );
+
+  };
+
+};
+
+export const deleteMediaItem = (mediaItemUuid) => {
+
+  return async (...args) => {
+
+    const query = `
+      mutation deleteMediaItem {
+        deleteMediaItem(mediaItemUuid:"${mediaItemUuid}") {
+          uuid,
+          type,
+          thumbnail,
+          url,
+          uploadStatus,
+          fileSize,
+          uploadProgress
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'deleteMediaItem' ],
+      DELETE_MEDIAITEM_START,
+      DELETE_MEDIAITEM_SUCCESS,
+      DELETE_MEDIAITEM_ERROR
     );
 
   };

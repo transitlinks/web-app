@@ -26,8 +26,8 @@ import {
   GET_FEEDITEM_ERROR,
   GET_MEDIAITEM_START,
   GET_MEDIAITEM_SUCCESS,
-  GET_MEDIAITEM_ERROR,
-} from "../constants";
+  GET_MEDIAITEM_ERROR, DELETE_MEDIAITEM_START, DELETE_MEDIAITEM_SUCCESS, DELETE_MEDIAITEM_ERROR,
+} from '../constants';
 
 export default function reduce(state = {}, action) {
 
@@ -289,6 +289,36 @@ export default function reduce(state = {}, action) {
         GET_MEDIAITEM_START,
         GET_MEDIAITEM_SUCCESS,
         GET_MEDIAITEM_ERROR
+      );
+    case DELETE_MEDIAITEM_START:
+    case DELETE_MEDIAITEM_SUCCESS:
+    case DELETE_MEDIAITEM_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({
+            deletingMediaItem: true,
+            deleteMediaItemError: null
+          }),
+          success: () => {
+
+            const { deleteMediaItem } = action.payload;
+            const mediaItems = state.mediaItems || [];
+            const updatedMediaItems = mediaItems.filter(mediaItem => mediaItem.uuid !== deleteMediaItem.uuid);
+            return {
+              mediaItems: updatedMediaItems,
+              deletingMediaItem: false
+            };
+
+          },
+          error: () => ({
+            deletingMediaItem: false,
+            deleteMediaItemError: action.payload.error
+          })
+        },
+        DELETE_MEDIAITEM_START,
+        DELETE_MEDIAITEM_SUCCESS,
+        DELETE_MEDIAITEM_ERROR
       );
 
   }

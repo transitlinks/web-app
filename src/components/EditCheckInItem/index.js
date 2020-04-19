@@ -8,7 +8,14 @@ import s from './EditCheckInItem.css';
 import Terminal from './Terminal';
 import CheckInItemContent from '../CheckInItemContent';
 import { getGeolocation } from '../../actions/global';
-import { savePost, saveCheckIn, deleteCheckIn, uploadFiles, getMediaItem } from '../../actions/posts';
+import {
+  savePost,
+  saveCheckIn,
+  deleteCheckIn,
+  uploadFiles,
+  getMediaItem,
+  deleteMediaItem,
+} from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
@@ -69,7 +76,7 @@ const getTabContent = (type, props) => {
 
   const {
     checkInItem: { checkIn, inbound }, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
-    savePost, uploadFiles, getMediaItem, setProperty, uploadingMedia,
+    savePost, uploadFiles, getMediaItem, deleteMediaItem, setProperty, uploadingMedia,
     loadedMediaItemChanged, loadMediaItem, loadMediaItemError, disabledTags, newCheckIn, savedTerminal
   } = props;
 
@@ -139,7 +146,15 @@ const getTabContent = (type, props) => {
             {
               (mediaItems || []).map(mediaItem => {
                 return (
-                  <div>
+                  <div className={s.mediaItem}>
+                    <div className={s.removeMediaItem}>
+                      <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'black' }}
+                        onClick={() => {
+                          deleteMediaItem(mediaItem.uuid);
+                        }}>
+                        cancel
+                      </FontIcon>
+                    </div>
                     {
                       mediaItem.type === 'image' ?
                         <img src={env.MEDIA_URL + mediaItem.url} width="100%" /> :
@@ -385,5 +400,6 @@ export default injectIntl(
     saveCheckIn,
     getMediaItem,
     deleteCheckIn,
+    deleteMediaItem
   })(withStyles(s)(EditCheckInItemView))
 );

@@ -595,7 +595,31 @@ export const PostMutationFields = {
 
     }
 
-  }
+  },
+
+  deleteMediaItem: {
+
+    type: MediaItemType,
+    description: 'Delete a media item',
+    args: {
+      mediaItemUuid: { type: GraphQLString },
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { mediaItemUuid, clientId }) => {
+      log.info(graphLog(request, 'delete-media-item', 'uuid=' + mediaItemUuid + 'clientId=' + clientId ));
+      const mediaItem = await postRepository.getMediaItem({
+        uuid: mediaItemUuid
+      });
+
+      const filePath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), mediaItem.url);
+      console.log('DELETING MEDIA ITEM:', mediaItem.json(), filePath);
+      await postRepository.deleteMediaItems({ uuid: mediaItem.uuid });
+      fs.unlinkSync(filePath);
+
+      return mediaItem.json();
+    }
+
+  },
 
 };
 

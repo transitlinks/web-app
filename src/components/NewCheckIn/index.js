@@ -93,7 +93,7 @@ const CheckInView = ({ geolocation, searchLocation, selectedLocation, setPropert
                 setProperty('posts.addType', null);
                 saveCheckIn({ checkIn: createCheckIn(geolocation, selectedLocation) });
               }}>
-                <FontIcon className="material-icons" style={{ fontSize: '28px', color: '#2eb82e' }}>beenhere</FontIcon>
+                <FontIcon className="material-icons" style={{ fontSize: '30px', color: '#2eb82e' }}>add_box</FontIcon>
               </div>
               { positionElem }
             </div>
