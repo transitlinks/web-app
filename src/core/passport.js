@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt-nodejs';
 import { login } from './auth';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import {
-	APP_URL, 
+	APP_URL,
   FB_GRAPH_API,
   AUTH_FB_APPID, AUTH_FB_SECRET,
   GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SECRET
@@ -14,15 +14,15 @@ import {
 
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.serializeUser((user, done) => {
-  log.debug('passport.serializeUser', `user.uuid=${user.uuid}`); 
-  done(null, user.uuid); 
+  log.debug('passport.serializeUser', `user.uuid=${user.uuid}`);
+  done(null, user.uuid);
 });
-  
+
 passport.deserializeUser((uuid, done) => {
-  log.debug('deserialize-user', `uuid=${uuid}`); 
+  log.debug('deserialize-user', `uuid=${uuid}`);
   User.findOne({ where: { uuid } })
   .then(user => done(null, user.json()));
 });
@@ -43,7 +43,7 @@ passport.use('login-local', new LocalStrategy({
     } else {
 			done({ message: 'invalid-login-credentials' });
 		}
-  }  
+  }
 ));
 
 passport.use('login-facebook', new FacebookStrategy({
@@ -86,19 +86,26 @@ passport.use('login-google', new GoogleStrategy({
     passReqToCallback: true
   },
   async (req, accessToken, refreshToken, profile, done) => {
+    console.log('got google profile', profile);
     log.debug('google-auth', `google-id=${profile.id}`);
     const emails = profile.emails;
     if (emails && emails.length > 0) {
       const email = emails[0].value;
       let photo = null;
-      if (profile.photos && profile.photos.length > 0) { 
+      let firstName = null;
+      let lastName = null;
+      if (profile.name) {
+        firstName = profile.name.givenName;
+        lastName = profile.name.familyName;
+      }
+      if (profile.photos && profile.photos.length > 0) {
         photo = profile.photos[0].value;
         if (photo.indexOf('?sz') != -1) {
           photo = photo.split('?')[0] + '?sz=250';
         }
       }
       try {
-        const user = await login({ email, photo });
+        const user = await login({ email, firstName, lastName, photo });
         done(null, user);
       } catch (err) {
         done({ message: err.message });
