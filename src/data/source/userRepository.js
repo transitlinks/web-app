@@ -40,6 +40,11 @@ export const getByUuid = async (uuid) => {
   return user.toJSON();
 };
 
+export const getByEmail = async (email) => {
+  const user = await User.findOne({ where: { email } });
+  return user.toJSON();
+};
+
 export const create = async (user) => {
 
   const created = await User.create(user);

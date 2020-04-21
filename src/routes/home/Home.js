@@ -62,6 +62,7 @@ class Home extends React.Component {
     this.props.setProperty('editTerminal.terminal', {});
     this.props.setProperty('editTerminal.terminalProperties', {});
     this.props.setProperty('posts.disabledTags', []);
+    this.props.setProperty('posts.showSettings', false);
     const checkIn = this.props.savedCheckIn;
     if (checkIn) {
       this.props.getFeedItem(checkIn.uuid, 'frame-new');

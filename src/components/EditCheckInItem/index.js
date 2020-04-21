@@ -13,13 +13,14 @@ import {
   saveCheckIn,
   deleteCheckIn,
   uploadFiles,
+  getFeed,
   getMediaItem,
   deleteMediaItem,
 } from '../../actions/posts';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
-import Link from '../Link';
+import CheckInControls from '../CheckIn/CheckInControls';
 
 const typeSelector = (iconName, isSelected, onClick) => {
   return (
@@ -267,8 +268,9 @@ const getTabContent = (type, props) => {
 const EditCheckInItemView = (props) => {
 
   const {
-    type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost, postText, mediaItems,
-    setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, uploadingMedia, newCheckIn, savedTerminal, frameId, disabledTags
+    type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost,
+    postText, mediaItems, setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, getFeed, uploadingMedia,
+    newCheckIn, savedTerminal, frameId, disabledTags, hideContent, editTime, editCheckIn
   } = props;
 
   let positionElem = null;
@@ -322,31 +324,47 @@ const EditCheckInItemView = (props) => {
   return (
 	  <div className={s.root}>
       <div className={s.container}>
-        <div className={s.placeSelector}>
-          <div className={s.positionContainer}>
-            <div className={s.positionSelector}>
-              <div className={s.editControls}>
-                {
-                  newCheckIn ?
-                    <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
-                      deleteCheckIn(checkIn.uuid);
-                    }}>delete</FontIcon> :
-                    <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
-                      setProperty('editTerminal.terminal', {});
-                      setProperty('posts.editPost', {});
-                    }}>close</FontIcon>
-                }
-
-              </div>
-              <div className={s.positionValue}>
-                { positionElem }
+        {
+          !hideContent &&
+            <div className={s.placeSelector}>
+              <div className={s.positionContainer}>
+                <div className={s.positionSelector}>
+                  {
+                    newCheckIn ?
+                      <div className={s.editControls}>
+                        <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                          setProperty('editTerminal.terminal', {});
+                          setProperty('posts.editPost', {});
+                          setProperty('posts.mediaItems', []);
+                          setProperty('posts.checkIn', null);
+                          setProperty('posts.editTime', false);
+                          getFeed(getClientId(), {});
+                        }}>close</FontIcon>
+                      </div> :
+                      <div className={s.editControls}>
+                        <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                          setProperty('editTerminal.terminal', {});
+                          setProperty('posts.editPost', {});
+                          setProperty('posts.mediaItems', []);
+                          setProperty('posts.checkIn', null);
+                          setProperty('posts.editTime', false);
+                        }}>close</FontIcon>
+                      </div>
+                  }
+                  <div className={s.positionValue}>
+                    { positionElem }
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+        }
         <div className={s.postContent}>
           {
-            ((!editPost.uuid && !editTerminal.uuid && !addPost) || newCheckIn) &&
+            newCheckIn &&
+              <CheckInControls checkIn={checkIn} />
+          }
+          {
+            (!hideContent && (!editPost.uuid && !editTerminal.uuid && !addPost) || newCheckIn) &&
             <div className={s.contentTypeContainer}>
               <div className={s.contentTypeSelectors}>
                 { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
@@ -360,7 +378,7 @@ const EditCheckInItemView = (props) => {
         </div>
       </div>
       {
-        showContent &&
+        (showContent && !hideContent) &&
           <CheckInItemContent transportTypes={transportTypes} checkInItem={checkInItem} contentType={selectedType} frameId={frameId} editPost={editPost} editable />
       }
     </div>
@@ -390,6 +408,8 @@ export default injectIntl(
     addPost: state.posts.addPost,
     disabledTags: state.posts.disabledTags || [],
     editTerminal: state.editTerminal.terminal || {},
+    editTime: state.posts.editTime,
+    editCheckIn: state.posts.editCheckIn || {},
     savedTerminal: state.editTerminal.savedTerminal,
     env: state.env
   }), {
@@ -400,6 +420,7 @@ export default injectIntl(
     saveCheckIn,
     getMediaItem,
     deleteCheckIn,
-    deleteMediaItem
+    deleteMediaItem,
+    getFeed
   })(withStyles(s)(EditCheckInItemView))
 );

@@ -10,7 +10,6 @@
 }
 
 .placeSelector {
-  margin-bottom: 6px;
   position: relative;
 }
 
@@ -55,7 +54,6 @@
 
 .postContent {
   background-color: #FFFFFF;
-  border-radius: 6px;
 }
 
 .postContent .contentTypeContainer {
@@ -143,6 +141,10 @@
   align-items: center;
 }
 
+.editControls span {
+  margin-left: 4px;
+}
+
 .uploadingVideo {
   text-align: center;
 }
@@ -222,4 +224,3 @@
   align-items: center;
   justify-content: center;
 }
-

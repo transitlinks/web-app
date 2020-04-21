@@ -10,6 +10,8 @@ import { setProperty, setDeepProperty } from '../../actions/properties';
 import { getFeedItem, deleteCheckIn, saveCheckIn } from '../../actions/posts';
 import Link from '../Link';
 import Terminal from '../EditCheckInItem/Terminal';
+import EditCheckInItem from '../EditCheckInItem';
+import CheckInControls from '../CheckIn/CheckInControls';
 
 const typeSelector = (iconName, isSelected, onClick, type) => {
   return (
@@ -71,8 +73,9 @@ const CheckInItem = (
 
   if (!contentType) {
     if (arrivals.length > 0) contentType = 'arrival';
-    if (departures.length > 0) contentType = 'departure';
-    if (item.posts.length > 0) contentType = 'reaction';
+    else if (departures.length > 0) contentType = 'departure';
+    else if (item.posts.length > 0) contentType = 'reaction';
+    else contentType = 'reaction';
   }
 
   const selectContentType = (value) => {
@@ -92,6 +95,9 @@ const CheckInItem = (
     typeSelectors.push(typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival'), 'arrival'));
   }
 
+  if (typeSelectors.length === 1) {
+    typeSelectors = [];
+  }
 
   /*
   if (typeSelectors.length < 2) {
@@ -216,33 +222,9 @@ const CheckInItem = (
 
       {
         (editable && showSettings) &&
-        (
-          !updateFeedItem ?
-            <div className={s.feedItemSettings}>
-              <div className={s.feedItemSetting}>
-                <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
-                  setProperty('posts.showSettings', false);
-                  deleteCheckIn(checkIn.uuid);
-                }}>delete</FontIcon>
-              </div>
-              <div className={s.feedItemSetting}>
-                <FontIcon className="material-icons" style={{ fontSize: '20px' }}>share</FontIcon>
-                <div className={s.updateFeedItem} onClick={() => {
-                  setProperty('posts.updateFeedItem', true);
-                }}></div>
-              </div>
-            </div> :
-            <div>
-              <input type="text" value={updatedCheckInDate || checkIn.date} onChange={(event) => {
-                setProperty('posts.updatedCheckInDate', event.target.value);
-              }}/>
-              <button onClick={() => {
-                setProperty('posts.updateFeedItem', false);
-                const updatedDate = new Date(updatedCheckInDate);
-                saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: updatedDate } });
-              }}>OK</button>
-            </div>
-        )
+          <div className={s.checkInControls}>
+            <CheckInControls checkIn={checkIn} />
+          </div>
       }
 
       <div className={s.contentTypeContainer}>
@@ -250,7 +232,16 @@ const CheckInItem = (
           { typeSelectors }
         </div>
       </div>
-
+      {
+        (showSettings && contentType === 'reaction') &&
+          <div className={s.addPost}>
+            <EditCheckInItem checkInItem={checkInItem}
+                             openTerminals={openTerminals}
+                             transportTypes={transportTypes}
+                             hideContent
+                             frameId="frame-edit" />
+          </div>
+      }
       {
         addTerminalElem ?
           addTerminalElem :

@@ -59,17 +59,6 @@
   margin-top: -10px;
 }
 
-.date {
-  display: flex;
-  width: 85px;
-  margin-right: 8px;
-}
-
-.time {
-  display: flex;
-  width: 42px;
-}
-
 .inputRow3 {
   display: flex;
   padding-left: 8px;
@@ -170,6 +159,17 @@
 .linkedDateTime {
   display: flex;
   margin-top: -18px;
+}
+
+.date {
+  display: flex;
+  width: 85px;
+  margin-right: 8px;
+}
+
+.time {
+  display: flex;
+  width: 42px;
 }
 
 

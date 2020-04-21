@@ -84,6 +84,7 @@ export const saveCheckIn = ({ checkIn }) => {
       mutation saveCheckIn {
         checkIn(checkIn:${toGraphQLObject(completedCheckIn)}, clientId:"${clientId}") {
           uuid,
+          date,
           userUuid,
           userImage,
           latitude,

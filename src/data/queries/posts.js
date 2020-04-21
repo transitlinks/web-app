@@ -65,9 +65,10 @@ const requireOwnership = async (request, clientId, entity) => {
 
   let userId = null;
 
+  const adminUser = await userRepository.getByEmail('vhalme@gmail.com');
   if (request.user) {
     userId = await userRepository.getUserIdByUuid(request.user.uuid);
-    if (entity.userId !== userId) {
+    if (adminUser.id !== userId && entity.userId !== userId) {
       throw new Error('Access not allowed for user id');
     }
   } else if (!(clientId && clientId === entity.clientId)) {
@@ -91,7 +92,8 @@ const getEntityCredentials = async (request, entity) => {
       credentials.userUuid = checkInUser.uuid;
       credentials.userImage = checkInUser.photo;
     }
-    if (request.user && request.user.uuid === checkInUser.uuid) {
+    const adminUser = await userRepository.getByEmail('vhalme@gmail.com');
+    if ((request.user && (adminUser.uuid === request.user.uuid || request.user.uuid === checkInUser.uuid))) {
       credentials.userAccess = 'edit';
     }
   }
@@ -297,7 +299,10 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     console.log("NEXT CHECK IN ID", saved.id);
   };
 
-  return saved.toJSON();
+  return {
+    ...saved.toJSON(),
+    date: saved.createdAt
+  };
 
 };
 
@@ -737,7 +742,7 @@ export const PostQueryFields = {
 
       const options = {
         order: [
-          ['createdAt', 'DESC']
+          ['id', 'DESC']
         ]
       };
 

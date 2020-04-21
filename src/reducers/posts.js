@@ -47,6 +47,7 @@ export default function reduce(state = {}, action) {
                 { saved: (new Date()).getTime() }
               ),
               editPost: {},
+              mediaItems: [],
               savedPost: action.payload.post
             };
           },

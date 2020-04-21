@@ -229,3 +229,12 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+.addPost {
+  margin-bottom: 6px;
+}
+
+.checkInControls {
+  margin-bottom: 4px;
+  margin-top: -2px;
+}
