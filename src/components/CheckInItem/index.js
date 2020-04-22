@@ -72,9 +72,9 @@ const CheckInItem = (
   const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
 
   if (!contentType) {
-    if (arrivals.length > 0) contentType = 'arrival';
+    if (item.posts.length > 0) contentType = 'reaction';
     else if (departures.length > 0) contentType = 'departure';
-    else if (item.posts.length > 0) contentType = 'reaction';
+    else if (arrivals.length > 0) contentType = 'arrival';
     else contentType = 'reaction';
   }
 

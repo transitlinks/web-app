@@ -1,5 +1,10 @@
 @import '../../components/variables.css';
 
+label > * {
+  display: block;
+  pointer-events: none;
+}
+
 .root {
 }
 

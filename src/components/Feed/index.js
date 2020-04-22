@@ -7,9 +7,7 @@ import EditCheckInItem from '../EditCheckInItem';
 import CheckInItem from '../CheckInItem';
 
 
-const FeedView = ({
-  feed, transportTypes, post, loadedFeed, savedCheckIn, fetchedFeedItems, feedUpdated
-}) => {
+const FeedView = ({ feed, transportTypes, post, loadedFeed, savedCheckIn, fetchedFeedItems, feedUpdated, user }) => {
 
   const currentFeed = (loadedFeed || feed) || {};
   const feedItems = (currentFeed.feedItems || []).map(feedItem => {
@@ -18,6 +16,15 @@ const FeedView = ({
   const openTerminals = (currentFeed.openTerminals || []).map(terminal => {
     return { ...terminal, id: terminal.uuid };
   });
+
+  const hideFeedItem = (feedItem, frameId) => {
+    const { checkIn, terminals, posts } = feedItem;
+    return (
+      frameId !== 'frame-new' &&
+      terminals.length === 0 && posts.length === 0 &&
+      checkIn.userUuid !== user.uuid
+    );
+  };
 
   return (
     <div className={s.container}>
@@ -33,6 +40,10 @@ const FeedView = ({
 
             const frameId = editable ? 'frame-new' : `feed-${checkIn.uuid}`;
             const fetchedFeedItem = fetchedFeedItems[frameId];
+
+            if (hideFeedItem(feedItem, frameId)) {
+              return null;
+            }
 
             return (
               <div className={s.feedItem} key={`${checkIn.uuid}-${index}`} id={`feed-item-${index}`}>
@@ -55,11 +66,16 @@ const FeedView = ({
   );
 };
 
-export default connect(state => ({
-  loadedFeed: state.posts.feed,
-  savedCheckIn: state.posts.checkIn,
-  fetchedFeedItems: state.posts.fetchedFeedItems || {},
-  feedUpdated: state.posts.feedUpdated
-}), {
+export default connect(state => {
+
+  return {
+    loadedFeed: state.posts.feed,
+    savedCheckIn: state.posts.checkIn,
+    fetchedFeedItems: state.posts.fetchedFeedItems || {},
+    feedUpdated: state.posts.feedUpdated,
+    user: state.auth.auth.user || {}
+  };
+
+}, {
   navigate
 })(withStyles(s)(FeedView));

@@ -13,7 +13,7 @@ import {
   saveCheckIn,
   deleteCheckIn,
   uploadFiles,
-  getFeed,
+  getFeedItem,
   getMediaItem,
   deleteMediaItem,
 } from '../../actions/posts';
@@ -269,7 +269,7 @@ const EditCheckInItemView = (props) => {
 
   const {
     type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost,
-    postText, mediaItems, setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, getFeed, uploadingMedia,
+    postText, mediaItems, setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, getFeedItem, uploadingMedia,
     newCheckIn, savedTerminal, frameId, disabledTags, hideContent, editTime, editCheckIn
   } = props;
 
@@ -338,7 +338,7 @@ const EditCheckInItemView = (props) => {
                           setProperty('posts.mediaItems', []);
                           setProperty('posts.checkIn', null);
                           setProperty('posts.editTime', false);
-                          getFeed(getClientId(), {});
+                          getFeedItem(checkIn.uuid, 'frame-new');
                         }}>close</FontIcon>
                       </div> :
                       <div className={s.editControls}>
@@ -421,6 +421,6 @@ export default injectIntl(
     getMediaItem,
     deleteCheckIn,
     deleteMediaItem,
-    getFeed
+    getFeedItem
   })(withStyles(s)(EditCheckInItemView))
 );
