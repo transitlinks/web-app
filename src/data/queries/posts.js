@@ -741,7 +741,9 @@ export const PostQueryFields = {
       let checkIns = [];
 
       const options = {
-        order: [
+        order: (user || tags || locality) ? [
+          ['createdAt', 'DESC']
+        ] : [
           ['id', 'DESC']
         ]
       };
