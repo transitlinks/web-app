@@ -52,7 +52,7 @@ const createCheckIn = (geolocation) => {
 
 const createPost = (props) =>  {
 
-  const { editPost, checkInItem: { checkIn }, mediaItems, tags } = props;
+  const { editPost, item: { checkIn }, mediaItems, tags } = props;
   const clientId = getClientId();
 
   (mediaItems || []).forEach(mediaItem => {
@@ -64,7 +64,7 @@ const createPost = (props) =>  {
       uuid: editPost.uuid,
       text: editPost.text,
       mediaItems,
-      checkInUuid: checkIn.uuid,
+      checkInUuid: editPost.checkInUuid || checkIn.uuid,
       clientId,
       tags
     }
@@ -76,10 +76,12 @@ const createPost = (props) =>  {
 const getTabContent = (type, props) => {
 
   const {
-    checkInItem: { checkIn, inbound }, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
+    item, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
     savePost, uploadFiles, getMediaItem, deleteMediaItem, setProperty, uploadingMedia,
     loadedMediaItemChanged, loadMediaItem, loadMediaItemError, disabledTags, newCheckIn, savedTerminal
   } = props;
+
+  const { checkIn, inbound } = item;
 
   const onFileInputChange = (event) => {
     uploadFiles({
@@ -222,6 +224,7 @@ const getTabContent = (type, props) => {
               <FontIcon className="material-icons" onClick={() => savePost(
                 createPost({
                   ...props,
+                  item,
                   tags: tags.filter(tag => tagEnabled(tag))
                 })
               )}>send</FontIcon>
@@ -270,14 +273,16 @@ const EditCheckInItemView = (props) => {
   const {
     type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost,
     postText, mediaItems, setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, getFeedItem, uploadingMedia,
-    newCheckIn, savedTerminal, frameId, disabledTags, hideContent, editTime, editCheckIn
+    newCheckIn, savedTerminal, frameId, disabledTags, hideContent, editTime, editCheckIn, fetchedFeedItem
   } = props;
+
+  const item = fetchedFeedItem || checkInItem;
 
   let positionElem = null;
   if (geolocation) {
     if (geolocation.status === 'located') {
       const { position } = geolocation;
-      positionElem = checkInItem.checkIn.formattedAddress;
+      positionElem = item.checkIn.formattedAddress;
     } else if (geolocation.status === 'locating') {
       positionElem = (
         <div>
@@ -290,12 +295,12 @@ const EditCheckInItemView = (props) => {
           { geolocation.error }
         </div>
       );
-    } else if (checkInItem.checkIn.formattedAddress) {
-      positionElem = checkInItem.checkIn.formattedAddress;
+    } else if (item.checkIn.formattedAddress) {
+      positionElem = item.checkIn.formattedAddress;
     }
   }
 
-  const { checkIn } = checkInItem;
+  const { checkIn } = item;
 
   let defaultType = 'reaction';
   if (!editPost.uuid && openTerminals && openTerminals.length > 0) {
@@ -310,8 +315,8 @@ const EditCheckInItemView = (props) => {
 
   const selectedType = type || defaultType;
 
-  const departures = checkInItem.terminals.filter(terminal => terminal.type === 'departure');
-  const arrivals = checkInItem.terminals.filter(terminal => terminal.type === 'arrival');
+  const departures = item.terminals.filter(terminal => terminal.type === 'departure');
+  const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
 
   const showSavedTerminal = (
     (departures.length > 0 && selectedType === 'departure') ||
@@ -338,7 +343,7 @@ const EditCheckInItemView = (props) => {
                           setProperty('posts.mediaItems', []);
                           setProperty('posts.checkIn', null);
                           setProperty('posts.editTime', false);
-                          getFeedItem(checkIn.uuid, 'frame-new');
+                          getFeedItem(checkIn.uuid, `feed-${checkIn.uuid}`);
                         }}>close</FontIcon>
                       </div> :
                       <div className={s.editControls}>
@@ -374,12 +379,12 @@ const EditCheckInItemView = (props) => {
               </div>
             </div>
           }
-          { showEditor && getTabContent(selectedType, props) }
+          { showEditor && getTabContent(selectedType, { ...props, item }) }
         </div>
       </div>
       {
         (showContent && !hideContent) &&
-          <CheckInItemContent transportTypes={transportTypes} checkInItem={checkInItem} contentType={selectedType} frameId={frameId} editPost={editPost} editable />
+          <CheckInItemContent transportTypes={transportTypes} checkInItem={item} contentType={selectedType} frameId={frameId} editPost={editPost} editable />
       }
     </div>
   );
@@ -398,6 +403,7 @@ export default injectIntl(
     postText: state.posts.postText,
     savedPost: state.posts.post,
     savedCheckIn: state.posts.checkIn,
+    fetchedFeedItem: state.posts.fetchedFeedItem,
     type: state.posts.addType,
     mediaItems: state.posts.mediaItems,
     uploadingMedia: state.posts.uploadingMedia,

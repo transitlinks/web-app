@@ -221,40 +221,53 @@ const CheckInItem = (
       }
 
       {
-        (editable && showSettings) &&
-          <div className={s.checkInControls}>
-            <CheckInControls checkIn={checkIn} />
+        loadingFeedItem !== 'loading' ?
+          <div>
+            {
+              (editable && showSettings) &&
+              <div className={s.checkInControls}>
+                <CheckInControls checkIn={checkIn} />
+              </div>
+            }
+
+            <div className={s.contentTypeContainer}>
+              <div className={s.contentTypeSelectors}>
+                { typeSelectors }
+              </div>
+            </div>
+            {
+              (showSettings && contentType === 'reaction') &&
+              <div className={s.addPost}>
+                <EditCheckInItem checkInItem={checkInItem}
+                                 openTerminals={openTerminals}
+                                 transportTypes={transportTypes}
+                                 hideContent
+                                 frameId="frame-edit" />
+              </div>
+            }
+            {
+              addTerminalElem ?
+                addTerminalElem :
+                <CheckInItemContent checkInItem={item} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} editPost={{}} editable={editable} />
+            }
+
+            <div className={s.tags}>
+              {
+                (checkIn.tags || []).map(tag => (
+                  <div className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
+                ))
+              }
+            </div>
+          </div> :
+          <div className={s.loading}>
+            <div className={s.loadingio}>
+              <div className={s.ldio}>
+                <div></div>
+              </div>
+            </div>
           </div>
       }
 
-      <div className={s.contentTypeContainer}>
-        <div className={s.contentTypeSelectors}>
-          { typeSelectors }
-        </div>
-      </div>
-      {
-        (showSettings && contentType === 'reaction') &&
-          <div className={s.addPost}>
-            <EditCheckInItem checkInItem={checkInItem}
-                             openTerminals={openTerminals}
-                             transportTypes={transportTypes}
-                             hideContent
-                             frameId="frame-edit" />
-          </div>
-      }
-      {
-        addTerminalElem ?
-          addTerminalElem :
-          <CheckInItemContent checkInItem={item} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} editPost={{}} editable={editable} />
-      }
-
-      <div className={s.tags}>
-        {
-          (checkIn.tags || []).map(tag => (
-            <div className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
-          ))
-        }
-      </div>
 
     </div>
   );

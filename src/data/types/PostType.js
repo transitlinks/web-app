@@ -86,6 +86,7 @@ export const CheckInType = new GraphQLObjectType({
   fields: {
     uuid: {type: new GraphQLNonNull(GraphQLString)},
     clientId: {type: GraphQLString},
+    checkInUuid: {type: GraphQLString},
     user: { type: GraphQLString },
     userUuid: { type: GraphQLString },
     userImage: { type: GraphQLString },

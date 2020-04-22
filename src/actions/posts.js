@@ -152,6 +152,7 @@ export const savePost = ({ post }) => {
       mutation savePost {
         post(post:${toGraphQLObject(post)}, clientId:"${clientId}") {
           uuid,
+          checkInUuid,
           text,
           mediaItems {
             uuid,

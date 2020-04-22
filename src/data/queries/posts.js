@@ -252,6 +252,7 @@ const savePost = async (postInput, clientId, request) => {
   saved = saved.json();
   const savedMediaItems = await postRepository.getMediaItems({ entityUuid: saved.uuid });
   saved.mediaItems = savedMediaItems.map(mediaItem => mediaItem.json());
+  saved.checkInUuid = checkIn.uuid;
 
   return saved;
 

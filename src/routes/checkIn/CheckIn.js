@@ -27,6 +27,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('editTerminal.terminal', {});
     this.props.setProperty('editTerminal.terminalProperties', {});
     this.props.setProperty('posts.disabledTags', []);
+    this.props.setProperty('posts.fetchedFeedItem', null);
     this.updateComponent(this.props);
   }
 
@@ -50,7 +51,7 @@ class CheckIn extends React.Component {
 
     if (props.savedPost) {
       props.setProperty('posts.savedPost', null);
-      props.getFeedItem(props.checkInItem.checkIn.uuid, 'frame-edit');
+      props.getFeedItem(props.savedPost.checkInUuid, 'frame-edit');
     }
 
   }
