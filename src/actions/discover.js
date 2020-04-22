@@ -8,7 +8,7 @@ import {
   GET_DISCOVER_ERROR
 } from '../constants';
 
-export const getDiscoveries = (params) => {
+export const getDiscoveries = (params, reset) => {
 
   return async (...args) => {
 
@@ -110,7 +110,7 @@ export const getDiscoveries = (params) => {
 
     return graphqlAction(
       ...args,
-      { query }, [ 'discover' ],
+      { query, variables: { reset } }, [ 'discover' ],
       GET_DISCOVER_START,
       GET_DISCOVER_SUCCESS,
       GET_DISCOVER_ERROR

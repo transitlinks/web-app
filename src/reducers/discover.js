@@ -22,8 +22,8 @@ export default function reduce(state = {}, action) {
             };
           },
           success: () => {
-            const { discover } = action.payload;
-            const stateDiscover = state.discover || { discoveries: [] };
+            const { discover, variables: { reset } } = action.payload;
+            const stateDiscover = (state.discover && !reset) ? state.discover : { discoveries: [] };
             for (let i = 0; i < discover.discoveries.length; i++) {
               stateDiscover.discoveries.push(discover.discoveries[i]);
             }

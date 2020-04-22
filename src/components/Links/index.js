@@ -367,7 +367,7 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
     (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals > 0) && displayLinks[0].internal.length > 0;
   let actualLinkMode = linkMode;
   if (displayLinks.length === 1 && !showControls) {
-    if (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals > 0) {
+    if (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals.length > 0) {
       actualLinkMode = 'external';
     } else if (displayLinks[0].internal.length > 0) {
       actualLinkMode = 'internal';

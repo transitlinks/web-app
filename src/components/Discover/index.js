@@ -18,6 +18,7 @@ const DiscoverView = ({
   discover, searchTerm, fetchedFeedItems, loadedDiscover, transportTypes
 }) => {
 
+  console.log(discover, loadedDiscover);
   let discoveries = (loadedDiscover || discover).discoveries;
 
   const renderTerminalsList = (terminalType, locations, groupName) => {
@@ -65,11 +66,9 @@ const DiscoverView = ({
                            const input = event.target.value;
                            setProperty('discover.searchTerm', input);
                            if (input.length > 2) {
-                             setProperty('discover.discover', { discoveries: [] });
-                             getDiscoveries({ search: input });
+                             getDiscoveries({ search: input }, true);
                            } else if (input.length === 0) {
-                             setProperty('discover.discover', { discoveries: [] });
-                             getDiscoveries({});
+                             getDiscoveries({}, true);
                            }
                          }} />
             </div>
@@ -124,12 +123,15 @@ const DiscoverView = ({
 DiscoverView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
-  connect(state => ({
-    loadedDiscover: state.discover.discover,
-    searchTerm: state.discover.searchTerm,
-    fetchedFeedItems: state.posts.fetchedFeedItems || {},
-    feedUpdated: state.posts.feedUpdated
-  }), {
+  connect(state => {
+    console.log('state discover', state.discover.discover);
+    return {
+      loadedDiscover: state.discover.discover,
+      searchTerm: state.discover.searchTerm,
+      fetchedFeedItems: state.posts.fetchedFeedItems || {},
+      feedUpdated: state.posts.feedUpdated
+    };
+  }, {
     getDiscoveries,
     setProperty
   })(withStyles(s)(DiscoverView))
