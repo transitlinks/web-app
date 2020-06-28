@@ -192,7 +192,7 @@ export const TransitLinkQueryFields = {
           if (departures.length > 0) terminal = departures[0];
           if (terminal) {
             linkStats.push({
-              locality,
+              locality: terminal.locality,
               latitude: terminal.latitude,
               longitude: terminal.longitude,
               departures: departures.map(departure => departure.json()),

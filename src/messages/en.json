@@ -62,8 +62,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -73,8 +73,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -84,8 +84,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -95,8 +95,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -106,8 +106,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -117,8 +117,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -128,8 +128,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -479,8 +479,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -490,8 +490,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -501,8 +501,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -512,8 +512,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -523,8 +523,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -534,8 +534,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -545,8 +545,8 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
