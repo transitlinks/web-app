@@ -25,7 +25,6 @@ const schema = new Schema({
       content,
       localities,
       profile: AccountQueryFields.profile,
-      userLinks: AccountQueryFields.links,
       transportTypes,
       linkInstanceMedia: TransitLinkQueryFields.linkInstanceMedia,
       user: UserQueryFields.user,

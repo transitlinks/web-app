@@ -206,8 +206,10 @@ export default function reduce(state = {}, action) {
               feed: stateFeed,
               feedOffset: stateFeed.feedItems.length,
               loadingFeed: false,
-              prevResultCount: feed.feedItems.length
+              prevResultCount: feed.feedItems.length,
+              feedUpdated: (new Date()).getTime()
             };
+
           },
           error: () => ({
             feed: null,

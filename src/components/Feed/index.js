@@ -67,7 +67,6 @@ const FeedView = ({ feed, transportTypes, post, loadedFeed, savedCheckIn, fetche
 };
 
 export default connect(state => {
-
   return {
     loadedFeed: state.posts.feed,
     savedCheckIn: state.posts.checkIn,

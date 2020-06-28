@@ -47,6 +47,7 @@ export const getLinks = (params) => {
                 priceAmount,
                 priceCurrency
               }
+              route { lat, lng }
             },
             arrivals {
               checkInUuid,
@@ -77,6 +78,7 @@ export const getLinks = (params) => {
                 priceAmount,
                 priceCurrency
               }
+              route { lat, lng }
             },
             internal {
               checkInUuid,
@@ -107,6 +109,7 @@ export const getLinks = (params) => {
                 priceAmount,
                 priceCurrency
               }
+              route { lat, lng }
             }
           }
         }`

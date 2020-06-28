@@ -154,15 +154,20 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
 
   return (terminals || []).map(terminal => {
     const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
+    let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
+    const { route } = terminal;
+    if (route && route.length > 0) {
+      const sortedRoute = terminal.type === 'departure' ? route : route.reverse();
+      lines = lines.concat(sortedRoute);
+    }
+    console.log('route', route);
+    lines.push({ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude });
+    console.log('lines', lines);
+
     const polyLine = {
       line: (
         <Polyline
-          path={
-            [
-              { lat: terminal.latitude, lng: terminal.longitude },
-              { lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }
-            ]
-          }
+          path={lines}
           onMouseOver={(event) => {
             terminal.highlighted = true;
             onHighlight(terminal);

@@ -8,14 +8,11 @@ import { uploadVideo } from '../../services/youtubeDataApi';
 import {
   localityRepository,
   linkRepository,
-  userRepository,
-  postRepository,
+  checkInRepository,
   terminalRepository,
 } from '../source';
 
 import {
-  TransitLinkType,
-  LinkType,
   MediaItemType, LinkSearchResultType,
 } from '../types/TransitLinkType';
 
@@ -105,6 +102,23 @@ export const TransitLinkMutationFields = {
 
 };
 
+const findRoutePoints = async (terminals) => {
+  for (let i = 0; i < terminals.length; i++) {
+    const terminal = terminals[i];
+    const { linkedTerminal } = terminal;
+    if (linkedTerminal) {
+      const linkedCheckIn = await checkInRepository.getCheckIn({ id: linkedTerminal.checkInId });
+      const routeCheckIns = await checkInRepository.getCheckIns({
+        createdAt: {
+          $gt: terminal.type === 'departure' ? terminal.checkIn.createdAt : linkedCheckIn.createdAt,
+          $lt: terminal.type === 'departure' ? linkedCheckIn.createdAt : terminal.checkIn.createdAt
+        }
+      });
+      terminal.route = (routeCheckIns || {}).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
+    }
+  }
+};
+
 export const TransitLinkQueryFields = {
 
   transitLinks: {
@@ -135,6 +149,9 @@ export const TransitLinkQueryFields = {
         const departures = interTerminals.filter(terminal => terminal.type === 'departure');
         const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
         const internal = await terminalRepository.getInternalDeparturesByLocality(locality);
+        await findRoutePoints(departures);
+        await findRoutePoints(arrivals);
+        await findRoutePoints(internal);
         let terminal = null;
         if (departures.length > 0) terminal = departures[0];
         if (arrivals.length > 0) terminal = arrivals[0];
