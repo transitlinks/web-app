@@ -114,6 +114,8 @@ const findRoutePoints = async (terminals) => {
           $lt: terminal.type === 'departure' ? linkedCheckIn.createdAt : terminal.checkIn.createdAt
         },
         userId: terminal.userId
+      }, {
+        order: [['createdAt', terminal.type === 'departure' ? 'ASC' : 'DESC']]
       });
       terminal.route = (routeCheckIns || {}).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
     }

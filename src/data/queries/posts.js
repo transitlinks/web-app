@@ -148,6 +148,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   const terminal = {
     checkInId: checkIn.id,
+    checkInUuid: checkIn.uuid,
     locality: checkIn.locality,
     latitude: checkIn.latitude,
     longitude: checkIn.longitude,
