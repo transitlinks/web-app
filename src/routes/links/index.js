@@ -20,6 +20,8 @@ export default {
       paramsString = '(' + paramsString + ')';
     }
 
+    console.log('LINKS ROUTE', paramsString);
+
     try {
 
       const { data } = await graphqlRequest(
@@ -55,6 +57,7 @@ export default {
                 formattedAddress,
                 description
               }
+              route { lat, lng }
             },
             arrivals {
               latitude,
@@ -83,6 +86,7 @@ export default {
                 formattedAddress,
                 description
               }
+              route { lat, lng }
             },
             internal {
               latitude,
@@ -111,6 +115,7 @@ export default {
                 formattedAddress,
                 description
               }
+              route { lat, lng }
             }
           },
           transportTypes { slug }

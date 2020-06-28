@@ -58,6 +58,20 @@ export default {
 
   },
 
+  getInterTerminalsByTag: async (tag, userId) => {
+
+    const checkIns = await CheckIn.findAll({
+      where: {
+        tag: { $ne: sequelize.col('Terminal.locality') },
+        locality
+      },
+      include: [{ all: true }]
+    });
+
+    return terminals;
+
+  },
+
   saveTerminal: async (terminal) => {
 
     if (terminal.uuid) {

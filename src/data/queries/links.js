@@ -9,7 +9,7 @@ import {
   localityRepository,
   linkRepository,
   checkInRepository,
-  terminalRepository,
+  terminalRepository, userRepository,
 } from '../source';
 
 import {
@@ -112,7 +112,8 @@ const findRoutePoints = async (terminals) => {
         createdAt: {
           $gt: terminal.type === 'departure' ? terminal.checkIn.createdAt : linkedCheckIn.createdAt,
           $lt: terminal.type === 'departure' ? linkedCheckIn.createdAt : terminal.checkIn.createdAt
-        }
+        },
+        userId: terminal.userId
       });
       terminal.route = (routeCheckIns || {}).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
     }
@@ -127,47 +128,82 @@ export const TransitLinkQueryFields = {
     description: 'Search terminals',
     args: {
       locality: { type: GraphQLString },
+      tag: { type: GraphQLString },
+      user: { type: GraphQLString },
       type: { type: GraphQLString }
     },
     resolve: async ({ request }, params) => {
 
-      const { locality, type } = params;
+      const { locality, tag, user, type } = params;
 
-      log.info(graphLog(request, 'search-terminals',`locality=${locality} type=${type}`));
+      log.info(graphLog(request, 'search-links',`locality=${locality} tag=${tag} type=${type}`));
 
       const linkStats = [];
 
-      const localityQuery = {
-        limit: 16
-      };
-      if (locality) localityQuery.search = locality;
-      const localities = await localityRepository.getCheckInLocalities(localityQuery);
+      if (!tag) {
+        const localityQuery = {
+          limit: 16
+        };
+        if (locality) localityQuery.search = locality;
+        const localities = await localityRepository.getCheckInLocalities(localityQuery);
 
-      for (let i = 0; i < localities.length; i++) {
-        const locality = localities[i];
-        const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality);
-        const departures = interTerminals.filter(terminal => terminal.type === 'departure');
-        const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
-        const internal = await terminalRepository.getInternalDeparturesByLocality(locality);
-        await findRoutePoints(departures);
-        await findRoutePoints(arrivals);
-        await findRoutePoints(internal);
-        let terminal = null;
-        if (departures.length > 0) terminal = departures[0];
-        if (arrivals.length > 0) terminal = arrivals[0];
-        if (internal.length > 0) terminal = internal[0];
-        if (terminal) {
-          linkStats.push({
-            locality,
-            latitude: terminal.latitude,
-            longitude: terminal.longitude,
-            departures,
-            arrivals,
-            internal
-          });
+        for (let i = 0; i < localities.length; i++) {
+          const locality = localities[i];
+          const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality);
+          const departures = interTerminals.filter(terminal => terminal.type === 'departure');
+          const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
+          const internal = await terminalRepository.getInternalDeparturesByLocality(locality);
+          await findRoutePoints(departures);
+          await findRoutePoints(arrivals);
+          await findRoutePoints(internal);
+          let terminal = null;
+          if (departures.length > 0) terminal = departures[0];
+          if (arrivals.length > 0) terminal = arrivals[0];
+          if (internal.length > 0) terminal = internal[0];
+          if (terminal) {
+            linkStats.push({
+              locality,
+              latitude: terminal.latitude,
+              longitude: terminal.longitude,
+              departures,
+              arrivals,
+              internal
+            });
+          }
+        }
+      } else {
+
+        const taggedCheckIns = await checkInRepository.getTaggedCheckIns({ tags: [tag] }, { order: [[ 'createdAt', 'ASC' ]] });
+
+        if (taggedCheckIns.length > 0) {
+
+          const query = {
+            checkInId: taggedCheckIns.map(checkIn => checkIn.id),
+            type: 'departure'
+          };
+          if (user) {
+            const userId = await userRepository.getUserIdByUuid(user);
+            query.userId = userId;
+          }
+
+          const departures = await terminalRepository.getTerminals(query);
+          await findRoutePoints(departures);
+          let terminal = null;
+          if (departures.length > 0) terminal = departures[0];
+          if (terminal) {
+            linkStats.push({
+              locality,
+              latitude: terminal.latitude,
+              longitude: terminal.longitude,
+              departures: departures.map(departure => departure.json()),
+              arrivals: [],
+              internal: []
+            });
+          }
         }
 
       }
+
 
       return linkStats;
 
