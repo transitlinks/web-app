@@ -57,7 +57,10 @@ export const saveCheckIn = ({ checkIn }) => {
       const checkInLocation = await geocodeCheckInLocation();
       completedCheckIn.locality = checkInLocation.locality;
       completedCheckIn.country = checkInLocation.country;
-      console.log('geocoded locality', checkInLocation);
+      if (checkIn.exif) {
+        completedCheckIn.formattedAddress = checkInLocation.result.formatted_address;
+        delete completedCheckIn.exif;
+      }
     }
 
 
@@ -157,7 +160,9 @@ export const savePost = ({ post }) => {
           mediaItems {
             uuid,
             type,
-            url
+            url,
+            latitude,
+            longitude
           }
         }
       }
@@ -188,7 +193,9 @@ export const getPosts = (input) => {
           mediaItems {
             uuid,
             type,
-            url
+            url,
+            latitude,
+            longitude
           }
         }
       }
@@ -334,7 +341,9 @@ export const getDiscoveries = (search, type) => {
                   mediaItems {
                     uuid,
                     type,
-                    url
+                    url,
+                    latitude,
+                    longitude
                   }
                 },
                 terminals {
@@ -356,7 +365,9 @@ export const getDiscoveries = (search, type) => {
                 mediaItems {
                   uuid,
                   type,
-                  url
+                  url,
+                  latitude,
+                  longitude
                 },
                 checkIn {
                   uuid,
@@ -509,7 +520,9 @@ export const getFeed = (clientId, params) => {
               mediaItems {
                 uuid,
                 type,
-                url
+                url,
+                latitude,
+                longitude
               }
             },
             terminals {
@@ -612,7 +625,9 @@ export const getMediaItem = (uuid) => {
           thumbnail,
           uploadStatus,
           uploadProgress,
-          fileSize
+          fileSize,
+          longitude,
+          latitude
         }
       }
     `;
@@ -642,7 +657,9 @@ export const uploadFiles = (mediaItem, files) => {
           url,
           uploadStatus,
           fileSize,
-          uploadProgress
+          uploadProgress,
+          longitude,
+          latitude
         }
       }
     `;

@@ -65,6 +65,8 @@ const renderLinkStatsOverlays = (linkStats, onSelect) => {
 
 const renderLinkInfo = (terminal, intl, wrapperClass) => {
 
+  console.log('render link info', terminal);
+
   const renderDateTime = (terminal, label) => {
 
     if (terminal.date || terminal.time) {
@@ -189,6 +191,7 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
       )
     };
 
+    console.log('render info window', terminal.selected);
     if (terminal.selected) {
       polyLine.info = (
         <InfoWindow position={{ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }}
@@ -257,6 +260,8 @@ const renderLinkStatsList = (linkStats, onSelect) => {
         (linkStats || []).map((linkStat) => {
 
           const { uuid } = linkStat;
+          console.log('render linkstat', linkStat);
+
           return (
             <div key={uuid} className={s.linkItem}>
               <div className={s.localityHeader}>
@@ -309,6 +314,8 @@ const renderLinksList = (links, linkMode, intl) => {
   const renderLink = (terminal) => {
     return renderLinkInfo(terminal, intl, s.listLinkInfo);
   };
+
+  console.log('render link list', links);
 
   return (
     <div>

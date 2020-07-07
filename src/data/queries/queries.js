@@ -50,7 +50,9 @@ export const getFeedItemQuery = (checkInUuid) => {
             mediaItems {
               uuid,
               type,
-              url
+              url,
+              latitude,
+              longitude
             }
           },
           terminals {

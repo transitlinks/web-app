@@ -1,5 +1,5 @@
 import { getLog } from '../../core/log';
-const log = getLog('routes/discover');
+const log = getLog('routes/links');
 
 import React from 'react';
 import ErrorPage from '../../components/common/ErrorPage';

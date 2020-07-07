@@ -47,8 +47,19 @@ const MediaItem = Model.define('MediaItem', {
   fileSize: {
     type: DataType.FLOAT,
     defaultValue: 0
-  }
+  },
 
+  latitude: {
+    type: DataType.FLOAT
+  },
+
+  longitude: {
+    type: DataType.FLOAT
+  },
+
+  altitude: {
+    type: DataType.INTEGER
+  }
 
 }, {
 

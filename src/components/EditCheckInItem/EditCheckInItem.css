@@ -229,3 +229,18 @@ label > * {
   align-items: center;
   justify-content: center;
 }
+
+.mediaItem .copyExif {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  top: 6px;
+  right: 36px;
+  cursor: pointer;
+  background-color: white;
+  opacity: 0.5;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

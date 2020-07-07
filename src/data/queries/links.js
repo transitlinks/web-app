@@ -110,8 +110,8 @@ const findRoutePoints = async (terminals) => {
       const linkedCheckIn = await checkInRepository.getCheckIn({ id: linkedTerminal.checkInId });
       const routeCheckIns = await checkInRepository.getCheckIns({
         createdAt: {
-          $gt: terminal.type === 'departure' ? terminal.checkIn.createdAt : linkedCheckIn.createdAt,
-          $lt: terminal.type === 'departure' ? linkedCheckIn.createdAt : terminal.checkIn.createdAt
+          $gt: terminal.checkIn.createdAt,
+          $lt: linkedCheckIn.createdAt
         },
         userId: terminal.userId
       }, {

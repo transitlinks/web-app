@@ -77,7 +77,7 @@ const getTabContent = (type, props) => {
 
   const {
     item, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
-    savePost, uploadFiles, getMediaItem, deleteMediaItem, setProperty, uploadingMedia,
+    savePost, saveCheckIn, uploadFiles, getMediaItem, deleteMediaItem, setProperty, uploadingMedia,
     loadedMediaItemChanged, loadMediaItem, loadMediaItemError, disabledTags, newCheckIn, savedTerminal
   } = props;
 
@@ -156,6 +156,25 @@ const getTabContent = (type, props) => {
                           deleteMediaItem(mediaItem.uuid);
                         }}>
                         cancel
+                      </FontIcon>
+                    </div>
+                    <div className={s.copyExif}>
+                      <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'black' }}
+                                onClick={() => {
+                                  console.log('media item', mediaItem);
+                                  const { latitude, longitude } = mediaItem;
+                                  if (latitude && longitude) {
+                                    saveCheckIn({
+                                      checkIn: {
+                                        uuid: checkIn.uuid,
+                                        latitude,
+                                        longitude,
+                                        exif: true
+                                      }
+                                    });
+                                  }
+                                }}>
+                        get_app
                       </FontIcon>
                     </div>
                     {

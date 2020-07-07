@@ -31,7 +31,9 @@ export default {
           mediaItems {
             uuid,
             type,
-            url
+            url,
+            latitude,
+            longitude
           }
         }
       `;
@@ -86,7 +88,9 @@ export default {
                 mediaItems {
                   uuid,
                   type,
-                  url
+                  url,
+                  latitude,
+                  longitude
                 }
               },
               terminals {

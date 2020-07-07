@@ -3666,6 +3666,13 @@ execall@^1.0.0:
   dependencies:
     clone-regexp "^1.0.0"
 
+exifreader@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/exifreader/-/exifreader-3.12.0.tgz#78e881d132330cc0928b4c247a5f805964f5f296"
+  integrity sha512-uxYUCCcJRu/fS4Ig2Ys1H6pEZPnKynNPkn8WO+hD/dtpi2NXK38OgvyBgQa+LlsWSvCtvAtmT3iER49dyiiqow==
+  optionalDependencies:
+    xmldom "^0.1.31"
+
 exit-hook@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/exit-hook/-/exit-hook-1.1.1.tgz#f05ca233b48c05d54fff07765df8507e95c02ff8"
@@ -11686,6 +11693,11 @@ ws@~6.1.0:
   integrity sha512-rfUqzvz0WxmSXtJpPMX2EeASXabOrSMk1ruMOV3JBTBjo4ac2lDjGGsbQSyxj8Odhw5fBib8ZKEjDNvgouNKYw==
   dependencies:
     async-limiter "~1.0.0"
+
+xmldom@^0.1.31:
+  version "0.1.31"
+  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
+  integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
 
 xmlhttprequest-ssl@~1.5.4:
   version "1.5.5"

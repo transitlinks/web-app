@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import ExifReader from 'exifreader';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
 
@@ -376,6 +377,12 @@ const getLinkedCheckIns = async (checkIn) => {
 
 };
 
+const getExifData = (path) => {
+  const buffer = fs.readFileSync(path);
+  const tags = ExifReader.load(buffer, { expanded: true });
+  return tags;
+};
+
 const writeFileSync = (path, buffer) => {
 
   const permission = 438;
@@ -401,7 +408,7 @@ const processImage = async (inputFile, outputFile) => {
 
   return new Promise((resolve, reject) => {
 
-    const readableStream = fs.createReadStream(inputFile);;
+    const readableStream = fs.createReadStream(inputFile);
 
     const pipeline = sharp()
       .rotate()
@@ -540,6 +547,15 @@ export const PostMutationFields = {
 
       if (fs.existsSync(filePath)) {
 
+        const exif = getExifData(filePath);
+        const additionalFields = {};
+        if (exif && exif.gps) {
+          log.info('adding exif data', exif.gps);
+          additionalFields.latitude = exif.gps.Latitude;
+          additionalFields.longitude = exif.gps.Longitude;
+          additionalFields.altitude = exif.gps.Altitude;
+        }
+
         if (!fs.existsSync(mediaPath)) {
           fs.mkdirSync(mediaPath);
         }
@@ -575,7 +591,8 @@ export const PostMutationFields = {
             flag: false,
             url: `/instance-media/${entityUuid}/${entityFileName}`,
             uploadStatus: 'uploaded',
-            uploadProgress: 100
+            uploadProgress: 100,
+            ...additionalFields
           });
 
         } else {
@@ -586,7 +603,8 @@ export const PostMutationFields = {
             entityUuid: entity.uuid,
             type: 'video',
             flag: false,
-            uploadProgress: 0
+            uploadProgress: 0,
+            ...additionalFields
           });
 
           processVideo(filePath, entityFilePath, entityUuid, savedMediaItem.uuid);
