@@ -417,7 +417,8 @@ const processImage = async (inputFile, outputFile) => {
 
         if (err) {
           log.error('error processing image', err, info);
-          reject(err);
+          fs.renameSync(inputFile, outputFile);
+          return resolve();
         }
 
         writeFileSync(outputFile, outputBuffer);
