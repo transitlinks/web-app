@@ -141,7 +141,8 @@ export const MediaItemInputType = new GraphQLInputObjectType({
     uploadProgress: { type: GraphQLFloat },
     fileSize: { type: GraphQLFloat },
     latitude: { type: GraphQLFloat },
-    longitude: { type: GraphQLFloat }
+    longitude: { type: GraphQLFloat },
+    date: { type: GraphQLString }
   })
 });
 
@@ -157,7 +158,8 @@ export const MediaItemType = new GraphQLObjectType({
     uploadProgress: { type: GraphQLFloat },
     fileSize: { type: GraphQLFloat },
     latitude: { type: GraphQLFloat },
-    longitude: { type: GraphQLFloat }
+    longitude: { type: GraphQLFloat },
+    date: { type: GraphQLString }
   })
 });
 

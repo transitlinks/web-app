@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import geoTz from 'geo-tz';
+import moment from 'moment-timezone';
 import ExifReader from 'exifreader';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
@@ -579,7 +581,25 @@ export const PostMutationFields = {
           const exif = getExifData(filePath);
           const additionalFields = {};
           if (exif && exif.gps) {
-            log.info('adding exif data', exif.gps);
+            log.info('adding exif data', exif.exif.GPSTimeStamp, exif.exif.DateTime);
+            if (exif.exif) {
+              let dateTime = exif.exif.DateTimeOriginal || exif.exif.DateTime;
+              let timeZone = geoTz(exif.gps.Latitude, exif.gps.Longitude);
+              if (dateTime.value && dateTime.value.length > 0 && timeZone.length > 0) {
+                dateTime = dateTime.value[0].split(' ');
+                if (dateTime.length === 2) {
+                  console.log(dateTime[0]);
+                  dateTime = dateTime[0].split(':').join('-') + ' ' + dateTime[1];
+                  timeZone = timeZone[0];
+                  const tzDateTime = moment.tz(dateTime, timeZone);
+                  const tzDateTimeValue = tzDateTime.format();
+                  additionalFields.date = new Date(tzDateTimeValue);
+                }
+              }
+            }
+            if (!additionalFields.date) {
+              log.info('Failed to parse date from EXIF', exif.exif);
+            }
             additionalFields.latitude = exif.gps.Latitude;
             additionalFields.longitude = exif.gps.Longitude;
             additionalFields.altitude = exif.gps.Altitude;

@@ -162,13 +162,14 @@ const getTabContent = (type, props) => {
                       <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'black' }}
                                 onClick={() => {
                                   console.log('media item', mediaItem);
-                                  const { latitude, longitude } = mediaItem;
+                                  const { latitude, longitude, date } = mediaItem;
                                   if (latitude && longitude) {
                                     saveCheckIn({
                                       checkIn: {
                                         uuid: checkIn.uuid,
                                         latitude,
                                         longitude,
+                                        date,
                                         exif: true
                                       }
                                     });

@@ -162,7 +162,8 @@ export const savePost = ({ post }) => {
             type,
             url,
             latitude,
-            longitude
+            longitude,
+            date
           }
         }
       }
@@ -195,7 +196,8 @@ export const getPosts = (input) => {
             type,
             url,
             latitude,
-            longitude
+            longitude,
+            date
           }
         }
       }
@@ -343,7 +345,8 @@ export const getDiscoveries = (search, type) => {
                     type,
                     url,
                     latitude,
-                    longitude
+                    longitude,
+                    date
                   }
                 },
                 terminals {
@@ -367,7 +370,8 @@ export const getDiscoveries = (search, type) => {
                   type,
                   url,
                   latitude,
-                  longitude
+                  longitude,
+                  date
                 },
                 checkIn {
                   uuid,
@@ -522,7 +526,8 @@ export const getFeed = (clientId, params) => {
                 type,
                 url,
                 latitude,
-                longitude
+                longitude,
+                date
               }
             },
             terminals {
@@ -627,7 +632,8 @@ export const getMediaItem = (uuid) => {
           uploadProgress,
           fileSize,
           longitude,
-          latitude
+          latitude,
+          date
         }
       }
     `;
@@ -659,7 +665,8 @@ export const uploadFiles = (mediaItem, files) => {
           fileSize,
           uploadProgress,
           longitude,
-          latitude
+          latitude,
+          date
         }
       }
     `;

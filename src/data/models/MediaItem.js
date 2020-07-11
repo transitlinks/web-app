@@ -59,6 +59,10 @@ const MediaItem = Model.define('MediaItem', {
 
   altitude: {
     type: DataType.INTEGER
+  },
+
+  date: {
+    type: DataType.DATE
   }
 
 }, {

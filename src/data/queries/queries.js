@@ -52,7 +52,8 @@ export const getFeedItemQuery = (checkInUuid) => {
               type,
               url,
               latitude,
-              longitude
+              longitude,
+              date
             }
           },
           terminals {
