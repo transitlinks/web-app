@@ -23,6 +23,17 @@ class Links extends React.Component {
     if (loadedLinks) {
       console.log('set zoom level');
       this.props.setZoomLevel(loadedLinks, this.props.linkMode);
+      const prevLoadedLinks = prevProps.loadedLinks;
+      this.props.setProperty('links.loadedMapCenter', null);
+      if (
+        !prevLoadedLinks ||
+        prevLoadedLinks[0].latitude !== loadedLinks[0].latitude ||
+        prevLoadedLinks[0].longitude !== loadedLinks[0].longitude) {
+        this.props.setProperty('links.loadedMapCenter', {
+          lat: loadedLinks[0].latitude,
+          lng: loadedLinks[0].longitude
+        });
+      }
     }
 
     const prevQuery = prevProps.query;

@@ -23,21 +23,34 @@ const LinksMap = compose(
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withGoogleMap
-)((props) => (
-  <GoogleMap
-    ref={props.onMapLoad}
-    defaultZoom={props.zoom}
-    zoom={props.zoom}
-    defaultCenter={props.center}
-    center={props.center}
-    onClick={props.onMapClick}
-    options={{
+)((props) => {
+
+  const mapProps = {
+    ref: props.onMapLoad,
+    defaultZoom: props.zoom,
+    zoom: props.zoom,
+    onClick: props.onMapClick,
+    options: {
       streetViewControl: false,
       mapTypeControl: false
-    }}>
-    { props.content }
-  </GoogleMap>
-));
+    }
+  };
+
+  if (props.center) {
+    mapProps.center = props.center;
+  }
+
+  if (props.defaultCenter) {
+    mapProps.defaultCenter = props.defaultCenter;
+  }
+
+  return (
+    <GoogleMap {...mapProps}>
+      {props.content}
+    </GoogleMap>
+  );
+
+});
 
 const renderLinkStatsOverlays = (linkStats, onSelect) => {
   return (linkStats || []).map(linkStat => {
@@ -64,8 +77,6 @@ const renderLinkStatsOverlays = (linkStats, onSelect) => {
 };
 
 const renderLinkInfo = (terminal, intl, wrapperClass) => {
-
-  console.log('render link info', terminal);
 
   const renderDateTime = (terminal, label) => {
 
@@ -159,12 +170,10 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
     let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
     const { route } = terminal;
     if (route && route.length > 0) {
-      const sortedRoute = terminal.type === 'departure' ? route : route.reverse();
-      lines = lines.concat(sortedRoute);
+      lines = lines.concat(route);
     }
-    console.log('route', route);
+
     lines.push({ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude });
-    console.log('lines', lines);
 
     const polyLine = {
       line: (
@@ -191,7 +200,6 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
       )
     };
 
-    console.log('render info window', terminal.selected);
     if (terminal.selected) {
       polyLine.info = (
         <InfoWindow position={{ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }}
@@ -260,7 +268,6 @@ const renderLinkStatsList = (linkStats, onSelect) => {
         (linkStats || []).map((linkStat) => {
 
           const { uuid } = linkStat;
-          console.log('render linkstat', linkStat);
 
           return (
             <div key={uuid} className={s.linkItem}>
@@ -315,8 +322,6 @@ const renderLinksList = (links, linkMode, intl) => {
     return renderLinkInfo(terminal, intl, s.listLinkInfo);
   };
 
-  console.log('render link list', links);
-
   return (
     <div>
       {
@@ -345,7 +350,7 @@ const renderLinksList = (links, linkMode, intl) => {
 
 };
 
-const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, linkMode, mapZoom, selectedLink, getLinks, setProperty }) => {
+const LinksView = ({ intl, links, loadedLinks, loadedMapCenter, searchTerm, viewMode, linkMode, mapZoom, selectedLink, getLinks, setProperty }) => {
 
   let  displayLinks = (loadedLinks || links) || [];
 
@@ -390,11 +395,17 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
   let listContent = null;
   if (displayLinks.length === 1) {
     mapContent = renderMapLinks(displayLinks[0], actualLinkMode, (terminal) => {
-      if (terminal.highlighted) setProperty('links.highlightedTerminal', terminal.uuid);
+      if (terminal.highlighted) {
+        setProperty('links.loadedMapCenter', null);
+        setProperty('links.highlightedTerminal', terminal.uuid);
+      }
       else if (!selectedLink) setProperty('links.highlightedTerminal', null);
     }, (terminal) => {
       if (selectedLink) selectedLink.selected = false;
-      if (terminal.selected) setProperty('links.selectedLink', terminal);
+      if (terminal.selected) {
+        setProperty('links.loadedMapCenter', null);
+        setProperty('links.selectedLink', terminal);
+      }
       else setProperty('links.selectedLink', null);
     }, intl);
     listContent = renderLinksList(displayLinks[0], actualLinkMode, intl);
@@ -403,32 +414,36 @@ const LinksView = ({ intl, links, loadedLinks, query, searchTerm, viewMode, link
     listContent = renderLinkStatsList(displayLinks, onSelectLocality);
   }
 
+  const mapProps = {
+    containerElement: <div style={{ height: `400px` }} />,
+    mapElement: <div style={{ height: `100%` }} />,
+    defaultCenter: mapCenter,
+    zoom: mapZoom ? mapZoom.zoomLevel : 10,
+    onMapLoad: (map) => {
+      if (map) {
+        if (mapZoom && loadedMapCenter && !selectedLink) {
+          console.log('fit bounds', map);
+          map.fitBounds(mapZoom.bounds);
+        }
+      }
+    },
+    onMapClick: () => {
+      console.log('map clicked');
+    },
+    content: mapContent
+  };
+
+  if (selectedLink) {
+    mapProps.center = mapCenter;
+  }
+
+  if (loadedMapCenter) {
+    mapProps.center = loadedMapCenter;
+  }
+
   const mapView = (
     <div>
-      <LinksMap
-        containerElement={
-          <div style={{ height: `400px` }} />
-        }
-        mapElement={
-          <div style={{ height: `100%` }} />
-        }
-        center={mapCenter}
-        zoom={mapZoom ? mapZoom.zoomLevel : 10}
-        onMapLoad={(map) => {
-          if (map) {
-
-            if (mapZoom && !selectedLink) {
-              console.log('fit bounds', map);
-              map.fitBounds(mapZoom.bounds);
-            }
-
-          }
-        }}
-        onMapClick={() => {
-          console.log('map clicked');
-        }}
-        content={mapContent}
-      />
+      <LinksMap {...mapProps} />
     </div>
   );
 
@@ -489,6 +504,7 @@ export default injectIntl(
   connect(state => {
     return {
       loadedLinks: state.links.transitLinks,
+      loadedMapCenter: state.links.loadedMapCenter,
       fetchedFeedItems: state.posts.fetchedFeedItems || {},
       feedUpdated: state.posts.feedUpdated,
       viewMode: state.links.viewMode,

@@ -383,6 +383,7 @@ const getExifData = (path) => {
   return tags;
 };
 
+
 const writeFileSync = (path, buffer) => {
 
   const permission = 438;
@@ -548,15 +549,6 @@ export const PostMutationFields = {
 
       if (fs.existsSync(filePath)) {
 
-        const exif = getExifData(filePath);
-        const additionalFields = {};
-        if (exif && exif.gps) {
-          log.info('adding exif data', exif.gps);
-          additionalFields.latitude = exif.gps.Latitude;
-          additionalFields.longitude = exif.gps.Longitude;
-          additionalFields.altitude = exif.gps.Altitude;
-        }
-
         if (!fs.existsSync(mediaPath)) {
           fs.mkdirSync(mediaPath);
         }
@@ -584,6 +576,15 @@ export const PostMutationFields = {
 
           log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${entityFileName}`);
 
+          const exif = getExifData(filePath);
+          const additionalFields = {};
+          if (exif && exif.gps) {
+            log.info('adding exif data', exif.gps);
+            additionalFields.latitude = exif.gps.Latitude;
+            additionalFields.longitude = exif.gps.Longitude;
+            additionalFields.altitude = exif.gps.Altitude;
+          }
+
           await processImage(filePath, entityFilePath);
 
           savedMediaItem = await postRepository.saveMediaItem({
@@ -604,8 +605,7 @@ export const PostMutationFields = {
             entityUuid: entity.uuid,
             type: 'video',
             flag: false,
-            uploadProgress: 0,
-            ...additionalFields
+            uploadProgress: 0
           });
 
           processVideo(filePath, entityFilePath, entityUuid, savedMediaItem.uuid);
