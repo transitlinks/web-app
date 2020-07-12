@@ -21,8 +21,8 @@ const CheckInControls = ({
 
   const dateTime = ({ date, time }) => {
     return {
-      date: date || new Date(checkIn.date),
-      time: time || new Date(checkIn.date)
+      date: date || new Date((savedCheckIn || checkIn).date),
+      time: time || new Date((savedCheckIn || checkIn).date)
     };
   };
 

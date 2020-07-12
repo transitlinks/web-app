@@ -118,7 +118,6 @@ export default function reduce(state = {}, action) {
             return {
               checkIn,
               feedProperties,
-              editPost: {},
               fetchedFeedItem: null,
               fetchedFeedItems,
               error: null

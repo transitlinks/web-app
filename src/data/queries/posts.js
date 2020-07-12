@@ -675,11 +675,8 @@ export const getFeedItem = async (request, checkIn) => {
 
   log.info(graphLog(request, 'get-feed-item', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
   const linkedCheckIns = await getLinkedCheckIns(checkIn, request);
-  console.log('checkin terminals', checkIn.terminals);
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
   const credentials = await getEntityCredentials(request, checkIn);
-
-  log.info('check in cred', credentials);
 
   return {
     userAccess: credentials.userAccess,

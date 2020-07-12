@@ -108,12 +108,10 @@ const getTabContent = (type, props) => {
       let match;
       const regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm;
       while ((match = regex.exec(text))) {
-        console.log('match', match);
         allTags.push(match[1]);
       }
     }
 
-    console.log('TAGS', checkIn);
     const inboundTags = (inbound && inbound.length > 0) ? inbound[0].tags : [];
     const distinct = (value, index, self) => self.indexOf(value) === index;
     return allTags.concat(inboundTags).filter(distinct).filter(tag => tag && tag.length > 0);
@@ -161,7 +159,6 @@ const getTabContent = (type, props) => {
                     <div className={s.copyExif}>
                       <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'black' }}
                                 onClick={() => {
-                                  console.log('media item', mediaItem);
                                   const { latitude, longitude, date } = mediaItem;
                                   if (latitude && longitude) {
                                     saveCheckIn({
