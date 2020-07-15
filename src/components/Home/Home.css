@@ -4,7 +4,7 @@
   margin: 0 auto;
   width: 100%;
   padding-top: 24px;
-  max-width: var(--max-content-width);
+  max-width: 760px;
 }
 
 .brand {
@@ -191,10 +191,13 @@
   display: flex;
   justify-content: space-between;
   margin-left: 8px;
+  width: calc(100% - 8px);
 }
 
 .filtersContainer .filtersDisplay {
-
+  width: calc(100% - 70px);
+  position: relative;
+  display: flex;
 }
 
 .filtersContainer .filtersReset {
@@ -208,11 +211,11 @@
   display: flex;
 }
 
-.userTagFilter .userImage {
+.userTagFilter .userImage, .userFilter .userImage {
   width: 40px;
 }
 
-.userTagFilter .userImage img {
+.userTagFilter .userImage img, .userFilter .userImage img {
   width: 100%;
   border-radius: 20px;
 }
@@ -232,4 +235,51 @@
   display: inline-block;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.localityFilter {
+  display: flex;
+  align-items: center;
+}
+
+.localityFilter .localityName {
+  font-size: 24px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.userFilter {
+  display: flex;
+  width: 100%;
+}
+
+.userFilter .userInfo {
+  margin-left: 8px;
+  width: calc(100% - 48px);
+}
+
+.userFilter .userInfo .userInfoTitle {
+  font-size: 13px;
+  color: #a0a0a0;
+}
+
+.userFilter .userInfo .userName {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tagFilter {
+  display: flex;
+  align-items: center;
+}
+
+.tagFilter .tagName {
+  font-size: 20px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
 }

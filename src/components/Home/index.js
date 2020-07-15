@@ -37,6 +37,8 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
     const { user, tags, locality } = query;
 
     let filterDisplay = null;
+    let directionsUrl = null;
+
     if (user && tags) {
       filterDisplay = (
         <div className={s.userTagFilter}>
@@ -49,22 +51,32 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
           </div>
         </div>
       );
+      directionsUrl = '/links?tag=' + tags;
     } else if (user) {
       filterDisplay = (
-        <div>
-          <div>user</div>
+        <div className={s.userFilter}>
+          <div className={s.userImage}>
+            <img src={feed.userImage} />
+          </div>
+          <div className={s.userInfo}>
+            <div className={s.userInfoTitle}>
+              Viewing check-ins by
+            </div>
+            <div className={s.userName}>{feed.user}</div>
+          </div>
         </div>
       );
     } else if (locality) {
       filterDisplay = (
-        <div>
-          <div>locality</div>
+        <div className={s.localityFilter}>
+          <div className={s.localityName}>{locality}</div>
         </div>
       );
+      directionsUrl = '/links?locality=' + locality;
     } else if (tags) {
       filterDisplay = (
-        <div>
-          <div>tags</div>
+        <div className={s.tagFilter}>
+          <div className={s.tagName}>#{tags}</div>
         </div>
       );
     }
@@ -73,11 +85,14 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
       <div className={s.filtersContainer}>
         <div className={s.filtersDisplay}>{filterDisplay}</div>
         <div className={s.filtersReset}>
-          <Link to={'/links?tag=' + tags}>
-            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
-              directions
-            </FontIcon>
-          </Link>
+          {
+            directionsUrl &&
+              <Link to={directionsUrl}>
+                <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
+                  directions
+                </FontIcon>
+              </Link>
+          }
           <Link to="/">
             <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
               clear
