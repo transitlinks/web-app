@@ -186,11 +186,16 @@ export default function reduce(state = {}, action) {
           },
           success: () => {
 
-            const { feed, variables: { add } } = action.payload;
+            const { feed, variables: { add, user, tags, locality } } = action.payload;
+
+            const additionalFields = {};
+            if (user || tags || locality) {
+              additionalFields.query = { user, tags, locality };
+            }
 
             if (!add) {
               return {
-                feed,
+                feed: { ...feed, ...additionalFields },
                 loadingFeed: false,
                 feedOffset: feed.feedItems.length
               };
@@ -202,7 +207,7 @@ export default function reduce(state = {}, action) {
             }
 
             return {
-              feed: stateFeed,
+              feed: { ...stateFeed, ...additionalFields },
               feedOffset: stateFeed.feedItems.length,
               loadingFeed: false,
               prevResultCount: feed.feedItems.length,

@@ -818,6 +818,19 @@ export const PostQueryFields = {
 
       const openTerminals = await postRepository.getTerminals(openTerminalParams);
       log.info(graphLog(request, 'get-feed', 'check-ins=' + checkIns.length));
+
+      let userName = null;
+      let userImage = null;
+      if (userId) {
+        const userById = await userRepository.getById(userId);
+        if (userById) {
+          userName = userById.firstName + ' ' + userById.lastName;
+          userImage = userById.photo;
+        }
+      }
+
+      console.log('feed for user', userName, userImage);
+
       return {
         feedItems: checkIns.map(async (checkIn) => {
           return await getFeedItem(request, checkIn);
@@ -828,7 +841,9 @@ export const PostQueryFields = {
             ...terminal.json(),
             checkIn: terminalCheckIn
           };
-        })
+        }),
+        user: userName,
+        userImage
       };
 
     }

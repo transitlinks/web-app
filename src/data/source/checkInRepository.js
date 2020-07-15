@@ -106,7 +106,6 @@ export default {
       ...options
     });
 
-    console.log("delete checkins result", deleteResult);
     return deleteResult;
 
   },

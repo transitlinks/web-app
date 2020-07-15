@@ -9,7 +9,8 @@ import {
   localityRepository,
   linkRepository,
   checkInRepository,
-  terminalRepository, userRepository,
+  terminalRepository,
+  userRepository
 } from '../source';
 
 import {
@@ -131,14 +132,15 @@ export const TransitLinkQueryFields = {
     args: {
       locality: { type: GraphQLString },
       tag: { type: GraphQLString },
+      query: { type: GraphQLString },
       user: { type: GraphQLString },
       type: { type: GraphQLString }
     },
     resolve: async ({ request }, params) => {
 
-      const { locality, tag, user, type } = params;
+      const { locality, tag, user, type, query } = params;
 
-      log.info(graphLog(request, 'search-links',`locality=${locality} tag=${tag} type=${type}`));
+      log.info(graphLog(request, 'search-links',`query=${query} locality=${locality} tag=${tag} type=${type}`));
 
       const linkStats = [];
 

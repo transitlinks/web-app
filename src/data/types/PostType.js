@@ -181,7 +181,9 @@ export const FeedType = new GraphQLObjectType({
   description: 'Transitlinks Feed query result object',
   fields: {
     feedItems: { type: new GraphQLList(FeedItemType) },
-    openTerminals: { type: new GraphQLList(TerminalType) }
+    openTerminals: { type: new GraphQLList(TerminalType) },
+    user: { type: GraphQLString },
+    userImage: { type: GraphQLString }
   }
 });
 

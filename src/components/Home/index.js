@@ -12,40 +12,9 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 import RaisedButton from 'material-ui/RaisedButton';
+import FontIcon from 'material-ui/FontIcon';
 
-const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, post, error }) => {
-
-  const select = (section) => {
-    setProperty('breakdownSelected', section);
-  }
-
-  const selection = breakdownSelected || 'find';
-
-  const findText = `
-    Search transit links contributed by fellow travellers. 
-    If someone has travelled or knows of a transit connection, you will find it 
-    no matter how remote the place is and how exotic the mode of transportation. 
-    Weather it is England, Estonia or Ethiopia, by bus, by boat or by bicycle - we have it!
-  `;
-
-  const contributeText = `
-    Transitlinks is a collaborative resource. By contributing your experience or research, you are
-    making the world a better place by building something great that can make difference in the world.
-  `;
-
-  const shareText = `
-    The trips you save in Transitlinks are your precious memories and experiences complete with media you choose to
-    add to them and you can share them with your friends and other Transitlinks users. Transitlinks is a community
-    of Travellers and all transit links are subject to feedback discussion and a source of inspiration for other 
-    travellers like you!
-  `;
-
-  let singleText = findText;
-  if (selection === 'contribute') {
-    singleText = contributeText;
-  } else if (selection === 'share') {
-    singleText = shareText;
-  }
+const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
 
   const errorClasses = {
     'PrelaunchError': s.prelaunchError
@@ -62,17 +31,72 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
     );
   });
 
+
+  const getFiltersElem = (query) => {
+
+    const { user, tags, locality } = query;
+
+    let filterDisplay = null;
+    if (user && tags) {
+      filterDisplay = (
+        <div className={s.userTagFilter}>
+          <div className={s.userImage}>
+            <img src={feed.userImage} />
+          </div>
+          <div className={s.filterInfo}>
+            <div className={s.userName}>{feed.user}</div>
+            <div className={s.tags}>#{tags}</div>
+          </div>
+        </div>
+      );
+    } else if (user) {
+      filterDisplay = (
+        <div>
+          <div>user</div>
+        </div>
+      );
+    } else if (locality) {
+      filterDisplay = (
+        <div>
+          <div>locality</div>
+        </div>
+      );
+    } else if (tags) {
+      filterDisplay = (
+        <div>
+          <div>tags</div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={s.filtersContainer}>
+        <div className={s.filtersDisplay}>{filterDisplay}</div>
+        <div className={s.filtersReset}>
+          <Link to={'/links?tag=' + tags}>
+            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
+              directions
+            </FontIcon>
+          </Link>
+          <Link to="/">
+            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
+              clear
+            </FontIcon>
+          </Link>
+        </div>
+      </div>
+    );
+
+  };
+
 	return (
     <div className={s.container}>
-      {
-        false &&
-        <div className={s.brand}>
-          <div className={s.appName}>Transitlinks</div>
-          <div className={s.appShortDescription}>Universal transit resource</div>
-        </div>
-      }
       <div>
-        <NewCheckIn />
+        {
+          feed.query ?
+            getFiltersElem(feed.query) :
+            <NewCheckIn />
+        }
       </div>
       <div>
         <div className={s.errors}>
@@ -80,57 +104,6 @@ const HomeView = ({ intl, setProperty, breakdownSelected, feed, transportTypes, 
         </div>
         <Feed post={post} feed={feed} transportTypes={transportTypes} post={post}/>
       </div>
-
-      {
-        false &&
-        <div>
-          <div className={s.about}>Find transit connections anywhere in the world by any mode of transport.</div>
-          <div className={s.breakdown}>
-            <div className={s.items}>
-              <div className={cx(s.item, s.find, selection === 'find' ? s.selected : s.unselected)}>
-                <div className={s.header} onClick={() => select('find')}>
-                  <div className={s.title}>
-                    <span>Find</span>
-                  </div>
-                </div>
-                <div className={s.body}>
-                  <div className={s.content}>
-                    {findText}
-                  </div>
-                </div>
-              </div>
-              <div className={cx(s.item, selection === 'contribute' ? s.selected : s.unselected)}>
-                <div className={s.header} onClick={() => select('contribute')}>
-                  <div className={s.title}>
-                    <span>Contribute</span>
-                  </div>
-                </div>
-                <div className={s.body}>
-                  <div className={s.content}>
-                    {contributeText}
-                  </div>
-                </div>
-              </div>
-              <div className={cx(s.item, selection === 'share' ? s.selected : s.unselected)}>
-                <div className={s.header} onClick={() => select('share')}>
-                  <div className={s.title}>
-                    <span>Share</span>
-                  </div>
-                </div>
-                <div className={s.body}>
-                  <div className={s.content}>
-                    {shareText}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className={s.singleText}>
-              {singleText}
-            </div>
-          </div>
-        </div>
-      }
-
     </div>
   );
 

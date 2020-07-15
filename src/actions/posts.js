@@ -468,8 +468,10 @@ export const getDiscoveries = (search, type) => {
 
 export const getFeed = (clientId, params) => {
 
+  console.log('feed params', params);
   let paramsString = `clientId: "${clientId}"`;
-  const { add, offset, limit } = params;
+  const { add, offset, limit, user, tags, locality } = params;
+
   delete params.add;
   const paramKeys = Object.keys(params);
   paramKeys.forEach(key => {
@@ -581,14 +583,16 @@ export const getFeed = (clientId, params) => {
               locality,
               country
             }
-          }
+          },
+          user,
+          userImage
         }
       }
     `;
 
     return graphqlAction(
       ...args,
-      { query, variables: { add, offset, limit } }, [ 'feed' ],
+      { query, variables: { add, offset, limit, user, tags, locality } }, [ 'feed' ],
       GET_FEED_START,
       GET_FEED_SUCCESS,
       GET_FEED_ERROR

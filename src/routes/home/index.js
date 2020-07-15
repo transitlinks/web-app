@@ -16,6 +16,7 @@ export default {
     const clientId = getClientId();
     const { frame } = query;
     if (frame) delete query.frame;
+    const { tags, user, locality } = query;
     const queryParams = { clientId, limit: 8, ...query };
 
     const { type, uuid } = params;
@@ -124,7 +125,9 @@ export default {
                 locality,
                 country
               }
-            }
+            },
+            user,
+            userImage
           },
           transportTypes { slug },
           ${contentQuery}
@@ -132,7 +135,12 @@ export default {
       );
 
       const { feed, transportTypes, post } = data;
-      log.info('event=received-feed-data', data);
+      log.info('event=received-feed-data', 'query=', query, data);
+
+      if (user || tags || locality) {
+        feed.query = { user, tags, locality };
+      }
+
       return <Home feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} />;
 
     } catch (error) {
