@@ -305,8 +305,12 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     console.log("NEXT CHECK IN ID", saved.id);
   };
 
+  const tagIds = (await tagRepository.getEntityTags({ checkInId: saved.id }))
+    .map(entityTag => entityTag.tagId);
+
   return {
     ...saved.toJSON(),
+    tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
     date: saved.createdAt
   };
 
@@ -679,6 +683,9 @@ export const getFeedItem = async (request, checkIn) => {
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
   const credentials = await getEntityCredentials(request, checkIn);
 
+  const tagIds = (await tagRepository.getEntityTags({ checkInId: checkIn.id }))
+    .map(entityTag => entityTag.tagId);
+
   return {
     userAccess: credentials.userAccess,
     checkIn: {
@@ -686,7 +693,8 @@ export const getFeedItem = async (request, checkIn) => {
       user: credentials.ownerFullName,
       userImage: credentials.userImage,
       userUuid: credentials.userUuid,
-      date: checkIn.createdAt
+      date: checkIn.createdAt,
+      tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value)
     },
     ...linkedCheckIns,
     posts: posts.map(async (post) => {

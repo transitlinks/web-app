@@ -41,6 +41,8 @@ const FeedView = ({ feed, transportTypes, post, loadedFeed, savedCheckIn, fetche
             const frameId = editable ? 'frame-new' : `feed-${checkIn.uuid}`;
             const fetchedFeedItem = fetchedFeedItems[frameId];
 
+            console.log(editable, frameId, fetchedFeedItem);
+
             if (hideFeedItem(feedItem, frameId)) {
               return null;
             }

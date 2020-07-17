@@ -250,14 +250,6 @@ const CheckInItem = (
                 addTerminalElem :
                 <CheckInItemContent checkInItem={item} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} editPost={{}} editable={editable} />
             }
-
-            <div className={s.tags}>
-              {
-                (checkIn.tags || []).map(tag => (
-                  <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
-                ))
-              }
-            </div>
           </div> :
           <div className={s.loading}>
             <div className={s.loadingio}>

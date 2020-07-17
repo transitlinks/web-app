@@ -23,7 +23,8 @@ export const getFeedItemQuery = (checkInUuid) => {
             placeId,
             formattedAddress,
             locality,
-            country
+            country,
+            tags
           },
           inbound {
             uuid,

@@ -46,7 +46,7 @@ const getLocalityDiscovery = async (locality, request) => {
 
   const connectionsFrom = await postRepository.getConnectionsByLocality(locality, 'arrival');
   const connectionsTo = await postRepository.getConnectionsByLocality(locality, 'departure');
-  const firstCheckIn = await postRepository.getCheckIn({ locality: locality }, { order: [['createdAt', 'desc']] });
+  const firstCheckIn = await postRepository.getCheckIn({ locality }, { order: [['createdAt', 'desc']] });
   const checkInCount = await postRepository.getCheckInCount(locality);
 
   const posts = await postRepository.getPostsByLocality(locality, 5);
@@ -70,7 +70,7 @@ const getTagDiscovery = async (tag, request) => {
 
   const checkInCount = await checkInRepository.getCheckInCountByTag(tag);
   const taggedCheckIns = await checkInRepository.getTaggedCheckIns({ tags: [tag] }, { limit: 1 });
-  const posts = await postRepository.getPostsByTag(tag);
+  const posts = await postRepository.getPostsByTag(tag, 5);
   const fullPosts = posts.map(async post => {
     return await getPostContent(post);
   });
