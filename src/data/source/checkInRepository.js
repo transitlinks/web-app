@@ -122,6 +122,12 @@ export default {
     return checkInCount[0].count;
   },
 
+  getCheckInCountByUser: async (userId) => {
+    const query = `SELECT COUNT(id) FROM "CheckIn" WHERE "userId" = ${userId}`;
+    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return checkInCount[0].count;
+  },
+
   getTaggedCheckIns: async (query, options) => {
 
     const { tags, userId } = query;
@@ -148,8 +154,12 @@ export default {
 
   },
 
-  getLatestCheckIns: async (limit, offset) => {
-    const query = `SELECT DISTINCT "locality", MAX("createdAt") as "lastCreated" FROM "CheckIn" GROUP BY "locality" ORDER BY "lastCreated" DESC, "locality" LIMIT ${limit} OFFSET ${offset}`;
+  getLatestCheckIns: async (limit, offset, search) => {
+    let query = `SELECT DISTINCT "locality", MAX("createdAt") as "lastCreated" FROM "CheckIn"`;
+    if (search) {
+      query += ` WHERE "locality" ILIKE '%${search}%'`
+    }
+    query += ` GROUP BY "locality" ORDER BY "lastCreated" DESC, "locality" LIMIT ${limit} OFFSET ${offset}`;
     const latestCheckIns = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestCheckIns;
   }

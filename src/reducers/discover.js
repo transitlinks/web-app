@@ -22,18 +22,17 @@ export default function reduce(state = {}, action) {
             };
           },
           success: () => {
-            const { discover, variables: { reset } } = action.payload;
+            const { discover, variables: { reset, limit, offset } } = action.payload;
             const stateDiscover = (state.discover && !reset) ? state.discover : { discoveries: [] };
             for (let i = 0; i < discover.discoveries.length; i++) {
               stateDiscover.discoveries.push(discover.discoveries[i]);
             }
 
-            console.log('reduced disciver', discover);
-
             return {
               discover: stateDiscover,
               localityOffset: discover.localityOffset,
               tagOffset: discover.tagOffset,
+              userOffset: discover.userOffset,
               offset: stateDiscover.discoveries.length,
               loadingDiscover: false,
               prevResultCount: discover.discoveries.length

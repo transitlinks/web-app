@@ -85,6 +85,25 @@ const getTagDiscovery = async (tag, request) => {
 
 };
 
+const getUserDiscovery = async (user, request) => {
+
+  const checkInCount = await checkInRepository.getCheckInCountByUser(user.id);
+  const posts = await postRepository.getPosts({ userId: user.id }, { limit: 5 });
+  const lastCheckIn = await checkInRepository.getCheckIn({ userId: user.id });
+  const fullPosts = posts.map(async post => {
+    return await getPostContent(post);
+  });
+
+  return {
+    groupType: 'user',
+    groupName: user.username || user.firstName + ' ' + user.lastName,
+    checkInCount,
+    feedItem: lastCheckIn ? await getFeedItem(request, lastCheckIn) : null,
+    posts: fullPosts
+  };
+
+};
+
 export const DiscoverQueryFields = {
 
   discover: {
@@ -97,34 +116,24 @@ export const DiscoverQueryFields = {
       offset: { type: GraphQLInt },
       localityOffset: { type: GraphQLInt },
       tagOffset: { type: GraphQLInt },
+      userOffset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { search, type, offset, localityOffset, tagOffset, limit }) => {
+    resolve: async ({ request }, { search, type, offset, localityOffset, tagOffset, userOffset, limit }) => {
 
       log.info(graphLog(request, 'discover',`search=${search} type=${type} offset=${offset} limit=${limit}`));
 
-      const offsetRatio = (offset || 0) / limit;
-      const locLimit = limit - (Math.round(limit/2));
-      const tagLimit = limit - locLimit;
-      const newLocationOffset = localityOffset || offsetRatio * locLimit;
-      const newTagOffset = tagOffset || offsetRatio * tagLimit;
+      const latestCheckIns = await checkInRepository.getLatestCheckIns(limit || 10, localityOffset || 0, search);
+      const latestTags = await tagRepository.getLatestTags(limit || 10, tagOffset || 0, search);
+      const matchingUsers = search && search.length > 0 ? await userRepository.getUsersBySearchTerm(limit || 10, userOffset || 0, search) : [];
 
-      const locOptions = {};
-      if (search) locOptions.search = search;
-      if (offset) locOptions.offset = newLocationOffset;
-      if (limit) locOptions.limit = locLimit;
-
-      const localities = await localityRepository.getCheckInLocalities(locOptions);
-
-      const latestCheckIns = await checkInRepository.getLatestCheckIns(limit || 10, localityOffset || 0);
-      const latestTags = await tagRepository.getLatestTags(limit || 10, tagOffset || 0);
       const allDiscoveries = latestCheckIns.concat(latestTags);
-      const sortedDiscoveries = allDiscoveries.sort((a, b) => a < b);
-      console.log("SORTED", sortedDiscoveries);
+      const sortedDiscoveries = allDiscoveries.sort((a, b) => {
+        return (new Date(b.lastCreated)).getTime() - (new Date(a.lastCreated)).getTime();
+      });
 
       let calcLocalityOffset = 0;
       let calcTagOffset = 0;
-
       let discoveries = [];
       for (let i = 0; i < (limit || 10) && i < sortedDiscoveries.length; i++) {
         const discovery = sortedDiscoveries[i];
@@ -137,26 +146,29 @@ export const DiscoverQueryFields = {
         }
       }
 
-      /*
-      for (let i = 0; i < localities.length; i++) {
-        discoveries = discoveries.concat([await getLocalityDiscovery(localities[i], request)]);
+      let numUsers = matchingUsers.length;
+      if (discoveries.length < limit - 2) {
+        numUsers = limit - discoveries.length;
+      } else {
+        numUsers = 2;
       }
 
-      const tagOptions = {};
-      if (offset) tagOptions.offset = newTagOffset;
-      if (limit) tagOptions.limit = tagLimit;
+      const calcUserOffset = numUsers;
 
-      const tags = await tagRepository.getTags(search ? { value: { $ilike: `%${search}%` } } : {}, tagOptions);
-      for (let i = 0; i < tags.length; i++) {
-        discoveries = discoveries.concat([await getTagDiscovery(tags[i].value, request)]);
-      }
-      */
+      const userDiscoveries = matchingUsers.slice(0, numUsers)
+        .map(async user => await getUserDiscovery(user, request));
 
-      console.log("LOCATION OFFSETS", calcTagOffset, calcTagOffset);
+      discoveries = userDiscoveries.concat(discoveries);
+
+      const newLocalityOffset = (localityOffset || 0) + calcLocalityOffset;
+      const newTagOffset = (tagOffset || 0) + calcTagOffset;
+      const newUserOffset = (userOffset || 0) + calcUserOffset;
+
       return {
         discoveries,
-        localityOffset: (localityOffset || 0) + calcLocalityOffset,
-        tagOffset: (tagOffset || 0) + calcTagOffset
+        localityOffset: newLocalityOffset,
+        tagOffset: newTagOffset,
+        userOffset: newUserOffset
       };
 
     }

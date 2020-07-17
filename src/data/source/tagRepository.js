@@ -69,8 +69,12 @@ export default {
 
   },
 
-  getLatestTags: async (limit, offset) => {
-    const query = `SELECT DISTINCT "value" as "tag", MAX("createdAt") as "lastCreated" FROM (SELECT t.value as "value", et."createdAt" AS "createdAt" FROM "Tag" t, "EntityTag" et WHERE t.id = et."tagId") AS tags GROUP BY "value" ORDER BY "lastCreated" DESC, "value" LIMIT ${limit} OFFSET ${offset}`;
+  getLatestTags: async (limit, offset, search) => {
+    let query = `SELECT DISTINCT "value" as "tag", MAX("createdAt") as "lastCreated" FROM (SELECT t.value as "value", et."createdAt" AS "createdAt" FROM "Tag" t, "EntityTag" et WHERE t.id = et."tagId") AS tags`;
+    if (search) {
+      query += ` WHERE "value" ILIKE '%${search}%'`
+    }
+    query += ` GROUP BY "value" ORDER BY "lastCreated" DESC, "value" LIMIT ${limit} OFFSET ${offset}`;
     const latestTags = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestTags;
   }

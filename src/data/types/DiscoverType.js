@@ -31,7 +31,8 @@ export const DiscoveryResultType = new GraphQLObjectType({
   fields: () => ({
     discoveries: { type: new GraphQLList(DiscoveryItemType) },
     localityOffset: { type: GraphQLInt },
-    tagOffset: { type: GraphQLInt }
+    tagOffset: { type: GraphQLInt },
+    userOffset: { type: GraphQLInt }
   })
 });
 

@@ -106,13 +106,16 @@ export const getDiscoveries = (params, reset) => {
               connectionsTo
             },
             localityOffset,
-            tagOffset
+            tagOffset,
+            userOffset
           }
         }`
 
+    const { offset, limit } = params;
+
     return graphqlAction(
       ...args,
-      { query, variables: { reset } }, [ 'discover' ],
+      { query, variables: { reset, offset, limit } }, [ 'discover' ],
       GET_DISCOVER_START,
       GET_DISCOVER_SUCCESS,
       GET_DISCOVER_ERROR
