@@ -253,8 +253,16 @@ export default {
     return checkInCount[0].count;
   },
 
-  getPostsByLocality: async (locality) => {
-    const query = `SELECT * FROM "Post" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') ORDER BY "createdAt" DESC;`;
+  getPostsByLocality: async (locality, limit) => {
+    let query = `SELECT * FROM "Post" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') ORDER BY "createdAt" DESC`;
+    if (limit) query += ' LIMIT ' + limit;
+    const posts = await sequelize.query(query, { model: Post, mapToModel: true });
+    return posts;
+  },
+
+  getPostsByTag: async (tag, limit) => {
+    let query = `SELECT * FROM "Post" WHERE "checkInId" IN (SELECT et."checkInId" FROM "EntityTag" et, "Tag" t WHERE et."tagId" = t.id AND t.value = '${tag}') ORDER BY "createdAt" DESC`;
+    if (limit) query += ' LIMIT ' + limit;
     const posts = await sequelize.query(query, { model: Post, mapToModel: true });
     return posts;
   },
@@ -263,54 +271,6 @@ export default {
     const query = `SELECT DISTINCT ci1.locality FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2.locality = '${locality}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
     const connections = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return connections.map(c => c.locality);
-  },
-
-  saveTag: async (entity, entityId, tagValue, userUuid) => {
-
-    let tag = await Tag.findOne({ where: { value: tagValue } });
-    if (!tag) {
-      tag = await Tag.create({ value: tagValue });
-    }
-
-    if (entity === 'Post') {
-      const post = await Post.findById(entityId);
-      const checkIn = await CheckIn.findById(post.checkInId);
-      const entityTag = await EntityTag.findOne({ where: { checkInId: checkIn.id, tagId: tag.id } });
-      if (!entityTag) {
-        console.log('CREATE ENTITY TAG', checkIn.id, tagValue + '(' + tag.id + ')', userUuid);
-        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id, userUuid });
-        console.log('Tagged entity', entity, entityId, 'with', tagValue);
-      } else {
-        console.log(entity, entityId, 'already tagged with', tagValue);
-      }
-
-    }
-
-  },
-
-  getTags: async (where, options = {}) => {
-
-    /*
-    const tags = await EntityTag.findAll({
-      where,
-      ...options,
-      include: [{
-        all: true
-      }]
-
-    });
-    */
-
-    const tags = Tag.findAll({
-      where: {},
-      ...options,
-      include: {
-        all: true
-      }
-    });
-
-    return tags;
-
   },
 
   getTaggedCheckIns: async (query, options) => {

@@ -20,8 +20,15 @@ const PostCollection = ({ transportTypes, groupName, posts, env, children, intl 
 
   let secondaryPosts = [];
   if (posts.length > 1) {
-    secondaryPosts = posts.filter(post => post.mediaItems.length > 0).slice(1, 3);
+    let secondaryPosts = posts.filter(post => post.mediaItems.length > 0);
+    if (secondaryPosts.length < 2) {
+      secondaryPosts.slice(0, 2);
+    } else {
+      secondaryPosts.slice(1, 3);
+    }
   }
+
+  console.log(groupName, posts.filter(post => post.mediaItems.length > 0));
 
   let secondaryPostsElem = null;
   if (secondaryPosts.length > 0) {

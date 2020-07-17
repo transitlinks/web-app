@@ -21,6 +21,10 @@ const EntityTag = Model.define('EntityTag', {
 
   userUuid: {
     type: DataType.STRING
+  },
+
+  locality: {
+    type: DataType.STRING
   }
 
 }, {

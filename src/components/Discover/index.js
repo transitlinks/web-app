@@ -50,6 +50,89 @@ const DiscoverView = ({
 
   };
 
+  const renderLocalityDiscovery = (discovery, index) => {
+
+    const frameId = `discover-${index}`;
+
+    const { posts, feedItem } = discovery;
+
+    return (
+      <div key={discovery.groupName} className={s.discoveryItem}>
+        <div className={s.discoveryHeader}>
+          <div className={s.discoveryGroupName}>
+            <Link to={`/?locality=${discovery.groupName}`}>{ discovery.groupName || 'Unnamed' }</Link>
+          </div>
+          <div className={s.discoveryHeaderControls}>
+            <div className={s.checkInCount}>
+              <div className={s.checkInCountIcon}>
+                <FontIcon className="material-icons" style={{ fontSize: '16px' }}>place</FontIcon>
+              </div>
+              <div className={s.checkInCountValue}>
+                { discovery.checkInCount }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={s.terminalSummary}>
+          { renderTerminalsList('arrival', discovery.connectionsFrom, discovery.groupName) }
+          { renderTerminalsList('departure', discovery.connectionsTo, discovery.groupName) }
+        </div>
+        <div className={s.postSummary}>
+          <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+          <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
+        </div>
+      </div>
+    )
+
+  };
+
+  const renderTagDiscovery = (discovery, index) => {
+
+    const frameId = `discover-${index}`;
+
+    const { posts, feedItem } = discovery;
+    const actualFeedItem = fetchedFeedItems[frameId] || feedItem;
+
+    return (
+      <div key={discovery.groupName} className={s.discoveryItem}>
+        <div className={s.discoveryHeader}>
+          <div className={s.discoveryGroupName}>
+            <Link to={`/?tags=${discovery.groupName}`}>#{ discovery.groupName }</Link>
+          </div>
+          <div className={s.discoveryHeaderControls}>
+            <div className={s.checkInCount}>
+              <div className={s.checkInCountIcon}>
+                <FontIcon className="material-icons" style={{ fontSize: '16px' }}>place</FontIcon>
+              </div>
+              <div className={s.checkInCountValue}>
+                { discovery.checkInCount }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={s.postSummary}>
+          {
+            actualFeedItem && <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+          }
+          <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
+        </div>
+      </div>
+    )
+
+  };
+
+  const renderDiscovery = (discovery, index) => {
+
+    if (discovery.groupType === 'locality') {
+      return renderLocalityDiscovery(discovery, index);
+    } else if (discovery.groupType === 'tag') {
+      return renderTagDiscovery(discovery, index);
+    } else {
+      return <div>Unknown discovery type</div>;
+    }
+
+  }
+
   return (
     <div className={s.container}>
       <div className={s.functionBar}>
@@ -79,39 +162,7 @@ const DiscoverView = ({
         {
 
           (discoveries || []).map((discovery, index) => {
-
-            const frameId = `discover-${index}`;
-
-            const { posts, feedItem } = discovery;
-
-            return (
-              <div key={discovery.groupName} className={s.discoveryItem}>
-                <div className={s.discoveryHeader}>
-                  <div className={s.discoveryGroupName}>
-                    <Link to={`/?locality=${discovery.groupName}`}>{ discovery.groupName || 'Unnamed' }</Link>
-                  </div>
-                  <div className={s.discoveryHeaderControls}>
-                    <div className={s.checkInCount}>
-                      <div className={s.checkInCountIcon}>
-                        <FontIcon className="material-icons" style={{ fontSize: '16px' }}>place</FontIcon>
-                      </div>
-                      <div className={s.checkInCountValue}>
-                        { discovery.checkInCount }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={s.terminalSummary}>
-                  { renderTerminalsList('arrival', discovery.connectionsFrom, discovery.groupName) }
-                  { renderTerminalsList('departure', discovery.connectionsTo, discovery.groupName) }
-                </div>
-                <div className={s.postSummary}>
-                  <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
-                  <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
-                </div>
-              </div>
-            )
-
+            return renderDiscovery(discovery, index);
           })
         }
       </div>

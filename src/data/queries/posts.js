@@ -11,7 +11,8 @@ import { uploadVideo } from '../../services/youtubeDataApi';
 
 import {
   postRepository,
-  userRepository
+  userRepository,
+  tagRepository
 } from '../source';
 
 import {
@@ -221,7 +222,7 @@ const savePost = async (postInput, clientId, request) => {
   if (splitByTags.length > 0) {
     for (let i = 1; i < splitByTags.length; i++) {
       const tag = splitByTags[i].split(' ')[0];
-      await postRepository.saveTag('Post', saved.id, tag);
+      await tagRepository.saveTag('Post', saved.id, tag);
       console.log('Saved tag:', tag);
     }
   }
@@ -230,7 +231,7 @@ const savePost = async (postInput, clientId, request) => {
   if (postInput.tags) {
     for (let i = 0; i < postInput.tags.length; i++) {
       const tag = postInput.tags[i];
-      await postRepository.saveTag('Post', saved.id, tag, request.user.uuid);
+      await tagRepository.saveTag('Post', saved.id, tag, request.user.uuid);
     }
   }
 

@@ -116,6 +116,11 @@ export default {
     return checkInCount[0].count;
   },
 
+  getCheckInCountByTag: async (tag) => {
+    const query = `SELECT COUNT(id) FROM "CheckIn" as ci WHERE EXISTS (SELECT 1 FROM "EntityTag" et, "Tag" t WHERE et."checkInId" = ci.id AND t.id = et."tagId" AND t."value" = '${tag}')`;
+    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return checkInCount[0].count;
+  },
 
   getTaggedCheckIns: async (query, options) => {
 
@@ -140,22 +145,6 @@ export default {
     });
 
     return taggedCheckIns;
-
-    /*
-    let checkIns = [];
-    for (let i = 0; i < tagEntities.length; i++) {
-      const tag = tagEntities[i];
-      const entityTags = await EntityTag.findAll({ where: { tagId: tag.id }});
-      const checkInIds = entityTags.map(entityTag => entityTag.checkInId);
-      const taggedCheckIns = await CheckIn.findAll({
-        where: { id: { $in: checkInIds } },
-        ...options
-      });
-      checkIns = checkIns.concat(taggedCheckIns);
-    }
-
-    return checkIns;
-    */
 
   }
 
