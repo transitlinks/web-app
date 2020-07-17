@@ -146,6 +146,12 @@ export default {
 
     return taggedCheckIns;
 
+  },
+
+  getLatestCheckIns: async (limit, offset) => {
+    const query = `SELECT DISTINCT "locality", MAX("createdAt") as "lastCreated" FROM "CheckIn" GROUP BY "locality" ORDER BY "lastCreated" DESC, "locality" LIMIT ${limit} OFFSET ${offset}`;
+    const latestCheckIns = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return latestCheckIns;
   }
 
 };

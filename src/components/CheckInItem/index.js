@@ -254,7 +254,7 @@ const CheckInItem = (
             <div className={s.tags}>
               {
                 (checkIn.tags || []).map(tag => (
-                  <div className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
+                  <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
                 ))
               }
             </div>

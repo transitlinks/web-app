@@ -112,7 +112,9 @@ export default {
               },
               connectionsFrom,
               connectionsTo
-            }
+            },
+            localityOffset,
+            tagOffset
           },
           transportTypes { slug }
         }`

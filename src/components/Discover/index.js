@@ -57,7 +57,7 @@ const DiscoverView = ({
     const { posts, feedItem } = discovery;
 
     return (
-      <div key={discovery.groupName} className={s.discoveryItem}>
+      <div key={frameId} className={s.discoveryItem}>
         <div className={s.discoveryHeader}>
           <div className={s.discoveryGroupName}>
             <Link to={`/?locality=${discovery.groupName}`}>{ discovery.groupName || 'Unnamed' }</Link>
@@ -82,7 +82,7 @@ const DiscoverView = ({
           <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
         </div>
       </div>
-    )
+    );
 
   };
 
@@ -94,7 +94,7 @@ const DiscoverView = ({
     const actualFeedItem = fetchedFeedItems[frameId] || feedItem;
 
     return (
-      <div key={discovery.groupName} className={s.discoveryItem}>
+      <div key={frameId} className={s.discoveryItem}>
         <div className={s.discoveryHeader}>
           <div className={s.discoveryGroupName}>
             <Link to={`/?tags=${discovery.groupName}`}>#{ discovery.groupName }</Link>

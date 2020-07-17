@@ -27,8 +27,13 @@ export default function reduce(state = {}, action) {
             for (let i = 0; i < discover.discoveries.length; i++) {
               stateDiscover.discoveries.push(discover.discoveries[i]);
             }
+
+            console.log('reduced disciver', discover);
+
             return {
               discover: stateDiscover,
+              localityOffset: discover.localityOffset,
+              tagOffset: discover.tagOffset,
               offset: stateDiscover.discoveries.length,
               loadingDiscover: false,
               prevResultCount: discover.discoveries.length

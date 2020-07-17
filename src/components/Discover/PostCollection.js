@@ -28,8 +28,6 @@ const PostCollection = ({ transportTypes, groupName, posts, env, children, intl 
     }
   }
 
-  console.log(groupName, posts.filter(post => post.mediaItems.length > 0));
-
   let secondaryPostsElem = null;
   if (secondaryPosts.length > 0) {
     secondaryPostsElem = (
@@ -38,7 +36,7 @@ const PostCollection = ({ transportTypes, groupName, posts, env, children, intl 
           secondaryPosts.map(post => {
             const { mediaItems } = post;
             return (
-              <div className={s.secondaryPost}>
+              <div key={post.uuid} className={s.secondaryPost}>
                 <img src={env.MEDIA_URL + mediaItems[0].url} width="100%"/>
               </div>
             );

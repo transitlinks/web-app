@@ -29,7 +29,9 @@ export const DiscoveryResultType = new GraphQLObjectType({
   name: 'DiscoveryResult',
   description: 'Collection of Transitlinks Discovery Item objects',
   fields: () => ({
-    discoveries: { type: new GraphQLList(DiscoveryItemType) }
+    discoveries: { type: new GraphQLList(DiscoveryItemType) },
+    localityOffset: { type: GraphQLInt },
+    tagOffset: { type: GraphQLInt }
   })
 });
 

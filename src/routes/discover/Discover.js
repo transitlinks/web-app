@@ -18,7 +18,7 @@ class Discover extends React.Component {
 
   componentDidMount() {
 
-    const { search, type, offset } = this.props;
+    const { search, type, offset, localityOffset, tagOffset } = this.props;
 
     window.onscroll = debounce(() => {
       this.setState({
@@ -31,13 +31,13 @@ class Discover extends React.Component {
       if (
         Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
-        const { search, type, offset } = this.props;
+        const { search, type, offset, localityOffset, tagOffset } = this.props;
         console.log('debounce search', this.props);
-        this.props.getDiscoveries({ search, type, offset: offset || 0, limit: 6 });
+        this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, tagOffset, limit: 6 });
       }
     }, 100);
 
-    this.props.getDiscoveries({ search, type, offset: offset || 0, limit: 6 });
+    this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, tagOffset, limit: 6 });
 
   }
 
@@ -75,6 +75,8 @@ Discover.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default connect(state => ({
   offset: state.discover.offset,
+  localityOffset: state.discover.localityOffset,
+  tagOffset: state.discover.tagOffset,
   limit: state.discover.limit,
   search: state.discover.searchTerm,
   loadingDiscover: state.discover.loadingDiscover

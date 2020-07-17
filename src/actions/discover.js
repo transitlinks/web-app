@@ -104,7 +104,9 @@ export const getDiscoveries = (params, reset) => {
               },
               connectionsFrom,
               connectionsTo
-            }
+            },
+            localityOffset,
+            tagOffset
           }
         }`
 
