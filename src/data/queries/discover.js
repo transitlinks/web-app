@@ -153,10 +153,11 @@ export const DiscoverQueryFields = {
         numUsers = 2;
       }
 
-      const calcUserOffset = numUsers;
 
       const userDiscoveries = matchingUsers.slice(0, numUsers)
         .map(async user => await getUserDiscovery(user, request));
+
+      const calcUserOffset = userDiscoveries.length;
 
       discoveries = userDiscoveries.concat(discoveries);
 

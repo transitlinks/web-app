@@ -14,7 +14,7 @@ import { injectIntl } from 'react-intl';
 import TextField from 'material-ui/TextField';
 
 const DiscoverView = ({
-  getDiscoveries, setProperty,
+  getDiscoveries, setProperty, discoverUpdated,
   discover, searchTerm, fetchedFeedItems, loadedDiscover, transportTypes
 }) => {
 
@@ -217,7 +217,8 @@ export default injectIntl(
       loadedDiscover: state.discover.discover,
       searchTerm: state.discover.searchTerm,
       fetchedFeedItems: state.posts.fetchedFeedItems || {},
-      feedUpdated: state.posts.feedUpdated
+      feedUpdated: state.posts.feedUpdated,
+      discoverUpdated: state.discover.discoverUpdated
     };
   }, {
     getDiscoveries,

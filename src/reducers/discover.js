@@ -35,7 +35,8 @@ export default function reduce(state = {}, action) {
               userOffset: discover.userOffset,
               offset: stateDiscover.discoveries.length,
               loadingDiscover: false,
-              prevResultCount: discover.discoveries.length
+              prevResultCount: discover.discoveries.length,
+              discoverUpdated: new Date()
             };
           },
           error: () => ({
