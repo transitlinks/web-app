@@ -290,7 +290,7 @@ const EditCheckInItemView = (props) => {
   const {
     type, transportTypes, checkInItem, openTerminals, intl, geolocation, editTerminal, editPost, addPost,
     postText, mediaItems, setProperty, getGeolocation, savePost, saveCheckIn, deleteCheckIn, getFeedItem, uploadingMedia,
-    newCheckIn, savedTerminal, frameId, disabledTags, hideContent, editTime, editCheckIn, fetchedFeedItem
+    newCheckIn, savedTerminal, frameId, disabledTags, activeTags, activeTag, hideContent, editTime, editCheckIn, fetchedFeedItem
   } = props;
 
   const item = fetchedFeedItem || checkInItem;
@@ -430,6 +430,8 @@ export default injectIntl(
     editPost: state.posts.editPost || {},
     addPost: state.posts.addPost,
     disabledTags: state.posts.disabledTags || [],
+    activeTags: state.posts.activeTags || [],
+    activeTag: state.posts.activeTag,
     editTerminal: state.editTerminal.terminal || {},
     editTime: state.posts.editTime,
     editCheckIn: state.posts.editCheckIn || {},
