@@ -28,6 +28,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('editTerminal.terminalProperties', {});
     this.props.setProperty('posts.disabledTags', []);
     this.props.setProperty('posts.fetchedFeedItem', null);
+    this.props.setProperty('posts.checkIn', null);
     this.updateComponent(this.props);
   }
 

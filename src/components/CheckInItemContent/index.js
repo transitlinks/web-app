@@ -9,11 +9,13 @@ import Link from '../Link';
 import s from './CheckInItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setDeepProperty, setProperty } from '../../actions/properties';
+import { saveCheckIn } from '../../actions/posts';
 import PropTypes from 'prop-types';
 
 const CheckInItemContent = ({
-  checkInItem, contentType, feedProperties, frameId, editPost, addPost, savedPost, savedTerminal, feedItemIndex,
-  setDeepProperty, setProperty, editable
+  checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
+  savedTerminal, feedItemIndex, savedCheckIn,
+  setDeepProperty, setProperty, saveCheckIn, editable
 }) => {
 
   const { checkIn, posts, terminals } = checkInItem;
@@ -156,9 +158,23 @@ const CheckInItemContent = ({
       {content}
       <div className={s.tags}>
         {
-          (checkIn.tags || []).map(tag => (
-            <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
-          ))
+          showSettings ?
+            (savedCheckIn || checkIn).tags.map(tag => (
+              <div className={s.removableTag}>
+                <div className={s.tagValue}>#{tag}</div>
+                <div className={s.removeTag} onClick={() => {
+                  console.log('remove tag', tag);
+                  saveCheckIn({ checkIn: { uuid: checkIn.uuid, tags: checkIn.tags.filter(t => t !== tag)}})
+                }}>
+                  <FontIcon className="material-icons" style={{ fontSize: '16px', color: '#9a0000' }}>
+                    remove_circle_outline
+                  </FontIcon>
+                </div>
+              </div>
+            )) :
+            ((savedCheckIn || checkIn).tags || []).map(tag => (
+              <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
+            ))
         }
       </div>
     </div>
@@ -177,8 +193,10 @@ export default injectIntl(
     feedProperties: state.posts.feedProperties || {},
     savedPost: state.posts.savedPost,
     addPost: state.posts.addPost,
-    savedTerminal: state.editTerminal.savedTerminal
+    savedTerminal: state.editTerminal.savedTerminal,
+    showSettings: state.posts.showSettings,
+    savedCheckIn: state.posts.checkIn
   }), {
-    setDeepProperty, setProperty
+    setDeepProperty, setProperty, saveCheckIn
   })(withStyles(s)(CheckInItemContent))
 );

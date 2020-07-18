@@ -307,10 +307,17 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   const tagIds = (await tagRepository.getEntityTags({ checkInId: saved.id }))
     .map(entityTag => entityTag.tagId);
+  const tags = (await tagRepository.getTags({ id: tagIds }));
+
+  let deletedTags = [];
+  if (checkInInput.tags) {
+    deletedTags = tags.filter(tag => checkInInput.tags.indexOf(tag.value) === -1);
+    await tagRepository.deleteEntityTags({ checkInId: saved.id, tagId: deletedTags.map(tag => tag.id) });
+  }
 
   return {
     ...saved.toJSON(),
-    tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
+    tags: tags.filter(tag => deletedTags.map(tag => tag.id).indexOf(tag.id) === -1).map(tag => tag.value),
     date: saved.createdAt
   };
 

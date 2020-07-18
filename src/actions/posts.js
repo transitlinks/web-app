@@ -95,7 +95,8 @@ export const saveCheckIn = ({ checkIn }) => {
           placeId,
           locality,
           country,
-          formattedAddress
+          formattedAddress,
+          tags
         }
       }
     `;

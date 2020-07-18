@@ -18,6 +18,9 @@ class Discover extends React.Component {
 
   componentDidMount() {
 
+
+    this.props.setProperty('posts.checkIn', null);
+
     const { search, type, offset, localityOffset, tagOffset, userOffset } = this.props;
 
     window.onscroll = debounce(() => {

@@ -77,6 +77,11 @@ export default {
     query += ` GROUP BY "value" ORDER BY "lastCreated" DESC, "value" LIMIT ${limit} OFFSET ${offset}`;
     const latestTags = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestTags;
-  }
+  },
+
+  deleteEntityTags: async (where) => {
+    await EntityTag.destroy({ where });
+    return;
+  },
 
 };
