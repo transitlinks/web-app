@@ -56,6 +56,7 @@ export const TerminalType = new GraphQLObjectType({
       priceAmount: { type: GraphQLFloat},
       priceCurrency: { type: GraphQLString},
       linkedTerminal: { type: TerminalType },
+      checkInUuid: { type: GraphQLString },
       checkIn: { type: CheckInType }
     };
   },

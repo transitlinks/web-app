@@ -15,6 +15,12 @@ import {
   DELETE_CHECKIN_START,
   DELETE_CHECKIN_SUCCESS,
   DELETE_CHECKIN_ERROR,
+  DELETE_POST_START,
+  DELETE_POST_SUCCESS,
+  DELETE_POST_ERROR,
+  DELETE_TERMINAL_START,
+  DELETE_TERMINAL_SUCCESS,
+  DELETE_TERMINAL_ERROR,
   MEDIA_FILE_UPLOAD_START,
   MEDIA_FILE_UPLOAD_SUCCESS,
   MEDIA_FILE_UPLOAD_ERROR,
@@ -147,6 +153,42 @@ export default function reduce(state = {}, action) {
         DELETE_CHECKIN_START,
         DELETE_CHECKIN_SUCCESS,
         DELETE_CHECKIN_ERROR
+      );
+    case DELETE_POST_START:
+    case DELETE_POST_SUCCESS:
+    case DELETE_POST_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+            return {
+              deletedPost: action.payload.deletePost
+            };
+          },
+          error: () => ({ deletedPost: null })
+        },
+        DELETE_POST_START,
+        DELETE_POST_SUCCESS,
+        DELETE_POST_ERROR
+      );
+    case DELETE_TERMINAL_START:
+    case DELETE_TERMINAL_SUCCESS:
+    case DELETE_TERMINAL_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+            return {
+              deletedTerminal: action.payload.deleteTerminal
+            };
+          },
+          error: () => ({ deletedTerminal: null })
+        },
+        DELETE_TERMINAL_START,
+        DELETE_TERMINAL_SUCCESS,
+        DELETE_TERMINAL_ERROR
       );
     case MEDIA_FILE_UPLOAD_START:
     case MEDIA_FILE_UPLOAD_SUCCESS:

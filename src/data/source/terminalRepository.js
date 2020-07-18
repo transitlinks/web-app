@@ -2,7 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/terminalRepository');
 
 import sequelize from '../sequelize';
-import { Terminal, CheckIn } from '../models';
+import { Terminal, CheckIn, Post } from '../models';
 import postRepository from './postRepository';
 
 export default {
@@ -96,6 +96,19 @@ export default {
 
     return created;
 
-  }
+  },
+
+  deleteTerminal: async (uuid) => {
+
+    const terminal = await Terminal.findOne({ where: { uuid }});
+
+    if (!terminal) {
+      throw new Error('Could not find terminal with uuid ' + uuid);
+    }
+
+    await terminal.destroy();
+    return terminal;
+
+  },
 
 };

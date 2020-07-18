@@ -55,6 +55,16 @@ class CheckIn extends React.Component {
       props.getFeedItem(props.savedPost.checkInUuid, 'frame-edit');
     }
 
+    if (props.deletedPost) {
+      props.setProperty('posts.deletedPost', null);
+      props.getFeedItem(props.deletedPost.checkInUuid, 'frame-edit');
+    }
+
+    if (props.deletedTerminal) {
+      props.setProperty('posts.deletedTerminal', null);
+      props.getFeedItem(props.deletedTerminal.checkInUuid, 'frame-edit');
+    }
+
   }
 
   render() {
@@ -87,6 +97,8 @@ CheckIn.contextTypes = { setTitle: PropTypes.func.isRequired };
 export default connect(state => ({
   saved: state.editCheckIn.checkIn,
   deleted: state.posts.deletedCheckIn,
+  deletedPost: state.posts.deletedPost,
+  deletedTerminal: state.posts.deletedTerminal,
   savedTerminal: state.editTerminal.savedTerminal,
   savedPost: state.posts.savedPost
 }), {

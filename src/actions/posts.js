@@ -23,6 +23,12 @@ import {
   DELETE_CHECKIN_START,
   DELETE_CHECKIN_SUCCESS,
   DELETE_CHECKIN_ERROR,
+  DELETE_POST_START,
+  DELETE_POST_SUCCESS,
+  DELETE_POST_ERROR,
+  DELETE_TERMINAL_START,
+  DELETE_TERMINAL_SUCCESS,
+  DELETE_TERMINAL_ERROR,
   MEDIA_FILE_UPLOAD_START,
   MEDIA_FILE_UPLOAD_SUCCESS,
   MEDIA_FILE_UPLOAD_ERROR,
@@ -146,6 +152,34 @@ export const deleteCheckIn = (uuid) => {
 
 };
 
+export const deletePost = (uuid) => {
+
+  return async (...args) => {
+
+
+    const clientId = getClientId();
+
+    const query = `
+      mutation deletePost {
+        deletePost(uuid:"${uuid}", clientId:"${clientId}") {
+          uuid,
+          checkInUuid
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'deletePost' ],
+      DELETE_POST_START,
+      DELETE_POST_SUCCESS,
+      DELETE_POST_ERROR
+    );
+
+  };
+
+};
+
 export const savePost = ({ post }) => {
 
   const clientId = getClientId();
@@ -248,7 +282,35 @@ export const saveTerminal = ({ terminal }) => {
 
   };
 
-}
+};
+
+export const deleteTerminal = (uuid) => {
+
+  return async (...args) => {
+
+
+    const clientId = getClientId();
+
+    const query = `
+      mutation deleteTerminal {
+        deleteTerminal(uuid:"${uuid}", clientId:"${clientId}") {
+          uuid,
+          checkInUuid
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'deleteTerminal' ],
+      DELETE_TERMINAL_START,
+      DELETE_TERMINAL_SUCCESS,
+      DELETE_TERMINAL_ERROR
+    );
+
+  };
+
+};
 
 export const getTerminals = (checkInId) => {
 

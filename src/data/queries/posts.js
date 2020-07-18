@@ -12,7 +12,9 @@ import { uploadVideo } from '../../services/youtubeDataApi';
 import {
   postRepository,
   userRepository,
-  tagRepository
+  tagRepository,
+  checkInRepository,
+  terminalRepository
 } from '../source';
 
 import {
@@ -263,6 +265,42 @@ const savePost = async (postInput, clientId, request) => {
 
 };
 
+const deletePost = async (uuid, clientId, request) => {
+
+  const post = await postRepository.getPost({ uuid });
+  if (!post) {
+    throw new Error('Post uuid=' + uuid + ' not found for deletion');
+  }
+
+  await requireOwnership(request, clientId, post);
+
+  return await postRepository.deletePost(uuid);
+
+};
+
+const deleteTerminal = async (uuid, clientId, request) => {
+
+  const terminal = await terminalRepository.getTerminal({ uuid });
+  if (!terminal) {
+    throw new Error('Terminal uuid=' + uuid + ' not found for deletion');
+  }
+
+  await requireOwnership(request, clientId, terminal);
+
+  if (terminal.linkedTerminalId) {
+    const linkedTerminal = await terminalRepository.getTerminal({ id: terminal.linkedTerminalId });
+    await terminalRepository.saveTerminal({
+      uuid: linkedTerminal.uuid,
+      linkedTerminalId: null,
+      linkedLocality: null,
+      linkedFormattedAddress: null
+    });
+  }
+
+  return await terminalRepository.deleteTerminal(uuid);
+
+};
+
 const saveCheckIn = async (checkInInput, clientId, request) => {
 
   if (!request.user) {
@@ -493,6 +531,32 @@ export const PostMutationFields = {
 
   },
 
+  deletePost: {
+
+    type: PostType,
+    description: 'Delete a post',
+    args: {
+      uuid: { type: GraphQLString },
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid, clientId }) => {
+
+      log.info(graphLog(request, 'delete-post', 'clientId=' + clientId + ' uuid=' + uuid));
+
+      let deletedPost = (await deletePost(uuid, clientId, request));
+
+      const checkIn = await checkInRepository.getCheckIn({ id: deletedPost.checkInId });
+      deletedPost = {
+        uuid: deletedPost.uuid,
+        checkInUuid: checkIn.uuid
+      };
+
+      return deletedPost;
+
+    }
+
+  },
+
   terminal: {
 
     type: TerminalType,
@@ -504,6 +568,32 @@ export const PostMutationFields = {
     resolve: async ({ request }, { terminal, clientId }) => {
       log.info(graphLog(request, 'save-terminal'));
       return await saveTerminal(terminal, clientId, request);
+    }
+
+  },
+
+  deleteTerminal: {
+
+    type: TerminalType,
+    description: 'Delete a terminal',
+    args: {
+      uuid: { type: GraphQLString },
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid, clientId }) => {
+
+      log.info(graphLog(request, 'delete-terminal', 'clientId=' + clientId + ' uuid=' + uuid));
+
+      let deletedTerminal = (await deleteTerminal(uuid, clientId, request));
+
+      const checkIn = await checkInRepository.getCheckIn({ id: deletedTerminal.checkInId });
+      deletedTerminal = {
+        uuid: deletedTerminal.uuid,
+        checkInUuid: checkIn.uuid
+      };
+
+      return deletedTerminal;
+
     }
 
   },

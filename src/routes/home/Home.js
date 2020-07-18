@@ -132,6 +132,16 @@ class Home extends React.Component {
       this.props.getFeedItem(checkIn.uuid, 'frame-new');
     }
 
+    if (this.props.deletedPost) {
+      this.props.setProperty('posts.deletedPost', null);
+      this.props.getFeedItem(checkIn.uuid, 'frame-new');
+    }
+
+    if (this.props.deletedTerminal) {
+      this.props.setProperty('posts.deletedTerminal', null);
+      this.props.getFeedItem(checkIn.uuid, 'frame-new');
+    }
+
     if (prevQuery.tags !== query.tags || prevQuery.user !== query.user) {
       this.props.getFeed(clientId, params);
     }
@@ -168,6 +178,8 @@ export default connect(state => ({
   savedCheckIn: state.posts.checkIn,
   deletedCheckIn: state.posts.deletedCheckIn,
   savedPost: state.posts.post,
+  deletedPost: state.posts.deletedPost,
+  deletedTerminal: state.posts.deletedTerminal,
   savedTerminal: state.editTerminal.savedTerminal,
   offset: state.posts.feedOffset,
   loadingFeed: state.posts.loadingFeed,

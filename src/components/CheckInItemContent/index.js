@@ -9,13 +9,13 @@ import Link from '../Link';
 import s from './CheckInItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setDeepProperty, setProperty } from '../../actions/properties';
-import { saveCheckIn } from '../../actions/posts';
+import { saveCheckIn, deletePost, deleteTerminal } from '../../actions/posts';
 import PropTypes from 'prop-types';
 
 const CheckInItemContent = ({
   checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
   savedTerminal, feedItemIndex, savedCheckIn,
-  setDeepProperty, setProperty, saveCheckIn, editable
+  setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, editable
 }) => {
 
   const { checkIn, posts, terminals } = checkInItem;
@@ -137,20 +137,32 @@ const CheckInItemContent = ({
           <div className={s.contentHeaderRight}>
             {
               (!editPost.uuid && editable && checkInItem.userAccess === 'edit') &&
-              <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
-                if (contentType === 'reaction') {
-                  setProperty('posts.addType', 'reaction');
-                  setProperty('posts.postText', posts[activePost].text);
-                  setProperty('posts.editPost', posts[activePost]);
-                  setProperty('posts.mediaItems', posts[activePost].mediaItems);
-                } else if (contentType === 'arrival') {
-                  setProperty('posts.addType', 'arrival');
-                  setProperty('editTerminal.terminal', arrival);
-                } else if (contentType === 'departure') {
-                  setProperty('posts.addType', 'departure');
-                  setProperty('editTerminal.terminal', departure);
-                }
-              }}>edit</FontIcon>
+              <div>
+                <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
+                  if (contentType === 'reaction') {
+                    setProperty('posts.addType', 'reaction');
+                    setProperty('posts.postText', posts[activePost].text);
+                    setProperty('posts.editPost', posts[activePost]);
+                    setProperty('posts.mediaItems', posts[activePost].mediaItems);
+                  } else if (contentType === 'arrival') {
+                    setProperty('posts.addType', 'arrival');
+                    setProperty('editTerminal.terminal', arrival);
+                  } else if (contentType === 'departure') {
+                    setProperty('posts.addType', 'departure');
+                    setProperty('editTerminal.terminal', departure);
+                  }
+                }}>edit</FontIcon>
+                <FontIcon className="material-icons" style={{ fontSize: '20px', marginLeftt: '4px' }} onClick={() => {
+                  if (contentType === 'reaction') {
+                    deletePost(posts[activePost].uuid);
+                  } else if (contentType === 'arrival') {
+                    deleteTerminal(arrival.uuid);
+                  } else if (contentType === 'departure') {
+                    deleteTerminal(departure.uuid);
+                  }
+                }}>delete</FontIcon>
+              </div>
+
             }
           </div>
         </div>
@@ -197,6 +209,6 @@ export default injectIntl(
     showSettings: state.posts.showSettings,
     savedCheckIn: state.posts.checkIn
   }), {
-    setDeepProperty, setProperty, saveCheckIn
+    setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal
   })(withStyles(s)(CheckInItemContent))
 );

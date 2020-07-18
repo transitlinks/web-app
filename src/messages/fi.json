@@ -62,7 +62,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -73,7 +72,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -84,7 +82,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -95,7 +92,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -106,7 +102,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -117,7 +112,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -128,17 +122,7 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
-    ]
-  },
-  {
-    "id": "editLinkInstance.addLink",
-    "description": "Add link",
-    "defaultMessage": "Add link",
-    "message": "",
-    "files": [
-      "src/components/EditCheckIn/messages.js"
     ]
   },
   {
@@ -455,31 +439,12 @@
     ]
   },
   {
-    "id": "mode.experience",
-    "description": "Experience",
-    "defaultMessage": "Experience",
-    "message": "",
-    "files": [
-      "src/components/EditCheckIn/messages.js"
-    ]
-  },
-  {
-    "id": "mode.research",
-    "description": "Research",
-    "defaultMessage": "Research",
-    "message": "",
-    "files": [
-      "src/components/EditCheckIn/messages.js"
-    ]
-  },
-  {
     "id": "transport.boat",
     "description": "Ship or boat",
     "defaultMessage": "Ship or boat",
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -490,7 +455,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -501,7 +465,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -512,7 +475,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -523,7 +485,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -534,7 +495,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },
@@ -545,7 +505,6 @@
     "message": "",
     "files": [
       "src/components/common/messages/transport.js",
-      "src/components/EditCheckIn/messages.js",
       "src/components/EditCheckInItem/messages.terminal.js"
     ]
   },

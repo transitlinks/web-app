@@ -52,7 +52,9 @@ const schema = new Schema({
       post: PostMutationFields.post,
       checkIn: PostMutationFields.checkIn,
       deleteCheckIn: PostMutationFields.deleteCheckIn,
+      deletePost: PostMutationFields.deletePost,
       terminal: PostMutationFields.terminal,
+      deleteTerminal: PostMutationFields.deleteTerminal,
       mediaItem: PostMutationFields.mediaItem,
       deleteMediaItem: PostMutationFields.deleteMediaItem
     },
