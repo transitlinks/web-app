@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { getFeedItem } from '../../actions/posts';
-import { getComments } from '../../actions/viewCheckIn';
+import { getComments } from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
 import { navigate } from '../../actions/route';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';

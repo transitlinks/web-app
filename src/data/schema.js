@@ -48,6 +48,7 @@ const schema = new Schema({
       instanceFiles: TransitLinkMutationFields.instanceFiles,
       user: UserMutationFields.user,
       comment: CommentMutationFields.comment,
+      like: CommentMutationFields.like,
       commentVote: CommentMutationFields.commentVote,
       post: PostMutationFields.post,
       checkIn: PostMutationFields.checkIn,

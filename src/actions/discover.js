@@ -30,7 +30,10 @@ export const getDiscoveries = (params, reset) => {
                   placeId,
                   formattedAddress,
                   locality,
-                  country
+                  country,
+                  tags,
+                  likes,
+                  likedByUser
                 },
                 inbound {
                   uuid,

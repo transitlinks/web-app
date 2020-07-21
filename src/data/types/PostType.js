@@ -2,7 +2,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLFloat,
-  GraphQLNonNull, GraphQLInputObjectType, GraphQLInt, GraphQLList,
+  GraphQLNonNull, GraphQLInputObjectType, GraphQLInt, GraphQLList, GraphQLBoolean,
 } from 'graphql';
 
 export const PostType = new GraphQLObjectType({
@@ -98,7 +98,9 @@ export const CheckInType = new GraphQLObjectType({
     country: {type: GraphQLString},
     formattedAddress: {type: GraphQLString},
     date: {type: GraphQLString},
-    tags: {type: new GraphQLList(GraphQLString)}
+    tags: {type: new GraphQLList(GraphQLString)},
+    likes: { type: GraphQLInt },
+    likedByUser: { type: GraphQLBoolean }
   },
 });
 

@@ -6,6 +6,17 @@ import { CheckIn, EntityTag, Tag, User } from '../models';
 
 export default {
 
+  getCheckInIdByUuid: async (uuid) => {
+
+    const checkIn = await CheckIn.findOne({
+      attributes: [ 'id' ],
+      where: { uuid }
+    });
+
+    return checkIn ? checkIn.id : null;
+
+  },
+
   getCheckIn: async (where, options = {}) => {
 
     const checkIn = await CheckIn.findOne({

@@ -1,32 +1,28 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const Rating = Model.define('Rating', {
+const Like = Model.define('Like', {
 
   id: {
     type: DataType.INTEGER,
     autoIncrement: true,
     primaryKey: true
-  }, 
+  },
 
-  weight: {
+  entityId: {
     type: DataType.INTEGER
   },
 
-  property: {
+  entityType: {
     type: DataType.STRING
-  },
-
-  rating: {
-    type: DataType.INTEGER
   }
 
 }, {
 
   indexes: [
-    { fields: [ 'id' ] },
+    { fields: [ 'id', 'entityId', 'entityType', 'userId' ] },
   ],
 
 });
 
-export default Rating;
+export default Like;

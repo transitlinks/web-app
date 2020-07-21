@@ -32,7 +32,13 @@ import {
   GET_FEEDITEM_ERROR,
   GET_MEDIAITEM_START,
   GET_MEDIAITEM_SUCCESS,
-  GET_MEDIAITEM_ERROR, DELETE_MEDIAITEM_START, DELETE_MEDIAITEM_SUCCESS, DELETE_MEDIAITEM_ERROR,
+  GET_MEDIAITEM_ERROR,
+  DELETE_MEDIAITEM_START,
+  DELETE_MEDIAITEM_SUCCESS,
+  DELETE_MEDIAITEM_ERROR,
+  SAVE_LIKE_START,
+  SAVE_LIKE_SUCCESS,
+  SAVE_LIKE_ERROR
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -62,6 +68,37 @@ export default function reduce(state = {}, action) {
         SAVE_POST_START,
         SAVE_POST_SUCCESS,
         SAVE_POST_ERROR
+      );
+    case SAVE_LIKE_START:
+    case SAVE_LIKE_SUCCESS:
+    case SAVE_LIKE_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+            console.log('STATE', state);
+            const { feed } = state;
+            const { feedItems } = feed;
+            const { entityUuid, entityType, onOff, likes } = action.payload.like;
+            const feedItem = feedItems.find(item => item.checkIn.uuid === entityUuid);
+            if (entityType === 'CheckIn' && feedItem) {
+              feedItem.checkIn.likes = likes;
+              feedItem.checkIn.likedByUser = onOff === 'on';
+            }
+            return {
+              like: action.payload.like,
+              feed: {
+                ...feed,
+                feedItems
+              }
+            };
+          },
+          error: () => ({ like: null })
+        },
+        SAVE_LIKE_START,
+        SAVE_LIKE_SUCCESS,
+        SAVE_LIKE_ERROR
       );
     case GET_POSTS_START:
     case GET_POSTS_SUCCESS:

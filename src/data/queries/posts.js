@@ -14,7 +14,8 @@ import {
   userRepository,
   tagRepository,
   checkInRepository,
-  terminalRepository
+  terminalRepository,
+  commentRepository
 } from '../source';
 
 import {
@@ -783,6 +784,14 @@ export const getFeedItem = async (request, checkIn) => {
   const tagIds = (await tagRepository.getEntityTags({ checkInId: checkIn.id }))
     .map(entityTag => entityTag.tagId);
 
+  let likedByUser = false;
+
+  if (request.user) {
+    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+    const userLikes = await commentRepository.countLikes({ userId, entityId: checkIn.id, entityType: 'CheckIn' });
+    likedByUser = userLikes > 0;
+  }
+
   return {
     userAccess: credentials.userAccess,
     checkIn: {
@@ -791,7 +800,9 @@ export const getFeedItem = async (request, checkIn) => {
       userImage: credentials.userImage,
       userUuid: credentials.userUuid,
       date: checkIn.createdAt,
-      tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value)
+      tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
+      likes: await commentRepository.countLikes({ entityId: checkIn.id, entityType: 'CheckIn' }),
+      likedByUser
     },
     ...linkedCheckIns,
     posts: posts.map(async (post) => {

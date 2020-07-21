@@ -61,7 +61,9 @@ export default {
                 formattedAddress,
                 locality,
                 country,
-                tags
+                tags,
+                likes,
+                likedByUser
               },
               inbound {
                 uuid,

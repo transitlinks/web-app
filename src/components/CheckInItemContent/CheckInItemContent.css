@@ -294,3 +294,18 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+.likes {
+  display: flex;
+  align-items: center;
+}
+
+.likes .heart {
+
+}
+
+.likes .count {
+  font-size: 18px;
+  margin-top: -2px;
+  margin-left: 2px;
+}

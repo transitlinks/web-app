@@ -36,6 +36,17 @@ export const CommentInputType = new GraphQLInputObjectType({
   })
 });
 
+export const LikeResultType = new GraphQLObjectType({
+  name: 'LikeResult',
+  description: 'Total entity comments',
+  fields: () => ({
+    entityType: { type: GraphQLString },
+    entityUuid: { type: GraphQLString },
+    onOff: { type: GraphQLString },
+    likes: { type: GraphQLInt }
+  })
+});
+
 export const CommentVoteType = new GraphQLObjectType({
   name: 'CommentVote',
   description: 'Info on comment votes',

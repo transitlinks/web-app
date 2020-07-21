@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { 
+import {
   saveComment
-} from '../../actions/viewLinkInstance';
+} from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -21,25 +21,25 @@ const CommentInput = ({
   textFieldOptions,
   env, intl
 }) => {
-   
+
   const handleTextChange = (event) => {
     setProperty((replyTo ? 'replyText' : 'newCommentText'), event.target.value);
   };
-  
+
   const submitNewComment = () => {
 
-    saveComment({ 
+    saveComment({
       linkInstanceUuid: linkInstance.uuid,
-      text: newCommentText 
+      text: newCommentText
     });
 
     setProperty('newCommentText', '');
 
   };
-  
+
   const submitNewReply = () => {
 
-    saveComment({ 
+    saveComment({
       linkInstanceUuid: linkInstance.uuid,
       replyToUuid: replyTo.uuid,
       text: replyText
@@ -49,7 +49,7 @@ const CommentInput = ({
     setProperty('replyTo', null);
 
   };
-  
+
   const textFieldAttributes = replyTo ? {
     hintText: "What's your response?",
     rows: 1
@@ -61,7 +61,7 @@ const CommentInput = ({
     floatingLabelFocusStyle: { fontSize: '24px', top: '28px' },
     rows: 2
   };
- 
+
   return (
     <div className={s.newComment}>
       <div className={s.newCommentInput}>
@@ -78,7 +78,7 @@ const CommentInput = ({
         </div>
       </div>
       <div className={s.newCommentSubmit}>
-        <FlatButton id="submit-new-comment" 
+        <FlatButton id="submit-new-comment"
           onClick={() => replyTo ? submitNewReply() : submitNewComment()}>
           Send
         </FlatButton>

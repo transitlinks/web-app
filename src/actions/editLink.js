@@ -32,23 +32,7 @@ export function selectLocality({ endpoint, locality }) {
 
 }
 
-export function selectAddress({ endpoint, locality }) {
 
-  return async (dispatch, getState) => {
-
-    dispatch({
-      type: SELECTED_ADDRESS,
-      payload: {
-        endpoint,
-        locality
-      },
-    });
-
-    return true;
-
-  };
-
-}
 
 export function setProperty(name, value) {
 

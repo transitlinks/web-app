@@ -2,9 +2,7 @@ import sequelize from '../sequelize';
 import User from './User';
 import Locality from './Locality';
 import TransitLink from './TransitLink';
-import LinkInstance from './LinkInstance';
 import TransportType from './TransportType';
-import Rating from './Rating';
 import MediaItem from './MediaItem';
 import Comment from './Comment';
 import Post from './Post';
@@ -12,10 +10,7 @@ import CheckIn from './CheckIn';
 import Terminal from './Terminal';
 import Tag from './Tag';
 import EntityTag from './EntityTag';
-
-User.hasMany(Rating, {
-  foreignKey: 'userId'
-});
+import Like from './Like';
 
 Comment.belongsTo(User, {
   foreignKey: 'userId',
@@ -32,35 +27,8 @@ TransitLink.belongsTo(Locality, {
   as: 'to'
 });
 
-LinkInstance.belongsTo(TransitLink, {
-  foreignKey: 'linkId',
-  as: 'link'
-});
-
-LinkInstance.belongsTo(TransportType, {
-  foreignKey: 'transportId',
-  as: 'transport'
-});
-
-LinkInstance.hasMany(Rating, {
-  foreignKey: 'linkInstanceId'
-});
-
-LinkInstance.hasMany(MediaItem, {
-  foreignKey: 'linkInstanceId'
-});
-
-LinkInstance.hasMany(Comment, {
-  foreignKey: 'linkInstanceId'
-});
-
 Comment.hasMany(Comment, {
   foreignKey: 'replyToId'
-});
-
-LinkInstance.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'user'
 });
 
 CheckIn.belongsTo(User, {
@@ -114,9 +82,13 @@ Tag.belongsToMany(CheckIn, {
   foreignKey: 'tagId'
 });
 
+Like.belongsTo(User, {
+  foreignKey: 'userId'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, LinkInstance, TransportType, Rating, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag };
+export { User, Locality, TransitLink, TransportType, Like, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag };

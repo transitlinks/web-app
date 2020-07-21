@@ -4,12 +4,6 @@ import {
   VOTE_START,
   VOTE_SUCCESS,
   VOTE_ERROR,
-  SAVE_RATING_START,
-  SAVE_RATING_SUCCESS,
-  SAVE_RATING_ERROR,
-  SAVE_COMMENT_START,
-  SAVE_COMMENT_SUCCESS,
-  SAVE_COMMENT_ERROR,
   GET_COMMENTS_START,
   GET_COMMENTS_SUCCESS,
   GET_COMMENTS_ERROR,
@@ -19,71 +13,35 @@ import {
   INSTANCE_FILE_UPLOAD_START,
   INSTANCE_FILE_UPLOAD_SUCCESS,
   INSTANCE_FILE_UPLOAD_ERROR,
-  SEARCH_MEDIA_START,
-  SEARCH_MEDIA_SUCCESS,
-  SEARCH_MEDIA_ERROR
+  SAVE_COMMENT_START,
+  SAVE_COMMENT_SUCCESS,
+  SAVE_COMMENT_ERROR,
+  SAVE_LIKE_START,
+  SAVE_LIKE_SUCCESS,
+  SAVE_LIKE_ERROR
 } from '../constants';
 
-export const saveRating = (rating) => {
+export const saveLike = (entityUuid, entityType, onOff) => {
 
   return async (...args) => {
 
     const query = `
-      mutation saveRating {
-        rating(rating:${toGraphQLObject(rating)}) {
-          userUuid,
-          checkInUuid,
-          avgRating,
-          avgAvailabilityRating,
-          avgDepartureRating,
-          avgArrivalRating,
-          avgAwesomeRating,
-          userAvailabilityRating,
-          userDepartureRating,
-          userArrivalRating,
-          userAwesomeRating
+      mutation like {
+        like(entityUuid:"${entityUuid}", entityType:"${entityType}", onOff:"${onOff}") {
+          likes,
+          entityUuid,
+          entityType,
+          onOff
         }
       }
     `;
 
     return graphqlAction(
       ...args,
-      { query }, [ 'rating' ],
-      SAVE_RATING_START,
-      SAVE_RATING_SUCCESS,
-      SAVE_RATING_ERROR
-    );
-
-  };
-
-};
-
-export const saveComment = (comment) => {
-
-  return async (...args) => {
-
-    const query = `
-      mutation saveComment {
-        comment(comment:${toGraphQLObject(comment)}) {
-          uuid,
-          text,
-          checkInUuid,
-          user {
-            uuid,
-            username,
-            firstName,
-            lastName
-          }
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query }, [ 'comment' ],
-      SAVE_COMMENT_START,
-      SAVE_COMMENT_SUCCESS,
-      SAVE_COMMENT_ERROR
+      { query }, [ 'like' ],
+      SAVE_LIKE_START,
+      SAVE_LIKE_SUCCESS,
+      SAVE_LIKE_ERROR
     );
 
   };
@@ -109,6 +67,38 @@ export const voteComment = (commentVote) => {
       COMMENT_VOTE_START,
       COMMENT_VOTE_SUCCESS,
       COMMENT_VOTE_ERROR
+    );
+
+  };
+
+};
+
+export const saveComment = (comment) => {
+
+  return async (...args) => {
+
+    const query = `
+      mutation saveComment {
+        comment(comment:${toGraphQLObject(comment)}) {
+          uuid,
+          text,
+          linkInstanceUuid,
+          user {
+            uuid,
+            username,
+            firstName,
+            lastName
+          }
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'comment' ],
+      SAVE_COMMENT_START,
+      SAVE_COMMENT_SUCCESS,
+      SAVE_COMMENT_ERROR
     );
 
   };
@@ -196,33 +186,6 @@ export const uploadFiles = (checkInUuid, files) => {
       INSTANCE_FILE_UPLOAD_START,
       INSTANCE_FILE_UPLOAD_SUCCESS,
       INSTANCE_FILE_UPLOAD_ERROR
-    );
-
-  };
-
-};
-
-export const getMediaItems = (checkInUuid) => {
-
-  return async (...args) => {
-
-    const query = `
-      query {
-        checkInMedia (checkInUuid: "${checkInUuid}") {
-          uuid,
-          type,
-          thumbnail,
-          url
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query }, [ 'checkInMedia' ],
-      SEARCH_MEDIA_START,
-      SEARCH_MEDIA_SUCCESS,
-      SEARCH_MEDIA_ERROR
     );
 
   };

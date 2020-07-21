@@ -5,15 +5,11 @@ import cx from 'classnames';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
 import { searchAddresses } from '../../actions/autocomplete';
-import { selectAddress } from '../../actions/editLink';
+import { selectAddress } from '../../actions/checkIns';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
-import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import FontIcon from 'material-ui/FontIcon';
 import { Marker, GoogleMap, withGoogleMap } from 'react-google-maps';
 import { geocode, reverseGeocode } from '../../services/linkService';
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   saveComment,
   voteComment
-} from '../../actions/viewLinkInstance';
+} from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
