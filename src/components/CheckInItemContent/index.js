@@ -15,7 +15,7 @@ import { saveLike } from '../../actions/comments';
 
 const CheckInItemContent = ({
   checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
-  savedTerminal, feedItemIndex, savedCheckIn,
+  savedTerminal, feedItemIndex, savedCheckIn, feedUpdated,
   setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, editable
 }) => {
 
@@ -192,7 +192,7 @@ const CheckInItemContent = ({
       <div className={s.tags}>
         {
           showSettings ?
-            (savedCheckIn || checkIn).tags.map(tag => (
+            (checkIn.tags || []).map(tag => (
               <div className={s.removableTag}>
                 <div className={s.tagValue}>#{tag}</div>
                 <div className={s.removeTag} onClick={() => {
@@ -205,7 +205,7 @@ const CheckInItemContent = ({
                 </div>
               </div>
             )) :
-            ((savedCheckIn || checkIn).tags || []).map(tag => (
+            (checkIn.tags || []).map(tag => (
               <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
             ))
         }
@@ -228,7 +228,8 @@ export default injectIntl(
     addPost: state.posts.addPost,
     savedTerminal: state.editTerminal.savedTerminal,
     showSettings: state.posts.showSettings,
-    savedCheckIn: state.posts.checkIn
+    savedCheckIn: state.posts.checkIn,
+    feedUpdated: state.posts.feedUpdated
   }), {
     setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike
   })(withStyles(s)(CheckInItemContent))

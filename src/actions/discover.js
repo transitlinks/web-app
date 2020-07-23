@@ -18,6 +18,7 @@ export const getDiscoveries = (params, reset) => {
               groupType,
               groupName,
               checkInCount,
+              postCount,
               feedItem {
                 checkIn {
                   uuid,

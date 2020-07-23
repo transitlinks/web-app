@@ -18,6 +18,7 @@ export const DiscoveryItemType = new GraphQLObjectType({
     groupType: { type: GraphQLString },
     groupName: { type: GraphQLString },
     checkInCount: { type: GraphQLInt },
+    postCount: { type: GraphQLInt },
     feedItem: { type: FeedItemType },
     posts: { type: new GraphQLList(PostType) },
     connectionsFrom: { type: new GraphQLList(GraphQLString) },

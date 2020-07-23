@@ -77,15 +77,18 @@ export default function reduce(state = {}, action) {
         {
           start: () => ({}),
           success: () => {
-            console.log('STATE', state);
-            const { feed } = state;
+
+            const { feed, discover } = state;
             const { feedItems } = feed;
             const { entityUuid, entityType, onOff, likes } = action.payload.like;
+
             const feedItem = feedItems.find(item => item.checkIn.uuid === entityUuid);
+
             if (entityType === 'CheckIn' && feedItem) {
               feedItem.checkIn.likes = likes;
               feedItem.checkIn.likedByUser = onOff === 'on';
             }
+
             return {
               like: action.payload.like,
               feed: {

@@ -48,6 +48,7 @@ const getLocalityDiscovery = async (locality, request) => {
   const connectionsTo = await postRepository.getConnectionsByLocality(locality, 'departure');
   const firstCheckIn = await postRepository.getCheckIn({ locality }, { order: [['createdAt', 'desc']] });
   const checkInCount = await postRepository.getCheckInCount(locality);
+  const postCount = await postRepository.getPostCount(locality);
 
   const posts = await postRepository.getPostsByLocality(locality, 5);
   const fullPosts = posts.map(async post => {
@@ -58,6 +59,7 @@ const getLocalityDiscovery = async (locality, request) => {
     groupType: 'locality',
     groupName: locality,
     checkInCount,
+    postCount,
     feedItem: await getFeedItem(request, firstCheckIn),
     posts: fullPosts,
     connectionsFrom,

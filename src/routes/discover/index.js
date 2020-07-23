@@ -23,6 +23,7 @@ export default {
               groupType,
               groupName,
               checkInCount,
+              postCount,
               feedItem {
                 checkIn {
                   uuid,

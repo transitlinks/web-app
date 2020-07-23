@@ -12,20 +12,18 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const PostCollection = ({ transportTypes, groupName, posts, env, children, intl }) => {
+const PostCollection = ({ transportTypes, groupName, posts, postCount, env, children, intl }) => {
 
+  console.log('post collection', posts);
   if (posts.length === 0) {
     return null;
   }
 
   let secondaryPosts = [];
-  if (posts.length > 1) {
-    let secondaryPosts = posts.filter(post => post.mediaItems.length > 0);
-    if (secondaryPosts.length < 2) {
-      secondaryPosts.slice(0, 2);
-    } else {
-      secondaryPosts.slice(1, 3);
-    }
+  if (posts.length < 3) {
+    secondaryPosts = posts.slice(0, 2);
+  } else {
+    secondaryPosts = posts.slice(1, 3);
   }
 
   let secondaryPostsElem = null;
@@ -45,7 +43,7 @@ const PostCollection = ({ transportTypes, groupName, posts, env, children, intl 
         <div className={s.secondaryPost}>
           <div className={s.postCount}>
             <Link to={`/?locality=${groupName}`}>
-              <div>{ posts.length }</div>
+              <div>{ postCount }</div>
               <div>posts</div>
             </Link>
           </div>
