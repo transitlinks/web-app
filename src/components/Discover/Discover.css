@@ -165,6 +165,7 @@
   display: flex;
 }
 
+
 .secondaryPosts .secondaryPost {
   width: 33%;
   margin-left: 1px;
@@ -239,3 +240,44 @@
 
 .postSummary {
 }
+
+.postSummary .left {
+}
+
+.postSummary .right {
+
+}
+
+@media (min-width: 620px) {
+
+  .secondaryPosts {
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .secondaryPosts .secondaryPost {
+    width: 100%;
+    height: 33%;
+    align-items: center;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+
+  .postSummary {
+    display: flex;
+  }
+
+  .postSummary .left {
+    flex: 2;
+  }
+
+  .postSummary .right {
+    flex: 1;
+  }
+
+  .postSummary .right > div {
+    height: 100%;
+  }
+
+}
+

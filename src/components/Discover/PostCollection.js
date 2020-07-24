@@ -14,7 +14,6 @@ import msg from './messages';
 
 const PostCollection = ({ transportTypes, groupName, posts, postCount, env, children, intl }) => {
 
-  console.log('post collection', posts);
   if (posts.length === 0) {
     return null;
   }

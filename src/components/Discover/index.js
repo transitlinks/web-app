@@ -78,8 +78,12 @@ const DiscoverView = ({
           { discovery.connectionsTo > 0 && renderTerminalsList('departure', discovery.connectionsTo, discovery.groupName) }
         </div>
         <div className={s.postSummary}>
-          <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
-          <PostCollection groupName={discovery.groupName} posts={posts} postCount={discovery.postCount} frameId={frameId} transportTypes={transportTypes} />
+          <div className={s.left}>
+            <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+          </div>
+          <div className={s.right}>
+            <PostCollection groupName={discovery.groupName} posts={posts} postCount={discovery.postCount} frameId={frameId} transportTypes={transportTypes} />
+          </div>
         </div>
       </div>
     );
@@ -112,9 +116,14 @@ const DiscoverView = ({
         </div>
         <div className={s.postSummary}>
           {
-            actualFeedItem && <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+            actualFeedItem &&
+              <div className={s.left}>
+                <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+              </div>
           }
-          <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
+          <div className={s.right}>
+            <PostCollection groupName={discovery.groupName} posts={posts} postCount={discovery.postCount} frameId={frameId} transportTypes={transportTypes} />
+          </div>
         </div>
       </div>
     )

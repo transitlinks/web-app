@@ -1,7 +1,6 @@
 @import '../variables.css';
 
 .container {
-  max-width: 460px;
   margin: auto;
   padding-bottom: 2px;
 }

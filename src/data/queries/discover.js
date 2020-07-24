@@ -48,7 +48,7 @@ const getLocalityDiscovery = async (locality, request) => {
   const connectionsTo = await postRepository.getConnectionsByLocality(locality, 'departure');
   const firstCheckIn = await postRepository.getCheckIn({ locality }, { order: [['createdAt', 'desc']] });
   const checkInCount = await postRepository.getCheckInCount(locality);
-  const postCount = await postRepository.getPostCount(locality);
+  const postCount = await postRepository.getPostCountByLocality(locality);
 
   const posts = await postRepository.getPostsByLocality(locality, 5);
   const fullPosts = posts.map(async post => {
@@ -73,6 +73,8 @@ const getTagDiscovery = async (tag, request) => {
   const checkInCount = await checkInRepository.getCheckInCountByTag(tag);
   const taggedCheckIns = await checkInRepository.getTaggedCheckIns({ tags: [tag] }, { limit: 1 });
   const posts = await postRepository.getPostsByTag(tag, 5);
+  const postCount = await postRepository.getPostCountByTag(tag);
+
   const fullPosts = posts.map(async post => {
     return await getPostContent(post);
   });
@@ -81,6 +83,7 @@ const getTagDiscovery = async (tag, request) => {
     groupType: 'tag',
     groupName: tag,
     checkInCount,
+    postCount,
     feedItem: taggedCheckIns.length > 0 ? await getFeedItem(request, taggedCheckIns[0]) : null,
     posts: fullPosts
   };

@@ -254,23 +254,29 @@ export default {
   },
 
   getPostsByLocality: async (locality, limit) => {
-    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
+    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE mi."type" = 'image' AND p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
     if (limit) query += ' LIMIT ' + limit;
     const posts = await sequelize.query(query, { model: Post, mapToModel: true });
     return posts;
   },
 
-  getPostCount: async (locality) => {
+  getPostCountByLocality: async (locality) => {
     let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}')`;
     const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return postCount[0].count;
   },
 
   getPostsByTag: async (tag, limit) => {
-    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT et."checkInId" FROM "EntityTag" et, "Tag" t WHERE et."tagId" = t.id AND t.value = '${tag}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
+    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT et."checkInId" FROM "EntityTag" et, "Tag" t WHERE et."tagId" = t.id AND t.value = '${tag}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE mi."type" = 'image' AND p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
     if (limit) query += ' LIMIT ' + limit;
     const posts = await sequelize.query(query, { model: Post, mapToModel: true });
     return posts;
+  },
+
+  getPostCountByTag: async (tag) => {
+    let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT et."checkInId" FROM "EntityTag" et, "Tag" t WHERE et."tagId" = t.id AND t.value = '${tag}')`;
+    const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return postCount[0].count;
   },
 
   getConnectionsByLocality: async(locality, type) => {
