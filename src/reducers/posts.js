@@ -78,15 +78,19 @@ export default function reduce(state = {}, action) {
           start: () => ({}),
           success: () => {
 
-            const { feed, discover } = state;
+            const { feed, fetchedFeedItem } = state;
             const { feedItems } = feed;
             const { entityUuid, entityType, onOff, likes } = action.payload.like;
 
             const feedItem = feedItems.find(item => item.checkIn.uuid === entityUuid);
-
             if (entityType === 'CheckIn' && feedItem) {
               feedItem.checkIn.likes = likes;
               feedItem.checkIn.likedByUser = onOff === 'on';
+            }
+
+            if (fetchedFeedItem && fetchedFeedItem.checkIn.uuid === entityUuid) {
+              fetchedFeedItem.checkIn.likes = likes;
+              fetchedFeedItem.checkIn.likedByUser = onOff === 'on';
             }
 
             return {
@@ -94,7 +98,9 @@ export default function reduce(state = {}, action) {
               feed: {
                 ...feed,
                 feedItems
-              }
+              },
+              fetchedFeedItem,
+              feedUpdated: (new Date()).getTime()
             };
           },
           error: () => ({ like: null })

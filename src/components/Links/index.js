@@ -350,7 +350,11 @@ const renderLinksList = (links, linkMode, intl) => {
 
 };
 
-const LinksView = ({ intl, links, loadedLinks, loadedMapCenter, searchTerm, viewMode, linkMode, mapZoom, selectedLink, getLinks, setProperty }) => {
+const LinksView = ({
+  intl, links, loadedLinks, loadedMapCenter, searchTerm, viewMode, linkMode,
+  mapZoom, selectedLink, transportTypes, showTransportTypes, selectedTransportTypes,
+  getLinks, setProperty
+}) => {
 
   let  displayLinks = (loadedLinks || links) || [];
 
@@ -481,6 +485,42 @@ const LinksView = ({ intl, links, loadedLinks, loadedMapCenter, searchTerm, view
           }
         </div>
       </div>
+      <div className={s.filters}>
+        {
+          !showTransportTypes ?
+            <div className={s.selectedFilters} onClick={() => setProperty('links.showTransportTypes', true)}>
+              {
+                !selectedTransportTypes || selectedTransportTypes.length === 0 ?
+                  <div className={s.selectedTransportType}>
+                    All transport types
+                  </div> :
+                  (selectedTransportTypes || []).map(transportType => (
+                    <div className={s.selectedTransportType}>
+                      {
+                        transportType === 'all' ?
+                          'All transport types' :
+                          intl.formatMessage(msgTransport[transportType])
+                      }
+                    </div>
+                  ))
+              }
+            </div> :
+            <div className={s.transportOptions} onClick={() => setProperty('links.showTransportTypes', false)}>
+              {
+                [{ slug: 'all' }].concat(transportTypes).map(transportType => (
+                  <div className={s.transportOption}>
+                    {
+                      transportType.slug === 'all' ?
+                        'All' :
+                        intl.formatMessage(msgTransport[transportType.slug])
+                    }
+                  </div>
+                ))
+              }
+            </div>
+        }
+
+      </div>
       {
         showControls &&
         <div className={s.mapControls}>
@@ -511,7 +551,9 @@ export default injectIntl(
       linkMode: state.links.linkMode || 'external',
       searchTerm: state.links.searchTerm,
       mapZoom: state.links.mapZoom,
-      selectedLink: state.links.selectedLink
+      selectedLink: state.links.selectedLink,
+      showTransportTypes: state.links.showTransportTypes,
+      selectedTransportTypes: state.links.selectedTransportTypes
     }
   }, {
     getLinks,

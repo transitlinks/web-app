@@ -268,7 +268,7 @@
   }
 
   .postSummary .left {
-    flex: 2;
+    width: 460px;
   }
 
   .postSummary .right {

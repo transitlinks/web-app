@@ -2,8 +2,8 @@ import { graphqlReduce, propToState } from "./utils";
 import {
   GET_DISCOVER_START,
   GET_DISCOVER_SUCCESS,
-  GET_DISCOVER_ERROR
-} from "../constants";
+  GET_DISCOVER_ERROR, SAVE_LIKE_START, SAVE_LIKE_SUCCESS, SAVE_LIKE_ERROR,
+} from '../constants';
 
 export default function reduce(state = {}, action) {
 
@@ -48,6 +48,40 @@ export default function reduce(state = {}, action) {
         GET_DISCOVER_SUCCESS,
         GET_DISCOVER_ERROR
       );
+
+    case SAVE_LIKE_START:
+    case SAVE_LIKE_SUCCESS:
+    case SAVE_LIKE_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+
+            const { discover } = state;
+            const { entityUuid, onOff, likes } = action.payload.like;
+            if (discover) {
+              const discoveryItem = discover.discoveries
+                .find(discovery => discovery.feedItem.checkIn.uuid === entityUuid);
+              if (discoveryItem) {
+                discoveryItem.feedItem.checkIn.likes = likes;
+                discoveryItem.feedItem.checkIn.likedByUser = onOff === 'on';
+              }
+            }
+
+            return {
+              like: action.payload.like,
+              discover,
+              discoverUpdated: (new Date()).getTime()
+            };
+          },
+          error: () => ({ like: null })
+        },
+        SAVE_LIKE_START,
+        SAVE_LIKE_SUCCESS,
+        SAVE_LIKE_ERROR
+      );
+
 
   }
 

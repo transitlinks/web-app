@@ -29,6 +29,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.disabledTags', []);
     this.props.setProperty('posts.fetchedFeedItem', null);
     this.props.setProperty('posts.checkIn', null);
+    this.props.getFeedItem(this.props.checkInItem.checkIn.uuid, 'frame-edit');
     this.updateComponent(this.props);
   }
 

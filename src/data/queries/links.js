@@ -145,12 +145,13 @@ export const TransitLinkQueryFields = {
       const linkStats = [];
 
       if (!tag) {
+
         const localityQuery = {
           limit: 16
         };
-        if (locality) localityQuery.search = locality;
-        const localities = await localityRepository.getCheckInLocalities(localityQuery);
 
+        if (locality) localityQuery.search = locality;
+        const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
         for (let i = 0; i < localities.length; i++) {
           const locality = localities[i];
           const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality);
@@ -185,6 +186,7 @@ export const TransitLinkQueryFields = {
             checkInId: taggedCheckIns.map(checkIn => checkIn.id),
             type: 'departure'
           };
+
           if (user) {
             const userId = await userRepository.getUserIdByUuid(user);
             query.userId = userId;

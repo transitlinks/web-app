@@ -3,6 +3,7 @@
 .container {
   margin: auto;
   padding-bottom: 2px;
+  max-width: 460px;
 }
 
 .feedItemContainer {
