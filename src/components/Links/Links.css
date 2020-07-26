@@ -218,6 +218,16 @@
 
 .filters {
   padding-left: 4px;
+  width: 100%;
+  position: relative;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
 }
 
 .filters .selectedFilters {
@@ -228,6 +238,10 @@
   padding-right: 5px;
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+.filters .selectedFilters .selectedTransportType {
+  margin-right: 4px;
 }
 
 .filters .transportOptions {
@@ -245,3 +259,8 @@
   margin-right: 4px;
   white-space: nowrap;
 }
+
+.filters .transportOptions .selectedTransportOption {
+  background-color: #e0e0e0;
+}
+

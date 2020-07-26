@@ -494,12 +494,15 @@ const LinksView = ({
                   <div className={s.selectedTransportType}>
                     All transport types
                   </div> :
-                  (selectedTransportTypes || []).map(transportType => (
+                  (selectedTransportTypes || []).map((transportType, index) => (
                     <div className={s.selectedTransportType}>
                       {
                         transportType === 'all' ?
                           'All transport types' :
                           intl.formatMessage(msgTransport[transportType])
+                      }
+                      {
+                        index < (selectedTransportTypes || []).length - 1 && <span>,</span>
                       }
                     </div>
                   ))
@@ -508,7 +511,19 @@ const LinksView = ({
             <div className={s.transportOptions} onClick={() => setProperty('links.showTransportTypes', false)}>
               {
                 [{ slug: 'all' }].concat(transportTypes).map(transportType => (
-                  <div className={s.transportOption}>
+                  <div className={cx(s.transportOption, selectedTransportTypes.find(type => type === transportType.slug) ? s.selectedTransportOption : {})} onClick={() => {
+                    if (transportType.slug === 'all') {
+                      setProperty('links.selectedTransportTypes', []);
+                    } else {
+                      setProperty(
+                        'links.selectedTransportTypes',
+                        selectedTransportTypes.find(type => type === transportType.slug) ?
+                          selectedTransportTypes.filter(type => type !== transportType.slug) :
+                          selectedTransportTypes.concat(transportType.slug)
+                      );
+                    }
+
+                  }}>
                     {
                       transportType.slug === 'all' ?
                         'All' :
@@ -553,7 +568,7 @@ export default injectIntl(
       mapZoom: state.links.mapZoom,
       selectedLink: state.links.selectedLink,
       showTransportTypes: state.links.showTransportTypes,
-      selectedTransportTypes: state.links.selectedTransportTypes
+      selectedTransportTypes: state.links.selectedTransportTypes || []
     }
   }, {
     getLinks,
