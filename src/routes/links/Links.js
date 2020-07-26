@@ -27,9 +27,12 @@ class Links extends React.Component {
       this.props.setProperty('links.loadedMapCenter', null);
       if (loadedLinks.length > 0) {
         if (
-          !prevLoadedLinks ||
-          prevLoadedLinks[0].latitude !== loadedLinks[0].latitude ||
-          prevLoadedLinks[0].longitude !== loadedLinks[0].longitude
+          !prevLoadedLinks || (
+            prevLoadedLinks.length > 0 && (
+              prevLoadedLinks[0].latitude !== loadedLinks[0].latitude ||
+              prevLoadedLinks[0].longitude !== loadedLinks[0].longitude
+            )
+          )
         ) {
           this.props.setProperty('links.loadedMapCenter', {
             lat: loadedLinks[0].latitude,

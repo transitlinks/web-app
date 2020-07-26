@@ -466,10 +466,10 @@ const LinksView = ({
                          onChange={(event) => {
                            const input = event.target.value;
                            setProperty('links.searchTerm', input);
-                           if (input.length > 2) {
+                           if (input.length > 2 || input.length === 0) {
                              setProperty('links.linkMode', 'external');
                              setProperty('links.selectedLink', null);
-                             getLinks({ locality: input, transportTypes: selectedTransportTypes });
+                             getLinks({ ...(input.length === 0 ? {} : { locality: input }), transportTypes: selectedTransportTypes });
                            }
                          }} />
             </div>
@@ -488,26 +488,27 @@ const LinksView = ({
       <div className={s.filters}>
         {
           !showTransportTypes ?
+            <div className={s.selectedFiltersWrapper}>
             <div className={s.selectedFilters} onClick={() => setProperty('links.showTransportTypes', true)}>
-              {
-                !selectedTransportTypes || selectedTransportTypes.length === 0 ?
-                  <div className={s.selectedTransportType}>
-                    All transport types
-                  </div> :
-                  (selectedTransportTypes || []).map((transportType, index) => (
-                    <div className={s.selectedTransportType}>
-                      {
-                        transportType === 'all' ?
-                          'All transport types' :
-                          intl.formatMessage(msgTransport[transportType])
-                      }
-                      {
-                        index < (selectedTransportTypes || []).length - 1 && <span>,</span>
-                      }
-                    </div>
-                  ))
-              }
-            </div> :
+              <div className={s.icon}>
+                <FontIcon className="material-icons" style={{ fontSize: '14px', marginTop: '4px' }}>tune</FontIcon>
+              </div>
+              <div className={s.values}>
+                {
+                  !selectedTransportTypes || selectedTransportTypes.length === 0 ?
+                    'All transport types' :
+                    (selectedTransportTypes || []).map((transportType, index) => {
+                      let selectedTransportType = transportType === 'all' ?
+                        'All transport types' :
+                        intl.formatMessage(msgTransport[transportType]);
+                      if (index < (selectedTransportTypes || []).length - 1) selectedTransportType += ', ';
+                      return selectedTransportType;
+                    })
+                }
+              </div>
+
+            </div>
+            </div>:
             <div className={s.transportOptions} onClick={() => setProperty('links.showTransportTypes', false)}>
               {
                 [{ slug: 'all' }].concat(transportTypes).map(transportType => (
