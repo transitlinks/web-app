@@ -29,13 +29,14 @@ export default {
 
   },
 
-  getInternalDeparturesByLocality: async (locality) => {
+  getInternalDeparturesByLocality: async (locality, query = {}) => {
 
     const terminals = await Terminal.findAll({
       where: {
         linkedLocality: { $eq: sequelize.col('Terminal.locality') },
         locality,
-        type: 'departure'
+        type: 'departure',
+        ...query
       },
       include: [{ all: true }]
     });
@@ -44,12 +45,13 @@ export default {
 
   },
 
-  getInterTerminalsByLocality: async (locality) => {
+  getInterTerminalsByLocality: async (locality, query = {}) => {
 
     const terminals = await Terminal.findAll({
       where: {
         linkedLocality: { $ne: sequelize.col('Terminal.locality') },
-        locality
+        locality,
+        ...query
       },
       include: [{ all: true }]
     });

@@ -44,7 +44,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
+  width: 25px;
 }
 
 .linkItem {
@@ -224,6 +224,7 @@
   overflow-y: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  margin-bottom: 6px;
 }
 
 .filters::-webkit-scrollbar {

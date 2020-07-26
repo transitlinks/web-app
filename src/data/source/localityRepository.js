@@ -22,6 +22,12 @@ export default {
     const searchParams = [];
     if (options.search) searchParams.push(`t."locality" ILIKE '%${options.search}%'`);
     if (options.transport) searchParams.push(`t."transport" = '${options.transport}'`);
+    if (options.transportTypes && options.transportTypes.length > 0) {
+      const transportTypesQuery = ' (' + options.transportTypes
+        .map(type => `t."transport" = '${type}'`)
+        .join(' OR ') + ')';
+      searchParams.push(transportTypesQuery);
+    }
     if (searchParams.length > 0) query += ` WHERE ${searchParams.join(' AND ')}`;
 
     query += ' GROUP BY t."locality" ORDER BY COUNT(t."id") DESC';

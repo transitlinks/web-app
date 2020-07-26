@@ -134,11 +134,12 @@ export const TransitLinkQueryFields = {
       tag: { type: GraphQLString },
       query: { type: GraphQLString },
       user: { type: GraphQLString },
-      type: { type: GraphQLString }
+      type: { type: GraphQLString },
+      transportTypes: { type: new GraphQLList(GraphQLString) }
     },
     resolve: async ({ request }, params) => {
 
-      const { locality, tag, user, type, query } = params;
+      const { locality, tag, user, type, query, transportTypes } = params;
 
       log.info(graphLog(request, 'search-links',`query=${query} locality=${locality} tag=${tag} type=${type}`));
 
@@ -146,18 +147,21 @@ export const TransitLinkQueryFields = {
 
       if (!tag) {
 
-        const localityQuery = {
-          limit: 16
-        };
+        const localityQuery = { limit: 16 };
+        const transportQuery = {};
 
         if (locality) localityQuery.search = locality;
+        if (transportTypes && transportTypes.length > 0) {
+          localityQuery.transportTypes = transportTypes;
+          transportQuery.transport = transportTypes;
+        }
         const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
         for (let i = 0; i < localities.length; i++) {
           const locality = localities[i];
-          const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality);
+          const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality, transportQuery);
           const departures = interTerminals.filter(terminal => terminal.type === 'departure');
           const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
-          const internal = await terminalRepository.getInternalDeparturesByLocality(locality);
+          const internal = await terminalRepository.getInternalDeparturesByLocality(locality, transportQuery);
           await findRoutePoints(departures);
           await findRoutePoints(arrivals);
           await findRoutePoints(internal);

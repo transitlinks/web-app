@@ -469,7 +469,7 @@ const LinksView = ({
                            if (input.length > 2) {
                              setProperty('links.linkMode', 'external');
                              setProperty('links.selectedLink', null);
-                             getLinks({ locality: input });
+                             getLinks({ locality: input, transportTypes: selectedTransportTypes });
                            }
                          }} />
             </div>
@@ -512,16 +512,19 @@ const LinksView = ({
               {
                 [{ slug: 'all' }].concat(transportTypes).map(transportType => (
                   <div className={cx(s.transportOption, selectedTransportTypes.find(type => type === transportType.slug) ? s.selectedTransportOption : {})} onClick={() => {
+
+                    let newSelectedTransportTypes = selectedTransportTypes;
                     if (transportType.slug === 'all') {
-                      setProperty('links.selectedTransportTypes', []);
+                      newSelectedTransportTypes = [];
                     } else {
-                      setProperty(
-                        'links.selectedTransportTypes',
+                      newSelectedTransportTypes =
                         selectedTransportTypes.find(type => type === transportType.slug) ?
                           selectedTransportTypes.filter(type => type !== transportType.slug) :
-                          selectedTransportTypes.concat(transportType.slug)
-                      );
+                          selectedTransportTypes.concat(transportType.slug);
                     }
+
+                    setProperty('links.selectedTransportTypes', newSelectedTransportTypes);
+                    getLinks({ locality: searchTerm, transportTypes: newSelectedTransportTypes });
 
                   }}>
                     {
