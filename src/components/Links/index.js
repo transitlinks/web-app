@@ -62,13 +62,13 @@ const renderLinkStatsOverlays = (linkStats, onSelect) => {
             {linkStat.locality}
           </div>
           <div className={s.localityStats}>
-            <span className="material-icons">call_made</span> {linkStat.departures.length}
+            <span className="material-icons">call_made</span> {linkStat.departureCount}
           </div>
           <div className={s.localityStats}>
-            <span className="material-icons">call_received</span> {linkStat.arrivals.length}
+            <span className="material-icons">call_received</span> {linkStat.arrivalCount}
           </div>
           <div className={s.localityStats}>
-            <span className="material-icons">cached</span> {linkStat.internal.length}
+            <span className="material-icons">cached</span> N/A
           </div>
         </div>
       </OverlayView>
@@ -77,6 +77,14 @@ const renderLinkStatsOverlays = (linkStats, onSelect) => {
 };
 
 const renderLinkInfo = (terminal, intl, wrapperClass) => {
+
+  if (terminal.linkedLocality) {
+    return (
+      <div>
+        SHOW LINK STATS!
+      </div>
+    );
+  }
 
   const renderDateTime = (terminal, label) => {
 
@@ -163,17 +171,20 @@ const renderLinkInfo = (terminal, intl, wrapperClass) => {
 
 };
 
-const drawLines = (terminals, onHighlight, onSelect, intl) => {
+const drawLines = (terminals, onHighlight, onSelect, intl, highlightedTerminal, selectedTerminal) => {
 
   return (terminals || []).map(terminal => {
-    const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
-    let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
+    const color = (terminal.type === 'departure' || terminal.linkedTerminalType === 'arrival') ? '#FF0000' : '#909090';
+    let lines = [{ lat: terminal.latitude, lng: (terminal.longitude || terminal.linkedLocalityLongitude)}];
     const { route } = terminal;
     if (route && route.length > 0) {
       lines = lines.concat(route);
     }
 
-    lines.push({ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude });
+    lines.push({
+      lat: terminal.linkedTerminal ? terminal.linkedTerminal.latitude : terminal.linkedLocalityLatitude,
+      lng: terminal.linkedTerminal ? terminal.linkedTerminal.longitude : terminal.linkedLocalityLongitude
+    });
 
     const polyLine = {
       line: (
@@ -194,15 +205,19 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
           options={{
             geodesic: true,
             strokeColor: color,
-            strokeOpacity: terminal.highlighted ? 1.0 : 0.5,
+            strokeOpacity: (terminal.highlighted || ((terminal.linkedTerminalUuid || '') === highlightedTerminal)) ? 1.0 : 0.5,
             strokeWeight: 4
           }} />
       )
     };
 
-    if (terminal.selected) {
+    console.log('draw terminal', terminal);
+    if (terminal.selected || ((terminal.linkedTerminalUuid || '') === selectedTerminal)) {
       polyLine.info = (
-        <InfoWindow position={{ lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude }}
+        <InfoWindow position={{
+          lat: terminal.linkedTerminal ? terminal.linkedTerminal.latitude : terminal.linkedLocalityLatitude,
+          lng: terminal.linkedTerminal ? terminal.linkedTerminal.longitude : terminal.linkedLocalityLongitude
+        }}
           options={{ maxWidth: '320px' }}
           onCloseClick={() => {
             terminal.selected = false;
@@ -216,50 +231,19 @@ const drawLines = (terminals, onHighlight, onSelect, intl) => {
   });
 };
 
-const renderMapLinks = (links, linkMode, onHighlight, onSelect, intl) => {
+const renderMapLinks = (links, linkMode, onHighlight, onSelect, intl, highlightedTerminal, selectedTerminal) => {
+  console.log('links', links);
   return (
       linkMode === 'internal' ?
-        drawLines(links.internal, onHighlight, onSelect, intl).map(line => [line.line, line.info]) :
+        drawLines((links.internal || []), onHighlight, onSelect, intl, highlightedTerminal, selectedTerminal).map(line => [line.line, line.info]) :
         [
-          drawLines(links.departures, onHighlight, onSelect, intl).map(line => [line.line, line.info]),
-          drawLines(links.arrivals, onHighlight, onSelect, intl).map(line => [line.line, line.info])
+          drawLines((links.departures || links.linkedDepartures.map(link => ({ ...link, latitude: links.latitude, longitude: links.longitude  }))), onHighlight, onSelect, intl, highlightedTerminal, selectedTerminal).map(line => [line.line, line.info]),
+          drawLines((links.arrivals || links.linkedArrivals.map(link => ({ ...link, latitude: links.latitude, longitude: links.longitude }))), onHighlight, onSelect, intl, highlightedTerminal, selectedTerminal).map(line => [line.line, line.info])
         ]
   );
 };
 
 const renderLinkStatsList = (linkStats, onSelect) => {
-
-  const renderTerminalsListing = (terminals, icon, text) => {
-    return (
-      <div className={s.terminalsListing}>
-        <div className={s.terminalTypeIcon}>
-          <FontIcon className="material-icons" style={{ fontSize: '24px' }}>
-            {icon}
-          </FontIcon>
-        </div>
-        <div>
-          {terminals.length} {text} &nbsp;
-        </div>
-        <div className={s.linkedLocalities}>
-          {
-            (terminals || []).map((terminal, index) => (
-              <span>
-                <span>
-                  <Link to={`/links?locality=${terminal.linkedTerminal.locality}`}>
-                    {terminal.linkedTerminal.locality}
-                  </Link>
-                </span>
-                {
-                  index < terminals.length - 1 &&
-                  <span>, </span>
-                }
-              </span>
-            ))
-          }
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div>
@@ -300,10 +284,10 @@ const renderLinkStatsList = (linkStats, onSelect) => {
                         }}>
                           {
                             slicedLinkedArrivals.length > 0 &&
-                            slicedLinkedArrivals.map((locality, index) => (
+                            slicedLinkedArrivals.map((link, index) => (
                               <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '40px' }) }}>
-                                <Link to={`/links?locality=${locality}`}>
-                                  {locality}
+                                <Link to={`/links?locality=${link.linkedLocality}`}>
+                                  {link.linkedLocality}
                                 </Link>
                                 {
                                   index === 0 &&
@@ -316,7 +300,7 @@ const renderLinkStatsList = (linkStats, onSelect) => {
                           }
                           {
                             slicedLinkedArrivals.length < linkStat.linkedArrivals.length &&
-                            <div className={s.otherPlaces}> + {linkStat.linkedArrivals.length - slicedLinkedArrivals.length} other places</div>
+                              <div className={s.otherPlaces}> + {linkStat.linkedArrivals.length - slicedLinkedArrivals.length} other places</div>
                           }
                         </div>
                       </div>
@@ -340,11 +324,13 @@ const renderLinkStatsList = (linkStats, onSelect) => {
                         }}>
                           {
                             slicedLinkedDepartures.length > 0 &&
-                            slicedLinkedDepartures.map((locality, index) => (
-                              <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '20px' }) }}>
+                            slicedLinkedDepartures.map((link, index) => (
+                              <div className={s.connection} style={{
+                                ...(index === slicedLinkedDepartures.length - 1 && { marginLeft: '20px' })
+                              }}>
                                 <div className={s.locality}>
-                                  <Link to={`/links?locality=${locality}`}>
-                                    {locality}
+                                  <Link to={`/links?locality=${link.linkedLocality}`}>
+                                    {link.linkedLocality}
                                   </Link>
                                   {
                                     index === slicedLinkedDepartures.length - 1 &&
@@ -388,34 +374,65 @@ const renderLinkStatsList = (linkStats, onSelect) => {
 
 };
 
-const renderLinksList = (links, linkMode, intl) => {
+const renderLinksList = (linkStat, linkMode, intl) => {
 
-  const { uuid } = links;
-
-  const renderLink = (terminal) => {
-    return renderLinkInfo(terminal, intl, s.listLinkInfo);
-  };
+  console.log('LINKSTAT', linkStat);
+  const { linkedDepartures, linkedArrivals } = linkStat;
 
   return (
     <div>
       {
-        <div key={uuid} className={s.linkItem}>
+        <div className={s.linkItem}>
           <div className={s.localityHeader}>
-            {links.locality}
+            {linkStat.locality}
+          </div>
+          <div className={s.inboundOutbound}>
+            <div className={s.inbound}>
+              INBOUND FROM
+            </div>
+            <div className={s.outbound}>
+              OUTBOUND TO
+            </div>
           </div>
           {
             linkMode === 'internal' ?
-              <div>
-                { (links.internal || []).map(terminal => renderLink(terminal)) }
-              </div> :
-              <div>
-                <div>
-                  { (links.departures || []).map(terminal => renderLink(terminal)) }
-                </div>
-                <div>
-                  { (links.arrivals || []).map(terminal => renderLink(terminal)) }
-                </div>
+              <div>Internal</div> :
+              <div className={s.localityConnections}>
+                {
+                  (linkedArrivals && linkedArrivals.length > 0) &&
+                  <div className={s.inboundColumn}>
+                    {
+                      linkedArrivals.map(link => {
+                        return (
+                          <div className={s.inOutLocality}>
+                            <Link to={`/links?from=${link.linkedLocality} to=${linkStat.locality}`}>
+                              { link.linkedLocality }
+                            </Link>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+
+                }
+                {
+                  (linkedDepartures && linkedDepartures.length > 0) &&
+                  <div className={s.outboundColumn}>
+                    {
+                      linkedDepartures.map(link => {
+                        return (
+                          <div className={s.inOutLocality}>
+                            <Link to={`/links?from=${linkStat.locality} to=${link.linkedLocality}`}>
+                              { link.linkedLocality }
+                            </Link>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                }
               </div>
+
           }
         </div>
       }
@@ -425,7 +442,7 @@ const renderLinksList = (links, linkMode, intl) => {
 };
 
 const LinksView = ({
-  intl, links, loadedLinks, loadedMapCenter, searchTerm, viewMode, linkMode,
+  intl, links, loadedLinks, loadedMapCenter, searchTerm, viewMode, linkMode, highlightedTerminal, selectedTerminal,
   mapZoom, selectedLink, transportTypes, showTransportTypes, selectedTransportTypes,
   getLinks, setProperty
 }) => {
@@ -444,27 +461,29 @@ const LinksView = ({
     lng: 24.93545
   };
 
-  if (displayLinks.length > 0) {
+  if (displayLinks && displayLinks.length > 0 && !highlightedTerminal && !selectedTerminal) {
     if (!selectedLink) {
       mapCenter = {
         lat: displayLinks[0].latitude,
         lng: displayLinks[0].longitude
       };
     } else {
+      console.log('sel link', selectedLink);
       mapCenter = {
-        lat: selectedLink.linkedTerminal.latitude,
-        lng: selectedLink.linkedTerminal.longitude
-      }
+        lat: selectedLink.linkedTerminal ? selectedLink.linkedTerminal.latitude : selectedLink.linkedLocalityLatitude,
+        lng: selectedLink.linkedTerminal ? selectedLink.linkedTerminal.longitude : selectedLink.linkedLocalityLongitude
+      };
     }
   }
 
+  console.log('disp links', displayLinks);
   const showControls = displayLinks.length === 1 &&
-    (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals.length > 0) && displayLinks[0].internal.length > 0;
+    ((displayLinks[0].departures || displayLinks[0].linkedDepartures).length > 0 || (displayLinks[0].arrivals || displayLinks[0].linkedArrivals).length > 0) && (displayLinks[0].internal || []).length > 0;
   let actualLinkMode = linkMode;
   if (displayLinks.length === 1 && !showControls) {
-    if (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals.length > 0) {
+    if ((displayLinks[0].departures || displayLinks[0].linkedDepartures).length > 0 || (displayLinks[0].arrivals || displayLinks[0].linkedArrivals).length > 0) {
       actualLinkMode = 'external';
-    } else if (displayLinks[0].internal.length > 0) {
+    } else if ((displayLinks[0].internal || []).length > 0) {
       actualLinkMode = 'internal';
     }
   }
@@ -475,7 +494,7 @@ const LinksView = ({
     mapContent = renderMapLinks(displayLinks[0], actualLinkMode, (terminal) => {
       if (terminal.highlighted) {
         setProperty('links.loadedMapCenter', null);
-        setProperty('links.highlightedTerminal', terminal.uuid);
+        setProperty('links.highlightedTerminal', terminal.uuid || terminal.linkedTerminalUuid);
       }
       else if (!selectedLink) setProperty('links.highlightedTerminal', null);
     }, (terminal) => {
@@ -483,9 +502,13 @@ const LinksView = ({
       if (terminal.selected) {
         setProperty('links.loadedMapCenter', null);
         setProperty('links.selectedLink', terminal);
+        setProperty('links.selectedTerminal', terminal.uuid || terminal.linkedTerminalUuid);
       }
-      else setProperty('links.selectedLink', null);
-    }, intl);
+      else {
+        setProperty('links.selectedLink', null);
+        setProperty('links.selectedTerminal', null);
+      }
+    }, intl, highlightedTerminal, selectedTerminal);
     listContent = renderLinksList(displayLinks[0], actualLinkMode, intl);
   } else {
     mapContent = renderLinkStatsOverlays(displayLinks, onSelectLocality);
@@ -646,7 +669,9 @@ export default injectIntl(
       mapZoom: state.links.mapZoom,
       selectedLink: state.links.selectedLink,
       showTransportTypes: state.links.showTransportTypes,
-      selectedTransportTypes: state.links.selectedTransportTypes || []
+      selectedTransportTypes: state.links.selectedTransportTypes || [],
+      selectedTerminal: state.links.selectedTerminal,
+      highlightedTerminal: state.links.highlightedTerminal
     }
   }, {
     getLinks,

@@ -255,19 +255,45 @@ export const getAvailableCurrencies = (destination) => {
 };
 
 export const getMapBounds = (linkStats, linkMode) => {
-  let terminals = [];
+  let coords = [];
   linkStats.forEach(linkStat => {
     if (linkMode !== 'internal') {
-      terminals = terminals.concat(linkStat.departures);
-      terminals = terminals.concat(linkStat.arrivals);
+      coords = coords.concat(
+        linkStat.departures ?
+          linkStat.departures.map(dep => ({
+            lat: dep.latitude,
+            lng: dep.longitude,
+            linkedLat: dep.linkedTerminal.latitude,
+            linkedLng: dep.linkedTerminal.longitude,
+          })) :
+          linkStat.linkedDepartures.map(dep => ({
+            lat: linkStat.latitude,
+            lng: linkStat.longitude,
+            linkedLat: dep.linkedLocalityLatitude,
+            linkedLng: dep.linkedLocalityLongitude,
+          }))
+        );
+      coords = coords.concat(
+        linkStat.internal ?
+          linkStat.internal.map(int => ({
+            lat: int.latitude,
+            lng: int.longitude,
+            linkedLat: int.linkedTerminal.latitude,
+            linkedLng: int.linkedTerminal.longitude,
+
+          })) : []
+      );
     }
-    terminals = terminals.concat(linkStat.internal);
+    if (linkStat.internal) {
+      coords = coords.concat(linkStat.internal.map(dep => ({ lat: dep.latitude, lng: dep.longitude })));
+    }
+
   });
   const bounds = new google.maps.LatLngBounds();
-  terminals.forEach(t => {
-    bounds.extend(new google.maps.LatLng({ lat: t.latitude, lng: t.longitude }));
+  coords.forEach(coord => {
+    bounds.extend(new google.maps.LatLng({ lat: coord.lat, lng: coord.lng }));
     if (linkStats.length === 1) {
-      bounds.extend(new google.maps.LatLng({ lat: t.linkedTerminal.latitude, lng: t.linkedTerminal.longitude }));
+      bounds.extend(new google.maps.LatLng({ lat: coord.linkedLat, lng: coord.linkedLng }));
     }
   });
   return bounds;

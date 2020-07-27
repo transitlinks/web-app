@@ -21,8 +21,8 @@ export default {
 
     const checkIn = await CheckIn.findOne({
       where,
-      ...options
-      //include: [ { all: true } ]
+      ...options,
+      include: [ { all: true } ]
     });
 
     return checkIn;
@@ -34,7 +34,7 @@ export default {
     const checkIns = await CheckIn.findAll({
       where,
       ...options,
-      include: { all: true }
+      include: [ { all: true } ]
     });
 
     return checkIns;

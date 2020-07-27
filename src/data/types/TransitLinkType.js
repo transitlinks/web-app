@@ -41,6 +41,21 @@ export const LinkTerminalType = new GraphQLObjectType({
   })
 });
 
+
+export const LinkedLocalityResultType = new GraphQLObjectType({
+  name: 'LinkedLocalityResult',
+  description: 'Basic info about linked locality',
+  fields: () => ({
+    locality: { type: GraphQLString },
+    linkedLocality: { type: GraphQLString },
+    linkedTerminalType: { type: GraphQLString },
+    linkedTerminalUuid: { type: GraphQLString },
+    linkedLocalityLatitude: { type: GraphQLFloat },
+    linkedLocalityLongitude: { type: GraphQLFloat },
+    linkCount: { type: GraphQLInt }
+  })
+});
+
 export const LinkSearchResultType = new GraphQLObjectType({
   name: 'LinkSearchResult',
   description: 'Transitlink between two localities.',
@@ -53,8 +68,8 @@ export const LinkSearchResultType = new GraphQLObjectType({
     internal: { type: new GraphQLList(LinkTerminalType) },
     departureCount: { type: GraphQLInt },
     arrivalCount: { type: GraphQLInt },
-    linkedDepartures: { type: new GraphQLList(GraphQLString) },
-    linkedArrivals: { type: new GraphQLList(GraphQLString) }
+    linkedDepartures: { type: new GraphQLList(LinkedLocalityResultType) },
+    linkedArrivals: { type: new GraphQLList(LinkedLocalityResultType) }
   })
 });
 

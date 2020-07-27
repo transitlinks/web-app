@@ -127,15 +127,64 @@
 }
 
 .linkItem .localityHeader {
-  background-color: #e0e0e0;
-  padding-left: 8px;
+  background-color: #f0f0f0;
+  padding-left: 6px;
   padding-top: 3px;
   padding-bottom: 3px;
-  text-decoration: underline;
+  font-size: 24px;
 }
 
 .linkItem .localityHeader span {
   cursor: pointer;
+}
+
+.linkItem .inboundOutbound {
+  display: flex;
+  font-size: 14px;
+  border-top: 1px solid #a0a0a0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.inboundOutbound .inbound {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-right: 1px solid black;
+}
+
+.inboundOutbound .outbound {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.localityConnections {
+  display: flex;
+}
+
+.localityConnections .inboundColumn,  .localityConnections .outboundColumn {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.localityConnections .inboundColumn {
+  border-right: 1px solid black;
+}
+
+.localityConnections .outboundColumn {
+  text-align: right;
+}
+
+.inOutLocality {
+  padding-right: 6px;
+  padding-left: 6px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .listLinkInfo {
@@ -382,6 +431,10 @@
   padding: 0;
   margin: 0;
   height: fit-content;
+}
+
+.labelMap .arrivals .connections {
+  padding-top: 8px;
 }
 
 .connections .connection {

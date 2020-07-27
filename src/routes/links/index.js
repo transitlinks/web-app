@@ -119,8 +119,24 @@ export default {
             },
             departureCount,
             arrivalCount,
-            linkedDepartures,
-            linkedArrivals
+            linkedDepartures {
+              locality,
+              linkedLocality,
+              linkedTerminalType,
+              linkedTerminalUuid,
+              linkedLocalityLatitude,
+              linkedLocalityLongitude,
+              linkCount
+            },
+            linkedArrivals {
+              locality,
+              linkedLocality,
+              linkedTerminalType,
+              linkedTerminalUuid,
+              linkedLocalityLatitude,
+              linkedLocalityLongitude,
+              linkCount
+            }
           },
           transportTypes { slug }
         }`
