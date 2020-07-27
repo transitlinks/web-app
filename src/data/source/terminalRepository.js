@@ -45,6 +45,48 @@ export default {
 
   },
 
+  getLinkedLocalitiesByLocality: async (query = {}) => {
+
+    const linkedLocalities = await Terminal.findAll({
+      where: {
+        linkedLocality: { $ne: sequelize.col('Terminal.locality') },
+        ...query
+      },
+      attributes: [[sequelize.fn('DISTINCT', sequelize.col('linkedLocality')), 'linkedLocality']],
+      group: ['Terminal.linkedLocality'],
+      raw: true
+    });
+
+    console.log('got linked', linkedLocalities);
+    return linkedLocalities.map(loc => loc.linkedLocality);
+
+  },
+
+  countInterTerminals: async (query = {}) => {
+
+    const counts = await Terminal.findAll({
+      where: {
+        linkedLocality: { $ne: sequelize.col('Terminal.locality') },
+        ...query
+      },
+      attributes: ['type', [sequelize.fn('count', sequelize.col('type')), 'count']],
+      group: ['Terminal.type'],
+      raw: true,
+      order: sequelize.literal('count DESC')
+    });
+
+    const terminalCounts = {
+    };
+
+    for (let i = 0; i < counts.length; i++) {
+      terminalCounts[counts[i].type] = counts[i].count;
+    }
+
+    return terminalCounts;
+
+  },
+
+
   getInterTerminalsByLocality: async (locality, query = {}) => {
 
     const terminals = await Terminal.findAll({

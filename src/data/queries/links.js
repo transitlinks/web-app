@@ -156,8 +156,52 @@ export const TransitLinkQueryFields = {
           transportQuery.transport = transportTypes;
         }
         const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
-        for (let i = 0; i < localities.length; i++) {
-          const locality = localities[i];
+        if (localities.length > 1) {
+          for (let i = 0; i < localities.length; i++) {
+            const locality = localities[i];
+            const baseQuery = {
+              locality,
+              ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes })
+            };
+            const interTerminalCounts = await terminalRepository.countInterTerminals({
+              ...baseQuery
+            });
+            const linkedDepartures = await terminalRepository.getLinkedLocalitiesByLocality({
+              ...baseQuery,
+              type: 'arrival'
+            });
+            const linkedArrivals = await terminalRepository.getLinkedLocalitiesByLocality({
+              ...baseQuery,
+              type: 'departure'
+            });
+            const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality, transportQuery);
+            const departures = interTerminals.filter(terminal => terminal.type === 'departure');
+            const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
+            const internal = await terminalRepository.getInternalDeparturesByLocality(locality, transportQuery);
+            await findRoutePoints(departures);
+            await findRoutePoints(arrivals);
+            await findRoutePoints(internal);
+            let terminal = null;
+            if (departures.length > 0) terminal = departures[0];
+            if (arrivals.length > 0) terminal = arrivals[0];
+            if (internal.length > 0) terminal = internal[0];
+            if (terminal) {
+              linkStats.push({
+                locality,
+                latitude: terminal.latitude,
+                longitude: terminal.longitude,
+                departures,
+                arrivals,
+                departureCount: interTerminalCounts.departure || 0,
+                arrivalCount: interTerminalCounts.arrival || 0,
+                linkedDepartures,
+                linkedArrivals,
+                internal
+              });
+            }
+          }
+        } else {
+          const locality = localities[0];
           const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality, transportQuery);
           const departures = interTerminals.filter(terminal => terminal.type === 'departure');
           const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');

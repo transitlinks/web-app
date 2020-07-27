@@ -110,7 +110,11 @@ export const getLinks = (params) => {
                 priceCurrency
               }
               route { lat, lng }
-            }
+            },
+            departureCount,
+            arrivalCount,
+            linkedDepartures,
+            linkedArrivals
           }
         }`
 

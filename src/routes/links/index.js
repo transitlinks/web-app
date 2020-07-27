@@ -116,7 +116,11 @@ export default {
                 description
               }
               route { lat, lng }
-            }
+            },
+            departureCount,
+            arrivalCount,
+            linkedDepartures,
+            linkedArrivals
           },
           transportTypes { slug }
         }`

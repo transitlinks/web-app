@@ -5,7 +5,7 @@ import {
   GraphQLString,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLFloat,
+  GraphQLFloat, GraphQLInt,
 } from 'graphql';
 
 export const LatLngType = new GraphQLObjectType({
@@ -50,7 +50,11 @@ export const LinkSearchResultType = new GraphQLObjectType({
     longitude: { type: GraphQLFloat },
     departures: { type: new GraphQLList(LinkTerminalType) },
     arrivals: { type: new GraphQLList(LinkTerminalType) },
-    internal: { type: new GraphQLList(LinkTerminalType) }
+    internal: { type: new GraphQLList(LinkTerminalType) },
+    departureCount: { type: GraphQLInt },
+    arrivalCount: { type: GraphQLInt },
+    linkedDepartures: { type: new GraphQLList(GraphQLString) },
+    linkedArrivals: { type: new GraphQLList(GraphQLString) }
   })
 });
 

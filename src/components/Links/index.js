@@ -269,39 +269,113 @@ const renderLinkStatsList = (linkStats, onSelect) => {
 
           const { uuid } = linkStat;
 
+
+          const slicedLinkedDepartures = linkStat.linkedDepartures.slice(0, 8);
+          const slicedLinkedArrivals = linkStat.linkedArrivals.slice(0, 8);
+
           return (
             <div key={uuid} className={s.linkItem}>
-              <div className={s.localityHeader}>
-                <span onClick={() => onSelect(linkStat.locality)}>{linkStat.locality}</span>
-              </div>
               {
-                linkStat.departures.length > 0 &&
                 <div>
-                  <div>
-                    { renderTerminalsListing(linkStat.departures, 'call_made', 'departures to') }
-                  </div>
-                </div>
-              }
-              {
-                linkStat.arrivals.length > 0 &&
-                <div>
-                  <div>
-                    { renderTerminalsListing(linkStat.arrivals, 'call_received', 'arrivals from') }
-                  </div>
-                </div>
-              }
-              {
-                linkStat.internal.length > 0 &&
-                <div>
-                  <div className={s.terminalsListing}>
-                    <div className={s.terminalTypeIcon}>
-                      <FontIcon className="material-icons" style={{ fontSize: '24px' }}>
-                        cached
-                      </FontIcon>
+                  <div className={s.labelMap}>
+                    {
+                      slicedLinkedArrivals.length > 0 &&
+                      <div className={s.arrivals}>
+                        <div className={s.info}>
+                          <div className={s.stats}>
+                            <div className={s.statsIcon}>
+                              <FontIcon className="material-icons" style={{ fontSize: '31px' }}>
+                                call_received
+                              </FontIcon>
+                            </div>
+                            <div className={s.statsNumber}>{linkStat.departureCount}</div>
+                          </div>
+                          <div className={s.statsLabel}>
+                            ARRIVALS
+                          </div>
+                        </div>
+                        <div className={s.connections} style={{
+                          flexDirection: 'row',
+                          flexWrap: 'wrap'
+                        }}>
+                          {
+                            slicedLinkedArrivals.length > 0 &&
+                            slicedLinkedArrivals.map((locality, index) => (
+                              <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '40px' }) }}>
+                                <Link to={`/links?locality=${locality}`}>
+                                  {locality}
+                                </Link>
+                                {
+                                  index === 0 &&
+                                  <div className={s.directionLabel} style={{ left: '-40px' }}>
+                                    FROM
+                                  </div>
+                                }
+                              </div>
+                            ))
+                          }
+                          {
+                            slicedLinkedArrivals.length < linkStat.linkedArrivals.length &&
+                            <div className={s.otherPlaces}> + {linkStat.linkedArrivals.length - slicedLinkedArrivals.length} other places</div>
+                          }
+                        </div>
+                      </div>
+                    }
+                    <div className={s.divider}>
+                      {
+                        slicedLinkedArrivals.length > 0 &&
+                          <div className={s.ruler}></div>
+                      }
+                      <div className={s.mainLocality}
+                        onClick={() => onSelect(linkStat.locality)}>
+                        {linkStat.locality}
+                      </div>
                     </div>
-                    <div>
-                      {linkStat.internal.length} internal connections
-                    </div>
+                    {
+                      slicedLinkedDepartures.length > 0 &&
+                      <div className={s.departures}>
+                        <div className={s.connections} style={{
+                          flexDirection: 'row-reverse',
+                          flexWrap: 'wrap-reverse'
+                        }}>
+                          {
+                            slicedLinkedDepartures.length > 0 &&
+                            slicedLinkedDepartures.map((locality, index) => (
+                              <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '20px' }) }}>
+                                <div className={s.locality}>
+                                  <Link to={`/links?locality=${locality}`}>
+                                    {locality}
+                                  </Link>
+                                  {
+                                    index === slicedLinkedDepartures.length - 1 &&
+                                    <div className={s.directionLabel} style={{ left: '-20px' }}>
+                                      TO
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            ))
+                          }
+                          {
+                            slicedLinkedDepartures.length < linkStat.linkedDepartures.length &&
+                            <div className={s.otherPlaces}> + {linkStat.linkedDepartures.length - slicedLinkedDepartures.length} other places</div>
+                          }
+                        </div>
+                        <div className={s.info}>
+                          <div className={s.stats}>
+                            <div className={s.statsNumber}>{linkStat.arrivalCount}</div>
+                            <div className={s.statsIcon}>
+                              <FontIcon className="material-icons" style={{ fontSize: '31px' }}>
+                                call_made
+                              </FontIcon>
+                            </div>
+                          </div>
+                          <div className={s.statsLabel}>
+                            DEPARTURES
+                          </div>
+                        </div>
+                      </div>
+                    }
                   </div>
                 </div>
               }
