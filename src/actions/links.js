@@ -15,24 +15,12 @@ export const getLinks = (params) => {
 
     const query = `query {
           transitLinks ${createParamString(params)} {
-            locality,
-            latitude,
-            longitude,
-            departures {
-              checkInUuid,
-              type,
+            searchResultType,
+            links {
+              locality,
               latitude,
               longitude,
-              locality,
-              formattedAddress,
-              transport,
-              transportId,
-              date,
-              time,
-              priceAmount,
-              priceCurrency,
-              description,
-              linkedTerminal {
+              departures {
                 checkInUuid,
                 type,
                 latitude,
@@ -43,27 +31,29 @@ export const getLinks = (params) => {
                 transportId,
                 date,
                 time,
-                description,
                 priceAmount,
-                priceCurrency
-              }
-              route { lat, lng }
-            },
-            arrivals {
-              checkInUuid,
-              type,
-              latitude,
-              longitude,
-              locality,
-              formattedAddress,
-              transport,
-              transportId,
-              date,
-              time,
-              priceAmount,
-              priceCurrency,
-              description,
-              linkedTerminal {
+                priceCurrency,
+                description,
+                linkCount,
+                reverseLinkCount,
+                linkedTerminal {
+                  checkInUuid,
+                  type,
+                  latitude,
+                  longitude,
+                  locality,
+                  formattedAddress,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  description,
+                  priceAmount,
+                  priceCurrency
+                }
+                route { lat, lng }
+              },
+              arrivals {
                 checkInUuid,
                 type,
                 latitude,
@@ -74,27 +64,29 @@ export const getLinks = (params) => {
                 transportId,
                 date,
                 time,
-                description,
                 priceAmount,
-                priceCurrency
-              }
-              route { lat, lng }
-            },
-            internal {
-              checkInUuid,
-              type,
-              latitude,
-              longitude,
-              locality,
-              formattedAddress,
-              transport,
-              transportId,
-              date,
-              time,
-              priceAmount,
-              priceCurrency,
-              description,
-              linkedTerminal {
+                priceCurrency,
+                description,
+                linkCount,
+                reverseLinkCount,
+                linkedTerminal {
+                  checkInUuid,
+                  type,
+                  latitude,
+                  longitude,
+                  locality,
+                  formattedAddress,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  description,
+                  priceAmount,
+                  priceCurrency
+                }
+                route { lat, lng }
+              },
+              internal {
                 checkInUuid,
                 type,
                 latitude,
@@ -105,31 +97,47 @@ export const getLinks = (params) => {
                 transportId,
                 date,
                 time,
-                description,
                 priceAmount,
-                priceCurrency
+                priceCurrency,
+                description,
+                linkCount,
+                linkedTerminal {
+                  checkInUuid,
+                  type,
+                  latitude,
+                  longitude,
+                  locality,
+                  formattedAddress,
+                  transport,
+                  transportId,
+                  date,
+                  time,
+                  description,
+                  priceAmount,
+                  priceCurrency
+                }
+                route { lat, lng }
+              },
+              departureCount,
+              arrivalCount,
+              linkedDepartures {
+                locality,
+                linkedLocality,
+                linkedTerminalType,
+                linkedTerminalUuid,
+                linkedLocalityLatitude,
+                linkedLocalityLongitude,
+                linkCount
+              },
+              linkedArrivals {
+                locality,
+                linkedLocality,
+                linkedTerminalType,
+                linkedTerminalUuid,
+                linkedLocalityLatitude,
+                linkedLocalityLongitude,
+                linkCount
               }
-              route { lat, lng }
-            },
-            departureCount,
-            arrivalCount,
-            linkedDepartures {
-              locality,
-              linkedLocality,
-              linkedTerminalType,
-              linkedTerminalUuid,
-              linkedLocalityLatitude,
-              linkedLocalityLongitude,
-              linkCount
-            },
-            linkedArrivals {
-              locality,
-              linkedLocality,
-              linkedTerminalType,
-              linkedTerminalUuid,
-              linkedLocalityLatitude,
-              linkedLocalityLongitude,
-              linkCount
             }
           }
         }`
@@ -149,7 +157,7 @@ export const getLinks = (params) => {
 export function setZoomLevel(linkStats, linkMode) {
 
   return async (dispatch) => {
-
+    console.log('set zoom level for', linkStats);
     const bounds = getMapBounds(linkStats, linkMode);
     const zoomLevel = getBoundsZoomLevel(bounds, { width: 400, height: 400 });
     dispatch({
@@ -157,6 +165,7 @@ export function setZoomLevel(linkStats, linkMode) {
       payload: {
         name: 'links.mapZoom',
         value: {
+          updated: (new Date()).getTime(),
           zoomLevel,
           bounds
         }

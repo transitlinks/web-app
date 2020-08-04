@@ -47,17 +47,18 @@ export const TerminalType = new GraphQLObjectType({
   fields: () => {
     return {
       uuid: { type: new GraphQLNonNull(GraphQLString)},
-      type: { type: GraphQLString},
-      transport: { type: GraphQLString},
-      transportId: { type: GraphQLString},
-      description: { type: GraphQLString},
-      date: { type: GraphQLString},
-      time: { type: GraphQLString},
-      priceAmount: { type: GraphQLFloat},
-      priceCurrency: { type: GraphQLString},
+      type: { type: GraphQLString },
+      transport: { type: GraphQLString },
+      transportId: { type: GraphQLString },
+      description: { type: GraphQLString },
+      date: { type: GraphQLString },
+      time: { type: GraphQLString },
+      priceAmount: { type: GraphQLFloat },
+      priceCurrency: { type: GraphQLString },
       linkedTerminal: { type: TerminalType },
       checkInUuid: { type: GraphQLString },
-      checkIn: { type: CheckInType }
+      checkIn: { type: CheckInType },
+      linkCount: { type: GraphQLInt }
     };
   },
 });

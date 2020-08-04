@@ -255,46 +255,32 @@ export const getAvailableCurrencies = (destination) => {
 };
 
 export const getMapBounds = (linkStats, linkMode) => {
-  let coords = [];
-  linkStats.forEach(linkStat => {
-    if (linkMode !== 'internal') {
-      coords = coords.concat(
-        linkStat.departures ?
-          linkStat.departures.map(dep => ({
-            lat: dep.latitude,
-            lng: dep.longitude,
-            linkedLat: dep.linkedTerminal.latitude,
-            linkedLng: dep.linkedTerminal.longitude,
-          })) :
-          linkStat.linkedDepartures.map(dep => ({
-            lat: linkStat.latitude,
-            lng: linkStat.longitude,
-            linkedLat: dep.linkedLocalityLatitude,
-            linkedLng: dep.linkedLocalityLongitude,
-          }))
-        );
-      coords = coords.concat(
-        linkStat.internal ?
-          linkStat.internal.map(int => ({
-            lat: int.latitude,
-            lng: int.longitude,
-            linkedLat: int.linkedTerminal.latitude,
-            linkedLng: int.linkedTerminal.longitude,
 
-          })) : []
-      );
+  let coords = [];
+
+  const collectCoords = (terminal) => {
+    return [ { lat: terminal.latitude, lng: terminal.longitude } ]
+          .concat(
+            terminal.linkedTerminal ?
+              [ { lat: terminal.linkedTerminal.latitude, lng: terminal.linkedTerminal.longitude } ] :
+              []
+          );
+  };
+
+  linkStats.forEach(linkStat => {
+
+    if (linkMode !== 'internal') {
+      coords = coords.concat((linkStat.departures || []).flatMap(dep => collectCoords(dep)));
+      coords = coords.concat((linkStat.arrivals || []).flatMap(arr => collectCoords(arr)));
     }
-    if (linkStat.internal) {
-      coords = coords.concat(linkStat.internal.map(dep => ({ lat: dep.latitude, lng: dep.longitude })));
-    }
+
+    coords = coords.concat((linkStat.internal || []).map(dep => ({ lat: dep.latitude, lng: dep.longitude })));
 
   });
+
   const bounds = new google.maps.LatLngBounds();
   coords.forEach(coord => {
-    bounds.extend(new google.maps.LatLng({ lat: coord.lat, lng: coord.lng }));
-    if (linkStats.length === 1) {
-      bounds.extend(new google.maps.LatLng({ lat: coord.linkedLat, lng: coord.linkedLng }));
-    }
+    bounds.extend(new google.maps.LatLng(coord));
   });
   return bounds;
 };

@@ -118,6 +118,7 @@ export function createParamString(params) {
     if (params[key]) {
       let val = isNaN(params[key]) ? `"${params[key]}"` : params[key];
       if (Array.isArray(params[key])) val = `[${params[key].map(p => `"${p}"`).join(',')}]`;
+      else if (isNaN(params[key]) && params[key].indexOf(',') !== -1) val = `[${params[key].split(',').map(p => `"${p}"`).join(',')}]`;
       paramsString += `, ${key}: ${val}`;
     }
   });

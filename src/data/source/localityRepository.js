@@ -8,7 +8,8 @@ export default {
 
   getCheckInLocalities: async (options) => {
     let query = `SELECT DISTINCT locality FROM "CheckIn"`;
-    if (options.search) query += ` WHERE locality ILIKE '%${options.search}%'`;
+    if (options.locality) query += ` WHERE locality = '${options.locality}'`;
+    else if (options.search) query += ` WHERE locality ILIKE '%${options.search}%'`;
     if (options.limit) query += ' LIMIT ' + options.limit;
     if (options.offset) query += ' OFFSET ' + options.offset;
     const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
@@ -20,7 +21,8 @@ export default {
     let query = 'SELECT t."locality" FROM "Terminal" t';
 
     const searchParams = [];
-    if (options.search) searchParams.push(`t."locality" ILIKE '%${options.search}%'`);
+    if (options.locality) searchParams.push(`t."locality" = '${options.locality}'`);
+    else if (options.search) searchParams.push(`t."locality" ILIKE '%${options.search}%'`);
     if (options.transport) searchParams.push(`t."transport" = '${options.transport}'`);
     if (options.transportTypes && options.transportTypes.length > 0) {
       const transportTypesQuery = ' (' + options.transportTypes

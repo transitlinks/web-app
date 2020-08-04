@@ -126,12 +126,24 @@
   margin-right: 4px;
 }
 
-.linkItem .localityHeader {
-  background-color: #f0f0f0;
+.localityHeader {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  padding-right: 6px;
   padding-left: 6px;
-  padding-top: 3px;
-  padding-bottom: 3px;
   font-size: 24px;
+}
+
+.localityHeader .localityName {
+
+}
+
+.localityHeader .undo {
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
 }
 
 .linkItem .localityHeader span {
@@ -454,4 +466,213 @@
   font-size: 12px;
   display: flex;
   align-items: flex-end;
+}
+
+.linkPopup .route {
+}
+
+.linkPopup .route .routePath {
+}
+
+.linkPopup .route .routePath .arrows {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 6px;
+}
+
+.arrows .arrow {
+  display: flex;
+}
+
+.arrows .arrow .label {
+  font-size: 16px;
+}
+
+.arrows .arrow .forward {
+  margin-top: -2px;
+}
+
+.arrows .arrow .back {
+  margin-top: -2px;
+}
+
+.arrows .arrow .both {
+  margin-top: -2px;
+}
+
+.linkPopup .route .routePath .terminalStats {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.linkPopup .route .routePath .terminalStats .routeStats {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.linkPopup .route .routePath .terminalStats .localityStats {
+  display: flex;
+}
+
+.linkPopup .route .routePath .terminalStats .directionLabel {
+  font-size: 12px;
+  margin-top: -2px;
+  margin-right: 2px;
+}
+
+.linkPopup .route .routePath .terminalStats .directionLocality {
+  font-size: 16px;
+}
+
+.linkPopup .route .routePath .terminalIcon {
+  display: flex;
+  align-items: center;
+}
+
+.linkPopup .route .routePath .locality {
+  padding: 6px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  min-width: 260px;
+}
+
+.linkPopup .route .routePath .routeTerminal {
+  display: flex;
+}
+
+.linkPopup .route .routePath .from {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.linkPopup .route .routePath .to {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.linkPopup .route .routePath .from .routeStats {
+  margin-bottom: 4px;
+}
+
+.linkPopup .route .routePath .to .routeStats {
+  margin-top: 2px;
+}
+
+.linkPopup .route .routePath .from .terminalStats {
+  flex-direction: row-reverse;
+}
+
+
+.linkPopup .route .routePath .to .terminalStats {
+  flex-direction: row-reverse;
+}
+
+.linksListHeader {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  padding-right: 6px;
+  padding-left: 6px;
+}
+
+.linksListHeader .locality {
+  font-size: 22px;
+  margin-right: 4px;
+  max-width: 66%;
+}
+
+.linksListHeader .undo {
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.linksListHeader .linkedLocality {
+  font-size: 18px;
+}
+
+.linksList {
+  padding-left: 6px;
+}
+
+.linksList .listLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+}
+
+.linksList .listLink .linkTypeAndTransport {
+  display: flex;
+  align-items: center;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin-right: 4px;
+}
+
+.linksList .listLink .linkTypeAndTransport .linkType {
+  margin-top: 6px;
+  margin-right: 2px;
+}
+
+.linksList .listLink .linkTypeAndTransport .linkTransport {
+
+}
+
+.linksList .listLink .linkInfo {
+
+}
+
+.linksList .listLink .dateTime {
+  display: flex;
+  padding-right: 4px;
+}
+
+.linksList .listLink .dateTime .date {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.linksList .listLink .dateTime .time {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.linksList .listLink .linkAddress {
+
+}
+
+.linksView {
+
+}
+
+.linksView .map {
+  width: 100%;
+  position: relative;
+}
+
+.linksView .list {
+  width: 100%;
+  position: relative;
+}
+
+@media (min-width: 620px) {
+
+  .linksView {
+    display: flex;
+  }
+
+  .linksView .map {
+    width: 50%;
+    position: relative;
+  }
+
+  .linksView .list {
+    width: 50%;
+    position: relative;
+  }
+
 }
