@@ -26,7 +26,6 @@ class Links extends React.Component {
     const linksResult = this.props.linksResult || this.props.loadedLinksResult;
     const prevLinksResult = prevProps.linksResult || prevProps.loadedLinksResult;
 
-    console.log('PROPS TEST', query);
     if (query.locality) {
       this.props.setProperty('links.selectedLocality', query.locality);
       this.props.setProperty('links.searchTerm', '');
@@ -44,6 +43,15 @@ class Links extends React.Component {
       this.props.setProperty('links.selectedTransportTypes', query.transportTypes.split(','));
     } else {
       this.props.setProperty('links.selectedTransportTypes', []);
+    }
+
+    if (query.tag) {
+      this.props.setProperty('links.selectedTag', query.tag);
+      this.props.setProperty('links.selectedLocality', null);
+      this.props.setProperty('links.selectedLinkedLocality', null);
+      this.props.setProperty('links.searchTerm', '');
+    } else {
+      this.props.setProperty('links.selectedTag', null);
     }
 
     if (query.search) {

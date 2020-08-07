@@ -17,6 +17,15 @@ export const LatLngType = new GraphQLObjectType({
   })
 });
 
+export const LinkTagType = new GraphQLObjectType({
+  name: 'LinkTag',
+  description: 'A tag related to a link',
+  fields: () => ({
+    tag: { type: GraphQLString },
+    userUuid: { type: GraphQLString }
+  })
+});
+
 export const LinkTerminalType = new GraphQLObjectType({
   name: 'LinkTerminal',
   description: 'Transitlink endpoint.',
@@ -39,7 +48,8 @@ export const LinkTerminalType = new GraphQLObjectType({
     linkedTerminal: { type: LinkTerminalType },
     linkCount: { type: GraphQLInt },
     reverseLinkCount: { type: GraphQLInt },
-    route: { type: new GraphQLList(LatLngType) }
+    route: { type: new GraphQLList(LatLngType) },
+    tags: { type: new GraphQLList(LinkTagType) }
   })
 });
 
@@ -71,7 +81,8 @@ export const TransitLinkType = new GraphQLObjectType({
     departureCount: { type: GraphQLInt },
     arrivalCount: { type: GraphQLInt },
     linkedDepartures: { type: new GraphQLList(LinkedLocalityResultType) },
-    linkedArrivals: { type: new GraphQLList(LinkedLocalityResultType) }
+    linkedArrivals: { type: new GraphQLList(LinkedLocalityResultType) },
+    tags: { type: new GraphQLList(LinkTagType) }
   })
 });
 

@@ -436,6 +436,10 @@
 }
 
 .connections {
+  flex-grow: 1;
+}
+
+.connectionLocalities {
   display: flex;
   flex-grow: 1;
   position: relative;
@@ -570,6 +574,26 @@
   flex-direction: row-reverse;
 }
 
+.taggedListHeader {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  padding-right: 6px;
+  padding-left: 6px;
+  align-items: flex-end;
+}
+
+.taggedListHeader .tag {
+  font-size: 22px;
+}
+
+.taggedListHeader .undo {
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  height: 26px;
+}
+
 .linksListHeader {
   display: flex;
   justify-content: center;
@@ -595,48 +619,168 @@
 }
 
 .linksList {
-  padding-left: 6px;
 }
 
 .linksList .listLink {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid #e0e0e0;
 }
 
-.linksList .listLink .linkTypeAndTransport {
+.linksList .listLink .listLinkContent {
+  padding-bottom: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-top: 4px;
+}
+
+.listLinkContent .terminalFromTo {
+}
+
+.listLinkContent .terminalFromTo .terminalTimes {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
+}
+
+.terminalTimes .departureTime {
+  font-size: 14px;
+}
+
+.terminalTimes .duration {
+  font-size: 14px;
+  background-color: #a0a0a0;
+  padding-left: 6px;
+  padding-right: 5px;
+  border-radius: 4px;
+  color: white;
+}
+
+.terminalTimes .arrivalTime {
+  font-size: 14px;
+}
+
+.listLinkContent .terminalFromTo .terminalAddresses {
+  display: flex;
+}
+
+.terminalAddresses .terminalAddressContainer {
+}
+
+.terminalAddresses .terminalAddressHeader {
+  font-size: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-right: 3px;
+  margin-top: 2px;
+}
+
+.terminalAddresses .terminalAddress {
+  font-size: 14px;
+  margin-block-start: unset;
+  margin-block-end: unset;
+  line-height: 18px;
+}
+
+.terminalAddresses .terminalFrom {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+
+.terminalAddresses .terminalTo {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.listLinkContent .terminalPriceDescription {
+  margin-top: 6px;
+}
+
+.listLinkContent .terminalPriceDescription p {
+  margin-block-start: unset;
+  margin-block-end: unset;
+  font-size: 14px;
+}
+
+.listLinkContent .terminalPriceDescription p .label{
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.listLinkContent .terminalPriceDescription p .content {
+  margin-right: 4px;
+}
+
+
+.linksList .listLink .listLinkHeader {
+  border-top: 1px solid #e0e0e0;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.linksList .listLink .listLinkHeader .linkHeaderTopRow {
+  display: flex;
+  align-items: center;
+  flex: 1 1 100%;
+  justify-content: space-between;
+}
+
+.linksList .listLink .listLinkHeader .linkTypeAndTransport {
   display: flex;
   align-items: center;
   padding-left: 4px;
   padding-right: 4px;
-  margin-right: 4px;
+  height: 23px;
+  margin-bottom: 3px;
 }
 
-.linksList .listLink .linkTypeAndTransport .linkType {
+.linksList .listLink .listLinkHeader .linkTypeAndTransport .linkType {
   margin-top: 6px;
   margin-right: 2px;
 }
 
-.linksList .listLink .linkTypeAndTransport .linkTransport {
+.linksList .listLink .listLinkHeader .linkTypeAndTransport .linkTransport {
 
 }
 
-.linksList .listLink .linkInfo {
-
-}
-
-.linksList .listLink .dateTime {
-  display: flex;
+.linksList .listLink .listLinkHeader .linkId {
+  font-size: 14px;
+  white-space: nowrap;
+  border: 1px solid black;
+  border-radius: 4px;
   padding-right: 4px;
+  padding-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: #ffffff;
 }
 
-.linksList .listLink .dateTime .date {
+..linksList .listLink .listLinkHeader .linkInfo {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.linksList .listLink .listLinkHeader .linkHeaderBottomRow {
+  display: flex;
+  padding-bottom: 6px;
+}
+
+.linksList .listLink .listLinkHeader .dateTime {
+  display: flex;
+  font-size: 14px;
+}
+
+.linksList .listLink .listLinkHeader .dateTime .date {
   margin-left: 2px;
   margin-right: 2px;
 }
 
-.linksList .listLink .dateTime .time {
+.linksList .listLink .listLinkHeader .dateTime .time {
   margin-left: 2px;
   margin-right: 2px;
 }
@@ -663,16 +807,79 @@
 
   .linksView {
     display: flex;
+    position: relative;
+    width: 100%;
   }
 
   .linksView .map {
-    width: 50%;
     position: relative;
+    width: 100%;
   }
 
   .linksView .list {
-    width: 50%;
     position: relative;
+    flex-grow: 1;
   }
 
+  .listLink .linkIdInfo {
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+  }
+
+
+  .listLink .linkIdInfo .linkId {
+    margin-top: 2px;
+    margin-bottom: 0px;
+    max-width: initial;
+  }
+
+}
+
+.terminalTags {
+  display: flex;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+
+.terminalTags .terminalTag {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.terminalTags .terminalTag a {
+  color: black;
+  text-decoration: none;
+}
+
+.localityTags {
+  display: flex;
+  margin-top: 12px;
+  margin-left: 6px;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.localityTags .localityTag {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.localityTags .localityTag a {
+  color: black;
+  text-decoration: none;
 }

@@ -13,7 +13,6 @@ import Link from '../Link';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
 import msgTransport from '../common/messages/transport';
-import msg from '../EditCheckInItem/messages.terminal';
 import { getDateString, getTimeString } from '../utils';
 
 const LinksMap = compose(
@@ -244,7 +243,6 @@ const renderLinkInfo = (terminal, transportTypes, intl, wrapperClass) => {
   const departureTerminal = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
   const arrivalTerminal = terminal.type === 'arrival' ? terminal : terminal.linkedTerminal;
 
-  console.log('terminal', terminal, msgTransport[departureTerminal.transport], intl);
   return (
     <div className={cx(s.linkInfo, wrapperClass)}>
       <div className={s.transportRow}>
@@ -314,7 +312,6 @@ const renderLinkInfo = (terminal, transportTypes, intl, wrapperClass) => {
 };
 
 const drawLines = (links, transportTypes, type, onHighlight, onSelect, intl) => {
-  console.log('draw lines intl', intl);
   return (links[type] || []).filter(terminal => !terminal.ignore).map(terminal => {
     const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
     let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
@@ -411,17 +408,28 @@ const renderConnectionsMap = (linkStat, transportTypes, linkMode, onHighlight, o
   );
 };
 
-const renderLinksMap = (linksResult, transportTypes, linkMode, onHighlight, onSelect, intl) => {
-  const linkStat = linksResult.links && linksResult.links.length > 0 ? linksResult.links[0] : null;
+const renderLinksMap = (props, onHighlight, onSelect) => {
+
+  const { linksResult, selectedTransportTypes, linkMode, selectedTerminal, intl } = props;
+
+  let linkStat = linksResult.links && linksResult.links.length > 0 ? linksResult.links[0] : null;
   if (!linkStat) {
     return null;
   }
+
+
+  if (selectedTerminal) {
+    linkStat = selectedTerminal.type === 'departure' ?
+      { departures: [selectedTerminal] } :
+      { arrivals: [selectedTerminal] };
+  }
+
   return (
     linkMode === 'internal' ?
-      drawLines(linkStat, transportTypes, 'internal', onHighlight, onSelect, intl).map(line => [line.line, line.info]) :
+      drawLines(linkStat, selectedTransportTypes, 'internal', onHighlight, onSelect, intl).map(line => [line.line, line.info]) :
       [
-        drawLines(linkStat, transportTypes,'departures', onHighlight, onSelect, intl).map(line => [line.line, line.info]),
-        drawLines(linkStat, transportTypes,'arrivals', onHighlight, onSelect, intl).map(line => [line.line, line.info])
+        drawLines(linkStat, selectedTransportTypes,'departures', onHighlight, onSelect, intl).map(line => [line.line, line.info]),
+        drawLines(linkStat, selectedTransportTypes,'arrivals', onHighlight, onSelect, intl).map(line => [line.line, line.info])
       ]
   );
 };
@@ -461,34 +469,38 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                             ARRIVALS
                           </div>
                         </div>
-                        <div className={s.connections} style={{
-                          flexDirection: 'row',
-                          flexWrap: 'wrap'
-                        }}>
+                        <div className={s.connections}>
                           {
                             slicedLinkedArrivals.length > 0 &&
-                            slicedLinkedArrivals.map((link, index) => (
-                              <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '40px' }) }}>
-                                <Link to={
-                                  getNavigationQuery({
-                                    locality: link.linkedLocality,
-                                    transportTypes
-                                  })
-                                }>
-                                  {link.linkedLocality}
-                                </Link>
+                              <div className={s.connectionLocalities} style={{
+                                flexDirection: 'row',
+                                flexWrap: 'wrap'
+                              }}>
                                 {
-                                  index === 0 &&
-                                  <div className={s.directionLabel} style={{ left: '-40px' }}>
-                                    FROM
-                                  </div>
+                                  slicedLinkedArrivals.map((link, index) => (
+                                    <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '40px' }) }}>
+                                      <Link to={
+                                        getNavigationQuery({
+                                          locality: link.linkedLocality,
+                                          transportTypes
+                                        })
+                                      }>
+                                        {link.linkedLocality}
+                                      </Link>
+                                      {
+                                        index === 0 &&
+                                        <div className={s.directionLabel} style={{ left: '-40px' }}>
+                                          FROM
+                                        </div>
+                                      }
+                                    </div>
+                                  ))
+                                }
+                                {
+                                  slicedLinkedArrivals.length < linkStat.linkedArrivals.length &&
+                                  <div className={s.otherPlaces}> + {linkStat.linkedArrivals.length - slicedLinkedArrivals.length} other places</div>
                                 }
                               </div>
-                            ))
-                          }
-                          {
-                            slicedLinkedArrivals.length < linkStat.linkedArrivals.length &&
-                              <div className={s.otherPlaces}> + {linkStat.linkedArrivals.length - slicedLinkedArrivals.length} other places</div>
                           }
                         </div>
                       </div>
@@ -500,44 +512,64 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                       }
                       <div className={s.mainLocality}
                         onClick={() => onSelect(linkStat.locality)}>
-                        {linkStat.locality}
+                        <div className={s.mainLocalityName}>
+                          {linkStat.locality}
+                        </div>
                       </div>
                     </div>
                     {
                       slicedLinkedDepartures.length > 0 &&
                       <div className={s.departures}>
-                        <div className={s.connections} style={{
-                          flexDirection: 'row-reverse',
-                          flexWrap: 'wrap-reverse'
-                        }}>
+                        <div className={s.connections}>
                           {
                             slicedLinkedDepartures.length > 0 &&
-                            slicedLinkedDepartures.map((link, index) => (
-                              <div className={s.connection} style={{
-                                ...(index === slicedLinkedDepartures.length - 1 && { marginLeft: '20px' })
+                              <div className={s.connectionLocalities} style={{
+                                flexDirection: 'row-reverse',
+                                flexWrap: 'wrap-reverse'
                               }}>
-                                <div className={s.locality}>
-                                  <Link to={
-                                    getNavigationQuery({
-                                      locality: link.linkedLocality,
-                                      transportTypes
-                                    })
-                                  }>
-                                    {link.linkedLocality}
-                                  </Link>
-                                  {
-                                    index === slicedLinkedDepartures.length - 1 &&
-                                    <div className={s.directionLabel} style={{ left: '-20px' }}>
-                                      TO
+                                {
+                                  slicedLinkedDepartures.map((link, index) => (
+                                    <div className={s.connection} style={{
+                                      ...(index === slicedLinkedDepartures.length - 1 && { marginLeft: '20px' })
+                                    }}>
+                                      <div className={s.locality}>
+                                        <Link to={
+                                          getNavigationQuery({
+                                            locality: link.linkedLocality,
+                                            transportTypes
+                                          })
+                                        }>
+                                          {link.linkedLocality}
+                                        </Link>
+                                        {
+                                          index === slicedLinkedDepartures.length - 1 &&
+                                          <div className={s.directionLabel} style={{ left: '-20px' }}>
+                                            TO
+                                          </div>
+                                        }
+                                      </div>
                                     </div>
-                                  }
-                                </div>
+                                  ))
+                                }
+                                {
+                                  slicedLinkedDepartures.length < linkStat.linkedDepartures.length &&
+                                  <div className={s.otherPlaces}> + {linkStat.linkedDepartures.length - slicedLinkedDepartures.length} other places</div>
+                                }
                               </div>
-                            ))
                           }
                           {
-                            slicedLinkedDepartures.length < linkStat.linkedDepartures.length &&
-                            <div className={s.otherPlaces}> + {linkStat.linkedDepartures.length - slicedLinkedDepartures.length} other places</div>
+                            linkStat.tags && linkStat.tags.length > 0 &&
+                            <div className={s.localityTags}>
+                              {
+                                linkStat.tags.map(tag => {
+                                  return (
+                                    <div className={s.localityTag}>
+                                      #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}`}>{ tag.tag }</Link>
+                                    </div>
+                                  );
+                                })
+                              }
+                            </div>
                           }
                         </div>
                         <div className={s.info}>
@@ -569,7 +601,6 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
 
 const renderConnectionsList = (linkStat, transportTypes, linkMode, intl) => {
 
-  console.log('LINKSTAT', linkStat);
   const { linkedDepartures, linkedArrivals } = linkStat;
 
   return (
@@ -644,37 +675,195 @@ const renderConnectionsList = (linkStat, transportTypes, linkMode, intl) => {
 
 };
 
-const renderLinksList = (linksResult, transportTypes, linkMode, intl) => {
+const renderLinksList = (props) => {
+
+  const { setProperty, linksResult, selectedTerminal, intl } = props;
 
   const terminals = linksResult.links && linksResult.links.length > 0 ?
     (linksResult.links[0].arrivals || []).concat(linksResult.links[0].departures || [])
     : [];
+
+  const getDateTimeStr = (terminal) => {
+
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    let date = '';
+    if (terminal.date) {
+     const terminalDate = new Date(terminal.date).toISOString();
+     date = months[parseInt(terminalDate.substring(5, 7)) - 1] + ' ' + parseInt(terminalDate.substring(8, 10));
+    }
+
+    const time = terminal.time ?
+      new Date(terminal.time).toISOString().substring(11, 16) : '';
+    return <span><span>{ date }</span> <span style={{ fontWeight: 'bold' }}>{ time }</span></span>;
+  };
+
+  const getTripDuration = (terminal) => {
+
+    if (terminal.time && terminal.linkedTerminal.time) {
+      let timeStr = (new Date(terminal.time).toISOString().substring(11, 16)) + ':00';
+      let linkedTimeStr = (new Date(terminal.linkedTerminal.time).toISOString().substring(11, 16)) + ':00';
+      if (terminal.date && terminal.linkedTerminal.date) {
+        timeStr = new Date(terminal.date).toISOString().substring(0, 10) + 'T' + timeStr;
+        linkedTimeStr = new Date(terminal.linkedTerminal.date).toISOString().substring(0, 10) + 'T' + linkedTimeStr;
+      } else {
+        timeStr = '2020-02-02T' + timeStr;
+        linkedTimeStr = '2020-02-02T' + linkedTimeStr;
+      }
+
+      const time = new Date(timeStr).getTime();
+      const linkedTime = new Date(linkedTimeStr).getTime();
+
+      const timeDiff = Math.abs(time - linkedTime);
+      const minuteUnit = 60 * 1000;
+      const hourUnit = 60 * minuteUnit;
+      const dayUnit = 24 * hourUnit;
+
+      const remainingAfterDays = timeDiff % dayUnit;
+      const dayTime = timeDiff - remainingAfterDays;
+      const days = dayTime / dayUnit;
+
+      const remainingAfterHours = remainingAfterDays % hourUnit;
+      const hourTime = remainingAfterDays - remainingAfterHours;
+      const hours = hourTime / hourUnit;
+
+      const minutes = Math.round(remainingAfterHours / minuteUnit);
+
+      let durationStr = '';
+      if (days > 0) durationStr += days + ' d';
+      if (hours > 0) durationStr += ' ' + hours + ' h';
+      if (minutes > 0 || durationStr.length === 0) durationStr += ' ' + minutes + ' min';
+
+      return durationStr;
+
+    } else {
+      return null;
+    }
+  };
 
   return (
     <div>
       <div className={s.linksList}>
         {
           terminals.map(terminal => {
+            const fromTerminal = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
+            const toTerminal = terminal.type === 'arrival' ? terminal : terminal.linkedTerminal;
+            const isSelected = selectedTerminal && selectedTerminal.checkInUuid === terminal.checkInUuid;
             return (
               <div className={s.listLink}>
-                <div className={s.linkTypeAndTransport}>
-                  <div className={s.linkType}>
-                    <FontIcon className="material-icons" style={{ fontSize: '18px' }}>
-                      { terminal.type === 'arrival' ? 'call_received' : 'call_made' }
-                    </FontIcon>
-                  </div>
-                  <div className={s.linkTransport}>{ intl.formatMessage(msgTransport[terminal.transport]) }</div>
-                </div>
-                <div className={s.linkInfo}>
-                  <div className={s.dateTime}>
-                    <div className={s.date}>
-                      { new Date(terminal.date).toISOString().substring(0, 10) }
+                <div className={s.listLinkHeader} style={isSelected ? { backgroundColor: '#f0f0f0' } : {}} onClick={() => {
+                  if (isSelected) {
+                    setProperty('links.selectedTerminal', null);
+                  } else {
+                    setProperty('links.selectedTerminal', terminal);
+                  }
+                }}>
+                  <div className={s.linkHeaderTopRow}>
+                    <div className={s.linkTypeAndTransport}>
+                      <div className={s.linkType}>
+                        <FontIcon className="material-icons" style={{ fontSize: '18px' }}>
+                          { terminal.type === 'arrival' ? 'call_received' : 'call_made' }
+                        </FontIcon>
+                      </div>
+                      <div className={s.linkTransport}>{ intl.formatMessage(msgTransport[terminal.transport]) }</div>
                     </div>
-                    <div className={s.time}>
-                      { new Date(terminal.time).toISOString().substring(11, 16) }
+                    <div className={s.linkInfo}>
+                      <div className={s.dateTime}>
+                        <div className={s.date}>
+                          { new Date(terminal.date).toISOString().substring(0, 10) }
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  {
+                    (terminal.transportId || terminal.linkedTerminal.transportId) &&
+                      <div className={s.linkHeaderBottomRow}>
+                        <div className={s.linkId}>
+                          { terminal.transportId || terminal.linkedTerminal.transportId }
+                        </div>
+                      </div>
+                  }
                 </div>
+                {
+                  isSelected &&
+                    <div className={s.listLinkContent}>
+                      <div className={s.terminalFromTo}>
+                        <div className={s.terminalTimes}>
+                          <div className={s.departureTime}>
+                            { getDateTimeStr(fromTerminal) }
+                          </div>
+                          <div className={s.duration}>
+                            { getTripDuration(terminal) }
+                          </div>
+                          <div className={s.arrivalTime}>
+                            { getDateTimeStr(toTerminal) }
+                          </div>
+                        </div>
+                        <div className={s.terminalAddresses}>
+                          <div className={s.terminalFrom}>
+                            <div className={s.terminalAddressContainer}>
+                              <p className={s.terminalAddress}>
+                                <span className={s.terminalAddressHeader}>
+                                  FROM
+                                </span>
+                                <Link to={`/check-in/${fromTerminal.checkInUuid}`}>
+                                  { fromTerminal.formattedAddress }
+                                </Link>
+                              </p>
+                            </div>
+                          </div>
+                          <div className={s.terminalTo}>
+                            <div className={s.terminalAddressContainer}>
+                              <p className={s.terminalAddress}>
+                                <span className={s.terminalAddressHeader}>
+                                  TO
+                                </span>
+                                <Link to={`/check-in/${toTerminal.checkInUuid}`}>
+                                  { toTerminal.formattedAddress }
+                                </Link>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={s.terminalPriceDescription}>
+                        <p>
+                          {
+                            (terminal.priceAmount || terminal.linkedTerminal.priceAmount) &&
+                              <span>
+                                <span className={s.label}>Price:</span>
+                                <span className={s.content}>{ terminal.priceAmount || terminal.linkedTerminal.priceAmount } { terminal.priceCurrency } </span> :
+                              </span>
+                          }
+                          {
+                            (terminal.description || terminal.linkedTerminal.description) &&
+                              <span>
+                                <span className={s.label}>Description:</span>
+                                <span className={s.content}>{ terminal.description || terminal.linkedTerminal.description }</span>
+                              </span>
+                          }
+                        </p>
+                      </div>
+                      {
+                        (terminal.tags && terminal.tags.length > 0) &&
+                        <div className={s.terminalTags}>
+                          {
+                            (terminal.tags || []).map(tag => {
+                              return (
+                                <div className={s.terminalTag}>
+                                  #<Link
+                                  to={`/links?tag=${tag.tag}&user=${tag.userUuid}`}>{tag.tag}</Link>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
+                      }
+                    </div>
+                }
               </div>
             );
           })
@@ -685,12 +874,14 @@ const renderLinksList = (linksResult, transportTypes, linkMode, intl) => {
 
 };
 
-const LinksView = ({
-  intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, viewMode, linkMode,
-  mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated,
-  selectedTransportTypes, selectedLocality, selectedLinkedLocality,
-  getLinks, setProperty, navigate
-}) => {
+const LinksView = (props) => {
+
+  const {
+    intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, viewMode, linkMode,
+    mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated,
+    selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag,
+    getLinks, setProperty, navigate
+  } = props;
 
   let displayLinksResult = linksResult || [];
   let displayLinks = displayLinksResult.links;
@@ -745,8 +936,6 @@ const LinksView = ({
   }
    */
 
-  console.log('disp links', displayLinks);
-
   const showControls = displayLinks.length === 1 &&
     (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals || displayLinks[0].length > 0) && (displayLinks[0].internal || []).length > 0;
   let actualLinkMode = linkMode;
@@ -787,7 +976,7 @@ const LinksView = ({
       mapContent = renderLocationsMap(displayLinks, onSelectLocality);
       listContent = renderLocationsList(displayLinks, selectedTransportTypes, onSelectLocality);
     }
-  } else {
+  } else if (searchResultType === 'links') {
     searchHeader = (
       <div className={s.linksListHeader}>
         <div className={s.locality}>{ displayLinksResult.locality }</div>
@@ -816,8 +1005,28 @@ const LinksView = ({
         </div>
       </div>
     );
-    mapContent = renderLinksMap(displayLinksResult, selectedTransportTypes, actualLinkMode, onHighlightConnection, onSelectConnection, intl);
-    listContent = renderLinksList(displayLinksResult, selectedTransportTypes, actualLinkMode, intl);
+    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
+    listContent = renderLinksList(props);
+  } else {
+    console.log('render tag links', displayLinksResult);
+    searchHeader = (
+      <div className={s.taggedListHeader}>
+        <div className={s.tag}>#{ selectedTag }</div>
+        <div className={s.undo}>
+          <Link to={
+            getNavigationQuery({
+              transportTypes: selectedTransportTypes
+            })
+          }>
+            <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
+              clear
+            </FontIcon>
+          </Link>
+        </div>
+      </div>
+    );
+    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
+    listContent = renderLinksList(props);
   }
 
 
@@ -1002,6 +1211,8 @@ export default injectIntl(
       searchTerm: state.links.searchTerm,
       selectedLocality: state.links.selectedLocality,
       selectedLinkedLocality: state.links.selectedLinkedLocality,
+      selectedTag: state.links.selectedTag,
+      selectedTerminal: state.links.selectedTerminal,
       mapZoom: state.links.mapZoom,
       selectedLink: state.links.selectedLink,
       showTransportTypes: state.links.showTransportTypes,

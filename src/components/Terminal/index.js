@@ -1,14 +1,9 @@
 import React from 'react';
-import cx from 'classnames';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { navigate } from '../../actions/route'
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { extractLinkAreas, getDateString, getTimeString } from '../utils';
+import { getDateString, getTimeString } from '../utils';
 import s from './Terminal.css';
-import FontIcon from 'material-ui/FontIcon';
-import { setProperty } from "../../actions/properties";
-import { getFeedItem } from "../../actions/posts";
 
 import terminalMsg from '../EditCheckInItem/messages.terminal';
 import Link from '../Link';

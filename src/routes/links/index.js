@@ -16,8 +16,6 @@ export default {
     const paramsString = createParamString(query);
     const { graphqlRequest } = context.store.helpers;
 
-    console.log('LINKS ROUTE', query, paramsString);
-
     try {
 
       const { data } = await graphqlRequest(
@@ -60,7 +58,8 @@ export default {
                   formattedAddress,
                   description
                 }
-                route { lat, lng }
+                route { lat, lng },
+                tags { tag, userUuid }
               },
               arrivals {
                 type,
@@ -92,7 +91,8 @@ export default {
                   formattedAddress,
                   description
                 }
-                route { lat, lng }
+                route { lat, lng },
+                tags { tag, userUuid }
               },
               internal {
                 latitude,
@@ -143,7 +143,8 @@ export default {
                 linkedLocalityLatitude,
                 linkedLocalityLongitude,
                 linkCount
-              }
+              },
+              tags { tag, userUuid }
             }
           },
           transportTypes { slug }

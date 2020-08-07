@@ -57,7 +57,6 @@ export default {
       raw: true
     });
 
-    console.log('got linked', linkedLocalities);
     return linkedLocalities.map(loc => loc.linkedLocality);
 
   },

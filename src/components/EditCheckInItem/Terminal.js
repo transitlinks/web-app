@@ -32,7 +32,7 @@ const labels = {
 
 const Terminal = ({
   intl, checkIn, transportTypes, openTerminals, type, editTerminal,
-  saveDisabled, setProperty, saveTerminal
+  saveDisabled, setProperty, saveTerminal, terminalInputErrors
 }) => {
 
   const transportOptions = transportTypes.map(type => (
@@ -53,12 +53,11 @@ const Terminal = ({
   const typedOpenTerminals = openTerminals.filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival') && terminal.checkIn.uuid !== checkIn.uuid));
 
   const openTerminalOptions = typedOpenTerminals.map(terminal => {
-
     const menuItemLabel = (
       <div className={s.terminalMenuItemLabel}>
         <div className={s.itemLabelRow}>
           <div className={s.terminalTransport}>
-            { intl.formatMessage(msg[terminal.transport]) }
+            { terminal.transport && intl.formatMessage(msg[terminal.transport]) }
           </div>
           <p className={s.terminalTransportId}>
             { terminal.transportId }
@@ -101,6 +100,13 @@ const Terminal = ({
 
   const save = () => {
 
+    if (!editTerminal.transport && !linkedTerminal) {
+      setProperty('editTerminal.terminalInputErrors', {
+        transport: 'empty'
+      });
+      return;
+    }
+
     const editedTerminal = {
       uuid: editTerminal.uuid,
       checkInUuid: checkIn.uuid,
@@ -115,8 +121,8 @@ const Terminal = ({
       editedTerminal.priceAmount = parseFloat(editTerminal.priceAmount);
     }
 
-    if (editTerminal.date) editedTerminal.date = (new Date(editTerminal.date) || now).toISOString();
-    if (editTerminal.time) editedTerminal.time = (new Date(editTerminal.time) || now).toISOString();
+    editedTerminal.date = (editTerminal.date ? new Date(editTerminal.date) : now).toISOString();
+    editedTerminal.time = (editTerminal.time ? new Date(editTerminal.time) : now).toISOString();
 
 
     if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
@@ -201,7 +207,11 @@ const Terminal = ({
                                  floatingLabelFixed
                                  floatingLabelText="Transport"
                                  hintText="Select type"
-                                 onChange={(event, index, value) => setTerminalProperty('transport', value)}>
+                                 errorText={(terminalInputErrors && terminalInputErrors.transport) && 'Select transport'}
+                                 onChange={(event, index, value) => {
+                                   setProperty('editTerminal.terminalInputErrors', null);
+                                   setTerminalProperty('transport', value);
+                                 }}>
                       {transportOptions}
                     </SelectField>
                   </div>
@@ -294,7 +304,8 @@ export default injectIntl(
   connect(state => ({
     terminalProperties: state.editTerminal.terminalProperties || {},
     editTerminal: state.editTerminal.terminal || {},
-    saveDisabled: state.editTerminal.saveDisabled
+    saveDisabled: state.editTerminal.saveDisabled,
+    terminalInputErrors: state.editTerminal.terminalInputErrors,
   }), {
     setProperty, saveTerminal
   })(withStyles(s)(Terminal))

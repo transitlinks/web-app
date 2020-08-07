@@ -23,6 +23,7 @@ import {
 } from 'graphql';
 
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
+import tagRepository from '../source/tagRepository';
 
 
 export const TransitLinkMutationFields = {
@@ -123,6 +124,20 @@ const findRoutePoints = async (terminals) => {
   }
 };
 
+const findTags = async (terminals) => {
+  const allTags = [];
+  for (let i = 0; i < terminals.length; i++) {
+    const terminal = terminals[i];
+    const { linkedTerminal } = terminal;
+    const checkInIds = [terminal.checkInId];
+    if (linkedTerminal) checkInIds.push(linkedTerminal.checkInId);
+    const tags = await tagRepository.getTagsByCheckInIds(checkInIds);
+    allTags.push(...tags);
+    terminal.tags = tags;
+  }
+  return allTags;
+};
+
 export const TransitLinkQueryFields = {
 
   transitLinks: {
@@ -217,11 +232,12 @@ export const TransitLinkQueryFields = {
               arrivalLinks.push(await getLinkedLocalityInfo(locality, linkedArrivalLocalities[i], 'arrival'));
             }
 
-            console.log('DEP AND ARR LINKS', departureLinks, arrivalLinks);
             const terminal = await terminalRepository.getTerminal({ locality });
 
             const departures = departureLinks.map(dep => dep.terminal);
             const arrivals = arrivalLinks.map(arr => arr.terminal);
+
+            const tags = await tagRepository.getLatestTagsByLocality(locality, 14);
 
             linkStats.push({
               locality,
@@ -232,7 +248,8 @@ export const TransitLinkQueryFields = {
               departures,
               arrivals,
               linkedDepartures: departures.map(dep => ({ linkedLocality: dep.linkedTerminal.locality })),
-              linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality }))
+              linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality })),
+              tags
             });
 
           }
@@ -259,6 +276,9 @@ export const TransitLinkQueryFields = {
           await findRoutePoints(departures);
           await findRoutePoints(arrivals);
           await findRoutePoints(internal);
+          let allTags = await findTags(departures);
+          allTags = allTags.concat(await findTags(arrivals));
+
           let terminal = null;
           if (departures.length > 0) terminal = departures[0];
           if (arrivals.length > 0) terminal = arrivals[0];
@@ -270,7 +290,8 @@ export const TransitLinkQueryFields = {
               longitude: terminal.longitude,
               departures,
               arrivals,
-              internal
+              internal,
+              tags: allTags
             });
           }
         }
