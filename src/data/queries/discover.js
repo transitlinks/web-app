@@ -46,7 +46,7 @@ const getLocalityDiscovery = async (locality, request) => {
 
   const connectionsFrom = await postRepository.getConnectionsByLocality(locality, 'arrival');
   const connectionsTo = await postRepository.getConnectionsByLocality(locality, 'departure');
-  const firstCheckIn = await postRepository.getCheckIn({ locality }, { order: [['createdAt', 'desc']] });
+  const firstCheckIn = await checkInRepository.getCheckInWithPostsByLocality(locality);
   const checkInCount = await postRepository.getCheckInCount(locality);
   const postCount = await postRepository.getPostCountByLocality(locality);
 

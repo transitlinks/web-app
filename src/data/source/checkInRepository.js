@@ -29,6 +29,19 @@ export default {
 
   },
 
+  getCheckInWithPostsByLocality: async (locality) => {
+
+    let query = `SELECT ci.* FROM "CheckIn" ci, "Post" p, "MediaItem" mi WHERE ci."locality" = '${locality}' AND ci."id" = p."checkInId"`;
+    let checkIns = await sequelize.query(query + ' AND mi."entityUuid" = p."uuid"::varchar', { model: CheckIn, mapToModel: true });
+    if (checkIns.length === 0) {
+      checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
+    }
+    if (checkIns.length === 0) return null;
+
+    return checkIns[0];
+
+  },
+
   getCheckIns: async (where, options = {}) => {
 
     const checkIns = await CheckIn.findAll({

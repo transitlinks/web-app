@@ -15,7 +15,18 @@ import msg from './messages';
 const PostCollection = ({ transportTypes, groupName, posts, postCount, env, children, intl }) => {
 
   if (posts.length === 0) {
-    return null;
+    return (
+      <div className={s.secondaryPosts}>
+        <div className={s.secondaryPost}>
+          <div className={s.postCount}>
+            <Link to={`/?locality=${groupName}`}>
+              <div>{ postCount }</div>
+              <div>posts</div>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   let secondaryPosts = [];
@@ -51,14 +62,16 @@ const PostCollection = ({ transportTypes, groupName, posts, postCount, env, chil
     );
   } else {
     secondaryPostsElem = (
-      <div>
+      <div className={s.secondaryPosts}>
       </div>
     );
   }
 
-  if (posts.length === 0) {
+  console.log('discoveeeeer', secondaryPosts, secondaryPosts.length === 0, posts, secondaryPostsElem);
+  if (secondaryPosts.length === 0) {
     return (
-      <div></div>
+      <div className={s.secondaryPosts}>
+      </div>
     );
   }
 
@@ -71,7 +84,7 @@ const PostCollection = ({ transportTypes, groupName, posts, postCount, env, chil
   );
 
   const mainPost = posts.length > 1 ? posts[1] : posts[0];
-
+  console.log('RETURN', secondaryPostsElem);
 	return (
     <div className={s.postCollection}>
       { secondaryPostsElem }
