@@ -472,6 +472,10 @@
   align-items: flex-end;
 }
 
+.linkPopup {
+  max-width: 320px;
+}
+
 .linkPopup .route {
 }
 
@@ -624,7 +628,7 @@
 .linksList .listLink {
 }
 
-.linksList .listLink .listLinkContent {
+.listLinkContent {
   padding-bottom: 6px;
   padding-left: 6px;
   padding-right: 6px;
@@ -717,20 +721,20 @@
 }
 
 
-.linksList .listLink .listLinkHeader {
+.listLinkHeader {
   border-top: 1px solid #e0e0e0;
   padding-left: 6px;
   padding-right: 6px;
 }
 
-.linksList .listLink .listLinkHeader .linkHeaderTopRow {
+.listLinkHeader .linkHeaderTopRow {
   display: flex;
   align-items: center;
   flex: 1 1 100%;
   justify-content: space-between;
 }
 
-.linksList .listLink .listLinkHeader .linkTypeAndTransport {
+.listLinkHeader .linkTypeAndTransport {
   display: flex;
   align-items: center;
   padding-left: 4px;
@@ -739,16 +743,16 @@
   margin-bottom: 3px;
 }
 
-.linksList .listLink .listLinkHeader .linkTypeAndTransport .linkType {
+.listLinkHeader .linkTypeAndTransport .linkType {
   margin-top: 6px;
   margin-right: 2px;
 }
 
-.linksList .listLink .listLinkHeader .linkTypeAndTransport .linkTransport {
+.listLinkHeader .linkTypeAndTransport .linkTransport {
 
 }
 
-.linksList .listLink .listLinkHeader .linkId {
+.listLinkHeader .linkId {
   font-size: 14px;
   white-space: nowrap;
   border: 1px solid black;
@@ -760,32 +764,33 @@
   background-color: #ffffff;
 }
 
-..linksList .listLink .listLinkHeader .linkInfo {
+.listLinkHeader .linkInfo {
   display: flex;
   justify-content: flex-end;
 }
 
-.linksList .listLink .listLinkHeader .linkHeaderBottomRow {
+.listLinkHeader .linkHeaderBottomRow {
   display: flex;
   padding-bottom: 6px;
 }
 
-.linksList .listLink .listLinkHeader .dateTime {
+.listLinkHeader .dateTime {
   display: flex;
   font-size: 14px;
 }
 
-.linksList .listLink .listLinkHeader .dateTime .date {
+.listLinkHeader .dateTime .date {
   margin-left: 2px;
   margin-right: 2px;
 }
 
-.linksList .listLink .listLinkHeader .dateTime .time {
+.listLinkHeader .dateTime .time {
   margin-left: 2px;
   margin-right: 2px;
+  font-weight: bold;
 }
 
-.linksList .listLink .linkAddress {
+.linkAddress {
 
 }
 

@@ -319,7 +319,7 @@ export const TransitLinkQueryFields = {
             query.userId = userId;
           }
 
-          const departures = await terminalRepository.getTerminals(query);
+          const departures = (await terminalRepository.getTerminals(query)).map(departure => departure.json());
           await findRoutePoints(departures);
           let terminal = null;
           if (departures.length > 0) terminal = departures[0];
@@ -328,7 +328,7 @@ export const TransitLinkQueryFields = {
               locality: terminal.locality,
               latitude: terminal.latitude,
               longitude: terminal.longitude,
-              departures: departures.map(departure => departure.json()),
+              departures,
               arrivals: [],
               internal: []
             });

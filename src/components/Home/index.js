@@ -79,6 +79,7 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
           <div className={s.tagName}>#{tags}</div>
         </div>
       );
+      directionsUrl = '/links?tag=' + tags;
     }
 
     return (
