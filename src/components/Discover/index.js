@@ -55,6 +55,7 @@ const DiscoverView = ({
     const frameId = `discover-${index}`;
 
     const { posts, feedItem } = discovery;
+    const actualFeedItem = fetchedFeedItems[frameId] || feedItem;
 
     return (
       <div key={frameId} className={s.discoveryItem}>
@@ -79,10 +80,10 @@ const DiscoverView = ({
         </div>
         <div className={s.postSummary}>
           <div className={s.left}>
-            <CheckInItem checkInItem={fetchedFeedItems[frameId] || feedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+            <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
           </div>
           <div className={s.right}>
-            <PostCollection groupName={discovery.groupName} posts={posts} postCount={discovery.postCount} frameId={frameId} transportTypes={transportTypes} />
+            <PostCollection discovery={discovery} checkInItem={actualFeedItem} posts={posts} frameId={frameId} transportTypes={transportTypes} />
           </div>
         </div>
       </div>
@@ -122,7 +123,7 @@ const DiscoverView = ({
               </div>
           }
           <div className={s.right}>
-            <PostCollection groupName={discovery.groupName} posts={posts} postCount={discovery.postCount} frameId={frameId} transportTypes={transportTypes} />
+            <PostCollection discovery={discovery} checkInItem={actualFeedItem} posts={posts} frameId={frameId} transportTypes={transportTypes} />
           </div>
         </div>
       </div>
@@ -158,7 +159,7 @@ const DiscoverView = ({
           {
             actualFeedItem && <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
           }
-          <PostCollection groupName={discovery.groupName} posts={posts} frameId={frameId} transportTypes={transportTypes} />
+          <PostCollection discovery={discovery} checkInItem={actualFeedItem} posts={posts} frameId={frameId} transportTypes={transportTypes} />
         </div>
       </div>
     )

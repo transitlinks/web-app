@@ -12,9 +12,13 @@ import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const PostCollection = ({ transportTypes, groupName, posts, postCount, env, children, intl }) => {
+const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, children, intl }) => {
 
-  if (posts.length === 0) {
+  const { groupName, postCount } = discovery;
+
+  const secondaryPosts = posts.filter(post => (checkInItem.posts || []).map(post => post.uuid).indexOf(post.uuid) === -1);
+
+  if (secondaryPosts.length === 0) {
     return (
       <div className={s.secondaryPosts}>
         <div className={s.secondaryPost}>
@@ -27,13 +31,6 @@ const PostCollection = ({ transportTypes, groupName, posts, postCount, env, chil
         </div>
       </div>
     );
-  }
-
-  let secondaryPosts = [];
-  if (posts.length < 3) {
-    secondaryPosts = posts.slice(0, 2);
-  } else {
-    secondaryPosts = posts.slice(1, 3);
   }
 
   let secondaryPostsElem = null;
