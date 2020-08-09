@@ -16,7 +16,7 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
 
   const { groupName, postCount } = discovery;
 
-  const secondaryPosts = posts.filter(post => (checkInItem.posts || []).map(post => post.uuid).indexOf(post.uuid) === -1);
+  const secondaryPosts = posts.filter(post => ((checkInItem && checkInItem.posts) || []).map(post => post.uuid).indexOf(post.uuid) === -1);
 
   if (secondaryPosts.length === 0) {
     return (
@@ -64,7 +64,6 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
     );
   }
 
-  console.log('discoveeeeer', secondaryPosts, secondaryPosts.length === 0, posts, secondaryPostsElem);
   if (secondaryPosts.length === 0) {
     return (
       <div className={s.secondaryPosts}>
@@ -72,16 +71,6 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
     );
   }
 
-
-  const { formattedAddress } = posts[0].checkIn;
-  const mainPostHeader = (
-    <div className={s.mainPostHeader}>
-      { formattedAddress }
-    </div>
-  );
-
-  const mainPost = posts.length > 1 ? posts[1] : posts[0];
-  console.log('RETURN', secondaryPostsElem);
 	return (
     <div className={s.postCollection}>
       { secondaryPostsElem }

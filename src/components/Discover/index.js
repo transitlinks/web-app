@@ -18,7 +18,6 @@ const DiscoverView = ({
   discover, searchTerm, fetchedFeedItems, loadedDiscover, transportTypes
 }) => {
 
-  console.log(discover, loadedDiscover);
   let discoveries = (loadedDiscover || discover).discoveries;
 
   const renderTerminalsList = (terminalType, locations, groupName) => {
@@ -222,7 +221,6 @@ DiscoverView.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 export default injectIntl(
   connect(state => {
-    console.log('state discover', state.discover.discover);
     return {
       loadedDiscover: state.discover.discover,
       searchTerm: state.discover.searchTerm,

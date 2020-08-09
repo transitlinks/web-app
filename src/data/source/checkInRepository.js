@@ -31,10 +31,12 @@ export default {
 
   getCheckInWithPostsByLocality: async (locality) => {
 
-    let query = `SELECT ci.* FROM "CheckIn" ci, "Post" p, "MediaItem" mi WHERE ci."locality" = '${locality}' AND ci."id" = p."checkInId"`;
-    let checkIns = await sequelize.query(query + ' AND mi."entityUuid" = p."uuid"::varchar', { model: CheckIn, mapToModel: true });
+    let queryWithPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p, "MediaItem" mi WHERE ci."locality" = '${locality}' AND ci."id" = p."checkInId" AND mi."entityUuid" = p."uuid"::varchar`;
+    let queryWithoutPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p WHERE ci."locality" = '${locality}' AND ci."id" = p."checkInId"`;
+
+    let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
     if (checkIns.length === 0) {
-      checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
+      checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
     }
     if (checkIns.length === 0) return null;
 
@@ -152,29 +154,33 @@ export default {
     return checkInCount[0].count;
   },
 
-  getTaggedCheckIns: async (query, options) => {
+  getTaggedCheckIns: async (tag, options) => {
 
-    const { tags, userId } = query;
-    const valueTags = await Tag.findAll({
-      where: { value: { $in: tags } }
-    });
+    let queryWithPhotos = `
+        SELECT ci.*
+            FROM "CheckIn" ci, "Post" p, "Tag" t, "EntityTag" et, "MediaItem" mi
+        WHERE t."value" = '${tag}' AND
+            ci."id" = p."checkInId" AND
+            et."checkInId" = ci."id" AND
+            et."tagId" = t."id" AND
+            mi."entityUuid" = p."uuid"::varchar
+        GROUP BY ci."id"`;
 
-    const valueTagIds = valueTags.map(tag => tag.id);
-    const entityTags = await EntityTag.findAll({ where: { tagId: { $in: valueTagIds } } });
-    const checkInIds = entityTags.map(entityTag => entityTag.checkInId);
-    const where = { id: { $in: checkInIds } };
-    if (userId) where.userId = userId;
+    let queryWithoutPhotos = `
+        SELECT ci.*
+            FROM "CheckIn" ci, "Post" p, "Tag" t, "EntityTag" et
+        WHERE t."value" = '${tag}' AND
+            ci."id" = p."checkInId" AND
+            et."checkInId" = ci."id" AND
+            et."tagId" = t."id"
+        GROUP BY ci."id"`;
 
-    console.log('query tagged checkins', where, options);
-    const taggedCheckIns = await CheckIn.findAll({
-      where,
-      ...options,
-      include: {
-        all: true
-      }
-    });
+    let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
+    if (checkIns.length === 0) {
+      checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
+    }
 
-    return taggedCheckIns;
+    return checkIns;
 
   },
 
