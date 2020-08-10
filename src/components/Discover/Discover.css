@@ -349,7 +349,7 @@
 
   .secondaryPosts .secondaryPost {
     width: 100%;
-    max-height: 33%;
+    max-height: 200px;
     align-items: center;
     margin-bottom: 1px;
     overflow: hidden;
