@@ -44,7 +44,11 @@ export default {
   getLocalityCountByTag: async (tag) => {
     let query = `SELECT COUNT(DISTINCT et."locality") FROM "EntityTag" et, "Tag" t WHERE et."tagId"= t.id AND t."value" = '${tag}'`;
     const localityCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return localityCount.count;
+    if (localityCount.length === 1) {
+      return localityCount[0].count;
+    } else {
+      return -1;
+    }
   },
 
   getLocalitiesByTag: async (tag, limit) => {

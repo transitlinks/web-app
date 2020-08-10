@@ -174,8 +174,47 @@
   justify-content: center;
 }
 
-.secondaryPosts .secondaryPost .postCount {
+.secondaryPosts .secondaryPost .discoveryStats {
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.discoveryStats .discoveryStatItem {
+  border-radius: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.discoveryStats .discoveryStatItem .discoveryStatIconAndNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 2px;
+}
+
+.discoveryStats .discoveryStatItem .discoveryStatIconAndNumber .discoveryStatIcon {
+  margin-right: 2px;
+  height: 24px;
+}
+
+.discoveryStats .discoveryStatItem .discoveryStatIconAndNumber .discoveryStatNumber {
+  margin-top: -2px;
+  font-size: 19px;
+}
+
+.discoveryStats .discoveryStatItem .discoveryStatIconAndNumber .discoveryStatNumber a {
+  color: black;
+}
+
+.discoveryStats .discoveryStatItem .discoveryStatText {
+  margin-top: -2px;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-bottom: 2px;
+  justify-content: center;
+  display: none;
 }
 
 .secondaryPosts .lastFrame {
@@ -285,6 +324,10 @@
 
   .postSummary .right {
     flex: 1;
+  }
+
+  .discoveryStats .discoveryStatItem .discoveryStatText {
+    display: flex;
   }
 
 }

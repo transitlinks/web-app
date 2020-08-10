@@ -128,7 +128,11 @@ export default {
   getTerminalCountByLocality: async (locality) => {
     const query = `SELECT count(id) FROM "Terminal" WHERE "locality" = '${locality}' AND "linkedLocality" != "locality"`;
     const terminalCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return terminalCount.count;
+    if (terminalCount.length === 1) {
+      return terminalCount[0].count;
+    } else {
+      return -1;
+    }
   },
 
   saveTerminal: async (terminal) => {

@@ -156,6 +156,24 @@ export default {
 
   getTaggedCheckIns: async (tag, options) => {
 
+    let queryWithoutPhotos = `
+        SELECT ci.*
+            FROM "CheckIn" ci, "Post" p, "Tag" t, "EntityTag" et
+        WHERE t."value" = '${tag}' AND
+            ci."id" = p."checkInId" AND
+            et."checkInId" = ci."id" AND
+            et."tagId" = t."id"
+        GROUP BY ci."id"
+        ORDER BY ci."createdAt" DESC`;
+
+    const checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
+
+    return checkIns;
+
+  },
+
+  getTaggedCheckInWithPhotos: async (tag, options) => {
+
     let queryWithPhotos = `
         SELECT ci.*
             FROM "CheckIn" ci, "Post" p, "Tag" t, "EntityTag" et, "MediaItem" mi
@@ -164,7 +182,8 @@ export default {
             et."checkInId" = ci."id" AND
             et."tagId" = t."id" AND
             mi."entityUuid" = p."uuid"::varchar
-        GROUP BY ci."id"`;
+        GROUP BY ci."id"
+        ORDER BY ci."createdAt" DESC`;
 
     let queryWithoutPhotos = `
         SELECT ci.*
@@ -173,7 +192,8 @@ export default {
             ci."id" = p."checkInId" AND
             et."checkInId" = ci."id" AND
             et."tagId" = t."id"
-        GROUP BY ci."id"`;
+        GROUP BY ci."id"
+        ORDER BY ci."createdAt" DESC`;
 
     let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
     if (checkIns.length === 0) {

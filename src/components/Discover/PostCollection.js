@@ -11,10 +11,11 @@ import Link from '../Link';
 
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
+import FontIcon from 'material-ui/FontIcon';
 
 const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, children, intl }) => {
 
-  const { groupName, groupType, postCount } = discovery;
+  const { groupName, groupType, postCount, connectionCount, localityCount, localities, tags } = discovery;
 
   let secondaryPosts = posts.filter(post => ((checkInItem && checkInItem.posts) || []).map(post => post.uuid).indexOf(post.uuid) === -1);
 
@@ -22,13 +23,55 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
   if (groupType === 'tag') postCountUrl = `/?tags=${groupName}`;
   else if (groupType === 'user') postCountUrl = `/?user=${groupName}`;
 
-  const postCountElem = (
+  let connectionCountUrl = `/links?locality=${groupName}`;
+  if (groupType === 'tag') connectionCountUrl = `/links?tag=${groupName}`;
+  else if (groupType === 'user') connectionCountUrl = `/links?user=${groupName}`;
+
+  const discoveryStatsElem = (
     <div className={cx(s.secondaryPost, s.lastFrame)}>
-      <div className={s.postCount}>
-        <Link to={postCountUrl}>
-          <div>{ postCount }</div>
-          <div>posts</div>
-        </Link>
+      <div className={s.discoveryStats}>
+        <div className={s.discoveryStatItem}>
+          <div className={s.discoveryStatIconAndNumber}>
+            <div className={s.discoveryStatIcon}>
+              <FontIcon className="material-icons" style={{ fontSize: '24px' }}>insert_photo</FontIcon>
+            </div>
+            <div className={s.discoveryStatNumber}>
+              <Link to={postCountUrl}> { postCount }</Link>
+            </div>
+          </div>
+          <div className={s.discoveryStatText}>
+            posts
+          </div>
+        </div>
+        <div className={s.discoveryStatItem}>
+          <div className={s.discoveryStatIconAndNumber}>
+            <div className={s.discoveryStatIcon}>
+              <FontIcon className="material-icons" style={{ fontSize: '24px' }}>directions</FontIcon>
+            </div>
+            <div className={s.discoveryStatNumber}>
+              <Link to={connectionCountUrl}> { connectionCount }</Link>
+            </div>
+          </div>
+          <div className={s.discoveryStatText}>
+            connections
+          </div>
+        </div>
+        {
+          groupType === 'tag' &&
+            <div className={s.discoveryStatItem}>
+              <div className={s.discoveryStatIconAndNumber}>
+                <div className={s.discoveryStatIcon}>
+                  <FontIcon className="material-icons" style={{ fontSize: '24px' }}>public</FontIcon>
+                </div>
+                <div className={s.discoveryStatNumber}>
+                  <Link to={postCountUrl}> { localityCount }</Link>
+                </div>
+              </div>
+              <div className={s.discoveryStatText}>
+                places
+              </div>
+            </div>
+        }
       </div>
     </div>
   );
@@ -44,23 +87,23 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
             const { mediaItems } = post;
             return (
               <div key={post.uuid} className={s.secondaryPost}>
-                <img src={env.MEDIA_URL + mediaItems[0].url} width="100%"/>
+                <img src={env.MEDIA_URL + mediaItems[0].url} width="100%" />
               </div>
             );
           })
         }
-        { postCountElem }
+        { discoveryStatsElem }
       </div>
     );
   } else {
     secondaryPostsElem = (
       <div className={s.secondaryPosts}>
-        { postCountElem }
+        { discoveryStatsElem }
       </div>
     );
   }
 
-	return secondaryPostsElem;
+  return secondaryPostsElem;
 
 };
 

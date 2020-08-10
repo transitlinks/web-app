@@ -76,7 +76,7 @@ const getLocalityDiscovery = async (locality, request) => {
 const getTagDiscovery = async (tag, request) => {
 
   const checkInCount = await checkInRepository.getCheckInCountByTag(tag);
-  const taggedCheckIns = await checkInRepository.getTaggedCheckIns(tag, { limit: 1 });
+  const taggedCheckIns = await checkInRepository.getTaggedCheckInWithPhotos(tag);
   const posts = await postRepository.getPostsByTag(tag, 5);
   const postCount = await postRepository.getPostCountByTag(tag);
   const localities = await localityRepository.getLocalitiesByTag(tag, 14);

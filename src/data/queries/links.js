@@ -305,7 +305,7 @@ export const TransitLinkQueryFields = {
 
       } else {
 
-        const taggedCheckIns = await checkInRepository.getTaggedCheckIns({ tags: [tag] }, { order: [[ 'createdAt', 'ASC' ]] });
+        const taggedCheckIns = await checkInRepository.getTaggedCheckIns(tag);
 
         if (taggedCheckIns.length > 0) {
 
