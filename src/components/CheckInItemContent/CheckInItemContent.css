@@ -258,6 +258,7 @@
   width: 100%;
   display: flex;
   margin-bottom: 8px;
+  margin-top: 8px;
   justify-content: flex-end;
 }
 

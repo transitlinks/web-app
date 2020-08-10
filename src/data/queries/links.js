@@ -128,10 +128,19 @@ const findTags = async (terminals) => {
   const allTags = [];
   for (let i = 0; i < terminals.length; i++) {
     const terminal = terminals[i];
+    const tags = await tagRepository.getTagsByCheckInIds([terminal.checkInId]);
     const { linkedTerminal } = terminal;
-    const checkInIds = [terminal.checkInId];
-    if (linkedTerminal) checkInIds.push(linkedTerminal.checkInId);
-    const tags = await tagRepository.getTagsByCheckInIds(checkInIds);
+    if (linkedTerminal) {
+      const linkedTags = await tagRepository.getTagsByCheckInIds([linkedTerminal.checkInId]);
+      tags.push(
+        ...linkedTags.filter(
+          linkedTag => !tags.find(
+            tag => tag.tag === linkedTag.tag && tag.userUuid === linkedTag.userUuid
+          )
+        )
+      );
+    }
+
     allTags.push(...tags);
     terminal.tags = tags;
   }
@@ -270,16 +279,22 @@ export const TransitLinkQueryFields = {
             linkedLocality
           };
 
-          console.log('BASE QUERY', baseQuery);
-
           const locality = localities[0];
           const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality, baseQuery);
           const departures = interTerminals.filter(terminal => terminal.type === 'departure');
           const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
           await findRoutePoints(departures);
           await findRoutePoints(arrivals);
-          let allTags = await findTags(departures);
-          allTags = allTags.concat(await findTags(arrivals));
+          const departureTags = await findTags(departures);
+          const arrivalTags = await findTags(arrivals);
+          const allTags = departureTags;
+          allTags.push(
+            ...arrivalTags.filter(
+              arrTag => !departureTags.find(
+                depTag => depTag.tag === arrTag.tag && depTag.userUuid === arrTag.userUuid
+              )
+            )
+          );
 
           let terminal = null;
           if (departures.length > 0) terminal = departures[0];
