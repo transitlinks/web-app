@@ -295,7 +295,7 @@
   margin-top: -6px;
   margin-bottom: 12px;
   align-items: center;
-  lex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .discoveryTags .label {
