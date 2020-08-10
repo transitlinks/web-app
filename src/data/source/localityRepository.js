@@ -41,6 +41,19 @@ export default {
 
   },
 
+  getLocalityCountByTag: async (tag) => {
+    let query = `SELECT COUNT(DISTINCT et."locality") FROM "EntityTag" et, "Tag" t WHERE et."tagId"= t.id AND t."value" = '${tag}'`;
+    const localityCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return localityCount.count;
+  },
+
+  getLocalitiesByTag: async (tag, limit) => {
+    let query = `SELECT DISTINCT et."locality" FROM "EntityTag" et, "Tag" t WHERE et."tagId"= t.id AND t."value" = '${tag}'`;
+    if (limit) query += ` LIMIT ${limit}`;
+    const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return localities.map(locality => locality.locality);
+  },
+
   getTerminalsByLocality: async (locality) => {
     const query = `SELECT * FROM "Terminal" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') ORDER BY "createdAt" DESC;`;
     const terminals = await sequelize.query(query, { model: Terminal, mapToModel: true });

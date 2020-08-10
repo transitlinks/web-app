@@ -158,9 +158,8 @@
 }
 
 .secondaryPosts {
-  margin-top: 6px;
   padding-top: 4px;
-  padding-left: 6px;
+  padding-left: 1px;
   padding-right: 6px;
   display: flex;
 }
@@ -177,6 +176,9 @@
 
 .secondaryPosts .secondaryPost .postCount {
   text-align: center;
+}
+
+.secondaryPosts .lastFrame {
 }
 
 .terminalSummary {
@@ -253,18 +255,28 @@
   .secondaryPosts {
     flex-direction: column;
     height: 100%;
+    align-items: flex-start;
+    display: flex;
+  }
+
+  .secondaryPosts .lastFrame {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
   }
 
   .secondaryPosts .secondaryPost {
     width: 100%;
-    height: 33%;
+    max-height: 33%;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 1px;
     overflow: hidden;
   }
 
   .postSummary {
     display: flex;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
   .postSummary .left {
@@ -273,10 +285,6 @@
 
   .postSummary .right {
     flex: 1;
-  }
-
-  .postSummary .right > div {
-    height: 100%;
   }
 
 }

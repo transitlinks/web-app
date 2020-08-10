@@ -19,6 +19,13 @@ export const getDiscoveries = (params, reset) => {
               groupName,
               checkInCount,
               postCount,
+              connectionCount,
+              localityCount,
+              localities,
+              tags {
+                tag,
+                userUuid
+              },
               feedItem {
                 checkIn {
                   uuid,

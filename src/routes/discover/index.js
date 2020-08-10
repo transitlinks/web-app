@@ -24,6 +24,13 @@ export default {
               groupName,
               checkInCount,
               postCount,
+              connectionCount,
+              localityCount,
+              localities,
+              tags {
+                tag,
+                userUuid
+              },
               feedItem {
                 checkIn {
                   uuid,

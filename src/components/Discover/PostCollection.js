@@ -14,24 +14,26 @@ import msg from './messages';
 
 const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, children, intl }) => {
 
-  const { groupName, postCount } = discovery;
+  const { groupName, groupType, postCount } = discovery;
 
-  const secondaryPosts = posts.filter(post => ((checkInItem && checkInItem.posts) || []).map(post => post.uuid).indexOf(post.uuid) === -1);
+  let secondaryPosts = posts.filter(post => ((checkInItem && checkInItem.posts) || []).map(post => post.uuid).indexOf(post.uuid) === -1);
 
-  if (secondaryPosts.length === 0) {
-    return (
-      <div className={s.secondaryPosts}>
-        <div className={s.secondaryPost}>
-          <div className={s.postCount}>
-            <Link to={`/?locality=${groupName}`}>
-              <div>{ postCount }</div>
-              <div>posts</div>
-            </Link>
-          </div>
-        </div>
+  let postCountUrl = `/?locality=${groupName}`;
+  if (groupType === 'tag') postCountUrl = `/?tags=${groupName}`;
+  else if (groupType === 'user') postCountUrl = `/?user=${groupName}`;
+
+  const postCountElem = (
+    <div className={cx(s.secondaryPost, s.lastFrame)}>
+      <div className={s.postCount}>
+        <Link to={postCountUrl}>
+          <div>{ postCount }</div>
+          <div>posts</div>
+        </Link>
       </div>
-    );
-  }
+    </div>
+  );
+
+  secondaryPosts = secondaryPosts.slice(0, 2);
 
   let secondaryPostsElem = null;
   if (secondaryPosts.length > 0) {
@@ -47,35 +49,18 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
             );
           })
         }
-        <div className={s.secondaryPost}>
-          <div className={s.postCount}>
-            <Link to={`/?locality=${groupName}`}>
-              <div>{ postCount }</div>
-              <div>posts</div>
-            </Link>
-          </div>
-        </div>
+        { postCountElem }
       </div>
     );
   } else {
     secondaryPostsElem = (
       <div className={s.secondaryPosts}>
+        { postCountElem }
       </div>
     );
   }
 
-  if (secondaryPosts.length === 0) {
-    return (
-      <div className={s.secondaryPosts}>
-      </div>
-    );
-  }
-
-	return (
-    <div className={s.postCollection}>
-      { secondaryPostsElem }
-    </div>
-  );
+	return secondaryPostsElem;
 
 };
 

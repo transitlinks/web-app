@@ -11,6 +11,15 @@ import {
   FeedItemType
 } from "./PostType";
 
+export const DiscoveryTagType = new GraphQLObjectType({
+  name: 'DiscoveryTag',
+  description: 'A tag related to a discovery',
+  fields: () => ({
+    tag: { type: GraphQLString },
+    userUuid: { type: GraphQLString }
+  })
+});
+
 export const DiscoveryItemType = new GraphQLObjectType({
   name: 'DiscoveryItem',
   description: 'Transitlinks Discovery Item object',
@@ -19,8 +28,12 @@ export const DiscoveryItemType = new GraphQLObjectType({
     groupName: { type: GraphQLString },
     checkInCount: { type: GraphQLInt },
     postCount: { type: GraphQLInt },
+    localityCount: { type: GraphQLInt },
+    connectionCount: { type: GraphQLInt },
+    localities: { type: new GraphQLList(GraphQLString) },
     feedItem: { type: FeedItemType },
     posts: { type: new GraphQLList(PostType) },
+    tags: { type: new GraphQLList(DiscoveryTagType) },
     connectionsFrom: { type: new GraphQLList(GraphQLString) },
     connectionsTo: { type: new GraphQLList(GraphQLString) }
   })

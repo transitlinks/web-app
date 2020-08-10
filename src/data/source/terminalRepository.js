@@ -115,6 +115,22 @@ export default {
 
   },
 
+  getTerminalCountByTag: async (tag) => {
+    const query = `SELECT COUNT(t."id") FROM "Terminal" trm, "CheckIn" ci, "EntityTag" et, "Tag" t WHERE et."tagId"= t.id AND ci."id" = et."checkInId" AND trm."checkInId" = ci."id" AND t."value" = '${tag}'`;
+    const terminalCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    if (terminalCount.length === 1) {
+      return terminalCount[0].count;
+    } else {
+      return -1;
+    }
+  },
+
+  getTerminalCountByLocality: async (locality) => {
+    const query = `SELECT count(id) FROM "Terminal" WHERE "locality" = '${locality}' AND "linkedLocality" != "locality"`;
+    const terminalCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return terminalCount.count;
+  },
+
   saveTerminal: async (terminal) => {
 
     if (terminal.uuid) {

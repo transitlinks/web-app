@@ -237,6 +237,9 @@ export const TransitLinkQueryFields = {
             const departures = departureLinks.map(dep => dep.terminal);
             const arrivals = arrivalLinks.map(arr => arr.terminal);
 
+
+            const internal = await terminalRepository.getInternalDeparturesByLocality(locality, baseQuery);
+
             const tags = await tagRepository.getLatestTagsByLocality(locality, 14);
 
             linkStats.push({
@@ -247,6 +250,7 @@ export const TransitLinkQueryFields = {
               arrivalCount: interTerminalCounts.departure || 0,
               departures,
               arrivals,
+              internal,
               linkedDepartures: departures.map(dep => ({ linkedLocality: dep.linkedTerminal.locality })),
               linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality })),
               tags
@@ -272,17 +276,14 @@ export const TransitLinkQueryFields = {
           const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality, baseQuery);
           const departures = interTerminals.filter(terminal => terminal.type === 'departure');
           const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
-          const internal = await terminalRepository.getInternalDeparturesByLocality(locality, transportQuery);
           await findRoutePoints(departures);
           await findRoutePoints(arrivals);
-          await findRoutePoints(internal);
           let allTags = await findTags(departures);
           allTags = allTags.concat(await findTags(arrivals));
 
           let terminal = null;
           if (departures.length > 0) terminal = departures[0];
           if (arrivals.length > 0) terminal = arrivals[0];
-          if (internal.length > 0) terminal = internal[0];
           if (terminal) {
             linkStats.push({
               locality,
@@ -290,7 +291,6 @@ export const TransitLinkQueryFields = {
               longitude: terminal.longitude,
               departures,
               arrivals,
-              internal,
               tags: allTags
             });
           }

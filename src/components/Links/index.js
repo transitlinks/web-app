@@ -425,81 +425,11 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
 
   };
 
-  const departureTerminal = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
-  const arrivalTerminal = terminal.type === 'arrival' ? terminal : terminal.linkedTerminal;
-
   return (
     <div className={s.linkPopup}>
       { renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty, true) }
     </div>
   );
-  /*
-  return (
-    <div className={cx(s.linkInfo, wrapperClass)}>
-      <div className={s.transportRow}>
-        <div className={s.transportType}>
-          { intl.formatMessage(msgTransport[departureTerminal.transport]) }
-        </div>
-        <div className={s.transportId}>
-          {departureTerminal.transportId || arrivalTerminal.transportId}
-        </div>
-      </div>
-      <div className={s.fromRow}>
-        <b>From:</b>&nbsp;
-        <Link to={`/check-in/${departureTerminal.checkInUuid}`}>{departureTerminal.formattedAddress}</Link>
-        {
-          terminal.type === 'arrival' &&
-            <span>&nbsp;[<Link to={
-              getNavigationQuery({
-                locality: departureTerminal.locality,
-                transportTypes
-              })
-            }>{departureTerminal.locality}</Link>]</span>
-        }
-      </div>
-      <div className={s.toRow}>
-        <b>To:</b>&nbsp;
-        <Link to={`/check-in/${arrivalTerminal.checkInUuid}`}>{arrivalTerminal.formattedAddress}</Link>
-        {
-          terminal.type === 'departure' &&
-          <span>&nbsp;[<Link to={
-            getNavigationQuery({
-              locality: arrivalTerminal.locality,
-              transportTypes
-            })
-          }>{arrivalTerminal.locality}</Link>]</span>
-        }
-      </div>
-      {
-        (arrivalTerminal.date || arrivalTerminal.time || departureTerminal.date || departureTerminal.time) &&
-        <div className={s.dateTimeRow}>
-          {[
-            renderDateTime(departureTerminal, 'Departure'),
-            renderDateTime(arrivalTerminal, 'Arrival')
-          ]}
-        </div>
-      }
-      {
-        (departureTerminal.description || arrivalTerminal.description) &&
-        <div className={s.linkDescription}>
-          <p>{departureTerminal.description}</p>
-          <p>{arrivalTerminal.description}</p>
-        </div>
-      }
-      {
-        (departureTerminal.priceAmount || arrivalTerminal.priceAmount) &&
-        <div className={s.linkCost}>
-          <b>Cost:</b>&nbsp;
-          {
-            arrivalTerminal.priceAmount ?
-              <span>{arrivalTerminal.priceAmount} {arrivalTerminal.priceCurrency}</span> :
-              <span>{departureTerminal.priceAmount} {departureTerminal.priceCurrency}</span>
-          }
-        </div>
-      }
-    </div>
-  );
-   */
 
 };
 
@@ -791,9 +721,10 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
 
 };
 
-const renderConnectionsList = (linkStat, transportTypes, linkMode, intl) => {
+const renderConnectionsList = (linkStat, linkMode, props) => {
 
-  const { linkedDepartures, linkedArrivals } = linkStat;
+  const { linkedDepartures, linkedArrivals, internal } = linkStat;
+  const { selectedTransportTypes, selectedTerminal, setProperty, intl } = props;
 
   return (
     <div>
@@ -809,7 +740,13 @@ const renderConnectionsList = (linkStat, transportTypes, linkMode, intl) => {
           </div>
           {
             linkMode === 'internal' ?
-              <div>Internal</div> :
+              <div>
+                {
+                  (internal || []).map(terminal => {
+                    return renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty);
+                  })
+                }
+              </div> :
               <div className={s.localityConnections}>
                 {
                   (linkedArrivals && linkedArrivals.length > 0) &&
@@ -823,7 +760,7 @@ const renderConnectionsList = (linkStat, transportTypes, linkMode, intl) => {
                               getNavigationQuery({
                                 locality: link.linkedLocality,
                                 linkedLocality: linkStat.locality,
-                                transportTypes
+                                transportTypes: selectedTransportTypes
                               })
                             }>
                               { link.linkedLocality }
@@ -846,7 +783,7 @@ const renderConnectionsList = (linkStat, transportTypes, linkMode, intl) => {
                               getNavigationQuery({
                                 locality: linkStat.locality,
                                 linkedLocality: link.linkedLocality,
-                                transportTypes
+                                transportTypes: selectedTransportTypes
                               })
                             }>
                               { link.linkedLocality }
@@ -983,8 +920,8 @@ const LinksView = (props) => {
           </div>
         </div>
       );
-      mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, onHighlightConnection, onSelectConnection, intl);
-      listContent = renderConnectionsList(displayLinks[0], selectedTransportTypes, actualLinkMode, intl);
+      mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
+      listContent = renderConnectionsList(displayLinks[0], actualLinkMode, props);
     } else {
       mapContent = renderLocationsMap(displayLinks, onSelectLocality);
       listContent = renderLocationsList(displayLinks, selectedTransportTypes, onSelectLocality);
@@ -1021,7 +958,6 @@ const LinksView = (props) => {
     mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
     listContent = renderLinksList(props);
   } else {
-    console.log('render tag links', displayLinksResult);
     searchHeader = (
       <div className={s.taggedListHeader}>
         <div className={s.tag}>#{ selectedTag }</div>
@@ -1049,7 +985,6 @@ const LinksView = (props) => {
     defaultCenter: mapCenter,
     defaultZoom: mapZoom ? mapZoom.zoomLevel : 10,
     onMapLoad: (map) => {
-      console.log('on map load');
       if (map) {
         if (mapZoom && mapZoom.updated !== mapBoundsUpdated) {
           console.log('fit bounds', map);
