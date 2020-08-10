@@ -83,6 +83,23 @@ const DiscoverView = ({
               <div className={s.left}>
                 <CheckInItem checkInItem={actualFeedItem} frameId={frameId}
                              transportTypes={transportTypes} target="discover"/>
+                {
+                  (discovery.tags && discovery.tags.length > 0) &&
+                  <div className={s.discoveryTags}>
+                    <div className={s.label}>
+                      <FontIcon className="material-icons" style={{ fontSize: '22px' }}>local_offer</FontIcon>
+                    </div>
+                    {
+                      discovery.tags.map(tag => {
+                        return (
+                          <div className={s.discoveryTag}>
+                            #<Link to={`/?tags=${tag.tag}&user=${tag.userUuid}`}>{ tag.tag }</Link>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                }
               </div>
           }
           <div className={s.right}>
@@ -123,6 +140,23 @@ const DiscoverView = ({
             actualFeedItem &&
               <div className={s.left}>
                 <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+                {
+                  (discovery.localities && discovery.localities.length > 0) &&
+                  <div className={s.discoveryLocalities}>
+                    <div className={s.label}>
+                      <FontIcon className="material-icons" style={{ fontSize: '22px' }}>public</FontIcon>
+                    </div>
+                    {
+                      discovery.localities.map(locality => {
+                        return (
+                          <div className={s.discoveryLocality}>
+                            <Link to={`/?locality=${locality}`}>{ locality }</Link>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                }
               </div>
           }
           <div className={s.right}>
