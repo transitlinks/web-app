@@ -4,7 +4,10 @@
   margin: 0 auto;
   display: block;
   width: 100%;
-  max-width: 460px;
+}
+
+.results {
+
 }
 
 .feedItem {
@@ -35,4 +38,18 @@
 .post .postText {
   padding-left: 6px;
   padding-right: 6px;
+}
+
+@media (min-width: 930px) {
+  .results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .feedItem {
+    margin-left: 4px;
+    margin-right: 4px;
+    width: 460px;
+  }
 }

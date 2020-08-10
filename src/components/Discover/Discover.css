@@ -296,6 +296,7 @@
     height: 100%;
     align-items: flex-start;
     display: flex;
+    max-height: 800px;
   }
 
   .secondaryPosts .lastFrame {
