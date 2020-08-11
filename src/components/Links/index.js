@@ -723,21 +723,13 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
 
 const renderConnectionsList = (linkStat, linkMode, props) => {
 
-  const { linkedDepartures, linkedArrivals, internal } = linkStat;
+  const { departures, arrivals, internal } = linkStat;
   const { selectedTransportTypes, selectedTerminal, setProperty, intl } = props;
 
   return (
     <div>
       {
         <div className={s.linkItem}>
-          <div className={s.inboundOutbound}>
-            <div className={s.inbound}>
-              INBOUND FROM
-            </div>
-            <div className={s.outbound}>
-              OUTBOUND TO
-            </div>
-          </div>
           {
             linkMode === 'internal' ?
               <div>
@@ -747,55 +739,95 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
                   })
                 }
               </div> :
-              <div className={s.localityConnections}>
-                {
-                  (linkedArrivals && linkedArrivals.length > 0) &&
-                  <div className={s.inboundColumn}>
-                    {
-                      linkedArrivals.map(link => {
-                        return (
-                          <div className={s.inOutLocality}>
+              <div>
+                <div className={s.inboundOutbound}>
+                  <div className={s.inbound}>
+                    <div className={s.directionIcon}>
+                      <FontIcon className="material-icons" style={{ fontSize: '20px' }}>
+                        call_received
+                      </FontIcon>
+                    </div>
+                    <div className={s.directionText}>
+                      FROM
+                    </div>
+                  </div>
+                  <div className={s.outbound}>
+                    <div className={s.directionIcon}>
+                      <FontIcon className="material-icons" style={{ fontSize: '20px' }}>
+                        call_made
+                      </FontIcon>
+                    </div>
+                    <div className={s.directionText}>
+                      TO
+                    </div>
+                  </div>
+                </div>
+                <div className={s.localityConnections}>
+                  {
+                    (arrivals && arrivals.length > 0) &&
+                    <div className={s.inboundColumn}>
+                      {
+                        arrivals.map(terminal => {
+                          return (
+                            <div className={s.inOutLocality}>
 
-                            <Link to={
+                              <Link to={
+                                getNavigationQuery({
+                                  locality: terminal.linkedTerminal.locality,
+                                  transportTypes: selectedTransportTypes
+                                })
+                              }>
+                                { terminal.linkedTerminal.locality }
+                              </Link>&nbsp;
+                              (<Link to={
+                                getNavigationQuery({
+                                  locality: terminal.locality,
+                                  linkedLocality: terminal.linkedTerminal.locality,
+                                  transportTypes: selectedTransportTypes
+                                })
+                              }>
+                              &nbsp;{ terminal.linkCount }&nbsp;
+                              </Link>)
+                            </div>
+                          );
+                        })
+                      }
+                    </div>
+
+                  }
+                  {
+                    (departures && departures.length > 0) &&
+                    <div className={s.outboundColumn}>
+                      {
+                        departures.map(terminal => {
+                          return (
+                            <div className={s.inOutLocality}>
+
+                              <Link to={
+                                getNavigationQuery({
+                                  locality: terminal.linkedTerminal.locality,
+                                  transportTypes: selectedTransportTypes
+                                })
+                              }>
+                                { terminal.linkedTerminal.locality }
+                              </Link>&nbsp;
+                              (<Link to={
                               getNavigationQuery({
-                                locality: link.linkedLocality,
-                                linkedLocality: linkStat.locality,
+                                locality: terminal.locality,
+                                linkedLocality: terminal.linkedTerminal.locality,
                                 transportTypes: selectedTransportTypes
                               })
                             }>
-                              { link.linkedLocality }
-                            </Link>
-                          </div>
-                        );
-                      })
-                    }
-                  </div>
-
-                }
-                {
-                  (linkedDepartures && linkedDepartures.length > 0) &&
-                  <div className={s.outboundColumn}>
-                    {
-                      linkedDepartures.map(link => {
-                        return (
-                          <div className={s.inOutLocality}>
-                            <Link to={
-                              getNavigationQuery({
-                                locality: linkStat.locality,
-                                linkedLocality: link.linkedLocality,
-                                transportTypes: selectedTransportTypes
-                              })
-                            }>
-                              { link.linkedLocality }
-                            </Link>
-                          </div>
-                        );
-                      })
-                    }
-                  </div>
-                }
+                              &nbsp;{ terminal.linkCount }&nbsp;
+                            </Link>)
+                            </div>
+                          );
+                        })
+                      }
+                    </div>
+                  }
+                </div>
               </div>
-
           }
         </div>
       }

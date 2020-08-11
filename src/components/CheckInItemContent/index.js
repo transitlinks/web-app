@@ -168,7 +168,7 @@ const CheckInItemContent = ({
                     <div className={s.heart}>
                       {
                         checkIn.likedByUser ?
-                          <FontIcon className="material-icons" style={{ fontSize: '20px' }}
+                          <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'red' }}
                                     onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'off')}>
                             favorite
                           </FontIcon> :

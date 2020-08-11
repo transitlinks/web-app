@@ -153,7 +153,6 @@
 .linkItem .inboundOutbound {
   display: flex;
   font-size: 14px;
-  border-top: 1px solid #a0a0a0;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -163,15 +162,25 @@
   justify-content: center;
   padding-top: 4px;
   padding-bottom: 4px;
-  border-right: 1px solid black;
+  align-items: center;
 }
 
 .inboundOutbound .outbound {
   width: 50%;
   display: flex;
   justify-content: center;
+  flex-direction: row-reverse;
   padding-top: 4px;
   padding-bottom: 4px;
+  align-items: center;
+}
+
+.inboundOutbound .directionIcon {
+  height: 19px;
+}
+
+.inboundOutbound .directionText {
+
 }
 
 .localityConnections {
@@ -185,7 +194,6 @@
 }
 
 .localityConnections .inboundColumn {
-  border-right: 1px solid black;
 }
 
 .localityConnections .outboundColumn {

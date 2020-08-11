@@ -14,7 +14,9 @@ import {
   userRepository,
   linkRepository, checkInRepository,
 } from '../source';
-import { requireOwnership } from './utils';
+import {
+  requireOwnership, throwMustBeLoggedInError,
+} from './utils';
 
 export const CommentQueryFields = {
 
@@ -49,23 +51,29 @@ export const CommentMutationFields = {
 
       log.info(`graphql-request=save-like user=${request.user ? request.user.uuid : null} entityUuid=${entityUuid} entityType=${entityType} onOff=${onOff}`);
 
+      if (!request.user) throwMustBeLoggedInError();
+
       if (entityType === 'CheckIn') {
-        const checkInId = await checkInRepository.getCheckInIdByUuid(entityUuid);
+
+        const checkIn = await checkInRepository.getCheckIn({ uuid: entityUuid });
+        if (!checkIn) throw new Error(`${entityType} not found by uuid ${entityUuid}`);
+
         const userId = await userRepository.getUserIdByUuid(request.user.uuid);
-        if (checkInId && userId) {
+
+        if (checkIn && userId) {
           if (onOff === 'on') {
             await commentRepository.saveLike({
               userId,
-              entityId: checkInId,
+              entityId: checkIn.id,
               entityType
             });
           } else if (onOff === 'off') {
-            await commentRepository.deleteLike(userId, checkInId, entityType);
+            await commentRepository.deleteLike(userId, checkIn.id, entityType);
           }
         }
 
         const likes = await commentRepository.countLikes({
-          entityId: checkInId,
+          entityId: checkIn.id,
           entityType
         });
 
@@ -93,73 +101,10 @@ export const CommentMutationFields = {
     },
     resolve: async ({ request }, { comment }) => {
 
-      const { linkInstanceUuid } = comment;
-      delete comment.linkInstanceUuid;
-      log.info(`graphql-request=save-comment user=${request.user ? request.user.uuid : null} comment-uuid=${comment.uuid} linkInstanceUuid=${linkInstanceUuid}`);
+      const { entity, entityUuid } = comment;
+      log.info(`graphql-request=save-comment user=${request.user ? request.user.uuid : null} comment-uuid=${comment.uuid} entity=${entity} entityUuid=${entityUuid}`);
 
-      if (comment.uuid) {
-
-        let userUuid = null;
-        const existing = commentRepository.getByUuid(comment.uuid);
-        if (comment.userId) {
-          const user = userRepository.getById(comment.userId);
-          userUuid = user.uuid;
-        }
-
-        requireOwnership(request, userUuid);
-
-        const updated = await commentRepository.update(comment);
-        return { ...updated, linkInstanceUuid };
-
-      } else {
-
-        if (request.user) {
-          const user = await userRepository.getByUuid(request.user.uuid);
-          comment.userId = user.id;
-        }
-
-        const linkInstanceId =
-          await linkRepository.getInstanceIdByUuid(linkInstanceUuid);
-        comment.linkInstanceId = linkInstanceId;
-
-        if (comment.replyToUuid) {
-          comment.replyToId =
-            await commentRepository.getIdByUuid(comment.replyToUuid);
-          delete comment.replyToUuid;
-        }
-
-        const created = await commentRepository.create(comment);
-        log.info(`graphql-request=save-comment created-comment-uuid=${created.uuid}`);
-        return { ...created, linkInstanceUuid };
-
-      }
-
-    }
-
-  },
-
-  commentVote: {
-
-    type: CommentVoteType,
-    description: 'Vote on a comment',
-    args: {
-      commentVote: { type: CommentVoteInputType }
-    },
-    resolve: async ({ request }, { commentVote }) => {
-
-      log.info(`graphql-request=comment-vote user=${request.user ? request.user.uuid : null} comment-uuid=${commentVote.uuid}`);
-
-      const comment = await commentRepository.getByUuid(commentVote.uuid);
-
-      const update =
-        commentVote.value < 0 ?
-        { down: comment.down + 1 } :
-        { up: comment.up + 1 };
-
-      update.uuid = commentVote.uuid;
-
-      const updated = await commentRepository.update(update);
-      return { uuid: updated.uuid, up: updated.up, down: updated.down };
+      return {};
 
     }
 

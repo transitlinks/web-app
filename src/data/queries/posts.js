@@ -37,6 +37,10 @@ import {
   GraphQLInt, GraphQLList,
 } from 'graphql';
 
+import {
+  requireOwnership,
+  throwMustBeLoggedInError
+} from './utils';
 
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
 
@@ -48,42 +52,6 @@ const throwPrelaunchError = () => {
       statusCode: 401
     }
   });
-};
-
-const throwMustBeLoggedInError = () => {
-  throw Object.assign(new Error('Not logged in'), {
-    extensions: {
-      name: 'NotLoggedIn',
-      text: 'Please, log in to create content :)',
-      statusCode: 401
-    }
-  });
-};
-
-const requireOwnership = async (request, clientId, entity) => {
-
-  if (!entity.uuid) return null;
-
-  /*
-  if (!request.user || request.user.email !== 'vhalme@gmail.com') {
-    throwPrelaunchError();
-  }
-  */
-
-  let userId = null;
-
-  const adminUser = await userRepository.getByEmail('vhalme@gmail.com');
-  if (request.user) {
-    userId = await userRepository.getUserIdByUuid(request.user.uuid);
-    if (adminUser.id !== userId && entity.userId !== userId) {
-      throw new Error('Access not allowed for user id');
-    }
-  } else if (!(clientId && clientId === entity.clientId)) {
-    throw new Error('Access not allowed for client id');
-  }
-
-  return userId;
-
 };
 
 const getEntityCredentials = async (request, entity) => {
@@ -137,7 +105,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   if (terminalInput.uuid) {
     const savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
-    await requireOwnership(request, clientId, savedTerminal);
+    await requireOwnership(request, savedTerminal, clientId);
   }
 
 
@@ -201,7 +169,7 @@ const savePost = async (postInput, clientId, request) => {
 
   if (postInput.uuid) {
     const savedPost = await postRepository.getPost({ uuid: postInput.uuid });
-    await requireOwnership(request, clientId, savedPost);
+    await requireOwnership(request, savedPost, clientId);
   }
 
   const { checkInUuid } = postInput;
@@ -273,7 +241,7 @@ const deletePost = async (uuid, clientId, request) => {
     throw new Error('Post uuid=' + uuid + ' not found for deletion');
   }
 
-  await requireOwnership(request, clientId, post);
+  await requireOwnership(request, post, clientId);
 
   return await postRepository.deletePost(uuid);
 
@@ -286,7 +254,7 @@ const deleteTerminal = async (uuid, clientId, request) => {
     throw new Error('Terminal uuid=' + uuid + ' not found for deletion');
   }
 
-  await requireOwnership(request, clientId, terminal);
+  await requireOwnership(request, terminal, clientId);
 
   if (terminal.linkedTerminalId) {
     const linkedTerminal = await terminalRepository.getTerminal({ id: terminal.linkedTerminalId });
@@ -311,7 +279,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   let userId = null;
   if (checkInInput.uuid) {
     const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
-    userId = await requireOwnership(request, clientId, savedCheckIn);
+    userId = await requireOwnership(request, savedCheckIn, clientId);
   }
 
   const checkIn = copyNonNull(checkInInput, {}, [
@@ -365,7 +333,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 const deleteCheckIn = async (checkInUuid, clientId, request) => {
 
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-  await requireOwnership(request, clientId, checkIn);
+  await requireOwnership(request, checkIn, clientId);
 
   const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
   const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });
