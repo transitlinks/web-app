@@ -319,24 +319,28 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({
-            loadingFeedItem: 'loading'
+            loadingFeedItem: 'loading',
+            loadingFrameId: action.payload.variables.frameId
           }),
           success: () => {
             let { fetchedFeedItems } = state;
             if (!fetchedFeedItems) fetchedFeedItems = {};
             const { feedItem, variables } = action.payload;
+            feedItem.fetchedAt = (new Date()).getTime();
             fetchedFeedItems[variables.frameId] = feedItem;
             const fetchedFeedItem = variables.frameId === 'frame-edit' ? feedItem : null;
             return {
               fetchedFeedItems,
               fetchedFeedItem,
               loadingFeedItem: 'loaded',
+              loadingFrameId: variables.frameId,
               feedUpdated: (new Date()).getTime()
             };
 
           },
           error: () => ({
             fetchedFeedItems: {},
+            loadingFrameId: action.payload.variables.frameId,
             loadingFeedItem: 'error'
           })
         },

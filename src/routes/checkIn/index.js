@@ -56,11 +56,14 @@ export default {
         log.info("event=received-check-in", "data:", data);
 
         const edit = params.action === 'edit';
+        const { feedItem, transportTypes, openTerminals } = data;
+        feedItem.fetchedAt = (new Date()).getTime();
+
         const props = {
           edit,
-          checkInItem: data.feedItem,
-          transportTypes: data.transportTypes,
-          openTerminals: data.openTerminals
+          feedItem,
+          transportTypes,
+          openTerminals
         };
 
         return <CheckIn {...props} />;

@@ -25,27 +25,33 @@ const typeSelector = (iconName, isSelected, onClick, type) => {
 
 const CheckInItem = (
   {
-    checkInItem, frameId, target, feedProperties, loadingFeedItem,
+    checkInItem, frameId, target, feedProperties, loadingFeedItem, loadingFrameId,
     transportTypes, openTerminals,
     showLinks, showSettings, updateFeedItem, updatedCheckInDate, feedItemIndex, feedItem, fetchedFeedItem,
-    setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn, editable, editCheckIn
+    setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn, editable, editCheckIn, navigate
   }) => {
 
-  const item = (!feedItem && fetchedFeedItem) ? fetchedFeedItem : checkInItem;
+  console.log(feedItem, checkInItem, fetchedFeedItem);
+  let item = checkInItem;
+  if (fetchedFeedItem && fetchedFeedItem.fetchedAt > checkInItem.fetchedAt) {
+    item = fetchedFeedItem;
+  }
 
   const { checkIn, inbound, outbound } = item;
 
   const selectCheckIn = (checkInUuid, frameId) => {
-    getFeedItem(checkInUuid, frameId, target);
+    if (feedItem) getFeedItem(checkInUuid, frameId, target);
+    else navigate({ pathname: `/check-in/${checkInUuid}`});
   };
 
   const getStateClass = (links) => {
 
     if (showLinks === frameId && links.length > 0) {
 
-      if (loadingFeedItem === 'loaded') {
+      if (loadingFeedItem === 'loaded' && loadingFrameId === frameId) {
         setTimeout(() => {
           setProperty('posts.loadingFeedItem', null);
+          setProperty('posts.loadingFrameId', null);
         }, 100);
         return s.closed;
       } else {
@@ -75,6 +81,16 @@ const CheckInItem = (
     if (item.posts.length > 0) contentType = 'reaction';
     else if (departures.length > 0) contentType = 'departure';
     else if (arrivals.length > 0) contentType = 'arrival';
+    else contentType = 'reaction';
+  }
+
+  if (contentType === 'arrival' && arrivals.length === 0) {
+    if (departures.length > 0) contentType = 'departure';
+    else contentType = 'reaction';
+  }
+
+  if (contentType === 'departure' && departures.length === 0) {
+    if (arrivals.length > 0) contentType = 'arrival';
     else contentType = 'reaction';
   }
 
@@ -221,7 +237,14 @@ const CheckInItem = (
       }
 
       {
-        loadingFeedItem !== 'loading' ?
+        (loadingFeedItem === 'loading' && loadingFrameId === frameId) ?
+          <div className={s.loading}>
+            <div className={s.loadingio}>
+              <div className={s.ldio}>
+                <div></div>
+              </div>
+            </div>
+          </div> :
           <div>
             {
               (editable && showSettings) &&
@@ -250,13 +273,6 @@ const CheckInItem = (
                 addTerminalElem :
                 <CheckInItemContent checkInItem={item} feedItemIndex={feedItemIndex} frameId={frameId} contentType={contentType} editPost={{}} editable={editable} />
             }
-          </div> :
-          <div className={s.loading}>
-            <div className={s.loadingio}>
-              <div className={s.ldio}>
-                <div></div>
-              </div>
-            </div>
           </div>
       }
 
@@ -272,6 +288,7 @@ export default connect(state => ({
   showLinks: state.posts.showLinks,
   showSettings: state.posts.showSettings,
   loadingFeedItem: state.posts.loadingFeedItem,
+  loadingFrameId: state.posts.loadingFrameId,
   propertyUpdated: state.posts.propertyUpdated,
   updateFeedItem: state.posts.updateFeedItem,
   updatedCheckInDate: state.posts.updatedCheckInDate,

@@ -16,7 +16,7 @@ class CheckIn extends React.Component {
 
     super(props);
     this.state = {
-      checkInItem: props.checkInItem,
+      checkInItem: props.feedItem,
       updated: 0
     };
 
@@ -29,7 +29,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.disabledTags', []);
     this.props.setProperty('posts.fetchedFeedItem', null);
     this.props.setProperty('posts.checkIn', null);
-    this.props.getFeedItem(this.props.checkInItem.checkIn.uuid, 'frame-edit');
+    this.props.getFeedItem(this.props.feedItem.checkIn.uuid, 'frame-edit');
     this.updateComponent(this.props);
   }
 
@@ -78,7 +78,7 @@ class CheckIn extends React.Component {
     this.context.setTitle(title);
 
     const {
-      checkInItem,
+      feedItem,
       transportTypes,
       openTerminals
     } = this.props;
@@ -86,7 +86,7 @@ class CheckIn extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <CheckInView checkInItem={checkInItem} openTerminals={openTerminals} transportTypes={transportTypes} />
+          <CheckInView checkInItem={feedItem} openTerminals={openTerminals} transportTypes={transportTypes} />
         </div>
       </div>
     );
