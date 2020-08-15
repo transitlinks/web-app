@@ -3,10 +3,8 @@ import {
   GraphQLInputObjectType,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLList,
   GraphQLInt,
-  GraphQLFloat,
-  GraphQLBoolean
+
 } from 'graphql';
 import { UserType } from './UserType';
 
@@ -16,11 +14,11 @@ export const CommentType = new GraphQLObjectType({
   fields: () => ({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
     replyToUuid: { type: GraphQLString },
-    linkInstanceUuid: { type: GraphQLString },
+    checkInUuid: { type: GraphQLString },
+    terminalUuid: { type: GraphQLString },
     text: { type: GraphQLString },
     user: { type: UserType },
-    up: { type: GraphQLInt },
-    down: { type: GraphQLInt },
+    likes: { type: GraphQLInt },
     createdAt: { type: GraphQLString }
   })
 });
@@ -30,7 +28,8 @@ export const CommentInputType = new GraphQLInputObjectType({
   description: 'Input properties for Comment.',
   fields: () => ({
     uuid: { type: GraphQLString },
-    linkInstanceUuid: { type: GraphQLString },
+    checkInUuid: { type: GraphQLString },
+    terminalUuid: { type: GraphQLString },
     replyToUuid: { type: GraphQLString },
     text: { type: GraphQLString }
   })
@@ -47,23 +46,5 @@ export const LikeResultType = new GraphQLObjectType({
   })
 });
 
-export const CommentVoteType = new GraphQLObjectType({
-  name: 'CommentVote',
-  description: 'Info on comment votes',
-  fields: () => ({
-    uuid: { type: new GraphQLNonNull(GraphQLString) },
-    up: { type: GraphQLInt },
-    down: { type: GraphQLInt }
-  })
-});
-
-export const CommentVoteInputType = new GraphQLInputObjectType({
-  name: 'CommentVoteInput',
-  description: 'Input object for comment vote',
-  fields: () => ({
-    uuid: { type: new GraphQLNonNull(GraphQLString) },
-    value: { type: GraphQLInt }
-  })
-});
 
 export default CommentType;
