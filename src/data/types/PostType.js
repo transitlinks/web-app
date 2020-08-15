@@ -4,6 +4,7 @@ import {
   GraphQLFloat,
   GraphQLNonNull, GraphQLInputObjectType, GraphQLInt, GraphQLList, GraphQLBoolean,
 } from 'graphql';
+import CommentType from './CommentType';
 
 export const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -86,21 +87,22 @@ export const CheckInType = new GraphQLObjectType({
   name: 'CheckIn',
   description: 'Transitlinks CheckIn object',
   fields: {
-    uuid: {type: new GraphQLNonNull(GraphQLString)},
-    clientId: {type: GraphQLString},
-    checkInUuid: {type: GraphQLString},
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    clientId: { type: GraphQLString },
+    checkInUuid: { type: GraphQLString },
     user: { type: GraphQLString },
     userUuid: { type: GraphQLString },
     userImage: { type: GraphQLString },
     latitude: {type: GraphQLFloat},
     longitude: {type: GraphQLFloat},
-    placeId: {type: GraphQLString},
-    locality: {type: GraphQLString},
-    country: {type: GraphQLString},
-    formattedAddress: {type: GraphQLString},
-    date: {type: GraphQLString},
-    tags: {type: new GraphQLList(GraphQLString)},
+    placeId: { type: GraphQLString },
+    locality: { type: GraphQLString },
+    country: { type: GraphQLString },
+    formattedAddress: { type: GraphQLString },
+    date: { type: GraphQLString },
+    tags: { type: new GraphQLList(GraphQLString) },
     likes: { type: GraphQLInt },
+    comments: { type: new GraphQLList(CommentType) },
     likedByUser: { type: GraphQLBoolean }
   },
 });

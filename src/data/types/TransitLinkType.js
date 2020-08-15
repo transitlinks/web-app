@@ -7,6 +7,7 @@ import {
   GraphQLList,
   GraphQLFloat, GraphQLInt,
 } from 'graphql';
+import CommentType from './CommentType';
 
 export const LatLngType = new GraphQLObjectType({
   name: 'LatLng',
@@ -49,7 +50,8 @@ export const LinkTerminalType = new GraphQLObjectType({
     linkCount: { type: GraphQLInt },
     reverseLinkCount: { type: GraphQLInt },
     route: { type: new GraphQLList(LatLngType) },
-    tags: { type: new GraphQLList(LinkTagType) }
+    tags: { type: new GraphQLList(LinkTagType) },
+    comments: { type: new GraphQLList(CommentType) }
   })
 });
 
