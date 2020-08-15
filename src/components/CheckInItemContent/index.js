@@ -31,6 +31,7 @@ const CheckInItemContent = ({
   const savedDeparture = savedTerminal && savedTerminal.type === 'departure' ? savedTerminal : null;
 
   let content = null;
+  let comments = null;
 
   const scrollToPost = (postIndex) => {
     setProperty('posts.savedPost', null);
@@ -93,6 +94,8 @@ const CheckInItemContent = ({
         </div>
       );
 
+      comments = checkIn.comments;
+
     } else {
 
       content = null;
@@ -101,8 +104,10 @@ const CheckInItemContent = ({
 
   } else if (contentType === 'arrival' && arrival) {
     content = <Terminal terminal={arrival} />;
+    comments = arrival.comments;
   } else if (contentType === 'departure' && departure) {
     content = <Terminal terminal={departure} />;
+    comments = departure.comments;
   }
 
   const showHeader = content && content.length !== 0;
@@ -208,6 +213,18 @@ const CheckInItemContent = ({
             (checkIn.tags || []).map(tag => (
               <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
             ))
+        }
+      </div>
+      <div className={s.comments}>
+        {
+          (comments && comments.length > 0) &&
+            comments.map(comment => {
+              return (
+                <div className={s.comment}>
+                  { comment.text }
+                </div>
+              );
+            })
         }
       </div>
     </div>

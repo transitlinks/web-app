@@ -37,7 +37,7 @@ const CheckInItem = (
     item = fetchedFeedItem;
   }
 
-  const { checkIn, inbound, outbound } = item;
+  const { checkIn, inbound, outbound, posts } = item;
 
   const selectCheckIn = (checkInUuid, frameId) => {
     if (feedItem) getFeedItem(checkInUuid, frameId, target);
@@ -92,6 +92,11 @@ const CheckInItem = (
   if (contentType === 'departure' && departures.length === 0) {
     if (arrivals.length > 0) contentType = 'arrival';
     else contentType = 'reaction';
+  }
+
+  if (contentType === 'reaction' && posts.length === 0) {
+    if (departures.length > 0) contentType = 'departure';
+    else if (arrivals.length > 0) contentType = 'arrival';
   }
 
   const selectContentType = (value) => {
