@@ -17,6 +17,16 @@ Comment.belongsTo(User, {
   as: 'user'
 });
 
+Comment.belongsTo(CheckIn, {
+  foreignKey: 'checkInId',
+  as: 'checkIn'
+});
+
+Comment.belongsTo(Terminal, {
+  foreignKey: 'terminalId',
+  as: 'terminal'
+});
+
 TransitLink.belongsTo(Locality, {
   foreignKey: 'fromId',
   as: 'from'

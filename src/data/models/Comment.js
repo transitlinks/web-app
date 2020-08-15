@@ -7,7 +7,7 @@ const Comment = Model.define('Comment', {
     type: DataType.INTEGER,
     autoIncrement: true,
     primaryKey: true
-  }, 
+  },
 
   uuid: {
     type: DataType.UUID,
@@ -17,16 +17,6 @@ const Comment = Model.define('Comment', {
 
   text: {
     type: DataType.STRING
-  },
-  
-  up: {
-    type: DataType.INTEGER,
-    defaultValue: 0
-  },
-  
-  down: {
-    type: DataType.INTEGER,
-    defaultValue: 0
   }
 
 }, {
@@ -34,15 +24,15 @@ const Comment = Model.define('Comment', {
   instanceMethods: {
 
     json: function() {
-    
+
       const json = this.toJSON();
       delete json.id;
       delete json.userId;
       delete json.replyToId;
-      
+
       const user = this.get('user');
       if (user) {
-        json.user = user.json();  
+        json.user = user.json();
       }
 
       return json;
