@@ -38,7 +38,13 @@ import {
   DELETE_MEDIAITEM_ERROR,
   SAVE_LIKE_START,
   SAVE_LIKE_SUCCESS,
-  SAVE_LIKE_ERROR, SAVE_COMMENT_START, SAVE_COMMENT_SUCCESS, SAVE_COMMENT_ERROR,
+  SAVE_LIKE_ERROR,
+  SAVE_COMMENT_START,
+  SAVE_COMMENT_SUCCESS,
+  SAVE_COMMENT_ERROR,
+  DELETE_COMMENT_START,
+  DELETE_COMMENT_SUCCESS,
+  DELETE_COMMENT_ERROR
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -78,25 +84,6 @@ export default function reduce(state = {}, action) {
           start: () => ({}),
           success: () => {
 
-            /*
-            const { feed, fetchedFeedItem } = state;
-            if (!feed) return state;
-
-            const { feedItems } = feed;
-            const { entityUuid, entityType, onOff, likes } = action.payload.like;
-
-            const feedItem = feedItems.find(item => item.checkIn.uuid === entityUuid);
-            if (entityType === 'CheckIn' && feedItem) {
-              feedItem.checkIn.likes = likes;
-              feedItem.checkIn.likedByUser = onOff === 'on';
-            }
-
-            if (fetchedFeedItem && fetchedFeedItem.checkIn.uuid === entityUuid) {
-              fetchedFeedItem.checkIn.likes = likes;
-              fetchedFeedItem.checkIn.likedByUser = onOff === 'on';
-            }
-            */
-
             const { like, variables: { frameId, checkInUuid } } = action.payload;
 
             return {
@@ -132,6 +119,25 @@ export default function reduce(state = {}, action) {
         SAVE_COMMENT_START,
         SAVE_COMMENT_SUCCESS,
         SAVE_COMMENT_ERROR
+      );
+    case DELETE_COMMENT_START:
+    case DELETE_COMMENT_SUCCESS:
+    case DELETE_COMMENT_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+            const { deleteComment, variables: { frameId, checkInUuid } } = action.payload;
+            return {
+              deletedComment: { ...deleteComment, frameId, checkInUuid },
+            };
+          },
+          error: () => ({ deletedComment: null })
+        },
+        DELETE_COMMENT_START,
+        DELETE_COMMENT_SUCCESS,
+        DELETE_COMMENT_ERROR
       );
     case GET_POSTS_START:
     case GET_POSTS_SUCCESS:

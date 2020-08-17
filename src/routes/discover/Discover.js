@@ -51,11 +51,25 @@ class Discover extends React.Component {
 
   componentDidUpdate() {
 
-    const { savedComment } = this.props;
+    const { savedComment, deletedComment } = this.props;
     if (savedComment) {
       this.props.setProperty('posts.savedComment', null);
       if (savedComment.checkInUuid) {
         this.props.getFeedItem(savedComment.checkInUuid, savedComment.frameId, true);
+      }
+    }
+    if (deletedComment) {
+      this.props.setProperty('posts.deletedComment', null);
+      if (deletedComment.checkInUuid) {
+        this.props.getFeedItem(deletedComment.checkInUuid, deletedComment.frameId, true);
+      }
+    }
+
+    const { savedLike } = this.props;
+    if (savedLike) {
+      this.props.setProperty('posts.savedLike', null);
+      if (savedLike.checkInUuid) {
+        this.props.getFeedItem(savedLike.checkInUuid, savedLike.frameId, true);
       }
     }
 
@@ -101,7 +115,9 @@ export default connect(state => ({
   limit: state.discover.limit,
   search: state.discover.searchTerm,
   loadingDiscover: state.discover.loadingDiscover,
-  savedComment: state.posts.savedComment
+  savedComment: state.posts.savedComment,
+  deletedComment: state.posts.deletedComment,
+  savedLike: state.posts.savedLike
 }), {
   getDiscoveries,
   setProperty,

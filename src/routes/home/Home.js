@@ -146,12 +146,18 @@ class Home extends React.Component {
       this.props.getFeed(clientId, params);
     }
 
-    const savedComment = this.props.savedComment;
+    const { savedComment, deletedComment } = this.props;
     if (savedComment) {
       this.props.setProperty('posts.savedComment', null);
       if (savedComment.checkInUuid) {
         console.log('updated feed item comments', savedComment);
         this.props.getFeedItem(savedComment.checkInUuid, savedComment.frameId, true);
+      }
+    }
+    if (deletedComment) {
+      this.props.setProperty('posts.deletedComment', null);
+      if (deletedComment.checkInUuid) {
+        this.props.getFeedItem(deletedComment.checkInUuid, deletedComment.frameId, true);
       }
     }
 
@@ -199,6 +205,7 @@ export default connect(state => ({
   deletedTerminal: state.posts.deletedTerminal,
   savedTerminal: state.editTerminal.savedTerminal,
   savedComment: state.posts.savedComment,
+  deletedComment: state.posts.deletedComment,
   savedLike: state.posts.savedLike,
   offset: state.posts.feedOffset,
   loadingFeed: state.posts.loadingFeed,

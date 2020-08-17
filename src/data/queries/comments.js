@@ -1,4 +1,4 @@
-import { getLog } from '../../core/log';
+import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/comments');
 
 import { GraphQLString, GraphQLList } from 'graphql';
@@ -17,6 +17,8 @@ import {
 import {
   requireOwnership, throwMustBeLoggedInError,
 } from './utils';
+import { PostType } from '../types/PostType';
+import { getComments } from '../../actions/comments';
 
 export const CommentQueryFields = {
 
@@ -33,6 +35,26 @@ export const CommentQueryFields = {
     }
 
   }
+
+};
+
+const deleteComment = async (uuid) => {
+
+  const comment = await commentRepository.getComment({ uuid });
+  if (!comment) throw new Error(`Could not find Comment uuid=${uuid} for deletion.`);
+
+  const deleteReplys = async (comment) => {
+    const replys = await commentRepository.getComments({ replyToId: comment.id });
+    for (let i = 0; i < replys.length; i++) {
+      await deleteReplys(replys[i]);
+    }
+    await commentRepository.deleteLikes({ entityType: 'Comment', entityId: comment.id });
+    await commentRepository.deleteComment(comment.uuid);
+  };
+
+  await deleteReplys(comment);
+
+  return comment;
 
 };
 
@@ -149,6 +171,24 @@ export const CommentMutationFields = {
 
     }
 
-  }
+  },
+
+  deleteComment: {
+
+    type: CommentType,
+    description: 'Delete a comment',
+    args: {
+      uuid: { type: GraphQLString },
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid, clientId }) => {
+
+      log.info(graphLog(request, 'delete-comment', 'clientId=' + clientId + ' uuid=' + uuid));
+      const deletedComment = await deleteComment(uuid);
+      return deletedComment.json();
+
+    }
+
+  },
 
 };

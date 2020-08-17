@@ -59,6 +59,13 @@ export default {
 
   },
 
+  deleteComment: async (commentUuid) => {
+    const comment = await Comment.findOne({ where: { uuid: commentUuid } });
+    if (!comment) throw new Error(`Could not find Comment uuid=${commentUuid} for deletion.`);
+    await comment.destroy();
+    return comment;
+  },
+
   getComment: async (where, options) => {
 
     const comment = await Comment.findOne({
@@ -97,6 +104,12 @@ export default {
     });
     await like.destroy();
     return like;
+  },
+
+  deleteLikes: async (where) => {
+    const deletedLikes = await Like.destroy({
+      where
+    });
   },
 
   countLikes: async (where) => {

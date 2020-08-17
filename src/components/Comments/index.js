@@ -1,19 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
+  deleteComment,
   saveComment,
-  saveLike
+  saveLike,
 } from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import cx from 'classnames';
 import s from './Comments.css';
 import FontIcon from 'material-ui/FontIcon';
-import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Link from '../Link';
-import { injectIntl, FormattedMessage } from 'react-intl';
-import { formatDuration, truncate, getCookie } from '../utils';
+import { injectIntl } from 'react-intl';
 
 const getCommentAuthor = (user) => {
 
@@ -30,7 +28,7 @@ const getCommentAuthor = (user) => {
 
 const Comments = ({
   comments, checkIn, terminal, commentText, frameId, preview, commentReplyTo,
-  setProperty, saveComment, saveLike,
+  setProperty, saveComment, deleteComment, saveLike,
   auth, env, intl
 }) => {
 
@@ -38,7 +36,6 @@ const Comments = ({
     subComments.forEach(subComment => {
       if (subComment.replyToUuid) sortedComments.push(subComment);
       const replys = comments.filter(reply => reply.replyToUuid === subComment.uuid);
-      //console.log('replys', replys);
       addReplys(replys, sortedComments);
     });
     return sortedComments;
@@ -51,8 +48,6 @@ const Comments = ({
       sortedComments.push(...addReplys([comment], []));
     }
   });
-
-  //console.log('SORTED', sortedComments);
 
   const getCommentInput = (comment) => {
 
@@ -128,42 +123,53 @@ const Comments = ({
                     (getCommentInput(comment))
                 }
                 <div className={s.commentControls} style={ comment.replyToUuid ? { marginRight: '6px' } : {} }>
-                  {
-                    (auth && auth.loggedIn) && (
-                      (commentReplyTo === comment.uuid) ?
-                        <div className={s.reply} onClick={() => setProperty('posts.commentReplyTo', null)}>
-                          Cancel
+                  <div className={s.left}>
+                    {
+                      (auth && auth.loggedIn && comment.user.uuid === auth.user.uuid) && (
+                        <div className={s.delete} onClick={() => deleteComment(comment.uuid, frameId, checkIn.uuid)}>
+                          Delete
+                        </div>
+                      )
+                    }
+                  </div>
+                  <div className={s.right}>
+                    {
+                      (auth && auth.loggedIn) && (
+                        (commentReplyTo === comment.uuid) ?
+                          <div className={s.reply} onClick={() => setProperty('posts.commentReplyTo', null)}>
+                            Cancel
+                          </div> :
+                          <div className={s.reply} onClick={() => setProperty('posts.commentReplyTo', comment.uuid)}>
+                            Reply
+                          </div>
+
+                      )
+                    }
+                    {
+                      comment.likedByUser ?
+                        <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'off', frameId, checkIn.uuid)}>
+                          <div className={s.icon}>
+                            <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
+                              favorite
+                            </FontIcon>
+                          </div>
+                          <div className={s.count}>
+                            { comment.likes || 0 }
+                          </div>
                         </div> :
-                        <div className={s.reply} onClick={() => setProperty('posts.commentReplyTo', comment.uuid)}>
-                          Reply
+                        <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'on', frameId, checkIn.uuid)}>
+                          <div className={s.icon}>
+                            <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
+                              favorite_border
+                            </FontIcon>
+                          </div>
+                          <div className={s.count}>
+                            { comment.likes || 0 }
+                          </div>
                         </div>
 
-                    )
-                  }
-                  {
-                    comment.likedByUser ?
-                      <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'off', frameId, checkIn.uuid)}>
-                        <div className={s.icon}>
-                          <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
-                            favorite
-                          </FontIcon>
-                        </div>
-                        <div className={s.count}>
-                          { comment.likes || 0 }
-                        </div>
-                      </div> :
-                      <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'on', frameId, checkIn.uuid)}>
-                        <div className={s.icon}>
-                          <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
-                            favorite_border
-                          </FontIcon>
-                        </div>
-                        <div className={s.count}>
-                          { comment.likes || 0 }
-                        </div>
-                      </div>
-
-                  }
+                    }
+                  </div>
                 </div>
               </div>
             </div>
@@ -188,6 +194,7 @@ export default injectIntl(
     commentReplyTo: state.posts.commentReplyTo
   }), {
     saveComment,
+    deleteComment,
     setProperty,
     saveLike
   })(withStyles(s)(Comments))

@@ -1,4 +1,4 @@
-import { toGraphQLObject } from '../core/utils';
+import { getClientId, toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import {
   VOTE_START,
@@ -18,7 +18,10 @@ import {
   SAVE_COMMENT_ERROR,
   SAVE_LIKE_START,
   SAVE_LIKE_SUCCESS,
-  SAVE_LIKE_ERROR
+  SAVE_LIKE_ERROR,
+  DELETE_COMMENT_START,
+  DELETE_COMMENT_SUCCESS,
+  DELETE_COMMENT_ERROR
 } from '../constants';
 
 export const saveLike = (entityUuid, entityType, onOff, frameId, checkInUuid) => {
@@ -117,53 +120,26 @@ export const getComments = (checkInUuid) => {
 };
 
 
-export const vote = (checkInUuid, voteType) => {
+export const deleteComment = (uuid, frameId, checkInUuid) => {
 
   return async (...args) => {
 
+    const clientId = getClientId();
+
     const query = `
-      mutation saveVote {
-        votes(uuid: "${checkInUuid}", voteType: "${voteType}") {
-          checkInUuid,
-          voteType,
-          votesCount
+      mutation deleteComment {
+        deleteComment(uuid:"${uuid}", clientId:"${clientId}") {
+          uuid
         }
       }
     `;
 
     return graphqlAction(
       ...args,
-      { query }, [ 'votes' ],
-      VOTE_START,
-      VOTE_SUCCESS,
-      VOTE_ERROR
-    );
-
-  };
-
-};
-
-export const uploadFiles = (checkInUuid, files) => {
-
-  return async (...args) => {
-
-    const query = `
-      mutation uploadInstanceFiles {
-        instanceFiles(checkInUuid: "${checkInUuid}") {
-          uuid,
-          type,
-          thumbnail,
-          url
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query, files }, [ 'instanceFiles' ],
-      INSTANCE_FILE_UPLOAD_START,
-      INSTANCE_FILE_UPLOAD_SUCCESS,
-      INSTANCE_FILE_UPLOAD_ERROR
+      { query, variables: { frameId, checkInUuid } }, [ 'deleteComment' ],
+      DELETE_COMMENT_START,
+      DELETE_COMMENT_SUCCESS,
+      DELETE_COMMENT_ERROR
     );
 
   };
