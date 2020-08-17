@@ -17,6 +17,8 @@ export const getCommentsQuery = () => {
       checkInUuid,
       terminalUuid,
       text,
+      likes,
+      likedByUser,
       user {
         uuid,
         firstName,

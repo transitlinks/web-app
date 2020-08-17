@@ -53,40 +53,42 @@ export const CommentMutationFields = {
 
       if (!request.user) throwMustBeLoggedInError();
 
+      let entity = null;
       if (entityType === 'CheckIn') {
-
-        const checkIn = await checkInRepository.getCheckIn({ uuid: entityUuid });
-        if (!checkIn) throw new Error(`${entityType} not found by uuid ${entityUuid}`);
-
-        const userId = await userRepository.getUserIdByUuid(request.user.uuid);
-
-        if (checkIn && userId) {
-          if (onOff === 'on') {
-            await commentRepository.saveLike({
-              userId,
-              entityId: checkIn.id,
-              entityType
-            });
-          } else if (onOff === 'off') {
-            await commentRepository.deleteLike(userId, checkIn.id, entityType);
-          }
-        }
-
-        const likes = await commentRepository.countLikes({
-          entityId: checkIn.id,
-          entityType
-        });
-
-        return {
-          likes,
-          entityUuid,
-          entityType,
-          onOff
-        };
-
+        entity = await checkInRepository.getCheckIn({ uuid: entityUuid });
+      } else if (entityType === 'Comment') {
+        entity = await commentRepository.getComment({ uuid: entityUuid });
+      } else {
+        throw new Error('Unsupported entity type for like operation');
       }
 
-      throw new Error('Unsupported entity type for like operation');
+      if (!entity) throw new Error(`${entityType} not found by uuid ${entityUuid}`);
+
+      const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+
+      if (entity && userId) {
+        if (onOff === 'on') {
+          await commentRepository.saveLike({
+            userId,
+            entityId: entity.id,
+            entityType
+          });
+        } else if (onOff === 'off') {
+          await commentRepository.deleteLike(userId, entity.id, entityType);
+        }
+      }
+
+      const likes = await commentRepository.countLikes({
+        entityId: entity.id,
+        entityType
+      });
+
+      return {
+        likes,
+        entityUuid,
+        entityType,
+        onOff
+      };
 
     }
 

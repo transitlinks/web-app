@@ -78,6 +78,7 @@ export default function reduce(state = {}, action) {
           start: () => ({}),
           success: () => {
 
+            /*
             const { feed, fetchedFeedItem } = state;
             if (!feed) return state;
 
@@ -94,15 +95,16 @@ export default function reduce(state = {}, action) {
               fetchedFeedItem.checkIn.likes = likes;
               fetchedFeedItem.checkIn.likedByUser = onOff === 'on';
             }
+            */
+
+            const { like, variables: { frameId, checkInUuid } } = action.payload;
 
             return {
-              like: action.payload.like,
-              feed: {
-                ...feed,
-                feedItems
-              },
-              fetchedFeedItem,
-              feedUpdated: (new Date()).getTime()
+              savedLike: {
+                ...like,
+                frameId,
+                checkInUuid
+              }
             };
           },
           error: () => ({ like: null })

@@ -758,13 +758,37 @@ export const getFeedItem = async (request, checkIn) => {
   const tagIds = (await tagRepository.getEntityTags({ checkInId: checkIn.id }))
     .map(entityTag => entityTag.tagId);
 
-  let likedByUser = false;
+  let checkInLikedByUser = false;
 
-  if (request.user) {
-    const userId = await userRepository.getUserIdByUuid(request.user.uuid);
-    const userLikes = await commentRepository.countLikes({ userId, entityId: checkIn.id, entityType: 'CheckIn' });
-    likedByUser = userLikes > 0;
+  let userId = null;
+  if (request.user) userId = await userRepository.getUserIdByUuid(request.user.uuid);
+  if (userId) {
+    const checkInUserLikes = await commentRepository.countLikes({ userId, entityId: checkIn.id, entityType: 'CheckIn' });
+    checkInLikedByUser = checkInUserLikes > 0;
   }
+
+  const getComments = async (query) => {
+
+    const comments = (await commentRepository.getComments(query))
+      .map(async comment => {
+
+        let commentLikedByUser = false;
+        if (userId) {
+          const commentUserLikes = await commentRepository.countLikes({ userId, entityId: comment.id, entityType: 'Comment' });
+          commentLikedByUser = commentUserLikes > 0;
+        }
+
+        return {
+          ...comment.get(),
+          checkInUuid: checkIn.uuid,
+          likes: await commentRepository.countLikes({ entityId: comment.id, entityType: 'Comment' }),
+          likedByUser: commentLikedByUser
+        };
+      });
+
+    return comments;
+
+  };
 
   return {
     userAccess: credentials.userAccess,
@@ -775,9 +799,9 @@ export const getFeedItem = async (request, checkIn) => {
       userUuid: credentials.userUuid,
       date: checkIn.createdAt,
       tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
-      comments: (await commentRepository.getComments({ checkInId: checkIn.id })).map(comment => ({ ...comment.get(), checkInUuid: checkIn.uuid })),
+      comments: await getComments({ checkInId: checkIn.id }),
       likes: await commentRepository.countLikes({ entityId: checkIn.id, entityType: 'CheckIn' }),
-      likedByUser
+      likedByUser: checkInLikedByUser
     },
     ...linkedCheckIns,
     posts: posts.map(async (post) => {
@@ -802,7 +826,7 @@ export const getFeedItem = async (request, checkIn) => {
       const terminalId = terminal.id;
       return {
         ...terminal.json(),
-        comments: (await commentRepository.getComments({ terminalId })).map(comment => ({ ...comment.get(), terminalUuid: terminal.uuid })),
+        comments: await getComments({ terminalId }),
         linkedTerminal
       };
 

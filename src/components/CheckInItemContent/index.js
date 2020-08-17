@@ -118,7 +118,11 @@ const CheckInItemContent = ({
   const userName = checkIn.user || 'Anonymoyus';
   const dateStr = (new Date(checkIn.date)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const commentsAttributes = { checkIn };
+  const commentsAttributes = {
+    checkIn,
+    frameId
+  };
+
   if (contentType === 'departure') {
     commentsAttributes.terminal = departure;
   } else if (contentType === 'arrival') {
@@ -184,11 +188,11 @@ const CheckInItemContent = ({
                       {
                         checkIn.likedByUser ?
                           <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'red' }}
-                                    onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'off')}>
+                                    onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'off', frameId, checkIn.uuid)}>
                             favorite
                           </FontIcon> :
                           <FontIcon className="material-icons" style={{ fontSize: '20px' }}
-                                    onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'on')}>
+                                    onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'on', frameId, checkIn.uuid)}>
                             favorite_border
                           </FontIcon>
                       }

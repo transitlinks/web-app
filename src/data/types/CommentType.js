@@ -3,7 +3,7 @@ import {
   GraphQLInputObjectType,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLInt,
+  GraphQLInt, GraphQLBoolean,
 
 } from 'graphql';
 import { UserType } from './UserType';
@@ -19,6 +19,7 @@ export const CommentType = new GraphQLObjectType({
     text: { type: GraphQLString },
     user: { type: UserType },
     likes: { type: GraphQLInt },
+    likedByUser: { type: GraphQLBoolean },
     createdAt: { type: GraphQLString }
   })
 });

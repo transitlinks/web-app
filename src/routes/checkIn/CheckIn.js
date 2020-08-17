@@ -79,6 +79,14 @@ class CheckIn extends React.Component {
       }
     }
 
+    const { savedLike } = props;
+    if (savedLike) {
+      props.setProperty('posts.savedLike', null);
+      if (savedLike.checkInUuid) {
+        props.getFeedItem(props.savedLike.checkInUuid, savedLike.frameId, true);
+      }
+    }
+
   }
 
   render() {
@@ -116,7 +124,8 @@ export default connect(state => ({
   savedTerminal: state.editTerminal.savedTerminal,
   savedPost: state.posts.savedPost,
   savedCheckIn: state.posts.checkIn,
-  savedComment: state.posts.savedComment
+  savedComment: state.posts.savedComment,
+  savedLike: state.posts.savedLike
 }), {
   getFeedItem, getComments, navigate, setProperty
 })(withStyles(s)(CheckIn));

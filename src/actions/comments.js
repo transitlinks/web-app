@@ -21,7 +21,7 @@ import {
   SAVE_LIKE_ERROR
 } from '../constants';
 
-export const saveLike = (entityUuid, entityType, onOff) => {
+export const saveLike = (entityUuid, entityType, onOff, frameId, checkInUuid) => {
 
   return async (...args) => {
 
@@ -38,7 +38,7 @@ export const saveLike = (entityUuid, entityType, onOff) => {
 
     return graphqlAction(
       ...args,
-      { query }, [ 'like' ],
+      { query, variables: { frameId, checkInUuid } }, [ 'like' ],
       SAVE_LIKE_START,
       SAVE_LIKE_SUCCESS,
       SAVE_LIKE_ERROR

@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  saveComment
+  saveComment,
+  saveLike
 } from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -29,7 +30,7 @@ const getCommentAuthor = (user) => {
 
 const Comments = ({
   comments, checkIn, terminal, commentText, frameId, preview, commentReplyTo,
-  setProperty, saveComment,
+  setProperty, saveComment, saveLike,
   auth, env, intl
 }) => {
 
@@ -139,16 +140,30 @@ const Comments = ({
 
                     )
                   }
-                  <div className={s.commentLikes}>
-                    <div className={s.icon}>
-                      <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
-                        favorite_border
-                      </FontIcon>
-                    </div>
-                    <div className={s.count}>
-                      0
-                    </div>
-                  </div>
+                  {
+                    comment.likedByUser ?
+                      <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'off', frameId, checkIn.uuid)}>
+                        <div className={s.icon}>
+                          <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
+                            favorite
+                          </FontIcon>
+                        </div>
+                        <div className={s.count}>
+                          { comment.likes || 0 }
+                        </div>
+                      </div> :
+                      <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'on', frameId, checkIn.uuid)}>
+                        <div className={s.icon}>
+                          <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
+                            favorite_border
+                          </FontIcon>
+                        </div>
+                        <div className={s.count}>
+                          { comment.likes || 0 }
+                        </div>
+                      </div>
+
+                  }
                 </div>
               </div>
             </div>
@@ -173,6 +188,7 @@ export default injectIntl(
     commentReplyTo: state.posts.commentReplyTo
   }), {
     saveComment,
-    setProperty
+    setProperty,
+    saveLike
   })(withStyles(s)(Comments))
 );

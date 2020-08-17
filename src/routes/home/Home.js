@@ -155,6 +155,14 @@ class Home extends React.Component {
       }
     }
 
+    const savedLike = this.props.savedLike;
+    if (savedLike) {
+      this.props.setProperty('posts.savedLike', null);
+      if (savedLike.checkInUuid) {
+        this.props.getFeedItem(savedLike.checkInUuid, savedLike.frameId, true);
+      }
+    }
+
   }
 
   render() {
@@ -191,6 +199,7 @@ export default connect(state => ({
   deletedTerminal: state.posts.deletedTerminal,
   savedTerminal: state.editTerminal.savedTerminal,
   savedComment: state.posts.savedComment,
+  savedLike: state.posts.savedLike,
   offset: state.posts.feedOffset,
   loadingFeed: state.posts.loadingFeed,
   loadFeedOffset: state.posts.loadFeedOffset
