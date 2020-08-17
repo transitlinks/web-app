@@ -121,7 +121,8 @@ export default function reduce(state = {}, action) {
           success: () => {
             const { comment, variables: { frameId } } = action.payload;
             return {
-              savedComment: { ...comment, frameId }
+              savedComment: { ...comment, frameId },
+              commentReplyTo: null
             };
           },
           error: () => ({ savedComment: null })

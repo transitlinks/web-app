@@ -59,6 +59,18 @@ export default {
 
   },
 
+  getComment: async (where, options) => {
+
+    const comment = await Comment.findOne({
+      where,
+      include: { model: User, as: 'user' },
+      ...options
+    });
+
+    return comment;
+
+  },
+
   getComments: async (where, options) => {
 
     const comments = await Comment.findAll({

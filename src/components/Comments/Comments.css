@@ -12,14 +12,28 @@
 
 }
 
+.comments .replyIndent {
+  background-color: #a0a0a0;
+  width: 1px;
+  margin-right: 6px;
+  margin-left: 6px;
+  margin-top: -22px;
+  margin-bottom: 22px;
+}
+
 .comments .comment {
   margin-bottom: 2px;
   margin-top: 2px;
   padding-left: 4px;
   padding-right: 4px;
+  display: flex;
 }
 
-.comment .commentContent {
+.comment .commentBody {
+  flex-grow: 1;
+}
+
+.commentBody .commentContent {
   margin-block-start: initial;
   margin-block-end: initial;
 }
@@ -46,6 +60,15 @@
   height: 30px;
 }
 
+.commentInput .replyToIndicator {
+  background-color: #a0a0a0;
+  width: 1px;
+  margin-right: 6px;
+  margin-left: 2px;
+  margin-top: -20px;
+  height: 40px;
+}
+
 .commentInput .input {
   height: 41px;
   display: flex;
@@ -53,9 +76,49 @@
   flex-grow: 1;
 }
 
+.commentBody .commentControls {
+  display: flex;
+  justify-content: flex-end;
+  background: white;
+  padding-bottom: 2px;
+}
+
+.commentBody .commentControlsBorder {
+  background: linear-gradient(to right, #ffffff, #a0a0a0);
+  height: 1px;
+  margin-left: 50%;
+  margin-top: 2px;
+  display: none;
+}
+
+
 .comments .otherComments {
   display: flex;
   justify-content: flex-end;
   padding-left: 4px;
   padding-right: 4px;
+}
+
+.commentControls .reply {
+  margin-right: 6px;
+  font-size: 15px;
+  text-decoration: underline;
+}
+
+.commentControls .commentLikes {
+  display: flex;
+}
+
+.commentLikes .icon {
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.commentLikes .count {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  margin-left: 1px;
 }

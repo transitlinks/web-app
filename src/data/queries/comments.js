@@ -101,7 +101,7 @@ export const CommentMutationFields = {
     },
     resolve: async ({ request }, { comment }) => {
 
-      const { checkInUuid, terminalUuid, text } = comment;
+      const { checkInUuid, terminalUuid, replyToUuid, text } = comment;
       log.info(`graphql-request=save-comment user=${request.user ? request.user.uuid : null} comment-uuid=${comment.uuid}`);
 
       if (!request.user) throwMustBeLoggedInError();
@@ -127,12 +127,21 @@ export const CommentMutationFields = {
         throw new Error('No valid entity reference provided for a new comment.');
       }
 
+      if (replyToUuid) {
+        const replyTo = await commentRepository.getComment({ uuid: replyToUuid });
+        if (replyTo) {
+          newComment.replyToId = replyTo.id;
+          newComment.replyToUuid = replyToUuid;
+        }
+      }
+
       const savedComment = await commentRepository.create(newComment);
       return {
         uuid: savedComment.uuid,
         user: user.json(),
         checkInUuid: checkInUuid || (terminal ? terminal.checkInUuid : null),
         terminalUuid,
+        replyToUuid,
         text
       };
 

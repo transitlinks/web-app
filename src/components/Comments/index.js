@@ -28,54 +28,129 @@ const getCommentAuthor = (user) => {
 };
 
 const Comments = ({
-  comments, checkIn, terminal, commentText, frameId, preview,
+  comments, checkIn, terminal, commentText, frameId, preview, commentReplyTo,
   setProperty, saveComment,
   auth, env, intl
 }) => {
 
-  return (
-    <div className={s.comments}>
-      {
-        (auth && auth.loggedIn) &&
-          <div className={s.commentInput}>
+  const addReplys = (subComments, sortedComments) => {
+    subComments.forEach(subComment => {
+      if (subComment.replyToUuid) sortedComments.push(subComment);
+      const replys = comments.filter(reply => reply.replyToUuid === subComment.uuid);
+      //console.log('replys', replys);
+      addReplys(replys, sortedComments);
+    });
+    return sortedComments;
+  };
+
+  const sortedComments = [];
+  comments.forEach(comment => {
+    if (!comment.replyToUuid) {
+      sortedComments.push(comment);
+      sortedComments.push(...addReplys([comment], []));
+    }
+  });
+
+  //console.log('SORTED', sortedComments);
+
+  const getCommentInput = (comment) => {
+
+    const commentInput = (
+      <div className={s.commentInput}>
+        {
+          comment ?
+            (
+              !comments.find(c => c.uuid === comment.replyToUuid) ?
+                <div className={s.replyToIndicator}></div> : null
+            ) :
             <div className={s.icon}>
               <FontIcon className="material-icons" style={{ fontSize: '24px' }}>
                 chat
               </FontIcon>
             </div>
-            <div className={s.input}>
-              <TextField id={`comment-input-${frameId}`}
-                         value={commentText[frameId]}
-                         fullWidth
-                         hintText={!commentText ? 'Write comment...' : null}
-                         onChange={(e) => {
-                           setProperty('posts.commentText', { ...commentText, [frameId]: e.target.value });
-                         }}
-                         onKeyDown={(e) => {
-                           if (e.keyCode === 13) {
-                             console.log('save comment', commentText);
-                             const newComment = { text: commentText[frameId] };
-                             if (terminal) newComment.terminalUuid = terminal.uuid;
-                             else if (checkIn) newComment.checkInUuid = checkIn.uuid;
-                             saveComment(newComment, frameId);
-                             setProperty('posts.commentText', { ...commentText, [frameId]: '' });
-                           }
-                         }}
-              />
-            </div>
-          </div>
+        }
+        <div className={s.input}>
+          <TextField id={`comment-input-${frameId}`}
+                     value={commentText[frameId]}
+                     fullWidth
+                     hintText={!commentText[frameId] ? (commentReplyTo ? 'Reply...' : 'Comment...') : null}
+                     onChange={(e) => {
+                       setProperty('posts.commentText', { ...commentText, [frameId]: e.target.value });
+                     }}
+                     onKeyDown={(e) => {
+                       if (e.keyCode === 13) {
+                         console.log('save comment', commentText);
+                         const newComment = { text: commentText[frameId] };
+                         if (terminal) newComment.terminalUuid = terminal.uuid;
+                         else if (checkIn) newComment.checkInUuid = checkIn.uuid;
+                         if (commentReplyTo) newComment.replyToUuid = commentReplyTo;
+                         saveComment(newComment, frameId);
+                         setProperty('posts.commentText', { ...commentText, [frameId]: '' });
+                       }
+                     }}
+          />
+        </div>
+      </div>
+    );
+
+    return commentInput;
+
+  };
+
+
+  return (
+    <div className={s.comments}>
+      {
+        (auth && auth.loggedIn && !commentReplyTo) &&
+          (getCommentInput())
       }
       {
         (comments && comments.length > 0) &&
-        (preview ? comments.slice(0, 1) : comments).map(comment => {
+        (preview ? sortedComments.slice(0, 1) : sortedComments).map(comment => {
           return (
             <div className={s.comment}>
-              <p className={s.commentContent}>
-                <span className={s.commentAuthor}>
-                  { getCommentAuthor(comment.user) }
-                </span>
-                { comment.text }
-              </p>
+              {
+                comment.replyToUuid &&
+                  <div className={s.replyIndent}>
+                  </div>
+              }
+              <div className={s.commentBody}>
+                <p className={s.commentContent}>
+                  <span className={s.commentAuthor}>
+                    { getCommentAuthor(comment.user) }
+                  </span>
+                  { comment.text }
+                </p>
+                <div className={s.commentControlsBorder}></div>
+                {
+                  (commentReplyTo === comment.uuid) &&
+                    (getCommentInput(comment))
+                }
+                <div className={s.commentControls} style={ comment.replyToUuid ? { marginRight: '6px' } : {} }>
+                  {
+                    (auth && auth.loggedIn) && (
+                      (commentReplyTo === comment.uuid) ?
+                        <div className={s.reply} onClick={() => setProperty('posts.commentReplyTo', null)}>
+                          Cancel
+                        </div> :
+                        <div className={s.reply} onClick={() => setProperty('posts.commentReplyTo', comment.uuid)}>
+                          Reply
+                        </div>
+
+                    )
+                  }
+                  <div className={s.commentLikes}>
+                    <div className={s.icon}>
+                      <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
+                        favorite_border
+                      </FontIcon>
+                    </div>
+                    <div className={s.count}>
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           );
         })
@@ -94,7 +169,8 @@ export default injectIntl(
   connect(state => ({
     auth: state.auth.auth,
     env: state.env,
-    commentText: state.posts.commentText || {}
+    commentText: state.posts.commentText || {},
+    commentReplyTo: state.posts.commentReplyTo
   }), {
     saveComment,
     setProperty

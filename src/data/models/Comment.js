@@ -17,6 +17,10 @@ const Comment = Model.define('Comment', {
 
   text: {
     type: DataType.STRING
+  },
+
+  replyToUuid: {
+    type: DataType.STRING
   }
 
 }, {
