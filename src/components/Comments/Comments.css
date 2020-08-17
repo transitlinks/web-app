@@ -9,96 +9,53 @@
 }
 
 .comments {
-  margin-top: 32px;
-  max-width: 640px;
-  width: 100%;
+
 }
 
-.newComment {
-  min-width: 320px;
+.comments .comment {
+  margin-bottom: 2px;
+  margin-top: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
-.newComment .newCommentInput {
-  display: flex;
-  align-items: flex-start;
+.comment .commentContent {
+  margin-block-start: initial;
+  margin-block-end: initial;
 }
 
-.newCommentInput .newCommentInputTitle {
-  margin-right: 8px;
+.commentContent .commentAuthor {
+  margin-right: 4px;
+  padding-left: 5px;
+  border-radius: 5px;
+  padding-right: 5px;
+  padding-bottom: 1px;
+  background-color: #f0f0f0;
 }
 
-.newComment .newCommentSubmit {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.newCommentInput .commentInput {
-  width: 100%;
-}
-
-.commentInput textarea {
-  width: 320px;
-  height: 80px;
-}
-
-.commentsList {
-  margin-top: 32px;
-}
-
-.comment {
-  margin-top: 4px;
-  margin-bottom: 4px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-
-.reply {
-  padding-left: 8px;
-  background-color: #f6f6f6;
-  border-left: 1px solid #ccc;
-}
-
-.comment .commentText {
-}
-
-.commentText .username {
-  font-weight: bold;
-}
-
-.commentText .text {
-  margin-left: 2px;
-}
-
-.comment .commentControls {
-  margin-top: 6px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.commentControls .commentReply {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.commentControls .commentLikes {
-  display: flex;
-}
-
-.commentLikes {
-}
-
-.likeBlock {
-  margin-left: 4px; 
-  margin-right: 4px; 
+.commentInput {
+  padding-left: 4px;
+  padding-right: 4px;
   display: flex;
   align-items: center;
+  margin-top: 12px;
 }
 
-.likeBlock span {
-  margin-left: 2px;
+.commentInput .icon {
+  padding-right: 4px;
+  height: 30px;
 }
 
-
-@media (max-width: 425px) {
+.commentInput .input {
+  height: 41px;
+  display: flex;
+  align-items: flex-end;
+  flex-grow: 1;
 }
 
+.comments .otherComments {
+  display: flex;
+  justify-content: flex-end;
+  padding-left: 4px;
+  padding-right: 4px;
+}

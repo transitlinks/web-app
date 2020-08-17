@@ -7,143 +7,15 @@ import {
   GET_LINKS_ERROR,
   SET_PROPERTY
 } from '../constants';
-import { createParamString } from '../core/utils';
+import { getLinksQuery } from '../data/queries/queries';
 
 export const getLinks = (params) => {
 
   return async (...args) => {
 
     const query = `query {
-          transitLinks ${createParamString(params)} {
-            searchResultType,
-            links {
-              locality,
-              latitude,
-              longitude,
-              departures {
-                checkInUuid,
-                type,
-                latitude,
-                longitude,
-                locality,
-                formattedAddress,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                description,
-                linkCount,
-                reverseLinkCount,
-                linkedTerminal {
-                  checkInUuid,
-                  type,
-                  latitude,
-                  longitude,
-                  locality,
-                  formattedAddress,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  description,
-                  priceAmount,
-                  priceCurrency
-                }
-                route { lat, lng },
-                tags { tag, userUuid }
-              },
-              arrivals {
-                checkInUuid,
-                type,
-                latitude,
-                longitude,
-                locality,
-                formattedAddress,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                description,
-                linkCount,
-                reverseLinkCount,
-                linkedTerminal {
-                  checkInUuid,
-                  type,
-                  latitude,
-                  longitude,
-                  locality,
-                  formattedAddress,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  description,
-                  priceAmount,
-                  priceCurrency
-                }
-                route { lat, lng },
-                tags { tag, userUuid }
-              },
-              internal {
-                checkInUuid,
-                type,
-                latitude,
-                longitude,
-                locality,
-                formattedAddress,
-                transport,
-                transportId,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                description,
-                linkCount,
-                linkedTerminal {
-                  checkInUuid,
-                  type,
-                  latitude,
-                  longitude,
-                  locality,
-                  formattedAddress,
-                  transport,
-                  transportId,
-                  date,
-                  time,
-                  description,
-                  priceAmount,
-                  priceCurrency
-                }
-                route { lat, lng }
-              },
-              departureCount,
-              arrivalCount,
-              linkedDepartures {
-                locality,
-                linkedLocality,
-                linkedTerminalType,
-                linkedTerminalUuid,
-                linkedLocalityLatitude,
-                linkedLocalityLongitude,
-                linkCount
-              },
-              linkedArrivals {
-                locality,
-                linkedLocality,
-                linkedTerminalType,
-                linkedTerminalUuid,
-                linkedLocalityLatitude,
-                linkedLocalityLongitude,
-                linkCount
-              },
-              tags { tag, userUuid }
-            }
-          }
-        }`
+          ${getLinksQuery(params)}
+        }`;
 
     return graphqlAction(
       ...args,

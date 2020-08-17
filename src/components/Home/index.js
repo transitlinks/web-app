@@ -25,7 +25,9 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
       <div className={errorClasses[err.name] || s.defaultError}>
         <div>{ err.text }</div>
         <div className={s.okButton}>
-          <RaisedButton label="OK" onClick={() => setProperty('posts.error', null)} />
+          <RaisedButton label="OK" onClick={() => {
+            setProperty('posts.error', null);
+          }} />
         </div>
       </div>
     );

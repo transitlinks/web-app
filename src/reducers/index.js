@@ -9,7 +9,6 @@ import login from './login';
 import autocomplete from './autocomplete';
 import editLink from './editLink';
 import editCheckIn from './editCheckIn';
-import viewCheckIn from './viewCheckIn';
 import editTerminal from './editTerminal';
 import searchLinks from './searchLinks';
 import profile from './profile';
@@ -29,7 +28,6 @@ export default combineReducers({
   autocomplete,
   editLink,
   editCheckIn,
-  viewCheckIn,
   editTerminal,
   searchLinks,
   profile,

@@ -59,7 +59,8 @@ export const TerminalType = new GraphQLObjectType({
       linkedTerminal: { type: TerminalType },
       checkInUuid: { type: GraphQLString },
       checkIn: { type: CheckInType },
-      linkCount: { type: GraphQLInt }
+      linkCount: { type: GraphQLInt },
+      comments: { type: new GraphQLList(CommentType) }
     };
   },
 });

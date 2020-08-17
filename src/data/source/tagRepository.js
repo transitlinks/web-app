@@ -87,7 +87,7 @@ export default {
   },
 
   getTagsByCheckInIds: async (checkInIds) => {
-    let query = `SELECT t."value" as "tag", et."userUuid" as "userUuid" FROM "Tag" t, "EntityTag" et WHERE t."id" = et."tagId" AND et."checkInId" IN (${checkInIds.join(',')});`;
+    let query = `SELECT t."value" as "tag", et."userUuid" as "userUuid" FROM "Tag" t, "EntityTag" et WHERE t."id" = et."tagId" AND et."checkInId" IN (${checkInIds.join(',')})`;
     const tags = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return tags;
   },

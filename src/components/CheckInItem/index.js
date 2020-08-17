@@ -31,7 +31,6 @@ const CheckInItem = (
     setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn, editable, editCheckIn, navigate
   }) => {
 
-  console.log(feedItem, checkInItem, fetchedFeedItem);
   let item = checkInItem;
   if (fetchedFeedItem && fetchedFeedItem.fetchedAt > checkInItem.fetchedAt) {
     item = fetchedFeedItem;
@@ -40,7 +39,7 @@ const CheckInItem = (
   const { checkIn, inbound, outbound, posts } = item;
 
   const selectCheckIn = (checkInUuid, frameId) => {
-    if (feedItem) getFeedItem(checkInUuid, frameId, target);
+    if (feedItem) getFeedItem(checkInUuid, frameId);
     else navigate({ pathname: `/check-in/${checkInUuid}`});
   };
 
@@ -84,19 +83,23 @@ const CheckInItem = (
     else contentType = 'reaction';
   }
 
-  if (contentType === 'arrival' && arrivals.length === 0) {
-    if (departures.length > 0) contentType = 'departure';
-    else contentType = 'reaction';
-  }
+  if (!showSettings) {
 
-  if (contentType === 'departure' && departures.length === 0) {
-    if (arrivals.length > 0) contentType = 'arrival';
-    else contentType = 'reaction';
-  }
+    if (contentType === 'arrival' && arrivals.length === 0) {
+      if (departures.length > 0) contentType = 'departure';
+      else contentType = 'reaction';
+    }
 
-  if (contentType === 'reaction' && posts.length === 0) {
-    if (departures.length > 0) contentType = 'departure';
-    else if (arrivals.length > 0) contentType = 'arrival';
+    if (contentType === 'departure' && departures.length === 0) {
+      if (arrivals.length > 0) contentType = 'arrival';
+      else contentType = 'reaction';
+    }
+
+    if (contentType === 'reaction' && posts.length === 0) {
+      if (departures.length > 0) contentType = 'departure';
+      else if (arrivals.length > 0) contentType = 'arrival';
+    }
+
   }
 
   const selectContentType = (value) => {

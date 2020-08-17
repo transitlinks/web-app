@@ -2,7 +2,7 @@ import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import { geocode, extractPlaceFields } from '../services/linkService';
 import { getClientId } from "../core/utils";
-import { createQuery, getFeedItemQuery } from '../data/queries/queries';
+import { createQuery, getFeedItemQuery, getFeedItemsQuery } from '../data/queries/queries';
 
 import {
   SAVE_POST_START,
@@ -552,88 +552,7 @@ export const getFeed = (clientId, params) => {
     const query = `
       query {
         feed (${paramsString}) {
-          feedItems {
-            checkIn {
-              uuid,
-              clientId,
-              user,
-              userUuid,
-              userImage,
-              date,
-              latitude,
-              longitude,
-              placeId,
-              formattedAddress,
-              locality,
-              country,
-              tags,
-              likes,
-              likedByUser
-            },
-            inbound {
-              uuid,
-              latitude,
-              longitude,
-              placeId,
-              formattedAddress,
-              locality,
-              country,
-              tags
-            },
-            outbound {
-              uuid,
-              latitude,
-              longitude,
-              placeId,
-              formattedAddress,
-              locality,
-              country
-            },
-            posts {
-              uuid,
-              text,
-              user,
-              mediaItems {
-                uuid,
-                type,
-                url,
-                latitude,
-                longitude,
-                date
-              }
-            },
-            terminals {
-              uuid,
-              type,
-              transport,
-              transportId,
-              description,
-              date,
-              time,
-              priceAmount,
-              priceCurrency,
-              linkedTerminal {
-                uuid,
-                type,
-                transport,
-                transportId,
-                description,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                checkIn {
-                  uuid,
-                  latitude,
-                  longitude,
-                  placeId,
-                  formattedAddress,
-                  locality,
-                  country
-                }
-              }
-            }
-          },
+          ${getFeedItemsQuery()},
           openTerminals {
             uuid,
             type,
@@ -672,7 +591,7 @@ export const getFeed = (clientId, params) => {
 
 }
 
-export const getFeedItem = (checkInUuid, frameId, target) => {
+export const getFeedItem = (checkInUuid, frameId, noLoading) => {
 
   return async (...args) => {
 
@@ -680,7 +599,7 @@ export const getFeedItem = (checkInUuid, frameId, target) => {
 
     return graphqlAction(
       ...args,
-      { query, variables: { checkInUuid, frameId, target } }, [ 'feedItem' ],
+      { query, variables: { checkInUuid, frameId, noLoading } }, [ 'feedItem' ],
       GET_FEEDITEM_START,
       GET_FEEDITEM_SUCCESS,
       GET_FEEDITEM_ERROR

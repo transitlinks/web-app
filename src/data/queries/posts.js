@@ -391,8 +391,13 @@ const getLinkedCheckIns = async (checkIn) => {
     order: [[ 'createdAt', 'ASC' ]]
   });
 
+  if (inboundCheckIns.length > 0) {
+    inboundCheckIns[0] = inboundCheckIns[0].get();
+    inboundCheckIns[0].tags = (await tagRepository.getTagsByCheckInIds([inboundCheckIns[0].id])).map(tag => tag.tag);
+  }
+
   return {
-    inbound: inboundCheckIns.map(checkIn => checkIn.json()),
+    inbound: inboundCheckIns,
     outbound: outboundCheckIns.map(checkIn => checkIn.json())
   };
 
@@ -746,6 +751,7 @@ export const getFeedItem = async (request, checkIn) => {
 
   log.info(graphLog(request, 'get-feed-item', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
   const linkedCheckIns = await getLinkedCheckIns(checkIn, request);
+  console.log('LINKED CHECKINS', linkedCheckIns.inbound[0]);
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
   const credentials = await getEntityCredentials(request, checkIn);
 
@@ -769,6 +775,7 @@ export const getFeedItem = async (request, checkIn) => {
       userUuid: credentials.userUuid,
       date: checkIn.createdAt,
       tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
+      comments: (await commentRepository.getComments({ checkInId: checkIn.id })).map(comment => ({ ...comment.get(), checkInUuid: checkIn.uuid })),
       likes: await commentRepository.countLikes({ entityId: checkIn.id, entityType: 'CheckIn' }),
       likedByUser
     },
@@ -792,8 +799,10 @@ export const getFeedItem = async (request, checkIn) => {
         linkedTerminal.checkIn = linkedTerminalCheckIn.json();
       }
 
+      const terminalId = terminal.id;
       return {
         ...terminal.json(),
+        comments: (await commentRepository.getComments({ terminalId })).map(comment => ({ ...comment.get(), terminalUuid: terminal.uuid })),
         linkedTerminal
       };
 

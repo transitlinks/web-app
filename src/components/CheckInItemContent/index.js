@@ -6,17 +6,20 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Post from '../Post';
 import Terminal from '../Terminal';
 import Link from '../Link';
+import Comments from '../Comments';
 import s from './CheckInItemContent.css';
 import FontIcon from 'material-ui/FontIcon';
 import { setDeepProperty, setProperty } from '../../actions/properties';
 import { saveCheckIn, deletePost, deleteTerminal } from '../../actions/posts';
 import PropTypes from 'prop-types';
-import { saveLike } from '../../actions/comments';
+import { saveLike, saveComment } from '../../actions/comments';
+import TextField from 'material-ui/TextField';
 
 const CheckInItemContent = ({
   checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
-  savedTerminal, feedItemIndex, savedCheckIn, feedUpdated,
-  setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, editable
+  savedTerminal, feedItemIndex, savedCheckIn, feedUpdated, commentText,
+  setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, saveComment,
+  editable
 }) => {
 
   const { checkIn, posts, terminals } = checkInItem;
@@ -94,13 +97,13 @@ const CheckInItemContent = ({
         </div>
       );
 
-      comments = checkIn.comments;
-
     } else {
 
       content = null;
 
     }
+
+    comments = checkIn.comments;
 
   } else if (contentType === 'arrival' && arrival) {
     content = <Terminal terminal={arrival} />;
@@ -114,6 +117,13 @@ const CheckInItemContent = ({
 
   const userName = checkIn.user || 'Anonymoyus';
   const dateStr = (new Date(checkIn.date)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const commentsAttributes = { checkIn };
+  if (contentType === 'departure') {
+    commentsAttributes.terminal = departure;
+  } else if (contentType === 'arrival') {
+    commentsAttributes.terminal = arrival;
+  }
 
   return (
     <div className={s.feedItemContent} id={`content-${frameId}`}>
@@ -215,18 +225,12 @@ const CheckInItemContent = ({
             ))
         }
       </div>
-      <div className={s.comments}>
-        {
-          (comments && comments.length > 0) &&
-            comments.map(comment => {
-              return (
-                <div className={s.comment}>
-                  { comment.text }
-                </div>
-              );
-            })
-        }
-      </div>
+      {
+        (frameId !== true) &&
+          <div>
+            <Comments comments={comments} frameId={frameId} preview={!editable} {...commentsAttributes} />
+          </div>
+      }
     </div>
   );
 
@@ -246,8 +250,9 @@ export default injectIntl(
     savedTerminal: state.editTerminal.savedTerminal,
     showSettings: state.posts.showSettings,
     savedCheckIn: state.posts.checkIn,
-    feedUpdated: state.posts.feedUpdated
+    feedUpdated: state.posts.feedUpdated,
+    commentText: state.posts.commentText,
   }), {
-    setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike
+    setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, saveComment
   })(withStyles(s)(CheckInItemContent))
 );

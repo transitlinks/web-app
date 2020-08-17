@@ -12,7 +12,7 @@ import {
 import {
   commentRepository,
   userRepository,
-  linkRepository, checkInRepository,
+  linkRepository, checkInRepository, terminalRepository,
 } from '../source';
 import {
   requireOwnership, throwMustBeLoggedInError,
@@ -101,10 +101,40 @@ export const CommentMutationFields = {
     },
     resolve: async ({ request }, { comment }) => {
 
-      const { entity, entityUuid } = comment;
-      log.info(`graphql-request=save-comment user=${request.user ? request.user.uuid : null} comment-uuid=${comment.uuid} entity=${entity} entityUuid=${entityUuid}`);
+      const { checkInUuid, terminalUuid, text } = comment;
+      log.info(`graphql-request=save-comment user=${request.user ? request.user.uuid : null} comment-uuid=${comment.uuid}`);
 
-      return {};
+      if (!request.user) throwMustBeLoggedInError();
+
+      const user = await userRepository.getByUuid(request.user.uuid);
+
+      if (!user) throw new Error('User not found to create a comment. User UUID: ' + request.user.uuid);
+
+      const newComment = {
+        userId: user.id,
+        text
+      };
+
+      let terminal = null;
+      if (checkInUuid) {
+        const checkIn = await checkInRepository.getCheckIn({ uuid: checkInUuid });
+        if (checkIn) newComment.checkInId = checkIn.id;
+        else throw new Error('Check-in for comment not found. Uuid: ' + checkInUuid);
+      } else if (terminalUuid) {
+        terminal = await terminalRepository.getTerminal({ uuid: terminalUuid });
+        if (terminal) newComment.terminalId = terminal.id;
+      } else {
+        throw new Error('No valid entity reference provided for a new comment.');
+      }
+
+      const savedComment = await commentRepository.create(newComment);
+      return {
+        uuid: savedComment.uuid,
+        user: user.json(),
+        checkInUuid: checkInUuid || (terminal ? terminal.checkInUuid : null),
+        terminalUuid,
+        text
+      };
 
     }
 

@@ -38,7 +38,7 @@ export const getById = async (id) => {
 
 export const getByUuid = async (uuid) => {
   const user = await User.findOne({ where: { uuid } });
-  return user.toJSON();
+  return user;
 };
 
 export const getByEmail = async (email) => {

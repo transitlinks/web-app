@@ -2,7 +2,12 @@ import { graphqlReduce, propToState } from "./utils";
 import {
   GET_DISCOVER_START,
   GET_DISCOVER_SUCCESS,
-  GET_DISCOVER_ERROR, SAVE_LIKE_START, SAVE_LIKE_SUCCESS, SAVE_LIKE_ERROR,
+  GET_DISCOVER_ERROR,
+  SAVE_LIKE_START,
+  SAVE_LIKE_SUCCESS,
+  SAVE_LIKE_ERROR,
+  SAVE_COMMENT_START,
+  SAVE_COMMENT_SUCCESS, SAVE_COMMENT_ERROR,
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -81,7 +86,6 @@ export default function reduce(state = {}, action) {
         SAVE_LIKE_SUCCESS,
         SAVE_LIKE_ERROR
       );
-
 
   }
 

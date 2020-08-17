@@ -38,7 +38,7 @@ import {
   DELETE_MEDIAITEM_ERROR,
   SAVE_LIKE_START,
   SAVE_LIKE_SUCCESS,
-  SAVE_LIKE_ERROR
+  SAVE_LIKE_ERROR, SAVE_COMMENT_START, SAVE_COMMENT_SUCCESS, SAVE_COMMENT_ERROR,
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -79,6 +79,8 @@ export default function reduce(state = {}, action) {
           success: () => {
 
             const { feed, fetchedFeedItem } = state;
+            if (!feed) return state;
+
             const { feedItems } = feed;
             const { entityUuid, entityType, onOff, likes } = action.payload.like;
 
@@ -108,6 +110,25 @@ export default function reduce(state = {}, action) {
         SAVE_LIKE_START,
         SAVE_LIKE_SUCCESS,
         SAVE_LIKE_ERROR
+      );
+    case SAVE_COMMENT_START:
+    case SAVE_COMMENT_SUCCESS:
+    case SAVE_COMMENT_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+            const { comment, variables: { frameId } } = action.payload;
+            return {
+              savedComment: { ...comment, frameId }
+            };
+          },
+          error: () => ({ savedComment: null })
+        },
+        SAVE_COMMENT_START,
+        SAVE_COMMENT_SUCCESS,
+        SAVE_COMMENT_ERROR
       );
     case GET_POSTS_START:
     case GET_POSTS_SUCCESS:
@@ -318,10 +339,13 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({
-            loadingFeedItem: 'loading',
-            loadingFrameId: action.payload.variables.frameId
-          }),
+          start: () => {
+            const { variables } = action.payload;
+            return variables.noLoading ? {} : {
+              loadingFeedItem: 'loading',
+              loadingFrameId: action.payload.variables.frameId
+            };
+          },
           success: () => {
             let { fetchedFeedItems } = state;
             if (!fetchedFeedItems) fetchedFeedItems = {};

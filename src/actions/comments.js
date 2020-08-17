@@ -48,32 +48,7 @@ export const saveLike = (entityUuid, entityType, onOff) => {
 
 };
 
-export const voteComment = (commentVote) => {
-
-  return async (...args) => {
-
-    const query = `
-      mutation voteComment {
-        commentVote(commentVote:${toGraphQLObject(commentVote)}) {
-          uuid,
-          up, down
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query }, [ 'commentVote' ],
-      COMMENT_VOTE_START,
-      COMMENT_VOTE_SUCCESS,
-      COMMENT_VOTE_ERROR
-    );
-
-  };
-
-};
-
-export const saveComment = (comment) => {
+export const saveComment = (comment, frameId) => {
 
   return async (...args) => {
 
@@ -82,12 +57,15 @@ export const saveComment = (comment) => {
         comment(comment:${toGraphQLObject(comment)}) {
           uuid,
           text,
-          linkInstanceUuid,
+          replyToUuid,
+          checkInUuid,
+          terminalUuid,
           user {
             uuid,
             username,
             firstName,
-            lastName
+            lastName,
+            photo
           }
         }
       }
@@ -95,7 +73,7 @@ export const saveComment = (comment) => {
 
     return graphqlAction(
       ...args,
-      { query }, [ 'comment' ],
+      { query, variables: { frameId } }, [ 'comment' ],
       SAVE_COMMENT_START,
       SAVE_COMMENT_SUCCESS,
       SAVE_COMMENT_ERROR

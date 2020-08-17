@@ -50,12 +50,25 @@ export default {
 
     const existing = await Comment.findOne({ where: { uuid: comment.uuid } });
     if (!existing) {
-      throw new Error('could not update comment, original comment not found');
+      throw new Error('Could not update comment, original comment not found');
     }
 
     delete comment.uuid;
     await Comment.update(comment, { where: { id: existing.id } });
     return await Comment.findById(existing.id);
+
+  },
+
+  getComments: async (where, options) => {
+
+    const comments = await Comment.findAll({
+      where,
+      include: { model: User, as: 'user' },
+      order: [['createdAt', 'DESC']],
+      ...options
+    });
+
+    return comments;
 
   },
 

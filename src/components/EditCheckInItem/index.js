@@ -365,6 +365,7 @@ const EditCheckInItemView = (props) => {
                       </div> :
                       <div className={s.editControls}>
                         <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                          setProperty('posts.addType', null);
                           setProperty('editTerminal.terminal', {});
                           setProperty('posts.editPost', {});
                           setProperty('posts.mediaItems', []);

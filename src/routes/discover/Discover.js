@@ -3,6 +3,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Discover.css';
 import DiscoverView from '../../components/Discover';
 import { getDiscoveries } from '../../actions/discover';
+import { getFeedItem } from '../../actions/posts';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
 import debounce from 'lodash.debounce';
@@ -48,6 +49,18 @@ class Discover extends React.Component {
 
   }
 
+  componentDidUpdate() {
+
+    const { savedComment } = this.props;
+    if (savedComment) {
+      this.props.setProperty('posts.savedComment', null);
+      if (savedComment.checkInUuid) {
+        this.props.getFeedItem(savedComment.checkInUuid, savedComment.frameId, true);
+      }
+    }
+
+  }
+
   render() {
 
     const { context, props } = this;
@@ -87,9 +100,11 @@ export default connect(state => ({
   userOffset: state.discover.userOffset,
   limit: state.discover.limit,
   search: state.discover.searchTerm,
-  loadingDiscover: state.discover.loadingDiscover
+  loadingDiscover: state.discover.loadingDiscover,
+  savedComment: state.posts.savedComment
 }), {
   getDiscoveries,
-  setProperty
+  setProperty,
+  getFeedItem
 })(withStyles(s)(Discover));
 

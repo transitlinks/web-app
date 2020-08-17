@@ -112,7 +112,7 @@ class Home extends React.Component {
       }
     }
 
-    if (post) {
+    if (checkIn && post) {
       if (!prevPost || prevPost.saved !== post.saved) {
         this.props.setProperty('posts.postText', '');
         this.props.setProperty('posts.mediaItems', []);
@@ -128,22 +128,31 @@ class Home extends React.Component {
 
 
     const savedTerminal = this.props.savedTerminal;
-    if (savedTerminal) {
-      this.props.getFeedItem(checkIn.uuid, 'frame-new');
+    if (checkIn && savedTerminal) {
+      this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
     }
 
-    if (this.props.deletedPost) {
+    if (checkIn && this.props.deletedPost) {
       this.props.setProperty('posts.deletedPost', null);
-      this.props.getFeedItem(checkIn.uuid, 'frame-new');
+      this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
     }
 
-    if (this.props.deletedTerminal) {
+    if (checkIn && this.props.deletedTerminal) {
       this.props.setProperty('posts.deletedTerminal', null);
-      this.props.getFeedItem(checkIn.uuid, 'frame-new');
+      this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
     }
 
     if (prevQuery.tags !== query.tags || prevQuery.user !== query.user) {
       this.props.getFeed(clientId, params);
+    }
+
+    const savedComment = this.props.savedComment;
+    if (savedComment) {
+      this.props.setProperty('posts.savedComment', null);
+      if (savedComment.checkInUuid) {
+        console.log('updated feed item comments', savedComment);
+        this.props.getFeedItem(savedComment.checkInUuid, savedComment.frameId, true);
+      }
     }
 
   }
@@ -181,6 +190,7 @@ export default connect(state => ({
   deletedPost: state.posts.deletedPost,
   deletedTerminal: state.posts.deletedTerminal,
   savedTerminal: state.editTerminal.savedTerminal,
+  savedComment: state.posts.savedComment,
   offset: state.posts.feedOffset,
   loadingFeed: state.posts.loadingFeed,
   loadFeedOffset: state.posts.loadFeedOffset

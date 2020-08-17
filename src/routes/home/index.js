@@ -5,6 +5,7 @@ import React from 'react';
 import Home from './Home';
 import ErrorPage from '../../components/common/ErrorPage';
 import {getClientId, createParamString} from "../../core/utils";
+import { getCheckInQuery, getCommentsQuery, getFeedItemsQuery } from '../../data/queries/queries';
 
 export default {
 
@@ -47,67 +48,7 @@ export default {
       const { data } = await graphqlRequest(
         `query {
           feed${paramsString} {
-            feedItems {
-              checkIn {
-                uuid,
-                clientId,
-                user,
-                userUuid,
-                userImage,
-                date,
-                latitude,
-                longitude
-                placeId,
-                formattedAddress,
-                locality,
-                country,
-                tags,
-                likes,
-                likedByUser
-              },
-              inbound {
-                uuid,
-                latitude,
-                longitude,
-                placeId,
-                formattedAddress,
-                locality,
-                country,
-                tags
-              },
-              outbound {
-                uuid,
-                latitude,
-                longitude,
-                placeId,
-                formattedAddress,
-                locality,
-                country
-              },
-              posts {
-                uuid,
-                text,
-                user,
-                mediaItems {
-                  uuid,
-                  type,
-                  url,
-                  latitude,
-                  longitude
-                }
-              },
-              terminals {
-                uuid,
-                type,
-                transport,
-                transportId,
-                description,
-                date,
-                time,
-                priceAmount,
-                priceCurrency
-              }
-            },
+            ${getFeedItemsQuery()},
             openTerminals {
               uuid,
               type,

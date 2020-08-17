@@ -1,15 +1,6 @@
 @import '../../components/variables.css';
 
 .root {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-@media (max-width: 450px) {
-  .root {
-    padding-left: 6px;
-    padding-right: 6px;
-  }
 }
 
 .container {

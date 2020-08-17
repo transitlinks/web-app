@@ -1,171 +1,102 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  saveComment,
-  voteComment
+  saveComment
 } from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
-import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import cx from 'classnames';
 import s from './Comments.css';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
+import Link from '../Link';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { formatDuration, truncate, getCookie } from '../utils';
-import CommentInput from './CommentInput';
+
+const getCommentAuthor = (user) => {
+
+  const { username, firstName, lastName, email } = user;
+  if (username) {
+    return user.username;
+  } else if (firstName || lastName) {
+    return [firstName, lastName].filter(name => name).join(' ');
+  }
+
+  return 'Anonymous';
+
+};
 
 const Comments = ({
-  user,
-  comments, savedComment,
-  setProperty, saveComment, voteComment,
-  newCommentText, commentVote, replyTo,
-  env, intl,
-  linkInstance
+  comments, checkIn, terminal, commentText, frameId, preview,
+  setProperty, saveComment,
+  auth, env, intl
 }) => {
 
-  const formatCommentText = (text) => {
-    return text.replace(/\n/g, '<br/>');
-  };
-
-  const submitCommentVote = (commentUuid, value) => {
-    voteComment({ uuid: commentUuid, value });
-    document.cookie = `txlinks-comment-vote-${commentUuid}=${value}`;
-  };
-
-  const getLikeStyle = (commentUuid, value) => {
-
-    if (!canUseDOM) return null;
-
-    const cookie = getCookie(`txlinks-comment-vote-${commentUuid}`);
-    if (!cookie) {
-      return { cursor: 'pointer', fontSize: '18px' };
-    }
-
-    if (parseInt(cookie) === value) {
-      return { color: '#0074c2', fontSize: '18px' };
-    } else {
-      return { color: '#c0c0c0', fontSize: '18px' };
-    }
-
-  };
-
-  const openReplyInput = (comment) => {
-    setProperty('replyToText', '');
-    setProperty('replyTo', comment);
-  };
-
-  const commentByUuid = {};
-  (comments || []).forEach(comment => {
-    commentByUuid[comment.uuid] = comment;
-    commentByUuid[comment.uuid].replys = [];
-  });
-
-  const replyUuids = [];
-  Object.keys(commentByUuid).forEach(commentUuid => {
-    const comment = commentByUuid[commentUuid];
-    if (comment.replyToUuid) {
-      commentByUuid[comment.replyToUuid].replys.push(comment);
-      replyUuids.push(commentUuid);
-    }
-  });
-
-  replyUuids.forEach(replyUuid => { delete commentByUuid[replyUuid]; });
-
-  const renderComment = (comment) => {
-
-    if (commentVote && commentVote.uuid === comment.uuid) {
-      comment.up = commentVote.up;
-      comment.down = commentVote.down;
-    }
-
-    const secondLevel = comment.replyToUuid && commentByUuid[comment.replyToUuid];
-
-    return (
-      <div className={cx("comment", s.comment, secondLevel ? s.reply : null)}>
-        <div className={cx("commentText", s.commentText)}>
-          <span className={s.username}>
-            {comment.username || 'Anonymous'}&gt;
-          </span>
-          <span className={s.text}
-            dangerouslySetInnerHTML={ { __html: formatCommentText(comment.text) } }>
-          </span>
-        </div>
-        <div className={s.commentControls}>
-          <div className={s.commentReply}>
-            {
-              (!replyTo || replyTo.uuid !== comment.uuid) &&
-              <span onClick={() => openReplyInput(comment)}>
-                Reply
-              </span>
-            }
-            {
-              (replyTo && replyTo.uuid === comment.uuid) &&
-              <span onClick={() => setProperty('replyTo', null)}>
-                Cancel reply
-              </span>
-            }
-          </div>
-          <div className={s.commentLikes}>
-            <div className={s.likeBlock}>
-              <span>{comment.up}</span>
-              <FontIcon className="material-icons"
-                onClick={() => submitCommentVote(comment.uuid, 1)}
-                style={getLikeStyle(comment.uuid, 1)}>
-                add
-              </FontIcon>
-            </div>
-            <div className={s.likeBlock}>
-              <span>{comment.down}</span>
-              <FontIcon className="material-icons"
-                onClick={() => submitCommentVote(comment.uuid, -1)}
-                style={getLikeStyle(comment.uuid, -1)}>
-                remove
-              </FontIcon>
-            </div>
-          </div>
-        </div>
-        {
-          (replyTo && replyTo.uuid === comment.uuid) &&
-          <div>
-            <CommentInput linkInstance={linkInstance}
-              replyTo={comment} />
-          </div>
-        }
-        {comment.replys.map(reply => renderComment(reply))}
-      </div>
-    );
-
-  };
-
-  const commentElems = (Object.keys(commentByUuid)).map(commentUuid => {
-    const comment = commentByUuid[commentUuid];
-    return renderComment(comment);
-  });
-
   return (
-    <div className={s.container}>
-      <div className={s.comments}>
-        <CommentInput linkInstance={linkInstance}/>
-        <div className={s.commentsList}>
-          {commentElems}
-        </div>
-      </div>
+    <div className={s.comments}>
+      {
+        (auth && auth.loggedIn) &&
+          <div className={s.commentInput}>
+            <div className={s.icon}>
+              <FontIcon className="material-icons" style={{ fontSize: '24px' }}>
+                chat
+              </FontIcon>
+            </div>
+            <div className={s.input}>
+              <TextField id={`comment-input-${frameId}`}
+                         value={commentText[frameId]}
+                         fullWidth
+                         hintText={!commentText ? 'Write comment...' : null}
+                         onChange={(e) => {
+                           setProperty('posts.commentText', { ...commentText, [frameId]: e.target.value });
+                         }}
+                         onKeyDown={(e) => {
+                           if (e.keyCode === 13) {
+                             console.log('save comment', commentText);
+                             const newComment = { text: commentText[frameId] };
+                             if (terminal) newComment.terminalUuid = terminal.uuid;
+                             else if (checkIn) newComment.checkInUuid = checkIn.uuid;
+                             saveComment(newComment, frameId);
+                             setProperty('posts.commentText', { ...commentText, [frameId]: '' });
+                           }
+                         }}
+              />
+            </div>
+          </div>
+      }
+      {
+        (comments && comments.length > 0) &&
+        (preview ? comments.slice(0, 1) : comments).map(comment => {
+          return (
+            <div className={s.comment}>
+              <p className={s.commentContent}>
+                <span className={s.commentAuthor}>
+                  { getCommentAuthor(comment.user) }
+                </span>
+                { comment.text }
+              </p>
+            </div>
+          );
+        })
+      }
+      {
+        (preview && comments && comments.length > 1) &&
+          <div className={s.otherComments}>
+            <Link to={`/check-in/${checkIn.uuid}`}>{ comments.length } comments</Link>
+          </div>
+      }
     </div>
   );
 }
 
 export default injectIntl(
   connect(state => ({
-    user: state.auth.auth.user,
+    auth: state.auth.auth,
     env: state.env,
-    newCommentText: state.viewLinkInstance.newCommentText,
-    replyTo: state.viewLinkInstance.replyTo,
-    commentVote: state.viewLinkInstance.commentVote
+    commentText: state.posts.commentText || {}
   }), {
     saveComment,
-    voteComment,
     setProperty
   })(withStyles(s)(Comments))
 );
