@@ -23,8 +23,8 @@ const Terminal = ({
       );
   }
 
-  const dateStr = terminal.date ? getDateString(terminal.date) : '';
-  const timeStr = terminal.time ? getTimeString(terminal.time) : '';
+  const dateStr = terminal.localDateTime ? getDateString(terminal.localDateTime) : '';
+  const timeStr = terminal.localDateTime ? getTimeString(terminal.localDateTime) : '';
 
   return (
     <div className={s.terminalEntry}>

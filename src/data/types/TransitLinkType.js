@@ -38,6 +38,7 @@ export const LinkTerminalType = new GraphQLObjectType({
     transportId: { type: GraphQLString },
     date: { type: GraphQLString },
     time: { type: GraphQLString },
+    localDateTime: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat },
     locality: { type: GraphQLString },

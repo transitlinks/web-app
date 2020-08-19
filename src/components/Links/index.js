@@ -119,19 +119,20 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
     ];
 
     let date = '';
-    if (terminal.date) {
-      const terminalDate = new Date(terminal.date).toISOString();
+    if (terminal.localDateTime) {
+      const terminalDate = terminal.localDateTime;
       date = months[parseInt(terminalDate.substring(5, 7)) - 1] + ' ' + parseInt(terminalDate.substring(8, 10));
     }
 
-    const time = terminal.time ?
-      new Date(terminal.time).toISOString().substring(11, 16) : '';
+    const time = terminal.localDateTime ?
+      terminal.localDateTime.substring(11, 16) : '';
     return <span><span>{ date }</span> <span style={{ fontWeight: 'bold' }}>{ time }</span></span>;
   };
 
   const getTripDuration = (terminal) => {
 
-    if (terminal.time && terminal.linkedTerminal.time) {
+    if (terminal.localDateTime && terminal.linkedTerminal.localDateTime) {
+      /*
       let timeStr = (new Date(terminal.time).toISOString().substring(11, 16)) + ':00';
       let linkedTimeStr = (new Date(terminal.linkedTerminal.time).toISOString().substring(11, 16)) + ':00';
       if (terminal.date && terminal.linkedTerminal.date) {
@@ -141,9 +142,9 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
         timeStr = '2020-02-02T' + timeStr;
         linkedTimeStr = '2020-02-02T' + linkedTimeStr;
       }
-
-      const time = new Date(timeStr).getTime();
-      const linkedTime = new Date(linkedTimeStr).getTime();
+      */
+      const time = new Date(terminal.localDateTime).getTime();
+      const linkedTime = new Date(terminal.linkedTerminal.localDateTime).getTime();
 
       const timeDiff = Math.abs(time - linkedTime);
       const minuteUnit = 60 * 1000;
@@ -196,10 +197,10 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
           <div className={s.linkInfo}>
             <div className={s.dateTime}>
               <div className={s.time}>
-                { new Date(terminal.time).toISOString().substring(11, 16) }
+                { terminal.localDateTime.substring(11, 16) }
               </div>
               <div className={s.date}>
-                { new Date(terminal.date).toISOString().substring(0, 10) }
+                { terminal.localDateTime.substring(0, 10) }
               </div>
             </div>
           </div>
@@ -403,7 +404,7 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
 
   const renderDateTime = (terminal, label) => {
 
-    if (terminal.date || terminal.time) {
+    if (terminal.localDateTime) {
       return (
         <div className={s.dateTime}>
           <div className={s.dateTimeHeader}>
@@ -411,10 +412,10 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
           </div>
           <div className={s.dateTimeValue}>
             <div className={s.dateValue}>
-              { terminal.date && getDateString(terminal.date) }
+              { getDateString(terminal.localDateTime) }
             </div>
             <div className={s.timeValue}>
-              { terminal.time && getTimeString(terminal.time) }
+              { getTimeString(terminal.localDateTime) }
             </div>
           </div>
         </div>

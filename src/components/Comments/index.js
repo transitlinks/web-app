@@ -42,7 +42,7 @@ const Comments = ({
   };
 
   const sortedComments = [];
-  comments.forEach(comment => {
+  (comments || []).forEach(comment => {
     if (!comment.replyToUuid) {
       sortedComments.push(comment);
       sortedComments.push(...addReplys([comment], []));

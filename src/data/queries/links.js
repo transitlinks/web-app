@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import geoTz from 'geo-tz';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/links');
 
@@ -24,6 +25,7 @@ import {
 
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
 import tagRepository from '../source/tagRepository';
+import { getLocalDateTime } from '../../core/utils';
 
 
 export const TransitLinkMutationFields = {
@@ -202,7 +204,11 @@ export const TransitLinkQueryFields = {
               locality, linkedLocality
             });
 
-            const formattedTerminal = terminal.json();
+            const timeZone = geoTz(terminal.latitude, terminal.longitude)[0];
+            const formattedTerminal = {
+              ...terminal.json(),
+              localDateTime: getLocalDateTime(terminal.createdAt, timeZone)
+            };
             delete formattedTerminal.formattedAddress;
             delete formattedTerminal.linkedFormattedAddress;
             formattedTerminal.linkCount = counts[type];
@@ -245,7 +251,6 @@ export const TransitLinkQueryFields = {
 
             const departures = departureLinks.map(dep => dep.terminal);
             const arrivals = arrivalLinks.map(arr => arr.terminal);
-
 
             const internal = await terminalRepository.getInternalDeparturesByLocality(locality, baseQuery);
 
@@ -304,8 +309,22 @@ export const TransitLinkQueryFields = {
               locality,
               latitude: terminal.latitude,
               longitude: terminal.longitude,
-              departures,
-              arrivals,
+              departures: departures.map(dep => ({
+                ...dep.json(),
+                localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
+                linkedTerminal: {
+                  ...dep.linkedTerminal.json(),
+                  localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
+                }
+              })),
+              arrivals: arrivals.map(arr => ({
+                ...arr.json(),
+                localDateTime: getLocalDateTime(arr.createdAt, geoTz(arr.latitude, arr.longitude)[0]),
+                linkedTerminal: {
+                  ...arr.linkedTerminal.json(),
+                  localDateTime: getLocalDateTime(arr.linkedTerminal.createdAt, geoTz(arr.linkedTerminal.latitude, arr.linkedTerminal.longitude)[0]),
+                }
+              })),
               tags: allTags
             });
           }
@@ -334,7 +353,17 @@ export const TransitLinkQueryFields = {
             query.userId = userId;
           }
 
-          const departures = (await terminalRepository.getTerminals(query)).map(departure => departure.json());
+          const departures = (await terminalRepository.getTerminals(query))
+            .filter(dep => dep.linkedTerminal)
+            .map(dep => ({
+              ...dep.json(),
+              localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
+              linkedTerminal: {
+                ...dep.linkedTerminal.json(),
+                localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
+              }
+            }));
+
           await findRoutePoints(departures);
           let terminal = null;
           if (departures.length > 0) terminal = departures[0];
