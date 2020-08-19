@@ -8,25 +8,19 @@ import s from './CheckIn.css';
 import FontIcon from 'material-ui/FontIcon';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
-
-const constructDateTime = ({ date, time }) => {
-  date.setHours(time.getHours());
-  date.setMinutes(time.getMinutes());
-  return date.toISOString();
-};
+import { getPaddedDate, getPaddedTime } from '../../core/utils';
 
 const CheckInControls = ({
   checkIn, savedCheckIn, editCheckIn, deleteCheckIn, saveCheckIn, setProperty
 }) => {
 
   const dateTime = ({ date, time }) => {
-    return {
-      date: date || new Date((savedCheckIn || checkIn).date),
-      time: time || new Date((savedCheckIn || checkIn).date)
-    };
+    const currentCheckIn = savedCheckIn || checkIn;
+    const newDate = date ? getPaddedDate(date) : getPaddedDate(new Date(currentCheckIn.date));
+    const newTime = time ? getPaddedTime(time) : getPaddedTime(new Date(currentCheckIn.date));
+    return newDate + ' ' + newTime;
   };
 
-  console.log('checkin controls', checkIn);
   return (
     <div className={s.checkInControls}>
       <div className={s.checkInControlsLeft}>
@@ -46,7 +40,8 @@ const CheckInControls = ({
                         floatingLabelStyle={{ width: '120px' }}
                         hintText="Date"
                         onChange={(event, value) => {
-                          saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: constructDateTime(dateTime({ date: value })) } });
+                          console.log('date value', value.getDate(), value.getMonth(), value.getFullYear());
+                          saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: dateTime({ date: value }) } });
                         }} />
           </div>
           <div className={s.time}>
@@ -59,7 +54,8 @@ const CheckInControls = ({
                         floatingLabelFixed
                         hintText="Time"
                         onChange={(event, value) => {
-                          saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: constructDateTime(dateTime({ time: value })) } });
+                          console.log('time value', value.getHours(), value.getMinutes());
+                          saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: dateTime({ time: value }) } });
                         }} />
           </div>
         </div>

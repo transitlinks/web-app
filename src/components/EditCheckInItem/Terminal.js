@@ -14,7 +14,7 @@ import { injectIntl } from 'react-intl';
 import { getAvailableCurrencies } from '../../services/linkService';
 
 import msg from './messages.terminal';
-import { getClientId } from '../../core/utils';
+import { getClientId, getPaddedDate, getPaddedTime } from '../../core/utils';
 import FontIcon from 'material-ui/FontIcon';
 
 const labels = {
@@ -98,6 +98,15 @@ const Terminal = ({
 
   const linkedTerminalLabel = type === 'arrival' ? 'Link to departure' : 'Link to arrival';
 
+  const dateTime = ({ date, time }) => {
+    const newDate = date ? getPaddedDate(date) : getPaddedDate(editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime);
+    const newTime = time ? getPaddedTime(time) : getPaddedTime(editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime);
+    return newDate + 'T' + newTime;
+  };
+
+
+  let defaultDateTime = new Date(editTerminal.localDateTime || checkIn.date);
+  console.log('TERMINAL DATES', defaultDateTime, editTerminal.localDateTime, checkIn.date);
   const save = () => {
 
     if (!editTerminal.transport && !linkedTerminal) {
@@ -121,9 +130,11 @@ const Terminal = ({
       editedTerminal.priceAmount = parseFloat(editTerminal.priceAmount);
     }
 
-    editedTerminal.date = (editTerminal.date ? new Date(editTerminal.date) : now).toISOString();
-    editedTerminal.time = (editTerminal.time ? new Date(editTerminal.time) : now).toISOString();
-
+    //const newDate = editTerminal.date ? getPaddedDate(editTerminal.date) : getPaddedDate(defaultDateTime);
+    //const newTime = editTerminal.time ? getPaddedTime(editTerminal.time) : getPaddedTime(defaultDateTime);
+    //editedTerminal.date = newDate + ' ' + newTime;
+    editedTerminal.date = editTerminal.localDateTime;
+    console.log('NEW DATE', editedTerminal.date);
 
     if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
       editedTerminal.linkedTerminalUuid = linkedTerminalUuid;
@@ -139,6 +150,7 @@ const Terminal = ({
 
   };
 
+  console.log('TIME VALUE', editTerminal.localDateTime);
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>
@@ -175,25 +187,25 @@ const Terminal = ({
                   <div className={s.linkedDateTime}>
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
-                                  value={editTerminal.date || now}
+                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : now}
                                   autoOk
                                   fullWidth
                                   floatingLabelFixed
                                   floatingLabelStyle={{ width: '120px' }}
                                   floatingLabelText={labels[type].dateInputTitle}
                                   hintText={labels[type].dateInputTitle}
-                                  onChange={(event, value) => setTerminalProperty('date', value)} />
+                                  onChange={(event, value) => setTerminalProperty('localDateTime', dateTime({ date: value }))} />
                     </div>
                     <div className={s.time}>
                       <TimePicker id={`${type}-time-picker`}
-                                  value={editTerminal.time || now}
+                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : now}
                                   format="24hr"
                                   autoOk
                                   fullWidth
                                   floatingLabelFixed
                                   floatingLabelText="Time"
                                   hintText={labels[type].timeInputTitle}
-                                  onChange={(event, value) => setTerminalProperty('time', value)} />
+                                  onChange={(event, value) => setTerminalProperty('localDateTime', dateTime({ time: value }))} />
                     </div>
                   </div>
                 </div>
@@ -218,23 +230,23 @@ const Terminal = ({
                   <div className={s.dateTime}>
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
-                                  value={editTerminal.date ? new Date(editTerminal.date) : now}
+                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime}
                                   floatingLabelStyle={{ width: '120px' }}
                                   floatingLabelText={labels[type].dateInputTitle}
                                   floatingLabelFixed
                                   fullWidth
                                   autoOk
-                                  onChange={(event, value) => setTerminalProperty('date', value)} />
+                                  onChange={(event, value) => setTerminalProperty('localDateTime', dateTime({ date: value }))} />
                     </div>
                     <div className={s.time}>
                       <TimePicker id={`${type}-time-picker`}
-                                  value={editTerminal.time ? new Date(editTerminal.time) : now}
+                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime}
                                   format="24hr"
                                   floatingLabelText="Time"
                                   floatingLabelFixed
                                   fullWidth
                                   autoOk
-                                  onChange={(event, value) => setTerminalProperty('time', value)} />
+                                  onChange={(event, value) => setTerminalProperty('localDateTime', dateTime({ time: value }))} />
                     </div>
                   </div>
                 </div>

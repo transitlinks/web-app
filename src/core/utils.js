@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 const uuid = require('uuid/v1');
 
 export const toGraphQLObject = (object) => {
@@ -130,3 +132,28 @@ export function createParamString(params) {
   return paramsString;
 
 }
+
+export function getPaddedDate(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
+}
+
+export function getPaddedTime(date) {
+  console.log('time for', date);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:00`;
+}
+
+
+export function getPaddedDateTime(date) {
+  return getPaddedDate(date) + 'T' + getPaddedTime(date);
+}
+
+export const getLocalDateTime = (date, timeZone) => {
+  const tzDateTime = moment.tz(date, timeZone);
+  const tzDateTimeValue = tzDateTime.format();
+  return tzDateTimeValue.substring(0, 19);
+};

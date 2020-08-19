@@ -99,6 +99,7 @@ export const getFeedItemsQuery = (topLevelQuery) => {
             description,
             date,
             time,
+            localDateTime,
             priceAmount,
             priceCurrency,
             ${getCommentsQuery()},
@@ -110,6 +111,7 @@ export const getFeedItemsQuery = (topLevelQuery) => {
               description,
               date,
               time,
+              localDateTime,
               priceAmount,
               priceCurrency,
               checkIn {
@@ -203,6 +205,7 @@ export const getLinksQuery = (params) => {
           priceCurrency,
           date,
           time,
+          localDateTime,
           checkInUuid,
           formattedAddress,
           description,
@@ -218,6 +221,7 @@ export const getLinksQuery = (params) => {
             priceCurrency,
             date,
             time,
+            localDateTime,
             checkInUuid,
             formattedAddress,
             description
@@ -237,6 +241,7 @@ export const getLinksQuery = (params) => {
           priceCurrency,
           date,
           time,
+          localDateTime,
           checkInUuid,
           formattedAddress,
           description,
@@ -252,6 +257,7 @@ export const getLinksQuery = (params) => {
             priceCurrency,
             date,
             time,
+            localDateTime,
             checkInUuid,
             formattedAddress,
             description
@@ -270,6 +276,7 @@ export const getLinksQuery = (params) => {
           priceCurrency,
           date,
           time,
+          localDateTime,
           checkInUuid,
           formattedAddress,
           description,
@@ -284,6 +291,7 @@ export const getLinksQuery = (params) => {
             priceCurrency,
             date,
             time,
+            localDateTime,
             checkInUuid,
             formattedAddress,
             description

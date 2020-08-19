@@ -54,6 +54,7 @@ export const TerminalType = new GraphQLObjectType({
       description: { type: GraphQLString },
       date: { type: GraphQLString },
       time: { type: GraphQLString },
+      localDateTime: { type: GraphQLString },
       priceAmount: { type: GraphQLFloat },
       priceCurrency: { type: GraphQLString },
       linkedTerminal: { type: TerminalType },

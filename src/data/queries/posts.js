@@ -43,6 +43,7 @@ import {
 } from './utils';
 
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
+import { getLocalDateTime } from '../../core/utils';
 
 const throwPrelaunchError = () => {
   throw Object.assign(new Error('Access error'), {
@@ -103,8 +104,9 @@ const addUserId = async (object, request) => {
 
 const saveTerminal = async (terminalInput, clientId, request) => {
 
+  let savedTerminal = null;
   if (terminalInput.uuid) {
-    const savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
+    savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
     await requireOwnership(request, savedTerminal, clientId);
   }
 
@@ -136,6 +138,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     terminal.linkedFormattedAddress = linkedTerminal.formattedAddress;
   }
 
+  /*
   if (terminalInput.date) {
     terminal.date = new Date(terminalInput.date);
   }
@@ -143,14 +146,24 @@ const saveTerminal = async (terminalInput, clientId, request) => {
   if (terminalInput.time) {
     terminal.time = new Date(terminalInput.time);
   }
+  */
 
-  copyNonNull(terminalInput, terminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
+  copyNonNull(terminalInput, terminal, [ 'uuid', 'date', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
   await addUserId(terminal, request);
+
+  const timeZone = geoTz(checkIn.latitude, checkIn.longitude)[0];
+
+  if (terminal.date) {
+    const tzDateTime = moment.tz(terminal.date, timeZone);
+    const tzDateTimeValue = tzDateTime.format();
+    terminal.createdAt = tzDateTimeValue;
+    terminal.updatedAt = tzDateTimeValue;
+  }
 
   const saved = await postRepository.saveTerminal(terminal);
 
   if (linkedTerminal) {
-    const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency', 'description' ]);
+    const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
     postRepository.saveTerminal({
       uuid: linkedTerminal.uuid,
       linkedTerminalId: saved.id,
@@ -160,7 +173,10 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     });
   }
 
-  return saved.toJSON();
+  return {
+    ...saved.toJSON(),
+    localDateTime: getLocalDateTime(saved.createdAt, timeZone)
+  };
 
 };
 
@@ -277,8 +293,9 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   }
 
   let userId = null;
+  let savedCheckIn = null;
   if (checkInInput.uuid) {
-    const savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
+    savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
     userId = await requireOwnership(request, savedCheckIn, clientId);
   }
 
@@ -286,9 +303,16 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress', 'date'
   ]);
 
+  const latitude = checkIn.latitude || savedCheckIn.latitude;
+  const longitude = checkIn.longitude || savedCheckIn.longitude;
+
+  const timeZone = geoTz(latitude, longitude)[0];
+
   if (checkIn.date) {
-    checkIn.createdAt = checkIn.date;
-    checkIn.updatedAt = checkIn.date;
+    const tzDateTime = moment.tz(checkIn.date, timeZone);
+    const tzDateTimeValue = tzDateTime.format();
+    checkIn.createdAt = tzDateTimeValue;
+    checkIn.updatedAt = tzDateTimeValue;
   }
 
   await addUserId(checkIn, request);
@@ -322,10 +346,11 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     await tagRepository.deleteEntityTags({ checkInId: saved.id, tagId: deletedTags.map(tag => tag.id) });
   }
 
+
   return {
     ...saved.toJSON(),
     tags: tags.filter(tag => deletedTags.map(tag => tag.id).indexOf(tag.id) === -1).map(tag => tag.value),
-    date: saved.createdAt
+    date: getLocalDateTime(saved.createdAt, timeZone)
   };
 
 };
@@ -789,6 +814,8 @@ export const getFeedItem = async (request, checkIn) => {
 
   };
 
+  const timeZone = geoTz(checkIn.latitude, checkIn.longitude)[0];
+
   return {
     userAccess: credentials.userAccess,
     checkIn: {
@@ -796,7 +823,7 @@ export const getFeedItem = async (request, checkIn) => {
       user: credentials.ownerFullName,
       userImage: credentials.userImage,
       userUuid: credentials.userUuid,
-      date: checkIn.createdAt,
+      date: getLocalDateTime(checkIn.createdAt, timeZone),
       tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
       comments: await getComments({ checkInId: checkIn.id }),
       likes: await commentRepository.countLikes({ entityId: checkIn.id, entityType: 'CheckIn' }),
@@ -818,13 +845,20 @@ export const getFeedItem = async (request, checkIn) => {
       if (terminal.linkedTerminalId) {
         linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
         const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
-        linkedTerminal = linkedTerminal.json();
-        linkedTerminal.checkIn = linkedTerminalCheckIn.json();
+        linkedTerminal = {
+          ...linkedTerminal.json(),
+          localDateTime: getLocalDateTime(linkedTerminal.createdAt, timeZone)
+        };
+        linkedTerminal.checkIn = {
+          ...linkedTerminalCheckIn.json(),
+          date: getLocalDateTime(linkedTerminalCheckIn.createdAt, timeZone)
+        };
       }
 
       const terminalId = terminal.id;
       return {
         ...terminal.json(),
+        localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
         comments: await getComments({ terminalId }),
         linkedTerminal
       };
@@ -947,15 +981,17 @@ export const PostQueryFields = {
       }
 
       console.log('feed for user', userName, userImage);
-
       return {
         feedItems: checkIns.map(async (checkIn) => {
           return await getFeedItem(request, checkIn);
         }),
         openTerminals: openTerminals.map(async (terminal) => {
           const terminalCheckIn = await postRepository.getCheckIn({ id: terminal.checkInId });
+          const timeZone = geoTz(terminalCheckIn.latitude, terminalCheckIn.longitude)[0];
+          terminalCheckIn.date = getLocalDateTime(terminalCheckIn.createdAt, timeZone);
           return {
             ...terminal.json(),
+            localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
             checkIn: terminalCheckIn
           };
         }),
@@ -989,8 +1025,11 @@ export const PostQueryFields = {
 
       const result = openTerminals.map(async (terminal) => {
         const terminalCheckIn = await postRepository.getCheckIn({ id: terminal.checkInId });
+        const timeZone = geoTz(terminalCheckIn.latitude, terminalCheckIn.longitude)[0];
+        terminalCheckIn.date = getLocalDateTime(terminalCheckIn.createdAt, timeZone);
         return {
           ...terminal.json(),
+          localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
           checkIn: terminalCheckIn.json()
         };
       });
