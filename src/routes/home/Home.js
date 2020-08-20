@@ -150,7 +150,6 @@ class Home extends React.Component {
     if (savedComment) {
       this.props.setProperty('posts.savedComment', null);
       if (savedComment.checkInUuid) {
-        console.log('updated feed item comments', savedComment);
         this.props.getFeedItem(savedComment.checkInUuid, savedComment.frameId, true);
       }
     }

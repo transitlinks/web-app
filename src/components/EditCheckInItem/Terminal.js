@@ -106,7 +106,7 @@ const Terminal = ({
 
 
   let defaultDateTime = new Date(editTerminal.localDateTime || checkIn.date);
-  console.log('TERMINAL DATES', defaultDateTime, editTerminal.localDateTime, checkIn.date);
+
   const save = () => {
 
     if (!editTerminal.transport && !linkedTerminal) {
@@ -130,11 +130,7 @@ const Terminal = ({
       editedTerminal.priceAmount = parseFloat(editTerminal.priceAmount);
     }
 
-    //const newDate = editTerminal.date ? getPaddedDate(editTerminal.date) : getPaddedDate(defaultDateTime);
-    //const newTime = editTerminal.time ? getPaddedTime(editTerminal.time) : getPaddedTime(defaultDateTime);
-    //editedTerminal.date = newDate + ' ' + newTime;
     editedTerminal.date = editTerminal.localDateTime;
-    console.log('NEW DATE', editedTerminal.date);
 
     if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
       editedTerminal.linkedTerminalUuid = linkedTerminalUuid;
@@ -150,7 +146,6 @@ const Terminal = ({
 
   };
 
-  console.log('TIME VALUE', editTerminal.localDateTime);
   return (
     <div>
       <div id="terminal-page-one" className={s.terminalPageOne}>

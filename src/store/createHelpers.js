@@ -1,14 +1,14 @@
 import fetch from '../core/fetch';
 
 function createGraphqlRequest(fetchKnowingCookie) {
-  
+
   return async function graphqlRequest(query, variables = {}, files) {
-    
+
     const fetchConfig = {
       method: 'post',
       credentials: 'include'
     };
-     
+
     if (files) {
       const form = new FormData();
       form.append('query', query);
@@ -25,7 +25,6 @@ function createGraphqlRequest(fetchKnowingCookie) {
 
     let response = {};
     try {
-      console.log('fetchConfig', fetchConfig);
       response = await fetchKnowingCookie('/graphql', fetchConfig);
     } catch (error) {
       response.errors = [ error ];
@@ -44,9 +43,9 @@ function createGraphqlRequest(fetchKnowingCookie) {
 }
 
 function createFetchKnowingCookie({ cookie }) {
-  
+
   if (!process.env.BROWSER) {
-    
+
     return async (url, options = {}) => {
       const isLocalUrl = /^\/($|[^\/])/.test(url);
 
@@ -62,7 +61,7 @@ function createFetchKnowingCookie({ cookie }) {
 
       return fetch(url, options);
     };
-  
+
   }
 
   return fetch;
@@ -70,7 +69,7 @@ function createFetchKnowingCookie({ cookie }) {
 }
 
 export default function createHelpers(config) {
-  
+
   const fetchKnowingCookie = createFetchKnowingCookie(config);
   const graphqlRequest = createGraphqlRequest(fetchKnowingCookie);
 

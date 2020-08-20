@@ -105,7 +105,8 @@ export const CheckInType = new GraphQLObjectType({
     tags: { type: new GraphQLList(GraphQLString) },
     likes: { type: GraphQLInt },
     comments: { type: new GraphQLList(CommentType) },
-    likedByUser: { type: GraphQLBoolean }
+    likedByUser: { type: GraphQLBoolean },
+    nextUrl: { type: GraphQLString }
   },
 });
 

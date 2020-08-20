@@ -29,8 +29,9 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.disabledTags', []);
     this.props.setProperty('posts.fetchedFeedItem', null);
     this.props.setProperty('posts.checkIn', null);
-    this.props.getFeedItem(this.props.feedItem.checkIn.uuid, 'frame-edit');
-    this.updateComponent(this.props);
+    this.props.setProperty('posts.savedCheckIn', null);
+    //this.props.getFeedItem(this.props.feedItem.checkIn.uuid, 'frame-edit');
+    //this.updateComponent(this.props);
   }
 
   componentWillReceiveProps(props) {
@@ -42,7 +43,7 @@ class CheckIn extends React.Component {
     if (props.deleted) {
       props.setProperty('posts.deletedCheckIn', null);
       props.setProperty('posts.editCheckIn', false);
-      props.navigate('/');
+      props.navigate(props.deleted.nextUrl);
       return;
     }
 
@@ -103,13 +104,14 @@ class CheckIn extends React.Component {
     const {
       feedItem,
       transportTypes,
-      openTerminals
+      openTerminals,
+      view
     } = this.props;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <CheckInView checkInItem={feedItem} openTerminals={openTerminals} transportTypes={transportTypes} />
+          <CheckInView checkInItem={feedItem} openTerminals={openTerminals} transportTypes={transportTypes} view={view} />
         </div>
       </div>
     );

@@ -75,7 +75,6 @@ const Comments = ({
                      }}
                      onKeyDown={(e) => {
                        if (e.keyCode === 13) {
-                         console.log('save comment', commentText);
                          const newComment = { text: commentText[frameId] };
                          if (terminal) newComment.terminalUuid = terminal.uuid;
                          else if (checkIn) newComment.checkInUuid = checkIn.uuid;
@@ -179,7 +178,7 @@ const Comments = ({
       {
         (preview && comments && comments.length > 1) &&
           <div className={s.otherComments}>
-            <Link to={`/check-in/${checkIn.uuid}`}>{ comments.length } comments</Link>
+            <Link to={`/check-in/${checkIn.uuid}?view=${terminal ? terminal.type : 'reaction'}`}>{ comments.length } comments</Link>
           </div>
       }
     </div>

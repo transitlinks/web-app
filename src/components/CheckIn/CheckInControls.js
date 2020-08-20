@@ -40,7 +40,6 @@ const CheckInControls = ({
                         floatingLabelStyle={{ width: '120px' }}
                         hintText="Date"
                         onChange={(event, value) => {
-                          console.log('date value', value.getDate(), value.getMonth(), value.getFullYear());
                           saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: dateTime({ date: value }) } });
                         }} />
           </div>
@@ -54,7 +53,6 @@ const CheckInControls = ({
                         floatingLabelFixed
                         hintText="Time"
                         onChange={(event, value) => {
-                          console.log('time value', value.getHours(), value.getMinutes());
                           saveCheckIn({ checkIn: { uuid: checkIn.uuid, date: dateTime({ time: value }) } });
                         }} />
           </div>

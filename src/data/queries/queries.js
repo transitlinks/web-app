@@ -183,7 +183,13 @@ export const getDiscoverQuery = (params) => {
 
 export const getLinksQuery = (params) => {
 
-  const paramsString = createParamString(params);
+  const query = {
+    ...params
+  };
+
+  delete query.view;
+
+  const paramsString = createParamString(query);
 
   return `
     transitLinks ${paramsString} {

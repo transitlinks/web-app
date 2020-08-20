@@ -121,7 +121,7 @@ export const saveCheckIn = ({ checkIn }) => {
 
 };
 
-export const deleteCheckIn = (uuid) => {
+export const deleteCheckIn = (uuid, nextUrl) => {
 
   return async (...args) => {
 
@@ -137,14 +137,15 @@ export const deleteCheckIn = (uuid) => {
           placeId,
           locality,
           country,
-          formattedAddress
+          formattedAddress,
+          nextUrl
         }
       }
     `;
 
     return graphqlAction(
       ...args,
-      { query }, [ 'checkIn' ],
+      { query, variables: { nextUrl } }, [ 'deleteCheckIn' ],
       DELETE_CHECKIN_START,
       DELETE_CHECKIN_SUCCESS,
       DELETE_CHECKIN_ERROR
@@ -536,7 +537,6 @@ export const getDiscoveries = (search, type) => {
 
 export const getFeed = (clientId, params) => {
 
-  console.log('feed params', params);
   let paramsString = `clientId: "${clientId}"`;
   const { add, offset, limit, user, tags, locality } = params;
 

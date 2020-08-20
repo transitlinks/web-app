@@ -53,7 +53,7 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
           </div>
         </div>
       );
-      directionsUrl = '/links?tag=' + tags;
+      directionsUrl = '/links?tag=' + tags + '&view=map';
     } else if (user) {
       filterDisplay = (
         <div className={s.userFilter}>
@@ -74,14 +74,14 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
           <div className={s.localityName}>{locality}</div>
         </div>
       );
-      directionsUrl = '/links?locality=' + locality;
+      directionsUrl = '/links?locality=' + locality + '&view=map';
     } else if (tags) {
       filterDisplay = (
         <div className={s.tagFilter}>
           <div className={s.tagName}>#{tags}</div>
         </div>
       );
-      directionsUrl = '/links?tag=' + tags;
+      directionsUrl = '/links?tag=' + tags + '&view=map';
     }
 
     return (

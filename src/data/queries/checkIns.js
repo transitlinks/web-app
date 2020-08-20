@@ -75,7 +75,6 @@ const getLinkedCheckIns = async (checkIn) => {
 
   const mapCheckInTags = (checkIns) => {
     return checkIns.map(checkIn => {
-      console.log(checkIn.tags.map(tag => tag.value));
       return {
         ...checkIn.toJSON(),
         tags: checkIn.tags.map(tag => tag.value)

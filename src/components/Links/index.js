@@ -132,17 +132,7 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
   const getTripDuration = (terminal) => {
 
     if (terminal.localDateTime && terminal.linkedTerminal.localDateTime) {
-      /*
-      let timeStr = (new Date(terminal.time).toISOString().substring(11, 16)) + ':00';
-      let linkedTimeStr = (new Date(terminal.linkedTerminal.time).toISOString().substring(11, 16)) + ':00';
-      if (terminal.date && terminal.linkedTerminal.date) {
-        timeStr = new Date(terminal.date).toISOString().substring(0, 10) + 'T' + timeStr;
-        linkedTimeStr = new Date(terminal.linkedTerminal.date).toISOString().substring(0, 10) + 'T' + linkedTimeStr;
-      } else {
-        timeStr = '2020-02-02T' + timeStr;
-        linkedTimeStr = '2020-02-02T' + linkedTimeStr;
-      }
-      */
+
       const time = new Date(terminal.localDateTime).getTime();
       const linkedTime = new Date(terminal.linkedTerminal.localDateTime).getTime();
 
@@ -282,7 +272,7 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
                   return (
                     <div className={s.terminalTag}>
                       #<Link
-                      to={`/links?tag=${tag.tag}&user=${tag.userUuid}`}>{tag.tag}</Link>
+                      to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{tag.tag}</Link>
                     </div>
                   );
                 })
@@ -687,7 +677,7 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                                 linkStat.tags.map(tag => {
                                   return (
                                     <div className={s.localityTag}>
-                                      #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}`}>{ tag.tag }</Link>
+                                      #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{ tag.tag }</Link>
                                     </div>
                                   );
                                 })
@@ -861,7 +851,7 @@ const LinksView = (props) => {
 
   const {
     intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, viewMode, linkMode,
-    mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated,
+    mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated, query,
     selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag,
     getLinks, setProperty, navigate
   } = props;
@@ -1019,10 +1009,14 @@ const LinksView = (props) => {
     defaultZoom: mapZoom ? mapZoom.zoomLevel : 10,
     onMapLoad: (map) => {
       if (map) {
-        if (mapZoom && mapZoom.updated !== mapBoundsUpdated) {
-          console.log('fit bounds', map);
-          setProperty('links.mapBoundsUpdated', mapZoom.updated);
-          map.fitBounds(mapZoom.bounds);
+        if ((mapZoom && mapZoom.updated !== mapBoundsUpdated) || query.view !== viewMode) {
+          console.log('fit bounds', map, mapZoom, displayLinks);
+          if (mapZoom) {
+            map.fitBounds(mapZoom.bounds);
+          } else {
+            setProperty('links.viewMode', query.view);
+            //map.fitBounds(displayLinks);
+          }
         }
       }
     },
@@ -1075,7 +1069,7 @@ const LinksView = (props) => {
         </div>
         <div className={s.mapToggle}>
           {
-            (viewMode === 'map') ?
+            ((viewMode || query.view) === 'map') ?
               <FontIcon className="material-icons" style={{ fontSize: '24px' }}
                         onClick={() => setProperty('links.viewMode', 'list')}>list</FontIcon> :
               <FontIcon className="material-icons" style={{ fontSize: '24px' }}
@@ -1161,7 +1155,7 @@ const LinksView = (props) => {
         (searchResultType === 'links' || searchResultType === 'tagged') ?
           <div className={s.linksView}>
             {
-              viewMode === 'map' &&
+              (viewMode || query.view) === 'map' &&
                 <div className={s.map}>
                   { mapView }
                 </div>
@@ -1170,7 +1164,7 @@ const LinksView = (props) => {
               { listContent }
             </div>
           </div> :
-          ((viewMode === 'map') ? mapView : listContent)
+          (((viewMode || query.view) === 'map') ? mapView : listContent)
       }
     </div>
   );

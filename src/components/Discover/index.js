@@ -29,7 +29,7 @@ const DiscoverView = ({
             {
               locations.map((location, i) => (
                 <span>
-                <a href={`/links?locality=${location}`}>{location}</a>
+                <a href={`/links?locality=${location}&view=map`}>{location}</a>
                   {
                     (i < locations.length - 1) && (<span>, </span>)
                   }
@@ -38,7 +38,7 @@ const DiscoverView = ({
             }
           </div>
           <div className={s.terminalTypeValue}>
-            <Link to={`/links?locality=${groupName}&type=${terminalType}`}>{locations.length}</Link>
+            <Link to={`/links?locality=${groupName}&type=${terminalType}&view=map`}>{locations.length}</Link>
           </div>
           <div className={s.terminalTypeIcon}>
             <FontIcon className="material-icons" style={{ fontSize: '20px' }}>{ terminalType === 'arrival' ? 'call_received' : 'call_made' }</FontIcon>

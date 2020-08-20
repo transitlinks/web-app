@@ -7,7 +7,7 @@ import CheckInItem from '../CheckInItem';
 import EditCheckInItem from '../EditCheckInItem';
 
 const CheckIn = ({
-  checkInItem, openTerminals, transportTypes, edit, addPost, editPost, editTerminal, savedTerninal
+  checkInItem, openTerminals, transportTypes, edit, addPost, editPost, editTerminal, savedTerninal, view
 }) => {
 
   return (
@@ -17,10 +17,12 @@ const CheckIn = ({
           <CheckInItem checkInItem={checkInItem}
                        transportTypes={transportTypes}
                        openTerminals={openTerminals}
-                       frameId="frame-edit" editable /> :
+                       frameId="frame-edit" view={view}
+                       editable /> :
           <EditCheckInItem checkInItem={checkInItem}
                            openTerminals={openTerminals}
                            transportTypes={transportTypes}
+                           view={view}
                            frameId="frame-edit" />
       }
 

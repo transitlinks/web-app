@@ -1,4 +1,4 @@
-import { graphqlReduce } from './utils';
+import { graphqlReduce, propToState } from './utils';
 import { navigate } from '../actions/route';
 import {
   SELECTED_LOCALITY,
@@ -152,10 +152,9 @@ export default function editLink(state = {}, action) {
         DELETE_CHECKIN_ERROR
       );
 
-    default:
-      return state;
-
   }
+
+  return propToState(action, 'editCheckIn', { ...state });
 
 
 }

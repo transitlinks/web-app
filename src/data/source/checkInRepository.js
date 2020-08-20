@@ -99,8 +99,6 @@ export default {
 
   saveCheckIn: async (checkIn) => {
 
-    console.log("save check in", checkIn, checkIn.uuid);
-
     if (checkIn.uuid) {
 
       const result = await CheckIn.update(checkIn, {

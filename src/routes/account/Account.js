@@ -3,20 +3,19 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Account.css';
 import AccountView from '../../components/Account';
 import Profile from '../../components/Account/Profile';
-import UserLinks from '../../components/Account/UserLinks';
 
 const title = 'Transitlinks - Account';
 
 class Account extends React.Component {
 
-  render() {  
+  render() {
 
     const { context, props } = this;
 
     context.setTitle(title);
 
     const errorElem = null;
-  
+
     let section = null;
     let sectionName = null;
     if (props.profile) {
@@ -32,7 +31,7 @@ class Account extends React.Component {
     }
 
     return (
-      
+
       <div>
         <div className={s.root}>
           <div className={s.container}>
@@ -41,8 +40,8 @@ class Account extends React.Component {
             </AccountView>
           </div>
         </div>
-      </div>    
-    
+      </div>
+
     );
 
   }

@@ -15,7 +15,6 @@ class Links extends React.Component {
   componentDidMount() {
     const { query } = this.props;
     this.props.setProperty('links.selectedLink', null);
-    this.props.getLinks(query || {});
   }
 
   componentDidUpdate(prevProps) {

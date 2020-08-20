@@ -209,8 +209,6 @@ export default {
 
   saveCheckIn: async (checkIn) => {
 
-    console.log("save check in", checkIn, checkIn.uuid);
-
     if (checkIn.uuid) {
 
       const result = await CheckIn.update(checkIn, {
@@ -242,7 +240,6 @@ export default {
       ...options
     });
 
-    console.log("delete checkins result", deleteResult);
     return deleteResult;
 
   },
@@ -332,7 +329,6 @@ export default {
       ...options
     });
 
-    console.log("delete posts result", deleteResult);
     return deleteResult;
 
   },
@@ -344,7 +340,6 @@ export default {
       ...options
     });
 
-    console.log("delete terminals result", deleteResult);
     return deleteResult;
 
   },
@@ -372,8 +367,6 @@ export default {
   },
 
   saveMediaItem: async (mediaItem) => {
-
-    console.log("save media item", mediaItem.uuid);
 
     if (mediaItem.uuid) {
 
@@ -406,7 +399,6 @@ export default {
       ...options
     });
 
-    console.log("delete media items result", deleteResult);
     return deleteResult;
 
   }

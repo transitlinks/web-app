@@ -58,7 +58,6 @@ const CheckInItemContent = ({
     */
 
     if (activePost > posts.length - 1) {
-      console.log('post out of bounds', feedProperties, activePost, frameId, posts);
       activePost = 0;
     }
 
@@ -215,7 +214,6 @@ const CheckInItemContent = ({
               <div className={s.removableTag}>
                 <div className={s.tagValue}>#{tag}</div>
                 <div className={s.removeTag} onClick={() => {
-                  console.log('remove tag', tag);
                   saveCheckIn({ checkIn: { uuid: checkIn.uuid, tags: checkIn.tags.filter(t => t !== tag)}})
                 }}>
                   <FontIcon className="material-icons" style={{ fontSize: '16px', color: '#9a0000' }}>

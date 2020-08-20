@@ -23,9 +23,9 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
   if (groupType === 'tag') postCountUrl = `/?tags=${groupName}`;
   else if (groupType === 'user') postCountUrl = `/?user=${groupName}`;
 
-  let connectionCountUrl = `/links?locality=${groupName}`;
-  if (groupType === 'tag') connectionCountUrl = `/links?tag=${groupName}`;
-  else if (groupType === 'user') connectionCountUrl = `/links?user=${groupName}`;
+  let connectionCountUrl = `/links?locality=${groupName}&view=map`;
+  if (groupType === 'tag') connectionCountUrl = `/links?tag=${groupName}&view=map`;
+  else if (groupType === 'user') connectionCountUrl = `/links?user=${groupName}&view=map`;
 
   const discoveryStatsElem = (
     <div className={cx(s.secondaryPost, s.lastFrame)}>

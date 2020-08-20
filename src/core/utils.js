@@ -141,7 +141,6 @@ export function getPaddedDate(date) {
 }
 
 export function getPaddedTime(date) {
-  console.log('time for', date);
   const hours = date.getHours();
   const minutes = date.getMinutes();
   return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:00`;

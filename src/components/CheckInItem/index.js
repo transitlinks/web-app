@@ -26,7 +26,7 @@ const typeSelector = (iconName, isSelected, onClick, type) => {
 const CheckInItem = (
   {
     checkInItem, frameId, target, feedProperties, loadingFeedItem, loadingFrameId,
-    transportTypes, openTerminals,
+    transportTypes, openTerminals, view,
     showLinks, showSettings, updateFeedItem, updatedCheckInDate, feedItemIndex, feedItem, fetchedFeedItem,
     setProperty, setDeepProperty, getFeedItem, deleteCheckIn, saveCheckIn, editable, editCheckIn, navigate
   }) => {
@@ -67,7 +67,7 @@ const CheckInItem = (
 
   const getOutboundClassnames = () => cx(getStateClass(outbound), s.outboundContainer);
 
-  let contentType = null;
+  let contentType = view;
   if (feedProperties[frameId] && feedProperties[frameId]['contentType']) {
     contentType = feedProperties[frameId]['contentType'];
   }

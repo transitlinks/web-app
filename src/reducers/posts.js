@@ -218,12 +218,16 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({}),
-          success: () => ({
-            deletedCheckIn: Object.assign(
-              action.payload,
-              { deleted: (new Date()).getTime() }
-            )
-          }),
+          success: () => {
+            const { deleteCheckIn, variables: { nextUrl } } = action.payload;
+            return {
+              deletedCheckIn: {
+                ...action.payload,
+                nextUrl: nextUrl !== '/' ? deleteCheckIn.nextUrl : '/',
+                deleted: (new Date()).getTime()
+              }
+            };
+          },
           error: () => ({ deletedCheckIn: null })
         },
         DELETE_CHECKIN_START,

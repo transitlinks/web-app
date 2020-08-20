@@ -317,6 +317,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   await addUserId(checkIn, request);
 
+  /*
   const clientParams = userId ? { userId } : { clientId: checkInInput.clientId };
   const lastCheckIns = await postRepository.getCheckIns(clientParams, {
     limit: 1,
@@ -328,13 +329,16 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     checkIn.prevCheckInId = lastCheckIns[0].id;
     console.log("PREV CHECK IN ID", lastCheckIns[0].id);
   };
+  */
 
   const saved = await postRepository.saveCheckIn(checkIn);
 
+  /*
   if (lastCheckIns.length > 0) {
     await postRepository.saveCheckIn({ uuid: lastCheckIns[0].uuid, nextCheckInId: saved.id });
     console.log("NEXT CHECK IN ID", saved.id);
   };
+  */
 
   const tagIds = (await tagRepository.getEntityTags({ checkInId: saved.id }))
     .map(entityTag => entityTag.tagId);
@@ -360,6 +364,7 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
   await requireOwnership(request, checkIn, clientId);
 
+  /*
   const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
   const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });
 
@@ -374,6 +379,22 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
       await postRepository.saveCheckIn({ uuid: nextCheckIn.uuid, prevCheckInId: prevCheckIn.id });
     }
   }
+  */
+
+  const inboundCheckIns = await postRepository.getCheckIns({
+    userId: checkIn.userId,
+    createdAt: { $lt: checkIn.createdAt }
+  }, {
+    limit: 1,
+    order: [[ 'createdAt', 'DESC' ]]
+  });
+  const outboundCheckIns = await postRepository.getCheckIns({
+    userId: checkIn.userId,
+    createdAt: { $gt: checkIn.createdAt }
+  }, {
+    limit: 1,
+    order: [[ 'createdAt', 'ASC' ]]
+  });
 
   await postRepository.deletePosts({ checkInId: checkIn.id });
   const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
@@ -394,7 +415,13 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
   await postRepository.deleteTerminals({ checkInId: checkIn.id });
   await postRepository.deleteCheckIns({ uuid: checkIn.uuid });
 
-  return checkIn.toJSON();
+  let nextUrl = '/';
+  if (outboundCheckIns.length > 0) nextUrl = `/check-in/${outboundCheckIns[0].uuid}`;
+  else if (inboundCheckIns.length > 0) nextUrl = `/check-in/${inboundCheckIns[0].uuid}`;
+  return {
+    ...checkIn.json(),
+    nextUrl
+  };
 
 };
 
@@ -504,7 +531,6 @@ const processVideo = async (inputFile, outputFile, entityUuid, mediaItemUuid) =>
     });
 
   } catch (err) {
-    console.log('process video error', err);
     await postRepository.deleteMediaItems({ uuid: mediaItemUuid });
   }
 
@@ -949,7 +975,6 @@ export const PostQueryFields = {
         const tagsArray = tags.split(',');
         const query = { tags: tagsArray, userId };
         checkIns = await postRepository.getTaggedCheckIns(query, options);
-        console.log('result for tags', tagsArray);
       } else {
         const query = {};
         if (locality) query.locality = locality;
@@ -980,7 +1005,6 @@ export const PostQueryFields = {
         }
       }
 
-      console.log('feed for user', userName, userImage);
       return {
         feedItems: checkIns.map(async (checkIn) => {
           return await getFeedItem(request, checkIn);

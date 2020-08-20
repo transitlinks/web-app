@@ -11,7 +11,7 @@ export default {
 
   path: '/check-in/:uuid',
 
-  async action({ params, context }) {
+  async action({ params, query, context }) {
 
     const { graphqlRequest } = context.store.helpers;
 
@@ -21,6 +21,8 @@ export default {
     if (auth.loggedIn) {
       userUuid = auth.user.uuid;
     }
+
+    const { view } = query;
 
     try {
 
@@ -63,7 +65,8 @@ export default {
           edit,
           feedItem,
           transportTypes,
-          openTerminals
+          openTerminals,
+          view
         };
 
         return <CheckIn {...props} />;

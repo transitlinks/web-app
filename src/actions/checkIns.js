@@ -159,7 +159,6 @@ export const deleteCheckIn = (uuid) => {
 
 export const getFeed = (clientId, params) => {
 
-  console.log('feed params', params);
   let paramsString = `clientId: "${clientId}"`;
   const { add, offset, limit, user, tags, locality } = params;
 
