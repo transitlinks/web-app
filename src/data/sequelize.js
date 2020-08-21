@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 import fixtures from 'sequelize-fixtures';
-import { DB_URL, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } from '../config';
+import { APP_ENV, DB_URL, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } from '../config';
 
 const dbUrl = DB_URL ||
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
@@ -8,7 +8,7 @@ const dbUrl = DB_URL ||
 const sequelize = new Sequelize(dbUrl, {
   dialect: 'postgres',
   dialectOptions: {
-    ssl: true
+    ssl: APP_ENV === 'stage'
   },
   logging: false,
   define: {
