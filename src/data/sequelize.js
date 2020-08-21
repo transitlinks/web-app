@@ -4,8 +4,12 @@ import { DB_URL, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } from '../conf
 
 const dbUrl = DB_URL ||
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
-  
+
 const sequelize = new Sequelize(dbUrl, {
+  dialect: 'postgres',
+  dialectOptions: {
+    ssl: true
+  },
   logging: false,
   define: {
     freezeTableName: true,
@@ -38,8 +42,8 @@ export const loadFixtures = () => {
 	  createTransport('plane'),
 	  createTransport('helicopter')
   ];
-	
-	console.log(models);	
+
+	console.log(models);
 	fixtures.loadFixtures(data, models).then((...args) => {
 			console.log(args);
 	});

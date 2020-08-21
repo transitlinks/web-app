@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { MAPS_JS_API_KEY, GA_TRACKING_ID } from '../config';
 
 function Html({ title, description, style, script, children, lang, state }) {
-  
+
   return (
     <html className="no-js" lang={lang}>
       <head>
@@ -41,6 +41,7 @@ function Html({ title, description, style, script, children, lang, state }) {
         <script async defer
           src={`https://maps.googleapis.com/maps/api/js?key=${MAPS_JS_API_KEY}`}>
         </script>
+        <script src="/js/markerclustererplus.min.js"></script>
       </body>
     </html>
   );
