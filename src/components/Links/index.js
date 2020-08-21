@@ -980,6 +980,25 @@ const LinksView = (props) => {
     );
     mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
     listContent = renderLinksList(props);
+  } else if (searchResultType === 'route') {
+    searchHeader = (
+      <div className={s.taggedListHeader}>
+        <div className={s.tag}>{ displayLinksResult.from } - { displayLinksResult.to }</div>
+        <div className={s.undo}>
+          <Link to={
+            getNavigationQuery({
+              transportTypes: selectedTransportTypes
+            })
+          }>
+            <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
+              clear
+            </FontIcon>
+          </Link>
+        </div>
+      </div>
+    );
+    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
+    listContent = renderLinksList(props);
   } else {
     searchHeader = (
       <div className={s.taggedListHeader}>
@@ -1152,7 +1171,7 @@ const LinksView = (props) => {
         </div>
       }
       {
-        (searchResultType === 'links' || searchResultType === 'tagged') ?
+        (searchResultType === 'links' || searchResultType === 'tagged' || searchResultType === 'route') ?
           <div className={s.linksView}>
             {
               (viewMode || query.view) === 'map' &&

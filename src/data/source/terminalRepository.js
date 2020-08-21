@@ -4,6 +4,7 @@ const log = getLog('data/source/terminalRepository');
 import sequelize from '../sequelize';
 import { Terminal, CheckIn, Post } from '../models';
 import postRepository from './postRepository';
+import { checkInRepository, terminalRepository } from './index';
 
 export default {
 
@@ -26,6 +27,35 @@ export default {
     });
 
     return terminals;
+
+  },
+
+  getRoute: async (from, to) => {
+    const query = `
+      SELECT
+    t.*
+      FROM
+          pgr_dijkstra(
+                  'SELECT id, source, target, distance AS cost FROM "Connection"',
+                  (SELECT id FROM "Locality" WHERE name = '${from}'),
+                  (SELECT id FROM "Locality" WHERE name = '${to}'),
+                  FALSE
+              ) AS p
+              LEFT JOIN "Connection" AS c ON p.edge = c.id
+              LEFT JOIN "Locality" AS l ON p.node = l.id
+              LEFT JOIN "Terminal" AS t ON c."sourceTerminalId" = t.id
+      ORDER BY
+          p.seq
+    `;
+    const departures = await sequelize.query(query, { model: Terminal, mapToModel: true });
+    for (let i = 0; i < departures.length; i++) {
+      if (departures[i].linkedTerminalId) {
+        departures[i].linkedTerminal = await terminalRepository.getTerminal({ id: departures[i].linkedTerminalId });
+        departures[i].checkIn = await checkInRepository.getCheckIn({ id: departures[i].checkInId });
+      }
+    }
+
+    return departures;
 
   },
 
