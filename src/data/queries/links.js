@@ -116,6 +116,7 @@ const findRoutePoints = async (terminals) => {
           $gt: terminal.type === 'departure' ? terminal.createdAt : linkedTerminal.createdAt,
           $lt: terminal.type === 'departure' ? linkedTerminal.createdAt : terminal.createdAt
         },
+        id: { $notIn: [terminal.checkInId, linkedTerminal.checkInId] },
         userId: terminal.userId
       }, {
         order: [['createdAt', terminal.type === 'departure' ? 'ASC' : 'DESC']]
