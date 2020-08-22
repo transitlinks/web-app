@@ -177,34 +177,49 @@ export const TransitLinkQueryFields = {
 
         if (from && to) {
 
-          let departures = await terminalRepository.getRoute(from, to);
-          console.log('got deps', departures);
+          const routes = await terminalRepository.getRoute(from, to);
+          const routeKeys = Object.keys(routes);
 
-          departures = departures
-            .filter(dep => dep.linkedTerminalId)
-            .map(dep => ({
-              ...dep.json(),
-              localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
-              linkedTerminal: {
-                ...dep.linkedTerminal.json(),
-                localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
-              }
-            }));
+          if (routeKeys.length > 0) {
 
-          await findRoutePoints(departures);
-          let terminal = null;
-          if (departures.length > 0) terminal = departures[0];
-          if (terminal) {
-            linkStats.push({
-              locality: terminal.locality,
-              latitude: terminal.latitude,
-              longitude: terminal.longitude,
-              from,
-              to,
-              departures,
-              arrivals: [],
-              internal: []
-            });
+            let terminals = [];
+
+            for (let i = 0; i < routeKeys.length; i++) {
+
+              const departures = routes[routeKeys[i]]
+                .filter(dep => dep.linkedTerminalId)
+                .map(dep => ({
+                  ...dep,
+                  routeId: parseInt(routeKeys[i]),
+                  localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
+                  linkedTerminal: {
+                    ...dep.linkedTerminal.json(),
+                    localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
+                  }
+                }));
+
+              await findRoutePoints(departures);
+
+              terminals = terminals.concat(departures);
+
+            }
+
+            let terminal = null;
+            if (terminals.length > 0) terminal = terminals[0];
+
+            if (terminal) {
+              linkStats.push({
+                locality: terminal.locality,
+                latitude: terminal.latitude,
+                longitude: terminal.longitude,
+                from,
+                to,
+                departures: terminals,
+                arrivals: [],
+                internal: []
+              });
+
+            }
           }
 
           return {

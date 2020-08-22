@@ -203,6 +203,7 @@ export const getLinksQuery = (params) => {
         locality,
         latitude,
         longitude,
+        routeId,
         departures {
           type,
           latitude,
@@ -214,6 +215,7 @@ export const getLinksQuery = (params) => {
           priceCurrency,
           date,
           time,
+          routeId,
           localDateTime,
           checkInUuid,
           formattedAddress,

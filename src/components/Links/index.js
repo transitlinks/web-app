@@ -14,6 +14,7 @@ import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } f
 import TextField from 'material-ui/TextField';
 import msgTransport from '../common/messages/transport';
 import { getDateString, getTimeString } from '../utils';
+import links from '../../reducers/links';
 
 const LinksMap = compose(
   withProps({
@@ -424,9 +425,29 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
 
 };
 
-const drawLines = (links, transportTypes, type, selectedTerminal, onHighlight, onSelect, intl, setProperty) => {
-  return (links[type] || []).filter(terminal => !terminal.ignore).map(terminal => {
-    const color = terminal.type === 'departure' ? '#FF0000' : '#909090';
+
+
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+const routeColors = [
+  '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'
+];
+
+const drawLines = (links, transportTypes, type, selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType) => {
+
+  return (links[type] || []).filter(terminal => !terminal.ignore).map((terminal, i) => {
+
+    const color = terminal.routeId ?
+      routeColors[terminal.routeId - 1] :
+        (terminal.type === 'departure' ? '#FF0000' : '#909090');
+
     let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
     const { route } = terminal;
     if (route && route.length > 0) {
@@ -521,6 +542,7 @@ const renderConnectionsMap = (linkStat, transportTypes, linkMode, selectedTermin
   );
 };
 
+
 const renderLinksMap = (props, onHighlight, onSelect) => {
 
   const { linksResult, selectedTransportTypes, linkMode, selectedTerminal, setProperty, intl } = props;
@@ -537,12 +559,14 @@ const renderLinksMap = (props, onHighlight, onSelect) => {
       { arrivals: [selectedTerminal] };
   }
 
+  const { searchResultType } = linksResult;
+
   return (
     linkMode === 'internal' ?
       drawLines(linkStat, selectedTransportTypes, 'internal', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info]) :
       [
-        drawLines(linkStat, selectedTransportTypes,'departures', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info]),
-        drawLines(linkStat, selectedTransportTypes,'arrivals', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info])
+        drawLines(linkStat, selectedTransportTypes,'departures', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType).map(line => [line.line, line.info]),
+        drawLines(linkStat, selectedTransportTypes,'arrivals', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType).map(line => [line.line, line.info])
       ]
   );
 };
@@ -997,7 +1021,7 @@ const LinksView = (props) => {
         </div>
       </div>
     );
-    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
+    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection, searchResultType);
     listContent = renderLinksList(props);
   } else {
     searchHeader = (
@@ -1029,7 +1053,7 @@ const LinksView = (props) => {
     onMapLoad: (map) => {
       if (map) {
         if ((mapZoom && mapZoom.updated !== mapBoundsUpdated) || query.view !== viewMode) {
-          console.log('fit bounds', map, mapZoom, displayLinks);
+          //console.log('fit bounds', map, mapZoom, displayLinks);
           if (mapZoom) {
             map.fitBounds(mapZoom.bounds);
           } else {

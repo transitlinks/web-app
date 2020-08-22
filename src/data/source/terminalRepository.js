@@ -31,6 +31,8 @@ export default {
   },
 
   getRoute: async (from, to) => {
+
+    /*
     const query = `
       SELECT
     t.*
@@ -47,15 +49,42 @@ export default {
       ORDER BY
           p.seq
     `;
-    const departures = await sequelize.query(query, { model: Terminal, mapToModel: true });
+     */
+
+    const query = `
+      SELECT x.path_id, x.path_seq, t.*,
+        CASE
+           WHEN edge = -1 THEN agg_cost ELSE NULL END AS "total_cost"
+        FROM
+            pgr_ksp(
+                    'SELECT id, source, target, distance AS cost FROM "Connection"',
+                    (SELECT id FROM "Locality" WHERE name = '${from}'),
+                    (SELECT id FROM "Locality" WHERE name = '${to}'),
+                    5,
+                    directed := TRUE
+                ) as x
+                LEFT JOIN "Connection" AS c ON x.edge = c.id
+                LEFT JOIN "Terminal" AS t ON t."id" = c."sourceTerminalId"
+        ORDER BY
+            x.path_id, x.path_seq;
+    `;
+
+    const routes = {
+    };
+
+    const departures = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+
     for (let i = 0; i < departures.length; i++) {
       if (departures[i].linkedTerminalId) {
         departures[i].linkedTerminal = await terminalRepository.getTerminal({ id: departures[i].linkedTerminalId });
         departures[i].checkIn = await checkInRepository.getCheckIn({ id: departures[i].checkInId });
+        //console.log('PATH ID', departures[i].path_id);
+        if (!routes[departures[i].path_id]) routes[departures[i].path_id] = [];
+        routes[departures[i].path_id].push(departures[i]);
       }
     }
 
-    return departures;
+    return routes;
 
   },
 
