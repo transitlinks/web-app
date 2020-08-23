@@ -2,7 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/localityRepository');
 
 import sequelize from '../sequelize';
-import { Terminal } from '../models';
+import { Terminal, Locality } from '../models';
 
 export default {
 
@@ -62,6 +62,13 @@ export default {
     const query = `SELECT * FROM "Terminal" WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') ORDER BY "createdAt" DESC;`;
     const terminals = await sequelize.query(query, { model: Terminal, mapToModel: true });
     return terminals;
+  },
+
+  saveLocality: async (locality) => {
+    const existing = await Locality.findOne({ where: { name: locality } });
+    if (!existing) {
+      await Locality.create({ name: locality });
+    }
   }
 
 };

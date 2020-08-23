@@ -94,54 +94,6 @@ export default {
 
   },
 
-  getTerminal: async (where, options) => {
-
-    let terminal = await Terminal.findOne({
-      where,
-      include: [ { all: true } ]
-    });
-
-    return terminal;
-
-  },
-
-  getTerminals: async (where, options) => {
-
-    let terminals = await Terminal.findAll({
-      where,
-      include: [ { all: true } ]
-    });
-
-    return terminals;
-
-  },
-
-  saveTerminal: async (terminal) => {
-
-    if (terminal.uuid) {
-
-      const result = await Terminal.update(terminal, {
-        where: { uuid: terminal.uuid }
-      });
-
-      if (result.length !== 1 || result[0] !== 1) {
-        throw new Error(`Invalid terminal update result: ${result}`);
-      }
-
-      return await Terminal.findOne({ where: { uuid: terminal.uuid }});
-
-    }
-
-    const created = await Terminal.create(terminal);
-
-    if (!created) {
-      throw new Error('Failed to create a terminal (null result)');
-    }
-
-    return created;
-
-  },
-
   getCheckIn: async (where, options = {}) => {
 
     let checkIn = await CheckIn.findOne({

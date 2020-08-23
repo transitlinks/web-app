@@ -6,6 +6,11 @@ import { Terminal, CheckIn, Post } from '../models';
 import postRepository from './postRepository';
 import { checkInRepository, terminalRepository } from './index';
 
+const updateTerminalGeom = async (terminalId) => {
+  const updateGeom = `UPDATE "Terminal" SET geom = ST_SetSRID(ST_Point(latitude, longitude), 4326) WHERE id = ${terminalId}`;
+  await sequelize.query(updateGeom);
+};
+
 export default {
 
   getTerminal: async (where, options) => {
@@ -206,7 +211,9 @@ export default {
         throw new Error(`Invalid terminal update result: ${result}`);
       }
 
-      return await Terminal.findOne({ where: { uuid: terminal.uuid }});
+      const updated = await Terminal.findOne({ where: { uuid: terminal.uuid }});
+      await updateTerminalGeom(updated.id);
+      return updated;
 
     }
 
@@ -216,6 +223,7 @@ export default {
       throw new Error('Failed to create a terminal (null result)');
     }
 
+    await updateTerminalGeom(created.id);
     return created;
 
   },
@@ -232,5 +240,139 @@ export default {
     return terminal;
 
   },
+
+  saveConnection: async (sourceTerminalId, targetTerminalId, distance) => {
+
+    const existingConnections = await sequelize.query(
+      `SELECT id FROM "Connection" 
+                WHERE "sourceTerminalId" = ${sourceTerminalId}
+                AND "targetTerminalId" = ${targetTerminalId}`
+    );
+
+    console.log('EXISTING', existingConnections[0]);
+
+    const fields = {
+      '"sourceLocality"': 't.locality',
+      '"targetLocality"': 'lt.locality',
+      '"sourceFormattedAddress"': 't."formattedAddress"',
+      '"targetFormattedAddress"': 'lt."formattedAddress"',
+      'geom': 'ST_MakeLine(t.geom, lt.geom)::GEOMETRY(LineString,4326)',
+      'distance': distance || 'ST_Distance(t.geom::GEOGRAPHY, lt.geom::GEOGRAPHY)/1000',
+      'source': 'tl.id',
+      'target': 'ltl.id',
+      '"sourceTerminalId"': 't.id',
+      '"targetTerminalId"': 'lt.id'
+    };
+
+
+    const updateStatement = `
+      UPDATE "Connection" SET ${Object.keys(fields).map(field => `${field} = ${fields[field]}`).join(', ')}
+      FROM "Terminal" t, "Terminal" lt, "Locality" tl, "Locality" ltl
+      WHERE 
+        "sourceTerminalId" = ${sourceTerminalId} AND
+        "targetTerminalId" = ${targetTerminalId} AND
+        t.id = "sourceTerminalId" AND
+        lt.id = "targetTerminalId" AND
+        lt.id = t."linkedTerminalId" AND
+        t.locality = tl.name AND
+        lt.locality = ltl.name
+    `;
+
+    const insertStatement = `
+      INSERT INTO "Connection" (${Object.keys(fields).join(', ')})
+        SELECT ${Object.keys(fields).map(field => `${fields[field]} AS ${field}`).join(', ')}
+        FROM "Terminal" t, "Terminal" lt, "Locality" tl, "Locality" ltl
+        WHERE
+            t.id = ${sourceTerminalId} AND 
+            t."linkedTerminalId" = lt.id AND 
+            t.locality = tl.name AND 
+            lt.locality = ltl.name
+    `;
+
+    const query = existingConnections[0].length > 0 ? updateStatement : insertStatement;
+    console.log('CONN QUERY', query);
+    await sequelize.query(query);
+
+  },
+
+  deleteConnection: async ({ sourceTerminalId, targetTerminalId }, andOr) => {
+    const params = {};
+    if (sourceTerminalId) params.sourceTerminalId = sourceTerminalId;
+    if (targetTerminalId) params.targetTerminalId = targetTerminalId;
+    const fields = Object.keys(params);
+    const where = fields.map(field => `"${field}" = ${params[field]}`).join(` ${andOr} `);
+    await sequelize.query(`DELETE FROM "Connection" WHERE ${where}`);
+  },
+
+  getRoutePoints: async (terminalId, userId) => {
+
+    let terminal = await Terminal.findOne({ where: { id: terminalId } });
+
+    if (terminal) {
+      terminal = terminal.get();
+      let linkedTerminal = terminal.linkedTerminalId ?
+        await Terminal.findOne({ where: { id: terminal.linkedTerminalId } }) :
+        null;
+      if (linkedTerminal) {
+        linkedTerminal = linkedTerminal.get();
+        const departure = terminal.type === 'departure' ? terminal : linkedTerminal;
+        const arrival = terminal.type === 'arrival' ? terminal : linkedTerminal;
+        const query = `
+        SELECT latitude, longitude, locality, "createdAt" FROM "CheckIn" 
+            WHERE "userId" = ${userId}
+            AND "createdAt" BETWEEN '${departure.createdAt.toISOString()}' AND '${arrival.createdAt.toISOString()}'
+            AND id NOT IN (${departure.checkInId}, ${arrival.checkInId})
+            ORDER BY "createdAt" ASC
+      `;
+        console.log('ROUTEPOINT QUERY', query);
+        const routePoints = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+        return routePoints;
+      }
+    }
+
+    return [];
+
+  },
+
+  getTotalDistance: async (route) => {
+
+    const distances = [];
+
+    for (let i = 0; i < route.length - 1; i++) {
+      const point = route[i];
+      const nextPoint = route[i + 1];
+      const query = `
+        SELECT ST_Distance(ST_SetSRID(ST_Point(${point.latitude}, ${point.longitude}), 4326)::GEOGRAPHY, ST_SetSRID(ST_Point(${nextPoint.latitude}, ${nextPoint.longitude}), 4326)::GEOGRAPHY)/1000 AS distance
+      `;
+      console.log('dist query', query);
+      const distanceResult = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+      if (distanceResult.length > 0) distances.push(distanceResult[0].distance);
+      console.log(distanceResult);
+    }
+
+    let totalDistance = 0;
+
+    for (let i = 0; i < distances.length; i++) {
+      totalDistance += distances[i];
+    }
+
+    return totalDistance;
+
+  },
+
+  getDepartureBefore: async (date, checkInId) => {
+    const departure = await Terminal.findOne({
+      where: {
+        type: 'departure',
+        createdAt: { $lt: date },
+        checkInId: { $ne: checkInId }
+      },
+      order: [[ 'createdAt', 'DESC' ]],
+      include: {
+        all: true
+      }
+    });
+    return departure;
+  }
 
 };

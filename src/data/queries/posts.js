@@ -15,7 +15,7 @@ import {
   tagRepository,
   checkInRepository,
   terminalRepository,
-  commentRepository
+  commentRepository, localityRepository,
 } from '../source';
 
 import {
@@ -101,25 +101,31 @@ const addUserId = async (object, request) => {
 
 };
 
+const adjustConnection = async (departure) => {
+  const routePoints = await terminalRepository.getRoutePoints(departure.id, departure.userId);
+  routePoints.unshift(departure.get());
+  routePoints.push(departure.linkedTerminal.get());
+  const totalDistance = await terminalRepository.getTotalDistance(routePoints);
+  await terminalRepository.saveConnection(departure.id, departure.linkedTerminal.id, totalDistance);
+};
 
 const saveTerminal = async (terminalInput, clientId, request) => {
 
   let savedTerminal = null;
   if (terminalInput.uuid) {
-    savedTerminal = await postRepository.getTerminal({ uuid: terminalInput.uuid });
+    savedTerminal = await terminalRepository.getTerminal({ uuid: terminalInput.uuid });
     await requireOwnership(request, savedTerminal, clientId);
   }
 
 
   const { checkInUuid, linkedTerminalUuid } = terminalInput;
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-  const linkedTerminal = await postRepository.getTerminal({ uuid: linkedTerminalUuid });
-
-  if (!checkIn) {
-    //TODO: Process error
+  let linkedTerminal = null;
+  if (linkedTerminalUuid) {
+    linkedTerminal = await terminalRepository.getTerminal({ uuid: linkedTerminalUuid });
   }
 
-  if (!linkedTerminal) {
+  if (!checkIn) {
     //TODO: Process error
   }
 
@@ -138,16 +144,6 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     terminal.linkedFormattedAddress = linkedTerminal.formattedAddress;
   }
 
-  /*
-  if (terminalInput.date) {
-    terminal.date = new Date(terminalInput.date);
-  }
-
-  if (terminalInput.time) {
-    terminal.time = new Date(terminalInput.time);
-  }
-  */
-
   copyNonNull(terminalInput, terminal, [ 'uuid', 'date', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
   await addUserId(terminal, request);
 
@@ -160,22 +156,28 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     terminal.updatedAt = tzDateTimeValue;
   }
 
-  const saved = await postRepository.saveTerminal(terminal);
+  savedTerminal = await terminalRepository.saveTerminal(terminal);
 
   if (linkedTerminal) {
     const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
-    postRepository.saveTerminal({
+    terminalRepository.saveTerminal({
       uuid: linkedTerminal.uuid,
-      linkedTerminalId: saved.id,
-      linkedLocality: saved.locality,
-      linkedFormattedAddress: saved.formattedAddress,
+      linkedTerminalId: savedTerminal.id,
+      linkedLocality: savedTerminal.locality,
+      linkedFormattedAddress: savedTerminal.formattedAddress,
       ...linkedTerminalUpdate
     });
   }
 
+  if (savedTerminal.linkedTerminalId) {
+    const savedLinkedTerminal = await terminalRepository.getTerminal({ id: savedTerminal.linkedTerminalId });
+    const departure = savedTerminal.type === 'departure' ? savedTerminal : savedLinkedTerminal;
+    await adjustConnection(departure);
+  }
+
   return {
-    ...saved.toJSON(),
-    localDateTime: getLocalDateTime(saved.createdAt, timeZone)
+    ...savedTerminal.toJSON(),
+    localDateTime: getLocalDateTime(savedTerminal.createdAt, timeZone)
   };
 
 };
@@ -270,10 +272,15 @@ const deleteTerminal = async (uuid, clientId, request) => {
     throw new Error('Terminal uuid=' + uuid + ' not found for deletion');
   }
 
-  await requireOwnership(request, terminal, clientId);
+  if (clientId || request) {
+    await requireOwnership(request, terminal, clientId);
+  }
 
   if (terminal.linkedTerminalId) {
     const linkedTerminal = await terminalRepository.getTerminal({ id: terminal.linkedTerminalId });
+    const departure = terminal.type === 'departure' ? terminal : linkedTerminal;
+    const arrival = terminal.type === 'arrival' ? terminal : linkedTerminal;
+    await terminalRepository.deleteConnection({ sourceTerminalId: departure.id, targetTerminalId: arrival.id }, 'AND');
     await terminalRepository.saveTerminal({
       uuid: linkedTerminal.uuid,
       linkedTerminalId: null,
@@ -317,28 +324,16 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   await addUserId(checkIn, request);
 
-  /*
-  const clientParams = userId ? { userId } : { clientId: checkInInput.clientId };
-  const lastCheckIns = await postRepository.getCheckIns(clientParams, {
-    limit: 1,
-    order: [[ 'createdAt', 'DESC' ]]
-  });
-
-  console.log("SAVING CHECK IN", lastCheckIns.length);
-  if (lastCheckIns.length > 0) {
-    checkIn.prevCheckInId = lastCheckIns[0].id;
-    console.log("PREV CHECK IN ID", lastCheckIns[0].id);
-  };
-  */
-
   const saved = await postRepository.saveCheckIn(checkIn);
 
-  /*
-  if (lastCheckIns.length > 0) {
-    await postRepository.saveCheckIn({ uuid: lastCheckIns[0].uuid, nextCheckInId: saved.id });
-    console.log("NEXT CHECK IN ID", saved.id);
-  };
-  */
+  let departureBefore = null;
+  if (savedCheckIn) {
+    departureBefore = await terminalRepository.getDepartureBefore(savedCheckIn.createdAt, savedCheckIn.id);
+    if (departureBefore) await adjustConnection(departureBefore);
+  }
+
+  departureBefore = await terminalRepository.getDepartureBefore(saved.createdAt, saved.id);
+  if (departureBefore) await adjustConnection(departureBefore);
 
   const tagIds = (await tagRepository.getEntityTags({ checkInId: saved.id }))
     .map(entityTag => entityTag.tagId);
@@ -350,6 +345,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     await tagRepository.deleteEntityTags({ checkInId: saved.id, tagId: deletedTags.map(tag => tag.id) });
   }
 
+  await localityRepository.saveLocality(saved.locality);
 
   return {
     ...saved.toJSON(),
@@ -363,23 +359,6 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
 
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
   await requireOwnership(request, checkIn, clientId);
-
-  /*
-  const nextCheckIn = await postRepository.getCheckIn({ nextCheckInId: checkIn.id });
-  const prevCheckIn = await postRepository.getCheckIn({ prevCheckInId: checkIn.id });
-
-  if (prevCheckIn) {
-    if (nextCheckIn) {
-      await postRepository.saveCheckIn({ uuid: prevCheckIn.uuid, nextCheckInId: nextCheckIn.id });
-    }
-  }
-
-  if (nextCheckIn) {
-    if (prevCheckIn) {
-      await postRepository.saveCheckIn({ uuid: nextCheckIn.uuid, prevCheckInId: prevCheckIn.id });
-    }
-  }
-  */
 
   const inboundCheckIns = await postRepository.getCheckIns({
     userId: checkIn.userId,
@@ -396,24 +375,16 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
     order: [[ 'createdAt', 'ASC' ]]
   });
 
+  const departureBefore = await terminalRepository.getDepartureBefore(checkIn.createdAt, checkIn.id);
+
   await postRepository.deletePosts({ checkInId: checkIn.id });
-  const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
+  const terminals = await terminalRepository.getTerminals({ checkInId: checkIn.id });
   for (let i = 0; i < terminals.length; i++) {
-    if (terminals[i].linkedTerminalId) {
-      const linkedTerminal = await postRepository.getTerminal({ id: terminals[i].linkedTerminalId });
-      if (linkedTerminal) {
-        await postRepository.saveTerminal({
-          uuid: linkedTerminal.uuid,
-          linkedTerminalId: null,
-          linkedLocality: null,
-          linkedFormattedAddress: null
-        });
-      }
-    }
+    await deleteTerminal(terminals[i].uuid);
   }
 
-  await postRepository.deleteTerminals({ checkInId: checkIn.id });
   await postRepository.deleteCheckIns({ uuid: checkIn.uuid });
+  if (departureBefore) await adjustConnection(departureBefore);
 
   let nextUrl = '/';
   if (outboundCheckIns.length > 0) nextUrl = `/check-in/${outboundCheckIns[0].uuid}`;
@@ -706,6 +677,7 @@ export const PostMutationFields = {
           log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${entityFileName}`);
 
           const exif = getExifData(filePath);
+          console.log('exif data for file', exif);
           const additionalFields = {};
           if (exif && exif.gps) {
             log.info('adding exif data', exif.exif.GPSTimeStamp, exif.exif.DateTime);
@@ -802,7 +774,7 @@ export const getFeedItem = async (request, checkIn) => {
 
   log.info(graphLog(request, 'get-feed-item', 'check-in=' + checkIn.uuid + ' posts=' + posts.length));
   const linkedCheckIns = await getLinkedCheckIns(checkIn, request);
-  const terminals = await postRepository.getTerminals({ checkInId: checkIn.id });
+  const terminals = await terminalRepository.getTerminals({ checkInId: checkIn.id });
   const credentials = await getEntityCredentials(request, checkIn);
 
   const tagIds = (await tagRepository.getEntityTags({ checkInId: checkIn.id }))
@@ -869,7 +841,7 @@ export const getFeedItem = async (request, checkIn) => {
       let linkedTerminal = null;
 
       if (terminal.linkedTerminalId) {
-        linkedTerminal = await postRepository.getTerminal({ id: terminal.linkedTerminalId });
+        linkedTerminal = await terminalRepository.getTerminal({ id: terminal.linkedTerminalId });
         const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
         linkedTerminal = {
           ...linkedTerminal.json(),
@@ -992,7 +964,7 @@ export const PostQueryFields = {
         openTerminalParams.clientId = clientId;
       }
 
-      const openTerminals = await postRepository.getTerminals(openTerminalParams);
+      const openTerminals = await terminalRepository.getTerminals(openTerminalParams);
       log.info(graphLog(request, 'get-feed', 'check-ins=' + checkIns.length));
 
       let userName = null;
@@ -1045,7 +1017,7 @@ export const PostQueryFields = {
         openTerminalParams.clientId = clientId;
       }
 
-      const openTerminals = await postRepository.getTerminals(openTerminalParams);
+      const openTerminals = await terminalRepository.getTerminals(openTerminalParams);
 
       const result = openTerminals.map(async (terminal) => {
         const terminalCheckIn = await postRepository.getCheckIn({ id: terminal.checkInId });

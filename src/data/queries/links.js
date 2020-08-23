@@ -121,7 +121,10 @@ const findRoutePoints = async (terminals) => {
       }, {
         order: [['createdAt', terminal.type === 'departure' ? 'ASC' : 'DESC']]
       });
+      console.log('ROUTE CHECVKINS FOR TERM', terminal.type, terminal.locality, terminal.createdAt);
+      console.log('ROUTE CHECVKINS FOR LINKED TERM ', linkedTerminal.type, linkedTerminal.locality, linkedTerminal.createdAt);
       terminal.route = (routeCheckIns || {}).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
+      console.log('TERM ROUTE', terminal.route);
     }
   }
 };
@@ -368,6 +371,7 @@ export const TransitLinkQueryFields = {
                 latitude: terminal.latitude,
                 longitude: terminal.longitude,
                 departures: departures.map(dep => ({
+                  route: dep.route,
                   ...dep.json(),
                   localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
                   linkedTerminal: {
@@ -376,6 +380,7 @@ export const TransitLinkQueryFields = {
                   }
                 })),
                 arrivals: arrivals.map(arr => ({
+                  route: arr.route,
                   ...arr.json(),
                   localDateTime: getLocalDateTime(arr.createdAt, geoTz(arr.latitude, arr.longitude)[0]),
                   linkedTerminal: {
