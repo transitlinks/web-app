@@ -59,7 +59,7 @@ const getNavigationPath = (params) => {
     pathname: '/links'
   };
 
-  const { search, locality, linkedLocality, transportTypes } = params;
+  const { search, locality, linkedLocality, from, to, transportTypes } = params;
   const paramsList = [];
   if (locality) {
     paramsList.push(`locality=${locality}`);
@@ -69,6 +69,10 @@ const getNavigationPath = (params) => {
   }
   if (search) {
     paramsList.push(`search=${search}`);
+  }
+  if (from && to) {
+    paramsList.push(`from=${from}`);
+    paramsList.push(`to=${to}`);
   }
   if (transportTypes && transportTypes.length > 0) {
     paramsList.push(`transportTypes=${transportTypes.join(',')}`);
@@ -134,8 +138,8 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
 
     if (terminal.localDateTime && terminal.linkedTerminal.localDateTime) {
 
-      const time = new Date(terminal.localDateTime).getTime();
-      const linkedTime = new Date(terminal.linkedTerminal.localDateTime).getTime();
+      const time = new Date(terminal.utcDateTime).getTime();
+      const linkedTime = new Date(terminal.linkedTerminal.utcDateTime).getTime();
 
       const timeDiff = Math.abs(time - linkedTime);
       const minuteUnit = 60 * 1000;
@@ -874,7 +878,7 @@ const renderLinksList = (props) => {
 const LinksView = (props) => {
 
   const {
-    intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, viewMode, linkMode,
+    intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, routeSearchTerm, viewMode, linkMode,
     mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated, query,
     selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag,
     getLinks, setProperty, navigate
@@ -917,22 +921,6 @@ const LinksView = (props) => {
     lng: 24.93545
   };
 
-  /*
-  if (displayLinks && displayLinks.length > 0) {
-    if (!selectedLink) {
-      mapCenter = {
-        lat: displayLinks[0].latitude,
-        lng: displayLinks[0].longitude
-      };
-    } else {
-      mapCenter = {
-        lat: selectedLink.linkedTerminal.latitude,
-        lng: selectedLink.linkedTerminal.longitude
-      };
-    }
-  }
-   */
-
   const showControls = displayLinks.length === 1 &&
     (displayLinks[0].departures.length > 0 || displayLinks[0].arrivals || displayLinks[0].length > 0) && (displayLinks[0].internal || []).length > 0;
   let actualLinkMode = linkMode;
@@ -950,20 +938,42 @@ const LinksView = (props) => {
   if (searchResultType === 'connections') {
     if (displayLinks.length === 1) {
       searchHeader = (
-        <div className={s.localityHeader}>
-          <div className={s.localityName}>
-            {displayLinks[0].locality}
+        <div>
+          <div className={s.localityHeader}>
+            <div className={s.localityName}>
+              {displayLinks[0].locality}
+            </div>
+            <div className={s.undo}>
+              <Link to={
+                getNavigationQuery({
+                  transportTypes: selectedTransportTypes
+                })
+              }>
+                <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
+                  clear
+                </FontIcon>
+              </Link>
+            </div>
           </div>
-          <div className={s.undo}>
-            <Link to={
-              getNavigationQuery({
-                transportTypes: selectedTransportTypes
-              })
-            }>
-              <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
-                clear
-              </FontIcon>
-            </Link>
+          <div className={s.routeSearch}>
+            <FontIcon className={cx(s.routeSearchIcon, 'material-icons')}>directions</FontIcon>
+            <div className={s.routeSearchField}>
+              <TextField id="link-search-input"
+                         value={routeSearchTerm}
+                         fullWidth
+                         style={{ height: '46px' }}
+                         hintText={`Search route to...`}
+                         onChange={(event) => {
+                           const input = event.target.value;
+                           setProperty('links.routeSearchTerm', input);
+                         }}
+                         onKeyDown={(e) => {
+                           if (e.keyCode === 13) {
+                             setProperty('links.routeSearchTerm', '');
+                             navigate(getNavigationPath({ from: displayLinks[0].locality, to: routeSearchTerm }));
+                           }
+                         }}/>
+            </div>
           </div>
         </div>
       );
@@ -1011,7 +1021,8 @@ const LinksView = (props) => {
         <div className={s.undo}>
           <Link to={
             getNavigationQuery({
-              transportTypes: selectedTransportTypes
+              transportTypes: selectedTransportTypes,
+              locality: displayLinksResult.from
             })
           }>
             <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
@@ -1087,28 +1098,31 @@ const LinksView = (props) => {
     <div className={s.container}>
       <div className={s.functionBar}>
         <div className={s.searchFieldContainer}>
-          <div className={s.search}>
-            <FontIcon className={cx(s.searchIcon, 'material-icons')}>search</FontIcon>
-            <div className={s.searchField}>
-              <TextField id="link-search-input"
-                         value={searchTerm}
-                         fullWidth
-                         style={{ height: '46px' }}
-                         hintText="Origin or destination"
-                         onChange={(event) => {
-                           const input = event.target.value;
-                           setProperty('links.searchTerm', input);
-                           if (input.length > 2 || input.length === 0) {
-                             setProperty('links.linkMode', 'external');
-                             setProperty('links.selectedLink', null);
-                             setProperty('links.selectedLocality', null);
-                             setProperty('links.selectedLinkedLocality', null);
-                             navigate(getNavigationPath({ search: input, transportTypes: selectedTransportTypes }));
-                             //getLinks({ ...(input.length === 0 ? {} : { locality: input }), transportTypes: selectedTransportTypes });
-                           }
-                         }} />
+          {
+            (!searchResultType || (searchResultType === 'connections' && displayLinks.length !== 1)) &&
+            <div className={s.search}>
+              <FontIcon className={cx(s.searchIcon, 'material-icons')}>search</FontIcon>
+              <div className={s.searchField}>
+                <TextField id="link-search-input"
+                           value={searchTerm}
+                           fullWidth
+                           style={{ height: '46px' }}
+                           hintText="Origin or destination"
+                           onChange={(event) => {
+                             const input = event.target.value;
+                             setProperty('links.searchTerm', input);
+                             if (input.length > 2 || input.length === 0) {
+                               setProperty('links.linkMode', 'external');
+                               setProperty('links.selectedLink', null);
+                               setProperty('links.selectedLocality', null);
+                               setProperty('links.selectedLinkedLocality', null);
+                               navigate(getNavigationPath({ search: input, transportTypes: selectedTransportTypes }));
+                               //getLinks({ ...(input.length === 0 ? {} : { locality: input }), transportTypes: selectedTransportTypes });
+                             }
+                           }} />
+              </div>
             </div>
-          </div>
+          }
         </div>
         <div className={s.mapToggle}>
           {
@@ -1227,6 +1241,7 @@ export default injectIntl(
       viewMode: state.links.viewMode,
       linkMode: state.links.linkMode || 'external',
       searchTerm: state.links.searchTerm,
+      routeSearchTerm: state.links.routeSearchTerm,
       selectedLocality: state.links.selectedLocality,
       selectedLinkedLocality: state.links.selectedLinkedLocality,
       selectedTag: state.links.selectedTag,

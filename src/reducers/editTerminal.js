@@ -8,7 +8,13 @@ import {
   GET_TERMINALS_SUCCESS,
   GET_FEED_START,
   GET_FEED_SUCCESS,
-  GET_FEED_ERROR, SAVE_CHECKIN_START, SAVE_CHECKIN_SUCCESS, SAVE_CHECKIN_ERROR,
+  GET_FEED_ERROR,
+  SAVE_CHECKIN_START,
+  SAVE_CHECKIN_SUCCESS,
+  SAVE_CHECKIN_ERROR,
+  DELETE_CHECKIN_START,
+  DELETE_CHECKIN_SUCCESS,
+  DELETE_CHECKIN_ERROR,
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -41,12 +47,26 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => state,
-          success: () => ({ ...state, terminalProperties: {}, terminal: null }),
+          success: () => ({ ...state, terminalProperties: {}, savedTerminal: null }),
           error: () => state
         },
         SAVE_CHECKIN_START,
         SAVE_CHECKIN_SUCCESS,
         SAVE_CHECKIN_ERROR
+      );
+    case DELETE_CHECKIN_START:
+    case DELETE_CHECKIN_SUCCESS:
+    case DELETE_CHECKIN_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => state,
+          success: () => ({ ...state, terminalProperties: {}, savedTerminal: null, terminal: null }),
+          error: () => state
+        },
+        DELETE_CHECKIN_START,
+        DELETE_CHECKIN_SUCCESS,
+        DELETE_CHECKIN_ERROR
       );
     case SAVE_TERMINAL_START:
     case SAVE_TERMINAL_SUCCESS:

@@ -228,7 +228,7 @@ const CheckInItemContent = ({
         }
       </div>
       {
-        (frameId !== true) &&
+        (frameId !== true && !showSettings) &&
           <div>
             <Comments comments={comments} frameId={frameId} preview={!editable} {...commentsAttributes} />
           </div>

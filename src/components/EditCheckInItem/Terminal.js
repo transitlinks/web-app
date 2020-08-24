@@ -105,7 +105,16 @@ const Terminal = ({
   };
 
 
-  let defaultDateTime = new Date(editTerminal.localDateTime || checkIn.date);
+  const getDefaultLinkedTime = () => {
+    const checkInDateTime = new Date(checkIn.date);
+    const timeDiff = Math.abs(now.getTime() - checkInDateTime.getTime());
+    console.log('time diff', timeDiff);
+    return (timeDiff < 1000 * 60 * 60 * 48) ? now : checkInDateTime;
+  };
+
+  const defaultDateTime = (linkedTerminal && !editTerminal.uuid) ?
+    new Date(editTerminal.localDateTime || getDefaultLinkedTime()) :
+    new Date(editTerminal.localDateTime || checkIn.date);
 
   const save = () => {
 
@@ -130,7 +139,7 @@ const Terminal = ({
       editedTerminal.priceAmount = parseFloat(editTerminal.priceAmount);
     }
 
-    editedTerminal.date = editTerminal.localDateTime;
+    editedTerminal.date = editTerminal.localDateTime || dateTime({ date: defaultDateTime, time: defaultDateTime });
 
     if (linkedTerminalUuid !== 'not-linked' && linkedTerminal) {
       editedTerminal.linkedTerminalUuid = linkedTerminalUuid;
@@ -182,7 +191,7 @@ const Terminal = ({
                   <div className={s.linkedDateTime}>
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
-                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : now}
+                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime}
                                   autoOk
                                   fullWidth
                                   floatingLabelFixed
@@ -193,7 +202,7 @@ const Terminal = ({
                     </div>
                     <div className={s.time}>
                       <TimePicker id={`${type}-time-picker`}
-                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : now}
+                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime}
                                   format="24hr"
                                   autoOk
                                   fullWidth

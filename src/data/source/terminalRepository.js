@@ -155,6 +155,7 @@ export default {
     const terminals = await Terminal.findAll({
       where: {
         linkedLocality: { $ne: sequelize.col('Terminal.locality') },
+        linkedTerminalId: { $ne: null },
         locality,
         ...query
       },
@@ -211,19 +212,23 @@ export default {
         throw new Error(`Invalid terminal update result: ${result}`);
       }
 
-      const updated = await Terminal.findOne({ where: { uuid: terminal.uuid }});
+      const updated = await Terminal.findOne({
+        where: { uuid: terminal.uuid },
+        include: [{ all: true }]
+      });
       await updateTerminalGeom(updated.id);
       return updated;
 
     }
 
-    const created = await Terminal.create(terminal);
+    let created = await Terminal.create(terminal);
 
     if (!created) {
       throw new Error('Failed to create a terminal (null result)');
     }
 
     await updateTerminalGeom(created.id);
+    created = await Terminal.findOne({ where: { id: created.id }, include: [{ all: true }] });
     return created;
 
   },
@@ -361,18 +366,21 @@ export default {
   },
 
   getDepartureBefore: async (date, checkInId) => {
-    const departure = await Terminal.findOne({
+
+    const terminal = await Terminal.findOne({
       where: {
-        type: 'departure',
-        createdAt: { $lt: date },
-        checkInId: { $ne: checkInId }
+        createdAt: { $lt: date.toISOString() },
+        checkInId: { $ne: checkInId },
+        linkedTerminalId: { $ne: null }
       },
       order: [[ 'createdAt', 'DESC' ]],
       include: {
         all: true
       }
     });
-    return departure;
+
+    return (terminal && terminal.type === 'departure') ? terminal : null;
+
   }
 
 };

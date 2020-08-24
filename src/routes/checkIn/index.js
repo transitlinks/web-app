@@ -37,8 +37,8 @@ export default {
               transport,
               transportId,
               description,
-              date,
-              time,
+              localDateTime,
+              utcDateTime,
               priceAmount,
               priceCurrency,
               checkIn {

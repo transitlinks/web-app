@@ -102,6 +102,7 @@ const addUserId = async (object, request) => {
 };
 
 const adjustConnection = async (departure) => {
+  console.log(`Adjusting connection: (${departure.id}) ${departure.locality}, (${departure.linkedTerminalId}) ${departure.linkedLocality}`);
   const routePoints = await terminalRepository.getRoutePoints(departure.id, departure.userId);
   routePoints.unshift(departure.get());
   routePoints.push(departure.linkedTerminal.get());
@@ -160,7 +161,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   if (linkedTerminal) {
     const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
-    terminalRepository.saveTerminal({
+    await terminalRepository.saveTerminal({
       uuid: linkedTerminal.uuid,
       linkedTerminalId: savedTerminal.id,
       linkedLocality: savedTerminal.locality,
@@ -170,14 +171,16 @@ const saveTerminal = async (terminalInput, clientId, request) => {
   }
 
   if (savedTerminal.linkedTerminalId) {
-    const savedLinkedTerminal = await terminalRepository.getTerminal({ id: savedTerminal.linkedTerminalId });
-    const departure = savedTerminal.type === 'departure' ? savedTerminal : savedLinkedTerminal;
+    const departure = savedTerminal.type === 'departure' ?
+      await terminalRepository.getTerminal({ id: savedTerminal.id }) :
+      await terminalRepository.getTerminal({ id: savedTerminal.linkedTerminalId });
     await adjustConnection(departure);
   }
 
   return {
     ...savedTerminal.toJSON(),
-    localDateTime: getLocalDateTime(savedTerminal.createdAt, timeZone)
+    localDateTime: getLocalDateTime(savedTerminal.createdAt, timeZone),
+    utcDateTime: savedTerminal.createdAt
   };
 
 };
@@ -206,17 +209,6 @@ const savePost = async (postInput, clientId, request) => {
 
   let saved = await postRepository.savePost(post);
 
-  /*
-  const splitByTags = saved.text.split('#');
-  if (splitByTags.length > 0) {
-    for (let i = 1; i < splitByTags.length; i++) {
-      const tag = splitByTags[i].split(' ')[0];
-      await tagRepository.saveTag('Post', saved.id, tag);
-      console.log('Saved tag:', tag);
-    }
-  }
-  */
-
   if (postInput.tags) {
     for (let i = 0; i < postInput.tags.length; i++) {
       const tag = postInput.tags[i];
@@ -224,21 +216,15 @@ const savePost = async (postInput, clientId, request) => {
     }
   }
 
-  //let savedMediaItems = await postRepository.getMediaItems({ entityUuid: saved.uuid });
-  //const savedMediaItemUuids = savedMediaItems.map(mediaItem => mediaItem.uuid);
-
   const { mediaItems } = postInput;
   if (mediaItems && mediaItems.length > 0) {
     for (let i = 0; i < mediaItems.length; i++) {
       const { thumbnail, type, url, uuid } = mediaItems[i];
-      //if (!savedMediaItemUuids.includes(uuid)) {
-        postRepository.saveMediaItem({
-          uuid, thumbnail, type, url,
-          entityUuid: saved.uuid,
-          entityType: 'Post'
-        });
-      //}
-
+      await postRepository.saveMediaItem({
+        uuid, thumbnail, type, url,
+        entityUuid: saved.uuid,
+        entityType: 'Post'
+      });
     }
   }
 
@@ -845,7 +831,8 @@ export const getFeedItem = async (request, checkIn) => {
         const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
         linkedTerminal = {
           ...linkedTerminal.json(),
-          localDateTime: getLocalDateTime(linkedTerminal.createdAt, timeZone)
+          localDateTime: getLocalDateTime(linkedTerminal.createdAt, timeZone),
+          utcDateTime: linkedTerminal.createdAt
         };
         linkedTerminal.checkIn = {
           ...linkedTerminalCheckIn.json(),
@@ -857,6 +844,7 @@ export const getFeedItem = async (request, checkIn) => {
       return {
         ...terminal.json(),
         localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
+        utcDateTime: terminal.createdAt,
         comments: await getComments({ terminalId }),
         linkedTerminal
       };
@@ -988,6 +976,7 @@ export const PostQueryFields = {
           return {
             ...terminal.json(),
             localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
+            utcDateTime: terminal.createdAt,
             checkIn: terminalCheckIn
           };
         }),
@@ -1026,6 +1015,7 @@ export const PostQueryFields = {
         return {
           ...terminal.json(),
           localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
+          utcDateTime: terminal.createdAt,
           checkIn: terminalCheckIn.json()
         };
       });

@@ -40,6 +40,30 @@
   padding-left: 8px;
 }
 
+.routeSearch {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  width: calc(100% - 40px);
+  max-width: 250px;
+  margin-top: -15px;
+  margin-bottom: 8px;
+}
+
+.routeSearch .routeSearchIcon {
+  margin-top: 4px;
+}
+
+.routeSearch .routeSearchField {
+  margin-left: 6px;
+  flex-grow: 1;
+}
+
+.routeSearchFieldContainer {
+  flex-grow: 1;
+  padding-left: 8px;
+}
+
 .mapToggle {
   display: flex;
   align-items: center;
