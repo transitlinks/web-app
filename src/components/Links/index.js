@@ -10,6 +10,7 @@ import { navigate } from '../../actions/route';
 import { setProperty } from '../../actions/properties';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import Link from '../Link';
+import FilterHeader from '../FilterHeader';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
 import msgTransport from '../common/messages/transport';
@@ -56,27 +57,14 @@ const LinksMap = compose(
 const getNavigationPath = (params) => {
 
   const path = {
-    pathname: '/links'
+    pathname: params.path || '/links'
   };
 
-  const { search, locality, linkedLocality, from, to, transportTypes } = params;
-  const paramsList = [];
-  if (locality) {
-    paramsList.push(`locality=${locality}`);
-  }
-  if (linkedLocality) {
-    paramsList.push(`linkedLocality=${linkedLocality}`);
-  }
-  if (search) {
-    paramsList.push(`search=${search}`);
-  }
-  if (from && to) {
-    paramsList.push(`from=${from}`);
-    paramsList.push(`to=${to}`);
-  }
-  if (transportTypes && transportTypes.length > 0) {
-    paramsList.push(`transportTypes=${transportTypes.join(',')}`);
-  }
+  const paramKeys = Object.keys(params);
+
+  const paramsList = paramKeys.filter(key => key !== 'path')
+    .map(key => `${key}=${Array.isArray(params[key]) ? params[key].join(',') : params[key]}`);
+
   if (paramsList.length > 0) {
     path.search = `?${paramsList.join('&')}`;
   }
@@ -166,6 +154,7 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
     } else {
       return null;
     }
+
   };
 
   const fromTerminal = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
@@ -228,9 +217,9 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
               <div className={s.terminalFrom}>
                 <div className={s.terminalAddressContainer}>
                   <p className={s.terminalAddress}>
-                                <span className={s.terminalAddressHeader}>
-                                  FROM
-                                </span>
+                    <span className={s.terminalAddressHeader}>
+                      FROM
+                    </span>
                     <Link to={`/check-in/${fromTerminal.checkInUuid}`}>
                       { fromTerminal.formattedAddress }
                     </Link>
@@ -935,26 +924,42 @@ const LinksView = (props) => {
   let mapContent = null;
   let listContent = null;
   let searchHeader = null;
+
+  let filterOptions = {
+    icon: 'public',
+    clearUrl: '/links',
+  };
+
+  const urlParams = {
+    path: '/',
+    transportTypes: selectedTransportTypes
+  };
+
+  if (displayLinksResult.user) {
+    filterOptions.user = {
+      uuid: query.user,
+      userImage: displayLinksResult.userImage,
+      userName: displayLinksResult.user
+    };
+    urlParams.user = query.user;
+  }
+
   if (searchResultType === 'connections') {
-    if (displayLinks.length === 1) {
+
+    if (displayLinks.length < 2) {
+
+      filterOptions = {
+        ...filterOptions,
+        locality: displayLinksResult.locality,
+        getUrl: () => getNavigationQuery({
+          ...urlParams,
+          locality: displayLinksResult.locality
+        })
+      };
+
       searchHeader = (
         <div>
-          <div className={s.localityHeader}>
-            <div className={s.localityName}>
-              {displayLinks[0].locality}
-            </div>
-            <div className={s.undo}>
-              <Link to={
-                getNavigationQuery({
-                  transportTypes: selectedTransportTypes
-                })
-              }>
-                <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
-                  clear
-                </FontIcon>
-              </Link>
-            </div>
-          </div>
+          <FilterHeader {...filterOptions} />
           <div className={s.routeSearch}>
             <FontIcon className={cx(s.routeSearchIcon, 'material-icons')}>directions</FontIcon>
             <div className={s.routeSearchField}>
@@ -970,15 +975,22 @@ const LinksView = (props) => {
                          onKeyDown={(e) => {
                            if (e.keyCode === 13) {
                              setProperty('links.routeSearchTerm', '');
-                             navigate(getNavigationPath({ from: displayLinks[0].locality, to: routeSearchTerm }));
+                             navigate(getNavigationPath({ from: displayLinksResult.locality, to: routeSearchTerm }));
                            }
                          }}/>
             </div>
           </div>
         </div>
       );
-      mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
-      listContent = renderConnectionsList(displayLinks[0], actualLinkMode, props);
+
+      if (displayLinks.length === 0) {
+        const noResults = <div>No places found matching search criteria. Please contribute by creating new and exciting transit data! :)</div>;
+        mapContent = null;
+        listContent = noResults;
+      } else {
+        mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
+        listContent = renderConnectionsList(displayLinks[0], actualLinkMode, props);
+      }
     } else {
       mapContent = renderLocationsMap(displayLinks, onSelectLocality);
       listContent = renderLocationsList(displayLinks, selectedTransportTypes, onSelectLocality);
@@ -1035,22 +1047,17 @@ const LinksView = (props) => {
     mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection, searchResultType);
     listContent = renderLinksList(props);
   } else {
-    searchHeader = (
-      <div className={s.taggedListHeader}>
-        <div className={s.tag}>#{ selectedTag }</div>
-        <div className={s.undo}>
-          <Link to={
-            getNavigationQuery({
-              transportTypes: selectedTransportTypes
-            })
-          }>
-            <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
-              clear
-            </FontIcon>
-          </Link>
-        </div>
-      </div>
-    );
+
+    filterOptions = {
+      ...filterOptions,
+      tag: selectedTag,
+      getUrl: () => getNavigationQuery({
+        ...urlParams,
+        tags: selectedTag
+      })
+    };
+
+    searchHeader = <FilterHeader {...filterOptions} />;
     mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
     listContent = renderLinksList(props);
   }
@@ -1096,10 +1103,10 @@ const LinksView = (props) => {
 
   return (
     <div className={s.container}>
-      <div className={s.functionBar}>
-        <div className={s.searchFieldContainer}>
-          {
-            (!searchResultType || (searchResultType === 'connections' && displayLinks.length !== 1)) &&
+      {
+        (!searchResultType || (searchResultType === 'connections' && displayLinks.length > 1)) &&
+        <div className={s.functionBar}>
+          <div className={s.searchFieldContainer}>
             <div className={s.search}>
               <FontIcon className={cx(s.searchIcon, 'material-icons')}>search</FontIcon>
               <div className={s.searchField}>
@@ -1116,24 +1123,27 @@ const LinksView = (props) => {
                                setProperty('links.selectedLink', null);
                                setProperty('links.selectedLocality', null);
                                setProperty('links.selectedLinkedLocality', null);
-                               navigate(getNavigationPath({ search: input, transportTypes: selectedTransportTypes }));
+                               navigate(getNavigationPath({
+                                 search: input,
+                                 transportTypes: selectedTransportTypes
+                               }));
                                //getLinks({ ...(input.length === 0 ? {} : { locality: input }), transportTypes: selectedTransportTypes });
                              }
-                           }} />
+                           }}/>
               </div>
             </div>
-          }
+          </div>
+          <div className={s.mapToggle}>
+            {
+              ((viewMode || query.view) === 'map') ?
+                <FontIcon className="material-icons" style={{ fontSize: '24px' }}
+                          onClick={() => setProperty('links.viewMode', 'list')}>list</FontIcon> :
+                <FontIcon className="material-icons" style={{ fontSize: '24px' }}
+                          onClick={() => setProperty('links.viewMode', 'map')}>map</FontIcon>
+            }
+          </div>
         </div>
-        <div className={s.mapToggle}>
-          {
-            ((viewMode || query.view) === 'map') ?
-              <FontIcon className="material-icons" style={{ fontSize: '24px' }}
-                        onClick={() => setProperty('links.viewMode', 'list')}>list</FontIcon> :
-              <FontIcon className="material-icons" style={{ fontSize: '24px' }}
-                        onClick={() => setProperty('links.viewMode', 'map')}>map</FontIcon>
-          }
-        </div>
-      </div>
+      }
       <div>
         { searchHeader }
       </div>
@@ -1160,7 +1170,7 @@ const LinksView = (props) => {
               </div>
 
             </div>
-            </div>:
+            </div> :
             <div className={s.transportOptions} onClick={() => setProperty('links.showTransportTypes', false)}>
               {
                 [{ slug: 'all' }].concat(transportTypes).map(transportType => (
@@ -1200,12 +1210,27 @@ const LinksView = (props) => {
 
       </div>
       {
+        (
+          (searchResultType === 'connections' && displayLinks.length === 1) ||
+          (searchResultType === 'links')
+        ) &&
+        <div className={s.filters}>
+          <div className={s.relevantTags}>
+            {
+              ((displayLinks || []).flatMap(link => link.tags || [])).map(tag => {
+                return (
+                  <div className={s.relevantTag}>
+                    #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{tag.tag}</Link>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </div>
+      }
+      {
         showControls &&
         <div className={s.mapControls}>
-          <div className={s.selector}>
-            <div className={s.selectorElement} style={linkMode === 'external' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'external')}>External</div>
-            <div className={s.selectorElement} style={linkMode === 'internal' ? { backgroundColor: '#d0d0d0' } : {}} onClick={() => setProperty('links.linkMode', 'internal')}>Internal</div>
-          </div>
         </div>
       }
       {
@@ -1221,7 +1246,7 @@ const LinksView = (props) => {
               { listContent }
             </div>
           </div> :
-          (((viewMode || query.view) === 'map') ? mapView : listContent)
+          (((viewMode || query.view) === 'map' && mapContent) ? mapView : listContent)
       }
     </div>
   );

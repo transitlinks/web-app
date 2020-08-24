@@ -6,13 +6,12 @@ import cx from 'classnames';
 import s from './Home.css';
 import Add from '../EditCheckInItem';
 import NewCheckIn from '../NewCheckIn';
+import FilterHeader from '../FilterHeader';
 import Feed from '../Feed';
 import Link from '../Link';
 
-import { injectIntl, FormattedMessage } from 'react-intl';
-import msg from './messages';
+import { injectIntl } from 'react-intl';
 import RaisedButton from 'material-ui/RaisedButton';
-import FontIcon from 'material-ui/FontIcon';
 
 const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
 
@@ -34,86 +33,35 @@ const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
   });
 
 
-  const getFiltersElem = (query) => {
+  let filterHeader = null;
+  if (feed.query) {
 
-    const { user, tags, locality } = query;
+    const { user, tags, locality } = feed.query;
+    const filterOptions = {
+      icon: 'directions',
+      tag: tags,
+      locality
+    };
 
-    let filterDisplay = null;
-    let directionsUrl = null;
-
-    if (user && tags) {
-      filterDisplay = (
-        <div className={s.userTagFilter}>
-          <div className={s.userImage}>
-            <img src={feed.userImage} />
-          </div>
-          <div className={s.filterInfo}>
-            <div className={s.userName}>{feed.user}</div>
-            <div className={s.tags}>#{tags}</div>
-          </div>
-        </div>
-      );
-      directionsUrl = '/links?tag=' + tags + '&view=map';
-    } else if (user) {
-      filterDisplay = (
-        <div className={s.userFilter}>
-          <div className={s.userImage}>
-            <img src={feed.userImage} />
-          </div>
-          <div className={s.userInfo}>
-            <div className={s.userInfoTitle}>
-              Viewing check-ins by
-            </div>
-            <div className={s.userName}>{feed.user}</div>
-          </div>
-        </div>
-      );
-    } else if (locality) {
-      filterDisplay = (
-        <div className={s.localityFilter}>
-          <div className={s.localityName}>{locality}</div>
-        </div>
-      );
-      directionsUrl = '/links?locality=' + locality + '&view=map';
-    } else if (tags) {
-      filterDisplay = (
-        <div className={s.tagFilter}>
-          <div className={s.tagName}>#{tags}</div>
-        </div>
-      );
-      directionsUrl = '/links?tag=' + tags + '&view=map';
+    if (user) {
+      filterOptions.user = {
+        uuid: user,
+        userName: feed.user,
+        userImage: feed.userImage
+      };
     }
 
-    return (
-      <div className={s.filtersContainer}>
-        <div className={s.filtersDisplay}>{filterDisplay}</div>
-        <div className={s.filtersReset}>
-          {
-            directionsUrl &&
-              <Link to={directionsUrl}>
-                <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
-                  directions
-                </FontIcon>
-              </Link>
-          }
-          <Link to="/">
-            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
-              clear
-            </FontIcon>
-          </Link>
-        </div>
-      </div>
-    );
+    filterHeader = <FilterHeader {...filterOptions} />;
 
-  };
+  }
+
+
 
 	return (
     <div className={s.container}>
       <div>
         {
-          feed.query ?
-            getFiltersElem(feed.query) :
-            <NewCheckIn />
+          filterHeader || <NewCheckIn />
         }
       </div>
       <div>

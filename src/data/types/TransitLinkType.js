@@ -101,6 +101,8 @@ export const LinkSearchResultType = new GraphQLObjectType({
     linkedLocality: { type: GraphQLString },
     from: { type: GraphQLString },
     to: { type: GraphQLString },
+    user: { type: GraphQLString },
+    userImage: { type: GraphQLString },
     links: { type: new GraphQLList(TransitLinkType) }
   })
 });

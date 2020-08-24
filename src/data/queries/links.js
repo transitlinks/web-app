@@ -246,10 +246,12 @@ export const TransitLinkQueryFields = {
             localityQuery.transportTypes = transportTypes;
             transportQuery.transport = transportTypes;
           }
+
           const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
+          const singleLocality = localities.length === 1 ? localities[0] : null;
+
           if (!linkedLocality) {
 
-            const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
             const baseQuery = {
               ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes })
             };
@@ -340,7 +342,8 @@ export const TransitLinkQueryFields = {
 
             return {
               searchResultType: 'connections',
-              links: linkStats
+              links: linkStats,
+              locality: singleLocality
             };
 
           } else {
@@ -370,7 +373,7 @@ export const TransitLinkQueryFields = {
             let terminal = null;
             if (departures.length > 0) terminal = departures[0];
             if (arrivals.length > 0) terminal = arrivals[0];
-            console.log('DEPS', departures.map(dep => `(${dep.id}) ${dep.locality} - (${dep.linkedTerminalId}) ${dep.linkedLocality} ${dep.linkedTerminal}`))
+
             if (terminal) {
               linkStats.push({
                 locality,
@@ -416,6 +419,11 @@ export const TransitLinkQueryFields = {
 
         const taggedCheckIns = await checkInRepository.getTaggedCheckIns(tag);
 
+        let tagUser = null;
+        if (user) {
+          tagUser = await userRepository.getByUuid(user);
+        }
+
         if (taggedCheckIns.length > 0) {
 
           const query = {
@@ -423,9 +431,8 @@ export const TransitLinkQueryFields = {
             type: 'departure'
           };
 
-          if (user) {
-            const userId = await userRepository.getUserIdByUuid(user);
-            query.userId = userId;
+          if (tagUser) {
+            query.userId = tagUser.id;
           }
 
           const departures = (await terminalRepository.getTerminals(query))
@@ -458,7 +465,9 @@ export const TransitLinkQueryFields = {
 
         return {
           searchResultType: 'tagged',
-          links: linkStats
+          links: linkStats,
+          user: tagUser ? `${tagUser.firstName} ${tagUser.lastName}` : null,
+          userImage: tagUser ? tagUser.photo : null
         };
 
       }

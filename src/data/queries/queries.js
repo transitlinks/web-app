@@ -197,6 +197,8 @@ export const getLinksQuery = (params) => {
       linkedLocality,
       from,
       to,
+      user,
+      userImage,
       links {
         locality,
         latitude,
