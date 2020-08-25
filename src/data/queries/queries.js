@@ -188,7 +188,6 @@ export const getLinksQuery = (params) => {
   delete query.view;
 
   const paramsString = createParamString(query);
-  console.log('params str', paramsString);
 
   return `
     transitLinks ${paramsString} {
@@ -205,6 +204,7 @@ export const getLinksQuery = (params) => {
         longitude,
         routeId,
         departures {
+          uuid,
           type,
           latitude,
           longitude,
@@ -214,6 +214,7 @@ export const getLinksQuery = (params) => {
           priceAmount,
           priceCurrency,
           routeId,
+          routeIndex,
           localDateTime,
           utcDateTime,
           checkInUuid,
@@ -240,6 +241,7 @@ export const getLinksQuery = (params) => {
           ${getCommentsQuery()}
         },
         arrivals {
+          uuid,
           type,
           latitude,
           longitude,
@@ -255,7 +257,10 @@ export const getLinksQuery = (params) => {
           description,
           linkCount,
           reverseLinkCount,
+          routeId,
+          routeIndex,
           linkedTerminal {
+            uuid,
             latitude,
             longitude,
             locality,
@@ -274,6 +279,7 @@ export const getLinksQuery = (params) => {
           ${getCommentsQuery()}
         },
         internal {
+          uuid,
           latitude,
           longitude,
           locality,
@@ -287,7 +293,10 @@ export const getLinksQuery = (params) => {
           formattedAddress,
           description,
           linkCount,
+          routeId,
+          routeIndex,
           linkedTerminal {
+            uuid,
             latitude,
             longitude,
             locality,

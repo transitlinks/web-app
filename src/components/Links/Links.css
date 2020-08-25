@@ -6,9 +6,14 @@
 
 .container {
   margin-top: 6px;
-  max-width: 760px;
+  max-width: 940px;
   margin-left: auto;
   margin-right: auto;
+}
+
+
+.mapContainer {
+  height: 300px;
 }
 
 .functionBar {
@@ -660,105 +665,22 @@
 }
 
 .linksList .listLink {
+
 }
 
-.listLinkContent {
-  padding-bottom: 6px;
-  padding-left: 6px;
-  padding-right: 6px;
-  margin-top: 4px;
+.linksList .selectedListLink {
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.listLinkContent .terminalFromTo {
+.linksList .selectedListLink:last-child {
+  border-bottom: none;
 }
-
-.listLinkContent .terminalFromTo .terminalTimes {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 2px;
-  margin-bottom: 4px;
-}
-
-.terminalTimes .departureTime {
-  font-size: 14px;
-}
-
-.terminalTimes .duration {
-  font-size: 14px;
-  background-color: #a0a0a0;
-  padding-left: 6px;
-  padding-right: 5px;
-  border-radius: 4px;
-  color: white;
-}
-
-.terminalTimes .arrivalTime {
-  font-size: 14px;
-}
-
-.listLinkContent .terminalFromTo .terminalAddresses {
-  display: flex;
-}
-
-.terminalAddresses .terminalAddressContainer {
-}
-
-.terminalAddresses .terminalAddressHeader {
-  font-size: 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding-left: 3px;
-  padding-right: 3px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  margin-right: 3px;
-  margin-top: 2px;
-}
-
-.terminalAddresses .terminalAddress {
-  font-size: 14px;
-  margin-block-start: unset;
-  margin-block-end: unset;
-  line-height: 18px;
-}
-
-.terminalAddresses .terminalFrom {
-  flex: 1 1 50%;
-  display: flex;
-  justify-content: flex-start;
-}
-
-
-.terminalAddresses .terminalTo {
-  flex: 1 1 50%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.listLinkContent .terminalPriceDescription {
-  margin-top: 6px;
-}
-
-.listLinkContent .terminalPriceDescription p {
-  margin-block-start: unset;
-  margin-block-end: unset;
-  font-size: 14px;
-}
-
-.listLinkContent .terminalPriceDescription p .label{
-  font-weight: bold;
-  margin-right: 2px;
-}
-
-.listLinkContent .terminalPriceDescription p .content {
-  margin-right: 4px;
-}
-
 
 .listLinkHeader {
-  border-top: 1px solid #e0e0e0;
   padding-left: 6px;
   padding-right: 6px;
+  cursor: pointer;
 }
 
 .listLinkHeader .linkHeaderTopRow {
@@ -824,6 +746,40 @@
   font-weight: bold;
 }
 
+.routesList {
+
+}
+
+.routesList .route {
+  border-bottom: 1px solid #e0e0e0;
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+}
+
+.routesList .route:first-child {
+  border-top: 1px solid #e0e0e0;
+}
+
+.routesList .selectedRoute {
+  border: 1px solid #e0e0e0;
+}
+
+.routesList .routeHeader {
+  cursor: pointer;
+  padding-left: 4px;
+  text-align: center;
+  padding-right: 4px;
+  padding-top: 2px;
+  padding-bottom: 3px;
+}
+
+.routesList .selectedRoute .routeHeader {
+  background-color: #e0e0e0;
+}
+
+.routesList .route .routeHeader {
+}
+
 .linkAddress {
 
 }
@@ -844,6 +800,11 @@
 
 @media (min-width: 620px) {
 
+
+  .mapContainer {
+    height: 400px;
+  }
+
   .linksView {
     display: flex;
     position: relative;
@@ -858,6 +819,8 @@
   .linksView .list {
     position: relative;
     flex-grow: 1;
+    max-width: 340px;
+    margin-left: 6px;
   }
 
   .listLink .linkIdInfo {
@@ -866,11 +829,23 @@
     align-items: center;
   }
 
-
   .listLink .linkIdInfo .linkId {
     margin-top: 2px;
     margin-bottom: 0px;
     max-width: initial;
+  }
+
+  .listLinkHeader {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .listLinkHeader .linkTypeAndTransport {
+    padding-left: 2px;
+  }
+
+
+  .routesList .routeHeader {
   }
 
 }
@@ -995,3 +970,4 @@
   padding-left: 5px;
   padding-right: 5px;
 }
+

@@ -61,6 +61,10 @@ class Links extends React.Component {
       this.props.setProperty('links.searchTerm', '');
     }
 
+
+    const selectedRouteLinks = this.props.selectedRouteLinks;
+    const prevSelectedRouteLinks = prevProps.selectedRouteLinks;
+
     const selectedLink = this.props.selectedLink;
     const prevSelectedLink = prevProps.selectedLink;
     const loadedLinks = linksResult.links || [];
@@ -76,6 +80,8 @@ class Links extends React.Component {
           { arrivals: [selectedLink] } :
           { departures: [selectedLink] }
         ], this.props.linkMode);
+    } else if (selectedRouteLinks && (!prevSelectedRouteLinks || selectedRouteLinks.routeId !== prevSelectedRouteLinks.routeId)) {
+      this.props.setZoomLevel({ departures: selectedRouteLinks.terminals }, this.props.linkMode);
     } else if (
       this.props.viewMode !== prevProps.viewMode ||
       this.props.locality !== prevProps.locality ||
@@ -117,6 +123,8 @@ Links.contextTypes = { setTitle: PropTypes.func.isRequired };
 export default connect(state => ({
   loadedLinksResult: state.links.transitLinks,
   selectedLink: state.links.selectedLink,
+  selectedRouteLinks: state.links.selectedRouteLinks,
+  displayLinks: state.links.displayLinks,
   locality: state.links.selectedLocality,
   linkedLocality: state.links.selectedLinkedLocality,
   linkMode: state.links.linkMode,

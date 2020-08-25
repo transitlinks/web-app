@@ -1,0 +1,101 @@
+@import '../../components/variables.css';
+
+.container {
+}
+
+.listLink {
+}
+
+.listLinkContent {
+  padding-bottom: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-top: 4px;
+}
+
+.listLinkContent .terminalFromTo {
+}
+
+.listLinkContent .terminalFromTo .terminalTimes {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
+}
+
+.terminalTimes .departureTime {
+  font-size: 14px;
+}
+
+.terminalTimes .duration {
+  font-size: 14px;
+  background-color: #a0a0a0;
+  padding-left: 6px;
+  padding-right: 5px;
+  border-radius: 4px;
+  color: white;
+}
+
+.terminalTimes .arrivalTime {
+  font-size: 14px;
+}
+
+.listLinkContent .terminalFromTo .terminalAddresses {
+  display: flex;
+}
+
+.terminalAddresses .terminalAddressContainer {
+}
+
+.terminalAddresses .terminalAddressHeader {
+  font-size: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-right: 3px;
+  margin-top: 2px;
+}
+
+.terminalAddresses .terminalAddress {
+  font-size: 14px;
+  margin-block-start: unset;
+  margin-block-end: unset;
+  line-height: 18px;
+}
+
+.terminalAddresses .terminalFrom {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: flex-start;
+  padding-right: 2px;
+}
+
+
+.terminalAddresses .terminalTo {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: flex-end;
+  padding-left: 2px;
+}
+
+.listLinkContent .terminalPriceDescription {
+  margin-top: 6px;
+}
+
+.listLinkContent .terminalPriceDescription p {
+  margin-block-start: unset;
+  margin-block-end: unset;
+  font-size: 14px;
+}
+
+.listLinkContent .terminalPriceDescription p .label{
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.listLinkContent .terminalPriceDescription p .content {
+  margin-right: 4px;
+}

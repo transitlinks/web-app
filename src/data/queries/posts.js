@@ -103,7 +103,7 @@ const addUserId = async (object, request) => {
 
 const adjustConnection = async (departure) => {
   console.log(`Adjusting connection: (${departure.id}) ${departure.locality}, (${departure.linkedTerminalId}) ${departure.linkedLocality}`);
-  const routePoints = await terminalRepository.getRoutePoints(departure.id, departure.userId);
+  const routePoints = await terminalRepository.getRoutePoints(departure);
   routePoints.unshift(departure.get());
   routePoints.push(departure.linkedTerminal.get());
   const totalDistance = await terminalRepository.getTotalDistance(routePoints);
@@ -314,11 +314,11 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   let departureBefore = null;
   if (savedCheckIn) {
-    departureBefore = await terminalRepository.getDepartureBefore(savedCheckIn.createdAt, savedCheckIn.id);
+    departureBefore = await terminalRepository.getDepartureBefore(savedCheckIn);
     if (departureBefore) await adjustConnection(departureBefore);
   }
 
-  departureBefore = await terminalRepository.getDepartureBefore(saved.createdAt, saved.id);
+  departureBefore = await terminalRepository.getDepartureBefore(saved);
   if (departureBefore) await adjustConnection(departureBefore);
 
   const tagIds = (await tagRepository.getEntityTags({ checkInId: saved.id }))
@@ -361,7 +361,7 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
     order: [[ 'createdAt', 'ASC' ]]
   });
 
-  const departureBefore = await terminalRepository.getDepartureBefore(checkIn.createdAt, checkIn.id);
+  const departureBefore = await terminalRepository.getDepartureBefore(checkIn);
 
   await postRepository.deletePosts({ checkInId: checkIn.id });
   const terminals = await terminalRepository.getTerminals({ checkInId: checkIn.id });
@@ -906,10 +906,11 @@ export const PostQueryFields = {
       tags: { type: GraphQLString },
       locality: { type: GraphQLString },
       user: { type: GraphQLString },
+      transportTypes: { type: new GraphQLList(GraphQLString) },
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags, locality, user, offset, limit }) => {
+    resolve: async ({ request }, { clientId, tags, locality, user, transportTypes, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 

@@ -8,20 +8,20 @@ import s from './Links.css';
 import { getLinks, setZoomLevel } from '../../actions/links';
 import { navigate } from '../../actions/route';
 import { setProperty } from '../../actions/properties';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import Link from '../Link';
 import FilterHeader from '../FilterHeader';
+import LinkDetails from './LinkDetails';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
 import msgTransport from '../common/messages/transport';
-import { getDateString, getTimeString } from '../utils';
-import links from '../../reducers/links';
+import { getDateString, getTimeString, getNavigationPath, getNavigationQuery } from '../utils';
 
 const LinksMap = compose(
   withProps({
     googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div className={s.mapContainer} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withGoogleMap
@@ -54,30 +54,6 @@ const LinksMap = compose(
 
 });
 
-const getNavigationPath = (params) => {
-
-  const path = {
-    pathname: params.path || '/links'
-  };
-
-  const paramKeys = Object.keys(params);
-
-  const paramsList = paramKeys.filter(key => key !== 'path')
-    .map(key => `${key}=${Array.isArray(params[key]) ? params[key].join(',') : params[key]}`);
-
-  if (paramsList.length > 0) {
-    path.search = `?${paramsList.join('&')}`;
-  }
-
-  return path;
-
-};
-
-const getNavigationQuery = (params) => {
-  const path = getNavigationPath(params);
-  return path.pathname + (path.search || '');
-};
-
 const renderLocationsMap = (linkStats, onSelect) => {
   return (linkStats || []).map(linkStat => {
     return (
@@ -102,67 +78,13 @@ const renderLocationsMap = (linkStats, onSelect) => {
   });
 };
 
-const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, showContent) => {
+const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, showContent, transportTypes) => {
 
-  const getDateTimeStr = (terminal) => {
-
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-
-    let date = '';
-    if (terminal.localDateTime) {
-      const terminalDate = terminal.localDateTime;
-      date = months[parseInt(terminalDate.substring(5, 7)) - 1] + ' ' + parseInt(terminalDate.substring(8, 10));
-    }
-
-    const time = terminal.localDateTime ?
-      terminal.localDateTime.substring(11, 16) : '';
-    return <span><span>{ date }</span> <span style={{ fontWeight: 'bold' }}>{ time }</span></span>;
-  };
-
-  const getTripDuration = (terminal) => {
-
-    if (terminal.localDateTime && terminal.linkedTerminal.localDateTime) {
-
-      const time = new Date(terminal.utcDateTime).getTime();
-      const linkedTime = new Date(terminal.linkedTerminal.utcDateTime).getTime();
-
-      const timeDiff = Math.abs(time - linkedTime);
-      const minuteUnit = 60 * 1000;
-      const hourUnit = 60 * minuteUnit;
-      const dayUnit = 24 * hourUnit;
-
-      const remainingAfterDays = timeDiff % dayUnit;
-      const dayTime = timeDiff - remainingAfterDays;
-      const days = dayTime / dayUnit;
-
-      const remainingAfterHours = remainingAfterDays % hourUnit;
-      const hourTime = remainingAfterDays - remainingAfterHours;
-      const hours = hourTime / hourUnit;
-
-      const minutes = Math.round(remainingAfterHours / minuteUnit);
-
-      let durationStr = '';
-      if (days > 0) durationStr += days + ' d';
-      if (hours > 0) durationStr += ' ' + hours + ' h';
-      if (minutes > 0 || durationStr.length === 0) durationStr += ' ' + minutes + ' min';
-
-      return durationStr;
-
-    } else {
-      return null;
-    }
-
-  };
-
-  const fromTerminal = terminal.type === 'departure' ? terminal : terminal.linkedTerminal;
-  const toTerminal = terminal.type === 'arrival' ? terminal : terminal.linkedTerminal;
   const isSelected = (selectedTerminal && selectedTerminal.checkInUuid === terminal.checkInUuid) || showContent;
+
   return (
-    <div className={s.listLink}>
-      <div className={s.listLinkHeader} style={isSelected ? { backgroundColor: '#f0f0f0' } : {}} onClick={() => {
+    <div className={isSelected ? s.selectedListLink : s.listLink}>
+      <div className={s.listLinkHeader} onClick={() => {
         if (isSelected) {
           setProperty('links.selectedTerminal', null);
         } else {
@@ -200,80 +122,7 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
       </div>
       {
         isSelected &&
-        <div className={s.listLinkContent}>
-          <div className={s.terminalFromTo}>
-            <div className={s.terminalTimes}>
-              <div className={s.departureTime}>
-                { getDateTimeStr(fromTerminal) }
-              </div>
-              <div className={s.duration}>
-                { getTripDuration(terminal) }
-              </div>
-              <div className={s.arrivalTime}>
-                { getDateTimeStr(toTerminal) }
-              </div>
-            </div>
-            <div className={s.terminalAddresses}>
-              <div className={s.terminalFrom}>
-                <div className={s.terminalAddressContainer}>
-                  <p className={s.terminalAddress}>
-                    <span className={s.terminalAddressHeader}>
-                      FROM
-                    </span>
-                    <Link to={`/check-in/${fromTerminal.checkInUuid}`}>
-                      { fromTerminal.formattedAddress }
-                    </Link>
-                  </p>
-                </div>
-              </div>
-              <div className={s.terminalTo}>
-                <div className={s.terminalAddressContainer}>
-                  <p className={s.terminalAddress}>
-                                <span className={s.terminalAddressHeader}>
-                                  TO
-                                </span>
-                    <Link to={`/check-in/${toTerminal.checkInUuid}`}>
-                      { toTerminal.formattedAddress }
-                    </Link>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={s.terminalPriceDescription}>
-            <p>
-              {
-                (terminal.priceAmount || terminal.linkedTerminal.priceAmount) &&
-                <span>
-                                <span className={s.label}>Price:</span>
-                                <span className={s.content}>{ terminal.priceAmount || terminal.linkedTerminal.priceAmount } { terminal.priceCurrency } </span> :
-                              </span>
-              }
-              {
-                (terminal.description || terminal.linkedTerminal.description) &&
-                <span>
-                                <span className={s.label}>Description:</span>
-                                <span className={s.content}>{ terminal.description || terminal.linkedTerminal.description }</span>
-                              </span>
-              }
-            </p>
-          </div>
-          {
-            (terminal.tags && terminal.tags.length > 0) &&
-            <div className={s.terminalTags}>
-              {
-                (terminal.tags || []).map(tag => {
-                  return (
-                    <div className={s.terminalTag}>
-                      #<Link
-                      to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{tag.tag}</Link>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          }
-        </div>
+          <LinkDetails terminal={terminal} selectedTransportTypes={transportTypes} />
       }
     </div>
   );
@@ -386,95 +235,64 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
     );
   }
 
-  const renderDateTime = (terminal, label) => {
-
-    if (terminal.localDateTime) {
-      return (
-        <div className={s.dateTime}>
-          <div className={s.dateTimeHeader}>
-            <b>{label}</b>
-          </div>
-          <div className={s.dateTimeValue}>
-            <div className={s.dateValue}>
-              { getDateString(terminal.localDateTime) }
-            </div>
-            <div className={s.timeValue}>
-              { getTimeString(terminal.localDateTime) }
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return null;
-
-  };
-
   return (
     <div className={s.linkPopup}>
-      { renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty, true) }
+      <LinkDetails terminal={terminal} selectedTransportTypes={transportTypes} />
     </div>
   );
 
 };
 
+const getLinesFromTerminal = (terminal) => {
 
-
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
+  let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
+  const { route } = terminal;
+  if (route && route.length > 0) {
+    lines = lines.concat(route);
   }
-  return color;
+
+  lines.push({
+    lat: terminal.linkedTerminal.latitude,
+    lng: terminal.linkedTerminal.longitude
+  });
+
+  return lines;
+
 };
 
-const routeColors = [
-  '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'
-];
+const createPolyLine = (terminal, onSelect, color, opacity) => {
 
-const drawLines = (links, transportTypes, type, selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType) => {
+  let lines = getLinesFromTerminal(terminal);
+
+  const polyLine = (
+    <Polyline
+      path={lines}
+      onClick={(event) => {
+        terminal.selected = true;
+        onSelect(terminal);
+      }}
+      options={{
+        geodesic: true,
+        strokeColor: color,
+        strokeOpacity: opacity || 1,
+        strokeWeight: 4
+      }} />
+  );
+
+  return polyLine;
+
+};
+
+const drawLines = (links, transportTypes, type, selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType, selectedRoute) => {
 
   return (links[type] || []).filter(terminal => !terminal.ignore).map((terminal, i) => {
 
     const color = terminal.routeId ?
-      routeColors[terminal.routeId - 1] :
+      terminal.routeId === selectedRoute ? '#FF0000' : '#909090' :
         (terminal.type === 'departure' ? '#FF0000' : '#909090');
 
-    let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
-    const { route } = terminal;
-    if (route && route.length > 0) {
-      lines = lines.concat(route);
-    }
-
-    lines.push({
-      lat: terminal.linkedTerminal.latitude,
-      lng: terminal.linkedTerminal.longitude
-    });
-
     const polyLine = {
-      line: (
-        <Polyline
-          path={lines}
-          onMouseOver={(event) => {
-            terminal.highlighted = true;
-            onHighlight(terminal);
-          }}
-          onMouseOut={(event) => {
-            terminal.highlighted = false;
-            onHighlight(terminal);
-          }}
-          onClick={(event) => {
-            terminal.selected = true;
-            onSelect(terminal);
-          }}
-          options={{
-            geodesic: true,
-            strokeColor: color,
-            strokeOpacity: terminal.highlighted ? 1.0 : 0.5,
-            strokeWeight: 4
-          }} />
-      )
+      line: createPolyLine(terminal, onSelect, color, (terminal.highlighted ? 1.0 : 0.5))
     };
 
     if (terminal.selected) {
@@ -538,7 +356,7 @@ const renderConnectionsMap = (linkStat, transportTypes, linkMode, selectedTermin
 
 const renderLinksMap = (props, onHighlight, onSelect) => {
 
-  const { linksResult, selectedTransportTypes, linkMode, selectedTerminal, setProperty, intl } = props;
+  const { linksResult, selectedTransportTypes, linkMode, selectedTerminal, selectedRoute, setProperty, intl } = props;
 
   let linkStat = linksResult.links && linksResult.links.length > 0 ? linksResult.links[0] : null;
   if (!linkStat) {
@@ -558,11 +376,12 @@ const renderLinksMap = (props, onHighlight, onSelect) => {
     linkMode === 'internal' ?
       drawLines(linkStat, selectedTransportTypes, 'internal', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info]) :
       [
-        drawLines(linkStat, selectedTransportTypes,'departures', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType).map(line => [line.line, line.info]),
-        drawLines(linkStat, selectedTransportTypes,'arrivals', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType).map(line => [line.line, line.info])
+        drawLines(linkStat, selectedTransportTypes,'departures', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType, selectedRoute).map(line => [line.line, line.info]),
+        drawLines(linkStat, selectedTransportTypes,'arrivals', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType, selectedRoute).map(line => [line.line, line.info])
       ]
   );
 };
+
 
 const renderLocationsList = (linkStats, transportTypes, onSelect) => {
 
@@ -743,7 +562,7 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
               <div>
                 {
                   (internal || []).map(terminal => {
-                    return renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty);
+                    return renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty, false, selectedTransportTypes);
                   })
                 }
               </div> :
@@ -846,21 +665,76 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
 
 const renderLinksList = (props) => {
 
-  const { setProperty, linksResult, selectedTerminal, intl } = props;
+  const { setProperty, linksResult, selectedTerminal, selectedRoute, intl, selectedTransportTypes } = props;
 
   const terminals = linksResult.links && linksResult.links.length > 0 ?
     (linksResult.links[0].arrivals || []).concat(linksResult.links[0].departures || [])
     : [];
 
+  let routeIds = terminals.map(terminal => terminal.routeId)
+    .filter((routeId, index, self) => self.indexOf(routeId) === index)
+    .sort((id1, id2) => id1 - id2);
+
+  const routes = routeIds.map(routeId => ({
+    routeId,
+    terminals: []
+  }));
+
+  for (let i = 0; i < terminals.length; i++) {
+    //console.log('route id', terminals[i].routeId, routes);
+    if (terminals[i].routeId) routes[terminals[i].routeId - 1].terminals.push(terminals[i]);
+  }
+
   return (
     <div>
-      <div className={s.linksList}>
-        {
-          terminals.map(terminal => renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty))
-        }
-      </div>
+      {
+        routes.length > 1 ?
+          <div className={s.routesList}>
+            {
+              routes.map(route => (
+                <div className={route.routeId === selectedRoute ? s.selectedRoute : s.route}>
+                  <div className={s.routeHeader} onClick={() => {
+                    setProperty('links.selectedRoute', route.routeId);
+                    setProperty('links.selectedLink', null);
+                    setProperty('links.selectedTerminal', null);
+                  }}>Route {route.routeId}</div>
+                  <div className={s.linksList}>
+                    {
+                      route.terminals.sort((t1, t2) => t1.routeIndex - t2.routeIndex)
+                        .filter(terminal => (!selectedRoute && route.routeId === 1) || terminal.routeId === selectedRoute)
+                        .map(terminal => renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty, false, selectedTransportTypes))
+                    }
+                  </div>
+                </div>
+              ))
+            }
+          </div> :
+          <div className={s.linksList}>
+            {
+              terminals
+                .map(terminal => renderDetailedLinkInfo(terminal, selectedTerminal, intl, setProperty, false, selectedTransportTypes))
+            }
+          </div>
+      }
+
     </div>
   );
+
+};
+
+const getRoutesMapContent = (terminals, selectedRoute, selectedTerminal, onSelect) => {
+
+  return terminals.sort(t => t.routeId === selectedRoute ? 1 : -1).map(terminal => {
+
+    let color = '#909090';
+    if (selectedRoute && terminal.routeId === selectedRoute) color = '#FF0000';
+
+    let opacity = 0.5;
+    if (selectedTerminal && selectedTerminal.uuid === terminal.uuid) opacity = 1;
+
+    return [ createPolyLine(terminal, onSelect, color, opacity) ];
+
+  });
 
 };
 
@@ -869,7 +743,7 @@ const LinksView = (props) => {
   const {
     intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, routeSearchTerm, viewMode, linkMode,
     mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated, query,
-    selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag,
+    selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag, selectedRoute,
     getLinks, setProperty, navigate
   } = props;
 
@@ -890,19 +764,27 @@ const LinksView = (props) => {
 
   const onHighlightConnection = (terminal) => {
     if (terminal.highlighted) {
-      setProperty('links.loadedMapCenter', null);
-      setProperty('links.highlightedTerminal', terminal.uuid);
+      //setProperty('links.loadedMapCenter', null);
+      //setProperty('links.highlightedTerminal', terminal.uuid);
     }
-    else if (!selectedLink) setProperty('links.highlightedTerminal', null);
+    //else if (!selectedLink) setProperty('links.highlightedTerminal', null);
   };
 
   const onSelectConnection = (terminal) => {
-    if (selectedLink) selectedLink.selected = false;
-    if (terminal.selected) {
-      setProperty('links.loadedMapCenter', null);
+    if (terminal.routeId !== selectedRoute) {
+      setProperty('links.selectedRoute', terminal.routeId);
+      setProperty('links.selectedLink', null);
+      setProperty('links.selectedTerminal', null);
+    } else {
+      //if (selectedLink) selectedLink.selected = false;
+      //if (terminal.selected) {
+      //setProperty('links.loadedMapCenter', null);
       setProperty('links.selectedLink', terminal);
+      setProperty('links.selectedTerminal', terminal);
+      //}
+      //else setProperty('links.selectedLink', null);
     }
-    else setProperty('links.selectedLink', null);
+
   };
 
   let mapCenter = {
@@ -1027,6 +909,7 @@ const LinksView = (props) => {
     mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
     listContent = renderLinksList(props);
   } else if (searchResultType === 'route') {
+
     searchHeader = (
       <div className={s.taggedListHeader}>
         <div className={s.tag}>{ displayLinksResult.from } - { displayLinksResult.to }</div>
@@ -1044,8 +927,14 @@ const LinksView = (props) => {
         </div>
       </div>
     );
-    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection, searchResultType);
+
+    mapContent = getRoutesMapContent(displayLinks[0].departures, selectedRoute, selectedTerminal, (terminal) => {
+      setProperty('links.selectedRoute', terminal.routeId);
+      setProperty('links.selectedTerminal', terminal);
+    });
+
     listContent = renderLinksList(props);
+
   } else {
 
     filterOptions = {
@@ -1064,7 +953,7 @@ const LinksView = (props) => {
 
 
   const mapProps = {
-    containerElement: <div style={{ height: `400px` }} />,
+    containerElement: <div className={s.mapContainer} />,
     mapElement: <div style={{ height: `100%` }} />,
     defaultCenter: mapCenter,
     defaultZoom: mapZoom ? mapZoom.zoomLevel : 10,
@@ -1271,6 +1160,7 @@ export default injectIntl(
       selectedLinkedLocality: state.links.selectedLinkedLocality,
       selectedTag: state.links.selectedTag,
       selectedTerminal: state.links.selectedTerminal,
+      selectedRoute: state.links.selectedRoute || 1,
       mapZoom: state.links.mapZoom,
       selectedLink: state.links.selectedLink,
       showTransportTypes: state.links.showTransportTypes,

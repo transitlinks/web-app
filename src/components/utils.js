@@ -12,12 +12,12 @@ export function padNumber(number) {
 }
 
 export const getMessages = (source) => {
-  
+
   let messages = {};
   Object.keys(source).forEach(name => {
     messages[name] = <FormattedMessage {...source[name]} />;
   });
-  
+
   return messages;
 
 };
@@ -39,7 +39,7 @@ export const getTimeString = (value) => {
 };
 
 export const formatDate = (value, format) => {
-  
+
   const date = new Date(value);
 
   return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
@@ -56,25 +56,25 @@ export const formatDuration = (totalMinutes) => {
   const hours = (totalMinutes - minutes) / 60;
 
   let formatted =  '';
-  
+
   if (hours > 0) {
-    formatted += `${hours}h `; 
+    formatted += `${hours}h `;
   }
 
   if (minutes > 0) {
     formatted += `${minutes}m`;
   }
-  
+
   return formatted;
 
 };
 
 export const extractLinkAreas = (link) => {
-  
+
   const fromCommaIndex = link.from.description.indexOf(',');
   const fromCity = link.from.description.substring(0, fromCommaIndex);
   const fromArea = link.from.description.substring(fromCommaIndex + 1);
-  
+
   const toCommaIndex = link.to.description.indexOf(',');
   const toCity = link.to.description.substring(0, toCommaIndex);
   const toArea = link.to.description.substring(toCommaIndex + 1);
@@ -84,7 +84,7 @@ export const extractLinkAreas = (link) => {
 };
 
 export const truncate = (value, maxLength) => {
-  
+
   if (!value) return null;
 
   const strValue = '' + value;
@@ -120,4 +120,28 @@ export const getCookie = (cname) => {
 export const getScreenWidth = () => {
   const w = window, d = document, e = d.documentElement, g = d.getElementsByTagName('body')[0];
   return w.innerWidth || e.clientWidth || g.clientWidth;
+};
+
+export const getNavigationPath = (params) => {
+
+  const path = {
+    pathname: params.path || '/links'
+  };
+
+  const paramKeys = Object.keys(params);
+
+  const paramsList = paramKeys.filter(key => key !== 'path' && params[key])
+    .map(key => `${key}=${Array.isArray(params[key]) ? params[key].join(',') : params[key]}`);
+
+  if (paramsList.length > 0) {
+    path.search = `?${paramsList.join('&')}`;
+  }
+
+  return path;
+
+};
+
+export const getNavigationQuery = (params) => {
+  const path = getNavigationPath(params);
+  return path.pathname + (path.search || '');
 };

@@ -195,6 +195,7 @@ export const TransitLinkQueryFields = {
                 .map(dep => ({
                   ...dep,
                   routeId: parseInt(routeKeys[i]),
+                  routeIndex: dep.path_seq,
                   localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
                   utcDateTime: dep.createdAt,
                   linkedTerminal: {
@@ -343,7 +344,7 @@ export const TransitLinkQueryFields = {
             return {
               searchResultType: 'connections',
               links: linkStats,
-              locality: singleLocality
+              locality: singleLocality || locality
             };
 
           } else {
@@ -435,7 +436,7 @@ export const TransitLinkQueryFields = {
             query.userId = tagUser.id;
           }
 
-          const departures = (await terminalRepository.getTerminals(query))
+          const departures = (await terminalRepository.getTerminals(query, { order: [ [ 'createdAt', 'ASC' ] ] }))
             .filter(dep => dep.linkedTerminal)
             .map(dep => ({
               ...dep.json(),

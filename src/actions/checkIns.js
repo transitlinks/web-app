@@ -65,6 +65,7 @@ export const saveCheckIn = ({ checkIn }) => {
     let completedCheckIn = checkIn;
     if (checkIn.latitude && checkIn.longitude) {
       const checkInLocation = await geocodeCheckInLocation();
+      console.log('CHECK IN LOC ', checkInLocation);
       completedCheckIn.locality = checkInLocation.locality;
       completedCheckIn.country = checkInLocation.country;
       if (checkIn.exif) {

@@ -28,7 +28,8 @@ export default {
 
     let terminals = await Terminal.findAll({
       where,
-      include: [ { all: true } ]
+      include: [ { all: true } ],
+      ...options
     });
 
     return terminals;
@@ -83,7 +84,6 @@ export default {
       if (departures[i].linkedTerminalId) {
         departures[i].linkedTerminal = await terminalRepository.getTerminal({ id: departures[i].linkedTerminalId });
         departures[i].checkIn = await checkInRepository.getCheckIn({ id: departures[i].checkInId });
-        //console.log('PATH ID', departures[i].path_id);
         if (!routes[departures[i].path_id]) routes[departures[i].path_id] = [];
         routes[departures[i].path_id].push(departures[i]);
       }
@@ -309,30 +309,25 @@ export default {
     await sequelize.query(`DELETE FROM "Connection" WHERE ${where}`);
   },
 
-  getRoutePoints: async (terminalId, userId) => {
+  getRoutePoints: async (terminal) => {
 
-    let terminal = await Terminal.findOne({ where: { id: terminalId } });
+    const linkedTerminal = terminal.linkedTerminalId ?
+      await Terminal.findOne({ where: { id: terminal.linkedTerminalId } }) :
+      null;
 
-    if (terminal) {
-      terminal = terminal.get();
-      let linkedTerminal = terminal.linkedTerminalId ?
-        await Terminal.findOne({ where: { id: terminal.linkedTerminalId } }) :
-        null;
-      if (linkedTerminal) {
-        linkedTerminal = linkedTerminal.get();
-        const departure = terminal.type === 'departure' ? terminal : linkedTerminal;
-        const arrival = terminal.type === 'arrival' ? terminal : linkedTerminal;
-        const query = `
+    if (linkedTerminal) {
+      const departure = terminal.type === 'departure' ? terminal : linkedTerminal;
+      const arrival = terminal.type === 'arrival' ? terminal : linkedTerminal;
+      const query = `
         SELECT latitude, longitude, locality, "createdAt" FROM "CheckIn" 
-            WHERE "userId" = ${userId}
-            AND "createdAt" BETWEEN '${departure.createdAt.toISOString()}' AND '${arrival.createdAt.toISOString()}'
-            AND id NOT IN (${departure.checkInId}, ${arrival.checkInId})
-            ORDER BY "createdAt" ASC
-      `;
-        console.log('ROUTEPOINT QUERY', query);
-        const routePoints = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-        return routePoints;
-      }
+          WHERE "userId" = ${terminal.userId}
+          AND "createdAt" BETWEEN '${departure.createdAt.toISOString()}' AND '${arrival.createdAt.toISOString()}'
+          AND id NOT IN (${departure.checkInId}, ${arrival.checkInId})
+          ORDER BY "createdAt" ASC
+        `;
+      console.log('ROUTEPOINT QUERY', query);
+      const routePoints = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+      return routePoints;
     }
 
     return [];
@@ -365,12 +360,15 @@ export default {
 
   },
 
-  getDepartureBefore: async (date, checkInId) => {
+  getDepartureBefore: async (checkIn) => {
+
+    const { id, createdAt, userId } = checkIn;
 
     const terminal = await Terminal.findOne({
       where: {
-        createdAt: { $lt: date.toISOString() },
-        checkInId: { $ne: checkInId },
+        createdAt: { $lt: createdAt },
+        checkInId: { $ne: id },
+        userId,
         linkedTerminalId: { $ne: null }
       },
       order: [[ 'createdAt', 'DESC' ]],

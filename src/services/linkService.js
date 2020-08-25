@@ -116,11 +116,23 @@ export const reverseGeocode = (placeId, callback) => {
 
 };
 
-const getLevelFromType = (type) => {
-  if (type === 'locality') return 1000;
-  if (type.substring(0, 26) === 'administrative_area_level_') {
+const getLevelFromType = (types, level) => {
+
+  if (level === 'results') {
+    if (
+      types.includes('airport') ||
+      types.includes('transit_station')
+    ) return 10000;
+  }
+
+  if (types.includes('locality')) {
+    if (types.includes('colloquial_area')) return 10000;
+    return 1000;
+  }
+
+  if (types[0].substring(0, 26) === 'administrative_area_level_') {
     try {
-      return parseInt(type.substring(26, 27));
+      return parseInt(types[0].substring(26, 27));
     } catch (error) {
       return 0;
     }
@@ -128,13 +140,13 @@ const getLevelFromType = (type) => {
   return 0;
 };
 
-const compareAdminAreaLevel = (a, b) => {
-  return getLevelFromType(b.types[0]) - getLevelFromType(a.types[0]);
+const compareAdminAreaLevel = (a, b, level) => {
+  return getLevelFromType(b.types, level) - getLevelFromType(a.types, level);
 };
 
 const extractLocality = (results) => {
-  const sortedResults = results.sort((a, b) => compareAdminAreaLevel(a, b));
-  const sortedComponents = sortedResults[0].address_components.sort((a, b) => compareAdminAreaLevel(a, b));
+  const sortedResults = results.sort((a, b) => compareAdminAreaLevel(a, b, 'results'));
+  const sortedComponents = sortedResults[0].address_components.sort((a, b) => compareAdminAreaLevel(a, b, 'address'));
   return sortedComponents[0].long_name;
 };
 
@@ -152,18 +164,37 @@ const extractCountry = (results) => {
   }
 };
 
+const eligibleLocalityTypes = (types) => {
+};
+
+const extractLocalityOptions = (results) => {
+  return results.flatMap(result => {
+    return result.address_components
+      .filter(cmp => cmp.types.find(type => [
+        'locality',
+        'administrative_area_level_1',
+        'administrative_area_level_2',
+        'administrative_area_level_3',
+        'colloquial_area'
+      ].includes(type)))
+      .map(cmp => cmp.long_name);
+  }).filter((value, index, self) => self.indexOf(value) === index);
+};
+
 export const geocode = (latLng, callback) => {
 
   const geocoder = new google.maps.Geocoder;
   console.log('geocode by latLing', latLng);
   geocoder.geocode({ location: latLng }, (results, status) => {
 
+    console.log('RESULTS', results);
     if (status === 'OK') {
       if (results.length > 0) {
         callback({
           result: results[0],
           locality: extractLocality(results),
-          country: extractCountry(results)
+          country: extractCountry(results),
+          localityOptions: extractLocalityOptions(results)
         });
       } else {
         console.error('No geocoding results');
