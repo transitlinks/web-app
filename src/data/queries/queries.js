@@ -48,6 +48,13 @@ export const getCheckInQuery = () => {
       tags,
       likes,
       likedByUser,
+      departure {
+        uuid,
+        localDateTime,
+        locality,
+        formattedAddress,
+        transport
+      }
       ${getCommentsQuery()}
     }
   `;

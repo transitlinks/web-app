@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { getFeedItem } from '../../actions/posts';
+import { getFeedItem } from '../../actions/checkIns';
 import { getComments } from '../../actions/comments';
 import { setProperty } from '../../actions/properties';
 import { navigate } from '../../actions/route';

@@ -3,7 +3,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Discover.css';
 import DiscoverView from '../../components/Discover';
 import { getDiscoveries } from '../../actions/discover';
-import { getFeedItem } from '../../actions/posts';
+import { getFeedItem } from '../../actions/checkIns';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
 import debounce from 'lodash.debounce';

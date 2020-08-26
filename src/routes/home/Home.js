@@ -5,7 +5,7 @@ import HomeView from '../../components/Home';
 
 import { connect } from "react-redux";
 import { getGeolocation } from "../../actions/global";
-import { getFeed, getFeedItem } from "../../actions/posts";
+import { getFeed, getFeedItem } from "../../actions/checkIns";
 import { setProperty } from "../../actions/properties";
 import {getClientId} from "../../core/utils";
 

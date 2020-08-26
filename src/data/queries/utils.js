@@ -20,22 +20,24 @@ export const throwUnauthorizedError = () => {
   });
 };
 
+export const throwTimelineConflictError = (text) => {
+  throw Object.assign(new Error('Timeline conflict'), {
+    extensions: {
+      name: 'TimelineConflict',
+      text: text ? ('Timeline Conflict: ' + text) : 'Timeline conflict.',
+      statusCode: 409
+    }
+  });
+};
+
 export const requireOwnership = async (request, entity, clientId) => {
-
-  if (!entity.uuid) return null;
-
-  /*
-  if (!request.user || request.user.email !== 'vhalme@gmail.com') {
-    throwPrelaunchError();
-  }
-  */
 
   let userId = null;
 
   const adminUser = await userRepository.getByEmail('vhalme@gmail.com');
   if (request.user) {
     userId = await userRepository.getUserIdByUuid(request.user.uuid);
-    if (adminUser.id !== userId && entity.userId !== userId) {
+    if (entity && adminUser.id !== userId && entity.userId !== userId) {
       throwUnauthorizedError();
     }
   } else if (!(clientId && clientId === entity.clientId)) {

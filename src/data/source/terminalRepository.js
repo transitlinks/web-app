@@ -2,7 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/terminalRepository');
 
 import sequelize from '../sequelize';
-import { Terminal, CheckIn, Post } from '../models';
+import { Terminal, CheckIn, Post, User } from '../models';
 import postRepository from './postRepository';
 import { checkInRepository, terminalRepository } from './index';
 
@@ -12,6 +12,28 @@ const updateTerminalGeom = async (terminalId) => {
 };
 
 export default {
+
+  getIdByUuid: async (uuid) => {
+
+    const terminal = await Terminal.findOne({
+      attributes: [ 'id' ],
+      where: { uuid }
+    });
+
+    return terminal ? terminal.id : null;
+
+  },
+
+  getUuidById: async (id) => {
+
+    const terminal = await Terminal.findOne({
+      attributes: [ 'uuid' ],
+      where: { id }
+    });
+
+    return terminal ? terminal.uuid : null;
+
+  },
 
   getTerminal: async (where, options) => {
 
@@ -319,9 +341,10 @@ export default {
       const departure = terminal.type === 'departure' ? terminal : linkedTerminal;
       const arrival = terminal.type === 'arrival' ? terminal : linkedTerminal;
       const query = `
-        SELECT latitude, longitude, locality, "createdAt" FROM "CheckIn" 
+        SELECT latitude, longitude, locality, "createdAt" FROM "CheckIn" ci
           WHERE "userId" = ${terminal.userId}
           AND "createdAt" BETWEEN '${departure.createdAt.toISOString()}' AND '${arrival.createdAt.toISOString()}'
+          AND NOT EXISTS (SELECT id FROM "Terminal" WHERE "checkInId" = ci.id)
           AND id NOT IN (${departure.checkInId}, ${arrival.checkInId})
           ORDER BY "createdAt" ASC
         `;
@@ -360,17 +383,16 @@ export default {
 
   },
 
-  getDepartureBefore: async (checkIn) => {
+  getDepartureBefore: async (dateTime, userId, checkIn) => {
+    const query = {
+      createdAt: { $lt: dateTime },
+      userId
+    };
 
-    const { id, createdAt, userId } = checkIn;
+    if (checkIn) query.checkInId = { $ne: checkIn.id };
 
     const terminal = await Terminal.findOne({
-      where: {
-        createdAt: { $lt: createdAt },
-        checkInId: { $ne: id },
-        userId,
-        linkedTerminalId: { $ne: null }
-      },
+      where: query,
       order: [[ 'createdAt', 'DESC' ]],
       include: {
         all: true
@@ -378,6 +400,38 @@ export default {
     });
 
     return (terminal && terminal.type === 'departure') ? terminal : null;
+
+  },
+
+  getArrivalAfter: async (dateTime, userId, checkIn) => {
+    const query = {
+      createdAt: { $gt: dateTime },
+      userId
+    };
+
+    if (checkIn) query.checkInId = { $ne: checkIn.id };
+
+    const terminal = await Terminal.findOne({
+      where: query,
+      order: [[ 'createdAt', 'ASC' ]],
+      include: {
+        all: true
+      }
+    });
+
+    return (terminal && terminal.type === 'arrival') ? terminal : null;
+
+  },
+
+  getTerminalsBetween: async (departureDateTime, arrivalDateTime, userId) => {
+
+    const query = `
+        SELECT * FROM "Terminal" 
+        WHERE "createdAt" > '${departureDateTime.toISOString()}'
+        AND "createdAt" < '${arrivalDateTime.toISOString()}'
+        AND "userId" = ${userId}`;
+
+    return await sequelize.query(query, { model: Terminal, mapToModel: true });
 
   }
 

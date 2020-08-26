@@ -1,6 +1,15 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
+export const MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+
+export const getMonthName = (date) => {
+  return MONTHS[date.getMonth()];
+};
+
 export function padNumber(number) {
 
   if (number < 10) {

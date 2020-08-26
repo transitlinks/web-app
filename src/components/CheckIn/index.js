@@ -5,13 +5,15 @@ import s from './CheckIn.css';
 import { injectIntl } from 'react-intl';
 import CheckInItem from '../CheckInItem';
 import EditCheckInItem from '../EditCheckInItem';
+import ErrorHeader from '../ErrorHeader';
 
 const CheckIn = ({
-  checkInItem, openTerminals, transportTypes, edit, addPost, editPost, editTerminal, savedTerninal, view
+  checkInItem, openTerminals, transportTypes, edit, addPost, editPost, editTerminal, savedTerninal, view, error
 }) => {
 
   return (
     <div className={s.container}>
+      <ErrorHeader />
       {
         (!addPost && !edit && !editPost.uuid && !editTerminal.uuid) ?
           <CheckInItem checkInItem={checkInItem}
@@ -38,6 +40,7 @@ export default injectIntl(
     editPost: state.posts.editPost || {},
     editTerminal: state.editTerminal.terminal || {},
     user: state.auth.auth.user,
+    error: state.posts.error,
     env: state.env
   }), {
   })(withStyles(s)(CheckIn))

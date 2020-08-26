@@ -5,7 +5,7 @@ import AddressAutocomplete from './AddressAutocomplete';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './CheckIn.css';
 import { getGeolocation } from '../../actions/global';
-import { saveCheckIn } from '../../actions/posts';
+import { saveCheckIn } from '../../actions/checkIns';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';

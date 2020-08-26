@@ -10,13 +10,15 @@ import CheckInItemContent from '../CheckInItemContent';
 import { getGeolocation } from '../../actions/global';
 import {
   savePost,
-  saveCheckIn,
-  deleteCheckIn,
   uploadFiles,
-  getFeedItem,
   getMediaItem,
   deleteMediaItem,
 } from '../../actions/posts';
+import {
+  saveCheckIn,
+  deleteCheckIn,
+  getFeedItem
+} from '../../actions/checkIns';
 import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';

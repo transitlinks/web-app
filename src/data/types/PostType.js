@@ -54,6 +54,8 @@ export const TerminalType = new GraphQLObjectType({
       description: { type: GraphQLString },
       date: { type: GraphQLString },
       time: { type: GraphQLString },
+      locality: { type: GraphQLString },
+      formattedAddress: { type: GraphQLString },
       localDateTime: { type: GraphQLString },
       utcDateTime: { type: GraphQLString },
       priceAmount: { type: GraphQLFloat },
@@ -102,6 +104,7 @@ export const CheckInType = new GraphQLObjectType({
     locality: { type: GraphQLString },
     country: { type: GraphQLString },
     formattedAddress: { type: GraphQLString },
+    departure: { type: TerminalType },
     date: { type: GraphQLString },
     tags: { type: new GraphQLList(GraphQLString) },
     likes: { type: GraphQLInt },
@@ -133,7 +136,8 @@ export const CheckInInputType = new GraphQLInputObjectType({
     locality: {type: GraphQLString},
     country: {type: GraphQLString},
     formattedAddress: {type: GraphQLString},
-    tags: {type: new GraphQLList(GraphQLString)}
+    tags: {type: new GraphQLList(GraphQLString)},
+    departureUuid: {type: GraphQLString}
   }
 });
 

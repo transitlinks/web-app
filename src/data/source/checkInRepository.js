@@ -2,7 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/checkInRepository');
 
 import sequelize from '../sequelize';
-import { CheckIn, EntityTag, Tag, User } from '../models';
+import { CheckIn, EntityTag, Tag, Terminal, User } from '../models';
 
 export default {
 
@@ -99,17 +99,18 @@ export default {
 
   saveCheckIn: async (checkIn) => {
 
-    if (checkIn.uuid) {
+    if (checkIn.id || checkIn.uuid) {
 
+      const query = checkIn.id ? { id: checkIn.id } : { uuid: checkIn.uuid };
       const result = await CheckIn.update(checkIn, {
-        where: { uuid: checkIn.uuid }
+        where: query
       });
 
       if (result.length !== 1 || result[0] !== 1) {
         throw new Error(`Invalid check-in update result: ${result}`);
       }
 
-      return await CheckIn.findOne({ where:{ uuid: checkIn.uuid }});
+      return await CheckIn.findOne({ where: query });
 
     }
 
@@ -210,6 +211,55 @@ export default {
     query += ` GROUP BY "locality" ORDER BY "lastCreated" DESC, "locality" LIMIT ${limit} OFFSET ${offset}`;
     const latestCheckIns = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestCheckIns;
-  }
+  },
+
+  getCheckInBefore: async (dateTime, userId) => {
+
+    const checkIn = await CheckIn.findOne({
+      where: {
+        createdAt: { $lt: dateTime },
+        userId
+      },
+      order: [[ 'createdAt', 'DESC' ]],
+      include: {
+        all: true
+      }
+    });
+
+    return checkIn;
+
+  },
+
+  getCheckInAfter: async (dateTime, userId) => {
+
+    const checkIn = await CheckIn.findOne({
+      where: {
+        createdAt: { $gt: dateTime },
+        userId
+      },
+      order: [[ 'createdAt', 'ASC' ]],
+      include: {
+        all: true
+      }
+    });
+
+    return checkIn;
+
+  },
+
+  getLastCheckInWithDeparture: async (dateTime, userId) => {
+
+    let query = `SELECT * FROM "CheckIn" ci
+        WHERE "userId" = ${userId} 
+        AND "createdAt" < '${dateTime.toISOString()}'
+        AND EXISTS(SELECT id FROM "Terminal" WHERE type = 'departure' AND "checkInId" = ci.id)
+        ORDER BY "createdAt" DESC LIMIT 1`;
+
+    console.log('CI QUERY', query);
+    const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
+    return checkIns.length > 0 ? checkIns[0] : null;
+
+  },
+
 
 };

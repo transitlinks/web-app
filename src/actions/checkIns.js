@@ -2,70 +2,40 @@ import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
 import { geocode, extractPlaceFields } from '../services/linkService';
 import { getClientId } from "../core/utils";
-import { createQuery, getFeedItemQuery } from '../data/queries/queries';
+import { createQuery, getFeedItemQuery, getFeedItemsQuery } from '../data/queries/queries';
 
 import {
-  SAVE_POST_START,
-  SAVE_POST_SUCCESS,
-  SAVE_POST_ERROR,
-  GET_POSTS_START,
-  GET_POSTS_SUCCESS,
-  GET_POSTS_ERROR,
-  SAVE_TERMINAL_START,
-  SAVE_TERMINAL_SUCCESS,
-  SAVE_TERMINAL_ERROR,
-  GET_TERMINALS_START,
-  GET_TERMINALS_SUCCESS,
-  GET_TERMINALS_ERROR,
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
   DELETE_CHECKIN_START,
   DELETE_CHECKIN_SUCCESS,
   DELETE_CHECKIN_ERROR,
-  DELETE_POST_START,
-  DELETE_POST_SUCCESS,
-  DELETE_POST_ERROR,
-  DELETE_TERMINAL_START,
-  DELETE_TERMINAL_SUCCESS,
-  DELETE_TERMINAL_ERROR,
-  MEDIA_FILE_UPLOAD_START,
-  MEDIA_FILE_UPLOAD_SUCCESS,
-  MEDIA_FILE_UPLOAD_ERROR,
   GET_FEED_START,
   GET_FEED_SUCCESS,
   GET_FEED_ERROR,
-  GET_DISCOVER_START,
-  GET_DISCOVER_SUCCESS,
-  GET_DISCOVER_ERROR,
   GET_FEEDITEM_START,
   GET_FEEDITEM_SUCCESS,
   GET_FEEDITEM_ERROR,
-  GET_MEDIAITEM_START,
-  GET_MEDIAITEM_SUCCESS,
-  GET_MEDIAITEM_ERROR,
-  DELETE_MEDIAITEM_START,
-  DELETE_MEDIAITEM_SUCCESS,
-  DELETE_MEDIAITEM_ERROR,
   SELECTED_ADDRESS,
 } from '../constants';
 
 export const saveCheckIn = ({ checkIn }) => {
 
-  const geocodeCheckInLocation = async () => {
-    return new Promise((resolve, reject) => {
-      geocode({ lat: checkIn.latitude, lng: checkIn.longitude }, (location) => {
-        resolve(location);
-      })
-    });
-  };
-
   return async (...args) => {
 
     let completedCheckIn = checkIn;
     if (checkIn.latitude && checkIn.longitude) {
+
+      const geocodeCheckInLocation = async () => {
+        return new Promise((resolve, reject) => {
+          geocode({ lat: checkIn.latitude, lng: checkIn.longitude }, (location) => {
+            resolve(location);
+          })
+        });
+      };
+
       const checkInLocation = await geocodeCheckInLocation();
-      console.log('CHECK IN LOC ', checkInLocation);
       completedCheckIn.locality = checkInLocation.locality;
       completedCheckIn.country = checkInLocation.country;
       if (checkIn.exif) {
@@ -108,7 +78,15 @@ export const saveCheckIn = ({ checkIn }) => {
           country,
           formattedAddress,
           tags,
-          likes
+          likes,
+          likedByUser,
+          departure {
+            uuid,
+            localDateTime,
+            locality,
+            formattedAddress,
+            transport
+          }
         }
       }
     `;
@@ -125,9 +103,10 @@ export const saveCheckIn = ({ checkIn }) => {
 
 };
 
-export const deleteCheckIn = (uuid) => {
+export const deleteCheckIn = (uuid, nextUrl) => {
 
   return async (...args) => {
+
 
     const clientId = getClientId();
 
@@ -140,14 +119,15 @@ export const deleteCheckIn = (uuid) => {
           placeId,
           locality,
           country,
-          formattedAddress
+          formattedAddress,
+          nextUrl
         }
       }
     `;
 
     return graphqlAction(
       ...args,
-      { query }, [ 'checkIn' ],
+      { query, variables: { nextUrl } }, [ 'deleteCheckIn' ],
       DELETE_CHECKIN_START,
       DELETE_CHECKIN_SUCCESS,
       DELETE_CHECKIN_ERROR
@@ -156,7 +136,6 @@ export const deleteCheckIn = (uuid) => {
   };
 
 };
-
 
 export const getFeed = (clientId, params) => {
 
@@ -175,87 +154,7 @@ export const getFeed = (clientId, params) => {
     const query = `
       query {
         feed (${paramsString}) {
-          feedItems {
-            checkIn {
-              uuid,
-              clientId,
-              user,
-              userUuid,
-              userImage,
-              date,
-              latitude,
-              longitude,
-              placeId,
-              formattedAddress,
-              locality,
-              country,
-              tags,
-              likes
-            },
-            inbound {
-              uuid,
-              latitude,
-              longitude,
-              placeId,
-              formattedAddress,
-              locality,
-              country,
-              tags
-            },
-            outbound {
-              uuid,
-              latitude,
-              longitude,
-              placeId,
-              formattedAddress,
-              locality,
-              country
-            },
-            posts {
-              uuid,
-              text,
-              user,
-              mediaItems {
-                uuid,
-                type,
-                url,
-                latitude,
-                longitude,
-                date
-              }
-            },
-            terminals {
-              uuid,
-              type,
-              transport,
-              transportId,
-              description,
-              date,
-              time,
-              priceAmount,
-              priceCurrency,
-              linkedTerminal {
-                uuid,
-                type,
-                transport,
-                transportId,
-                description,
-                date,
-                time,
-                priceAmount,
-                priceCurrency,
-                checkIn {
-                  uuid,
-                  latitude,
-                  longitude,
-                  placeId,
-                  formattedAddress,
-                  locality,
-                  country
-                }
-              }
-            }
-          },
+          ${getFeedItemsQuery()},
           openTerminals {
             uuid,
             type,
@@ -292,9 +191,9 @@ export const getFeed = (clientId, params) => {
 
   };
 
-}
+};
 
-export const getFeedItem = (checkInUuid, frameId, target) => {
+export const getFeedItem = (checkInUuid, frameId, noLoading) => {
 
   return async (...args) => {
 
@@ -302,107 +201,10 @@ export const getFeedItem = (checkInUuid, frameId, target) => {
 
     return graphqlAction(
       ...args,
-      { query, variables: { checkInUuid, frameId, target } }, [ 'feedItem' ],
+      { query, variables: { checkInUuid, frameId, noLoading } }, [ 'feedItem' ],
       GET_FEEDITEM_START,
       GET_FEEDITEM_SUCCESS,
       GET_FEEDITEM_ERROR
-    );
-
-  };
-
-}
-
-
-export const getMediaItem = (uuid) => {
-
-  return async (...args) => {
-
-    const query = `
-      query {
-        mediaItem (uuid:"${uuid}") {
-          uuid,
-          url,
-          type,
-          thumbnail,
-          uploadStatus,
-          uploadProgress,
-          fileSize,
-          longitude,
-          latitude,
-          date
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query }, [ 'mediaItem' ],
-      GET_MEDIAITEM_START,
-      GET_MEDIAITEM_SUCCESS,
-      GET_MEDIAITEM_ERROR
-    );
-
-  };
-
-}
-
-export const uploadFiles = (mediaItem, files) => {
-
-  return async (...args) => {
-
-    const query = `
-      mutation uploadMedia {
-        mediaItem(mediaItem:${toGraphQLObject(mediaItem)}) {
-          uuid,
-          type,
-          thumbnail,
-          url,
-          uploadStatus,
-          fileSize,
-          uploadProgress,
-          longitude,
-          latitude,
-          date
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query, files, variables: { files } }, [ 'mediaItem' ],
-      MEDIA_FILE_UPLOAD_START,
-      MEDIA_FILE_UPLOAD_SUCCESS,
-      MEDIA_FILE_UPLOAD_ERROR
-    );
-
-  };
-
-};
-
-export const deleteMediaItem = (mediaItemUuid) => {
-
-  return async (...args) => {
-
-    const query = `
-      mutation deleteMediaItem {
-        deleteMediaItem(mediaItemUuid:"${mediaItemUuid}") {
-          uuid,
-          type,
-          thumbnail,
-          url,
-          uploadStatus,
-          fileSize,
-          uploadProgress
-        }
-      }
-    `;
-
-    return graphqlAction(
-      ...args,
-      { query }, [ 'deleteMediaItem' ],
-      DELETE_MEDIAITEM_START,
-      DELETE_MEDIAITEM_SUCCESS,
-      DELETE_MEDIAITEM_ERROR
     );
 
   };

@@ -3,6 +3,7 @@ import path from 'path';
 import sharp from 'sharp';
 import geoTz from 'geo-tz';
 import moment from 'moment-timezone';
+import { getDistance } from 'geolib';
 import ExifReader from 'exifreader';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
@@ -39,11 +40,12 @@ import {
 
 import {
   requireOwnership,
-  throwMustBeLoggedInError
+  throwMustBeLoggedInError, throwTimelineConflictError,
 } from './utils';
 
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
 import { getLocalDateTime } from '../../core/utils';
+import { CheckIn } from '../models';
 
 const throwPrelaunchError = () => {
   throw Object.assign(new Error('Access error'), {
@@ -102,35 +104,44 @@ const addUserId = async (object, request) => {
 };
 
 const adjustConnection = async (departure) => {
+
   console.log(`Adjusting connection: (${departure.id}) ${departure.locality}, (${departure.linkedTerminalId}) ${departure.linkedLocality}`);
+
   const routePoints = await terminalRepository.getRoutePoints(departure);
   routePoints.unshift(departure.get());
   routePoints.push(departure.linkedTerminal.get());
-  const totalDistance = await terminalRepository.getTotalDistance(routePoints);
+  let totalDistance = 0;
+  for (let i = 0; i < routePoints.length - 1; i++) {
+    const fromPoint = { latitude: routePoints[i].latitude, longitude: routePoints[i].longitude };
+    const toPoint = { latitude: routePoints[i + 1].latitude, longitude: routePoints[i + 1].longitude };
+    const distance = getDistance(fromPoint, toPoint);
+    totalDistance += distance / 1000;
+  }
+
   await terminalRepository.saveConnection(departure.id, departure.linkedTerminal.id, totalDistance);
+
 };
 
 const saveTerminal = async (terminalInput, clientId, request) => {
 
-  let savedTerminal = null;
+  let existingTerminal = null;
   if (terminalInput.uuid) {
-    savedTerminal = await terminalRepository.getTerminal({ uuid: terminalInput.uuid });
-    await requireOwnership(request, savedTerminal, clientId);
+    existingTerminal = await terminalRepository.getTerminal({ uuid: terminalInput.uuid });
   }
 
+  const userId = await requireOwnership(request, existingTerminal, clientId);
 
   const { checkInUuid, linkedTerminalUuid } = terminalInput;
+
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
-  let linkedTerminal = null;
+  if (!checkIn) throw new Error('Could not find Check In for Terminal');
+
+  let newLinkedTerminal = null;
   if (linkedTerminalUuid) {
-    linkedTerminal = await terminalRepository.getTerminal({ uuid: linkedTerminalUuid });
+    newLinkedTerminal = await terminalRepository.getTerminal({ uuid: linkedTerminalUuid });
   }
 
-  if (!checkIn) {
-    //TODO: Process error
-  }
-
-  const terminal = {
+  const newTerminal = {
     checkInId: checkIn.id,
     checkInUuid: checkIn.uuid,
     locality: checkIn.locality,
@@ -139,30 +150,88 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     formattedAddress: checkIn.formattedAddress
   };
 
-  if (linkedTerminal) {
-    terminal.linkedTerminalId = linkedTerminal.id;
-    terminal.linkedLocality = linkedTerminal.locality;
-    terminal.linkedFormattedAddress = linkedTerminal.formattedAddress;
+  if (!existingTerminal) newTerminal.userId = userId;
+
+  if (newLinkedTerminal) {
+    newTerminal.linkedTerminalId = newLinkedTerminal.id;
+    newTerminal.linkedLocality = newLinkedTerminal.locality;
+    newTerminal.linkedFormattedAddress = newLinkedTerminal.formattedAddress;
   }
 
-  copyNonNull(terminalInput, terminal, [ 'uuid', 'date', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
-  await addUserId(terminal, request);
+  copyNonNull(terminalInput, newTerminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
 
   const timeZone = geoTz(checkIn.latitude, checkIn.longitude)[0];
 
-  if (terminal.date) {
-    const tzDateTime = moment.tz(terminal.date, timeZone);
+  if (terminalInput.date) {
+
+    const tzDateTime = moment.tz(terminalInput.date, timeZone);
     const tzDateTimeValue = tzDateTime.format();
-    terminal.createdAt = tzDateTimeValue;
-    terminal.updatedAt = tzDateTimeValue;
+
+    const newDateTime = new Date(tzDateTimeValue);
+    const now = new Date();
+
+    const futureTime = (newDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    if (newTerminal.type === 'arrival' && futureTime > 0) {
+      throwTimelineConflictError('Arrival time cannot be predicted in the future.');
+    }
+
+    if (newTerminal.type === 'departure' && futureTime > 2) {
+      throwTimelineConflictError('Maximum allowed future departure time is 2 hours.');
+    }
+
+    const linkedTerminal = newLinkedTerminal || (existingTerminal && existingTerminal.linkedTerminal);
+    const type = newTerminal.type || (existingTerminal && existingTerminal.type);
+
+    if (linkedTerminal) {
+
+      if (type) {
+        const departureDate = type === 'departure' ? newDateTime : linkedTerminal.createdAt;
+        const arrivalDate = type === 'arrival' ? newDateTime : linkedTerminal.createdAt;
+        console.log('NEW DATE', newDateTime);
+        console.log('DEP DATE', departureDate);
+        console.log('ARR DATE', arrivalDate);
+        if (new Date(departureDate).getTime() >= (new Date(arrivalDate)).getTime()) {
+          throwTimelineConflictError('Departure cannot be later than arrival.');
+        }
+
+
+        const terminalsBetween = await terminalRepository.getTerminalsBetween(departureDate, arrivalDate, userId);
+        if (terminalsBetween.length > 0) {
+          throwTimelineConflictError('Overlapping connections. Other departures and/or arrivals fall in specified time range.');
+        }
+      }
+
+    }
+
+    if (type === 'departure') {
+      const departureBefore = await terminalRepository.getDepartureBefore(newDateTime, userId);
+      if (departureBefore && !(existingTerminal && existingTerminal.id === departureBefore.id)) throwTimelineConflictError('Overlapping departure. Cannot save departure immediately after another departure.');
+    }
+
+    if (type === 'arrival') {
+      const departureAfter = await terminalRepository.getArrivalAfter(newDateTime, userId);
+      if (departureAfter) throwTimelineConflictError('Overlapping arrival. Cannot save arrival immediately before another arrival.');
+    }
+
+    newTerminal.createdAt = tzDateTimeValue;
+    newTerminal.updatedAt = tzDateTimeValue;
   }
 
-  savedTerminal = await terminalRepository.saveTerminal(terminal);
+  const savedTerminal = await terminalRepository.saveTerminal(newTerminal);
 
-  if (linkedTerminal) {
+  if (savedTerminal.type === 'arrival' && (new Date(savedTerminal.createdAt)).getTime() > (new Date(checkIn.createdAt)).getTime()) {
+    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminal.createdAt });
+  }
+
+  if (savedTerminal.type === 'departure' && (new Date(savedTerminal.createdAt)).getTime() < (new Date(checkIn.createdAt)).getTime()) {
+    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminal.createdAt });
+  }
+
+  if (newLinkedTerminal) {
     const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
     await terminalRepository.saveTerminal({
-      uuid: linkedTerminal.uuid,
+      uuid: newLinkedTerminal.uuid,
       linkedTerminalId: savedTerminal.id,
       linkedLocality: savedTerminal.locality,
       linkedFormattedAddress: savedTerminal.formattedAddress,
@@ -196,7 +265,7 @@ const savePost = async (postInput, clientId, request) => {
   const { checkInUuid } = postInput;
   const checkIn = await postRepository.getCheckIn({ uuid: checkInUuid });
   if (!checkIn) {
-    // TODO: Error
+    throw new Error('Could not find Check In for Post');
   }
 
   const post = {
@@ -281,62 +350,100 @@ const deleteTerminal = async (uuid, clientId, request) => {
 
 const saveCheckIn = async (checkInInput, clientId, request) => {
 
-  if (!request.user) {
-    throwMustBeLoggedInError();
-  }
-
-  let userId = null;
-  let savedCheckIn = null;
+  let existingCheckIn = null;
   if (checkInInput.uuid) {
-    savedCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
-    userId = await requireOwnership(request, savedCheckIn, clientId);
+    existingCheckIn = await postRepository.getCheckIn({ uuid: checkInInput.uuid });
   }
 
-  const checkIn = copyNonNull(checkInInput, {}, [
-    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress', 'date'
+  const userId = await requireOwnership(request, existingCheckIn, clientId);
+
+  const newCheckIn = copyNonNull(checkInInput, {}, [
+    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress'
   ]);
 
-  const latitude = checkIn.latitude || savedCheckIn.latitude;
-  const longitude = checkIn.longitude || savedCheckIn.longitude;
+  const latitude = newCheckIn.latitude || existingCheckIn.latitude;
+  const longitude = newCheckIn.longitude || existingCheckIn.longitude;
 
   const timeZone = geoTz(latitude, longitude)[0];
 
-  if (checkIn.date) {
-    const tzDateTime = moment.tz(checkIn.date, timeZone);
+  if (checkInInput.date) {
+
+    const tzDateTime = moment.tz(checkInInput.date, timeZone);
     const tzDateTimeValue = tzDateTime.format();
-    checkIn.createdAt = tzDateTimeValue;
-    checkIn.updatedAt = tzDateTimeValue;
+    const newDateTime = new Date(tzDateTimeValue);
+    const now = new Date();
+    if (newDateTime.getTime() > now.getTime()) {
+      throwTimelineConflictError('Check-ins in the future are not allowed as this has a potential to mess up your timeline.');
+    }
+
+    if (existingCheckIn) {
+
+      const terminals = await terminalRepository.getTerminals({ checkInId: existingCheckIn.id });
+
+      const arrival = terminals.find(terminal => terminal.type === 'arrival');
+      const departure = terminals.find(terminal => terminal.type === 'departure');
+
+      if (arrival) {
+        if (new Date(arrival.createdAt).getTime() > newDateTime) {
+          throwTimelineConflictError('Arrival check-in cannot be earlier than actual arrival.');
+        }
+      }
+
+      if (departure) {
+        if (new Date(departure.createdAt).getTime() < newDateTime) {
+          throwTimelineConflictError('Departure check-in cannot be later than actual departure.');
+        }
+      }
+
+      const lastDepartureCheckIn = await checkInRepository.getLastCheckInWithDeparture(newDateTime, userId);
+      if (lastDepartureCheckIn) {
+        const lastCheckInDeparture = await terminalRepository.getTerminal({ checkInId: lastDepartureCheckIn.id });
+        if (new Date(lastCheckInDeparture.createdAt).getTime() > newDateTime.getTime()) {
+          throwTimelineConflictError('Cannot move check-in between another check-in and departure');
+        }
+      }
+
+    }
+
+    newCheckIn.createdAt = tzDateTimeValue;
+    newCheckIn.updatedAt = tzDateTimeValue;
+
+  } else {
+
+    if (!existingCheckIn) newCheckIn.createdAt = new Date();
+
   }
 
-  await addUserId(checkIn, request);
-
-  const saved = await postRepository.saveCheckIn(checkIn);
-
-  let departureBefore = null;
-  if (savedCheckIn) {
-    departureBefore = await terminalRepository.getDepartureBefore(savedCheckIn);
-    if (departureBefore) await adjustConnection(departureBefore);
+  if (!existingCheckIn) {
+    newCheckIn.userId = userId;
+    await localityRepository.saveLocality(newCheckIn.locality);
   }
 
-  departureBefore = await terminalRepository.getDepartureBefore(saved);
-  if (departureBefore) await adjustConnection(departureBefore);
+  let departureBeforeExisting = null;
+  if (existingCheckIn) {
+    departureBeforeExisting = await terminalRepository.getDepartureBefore(existingCheckIn.createdAt, userId, existingCheckIn);
+  }
 
-  const tagIds = (await tagRepository.getEntityTags({ checkInId: saved.id }))
-    .map(entityTag => entityTag.tagId);
-  const tags = (await tagRepository.getTags({ id: tagIds }));
+  let departureBeforeNew = null;
+  if (newCheckIn.createdAt) {
+    departureBeforeNew = await terminalRepository.getDepartureBefore(newCheckIn.createdAt, userId);
+  }
 
-  let deletedTags = [];
+  const savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
+
+  if (departureBeforeExisting && departureBeforeExisting.linkedTerminal) await adjustConnection(departureBeforeExisting);
+  if (departureBeforeNew && departureBeforeNew.linkedTerminal) await adjustConnection(departureBeforeNew);
+
   if (checkInInput.tags) {
-    deletedTags = tags.filter(tag => checkInInput.tags.indexOf(tag.value) === -1);
-    await tagRepository.deleteEntityTags({ checkInId: saved.id, tagId: deletedTags.map(tag => tag.id) });
+    const checkInTags = await tagRepository.getTagsByCheckInIds([savedCheckIn.id]);
+    const deletedTags = checkInTags.filter(tag => checkInInput.tags.indexOf(tag.value) === -1);
+    await tagRepository.deleteEntityTags({ checkInId: savedCheckIn.id, tagId: deletedTags.map(tag => tag.id) });
   }
-
-  await localityRepository.saveLocality(saved.locality);
 
   return {
-    ...saved.toJSON(),
-    tags: tags.filter(tag => deletedTags.map(tag => tag.id).indexOf(tag.id) === -1).map(tag => tag.value),
-    date: getLocalDateTime(saved.createdAt, timeZone)
+    ...savedCheckIn.json(),
+    tags: (await tagRepository.getTagsByCheckInIds([savedCheckIn.id])).map(tag => tag.value),
+    date: getLocalDateTime(savedCheckIn.createdAt, timeZone)
   };
 
 };
@@ -800,10 +907,21 @@ export const getFeedItem = async (request, checkIn) => {
 
   const timeZone = geoTz(checkIn.latitude, checkIn.longitude)[0];
 
+  let departure = null;
+  if (checkIn.departureId) {
+    departure = await terminalRepository.getTerminal(checkIn.departureId);
+  } else {
+    departure = await terminalRepository.getDepartureBefore(checkIn);
+  }
+
   return {
     userAccess: credentials.userAccess,
     checkIn: {
       ...(checkIn.json()),
+      departure: departure ? {
+        ...departure.json(),
+        localDateTime: getLocalDateTime(departure.createdAt, geoTz(departure.latitude, departure.longitude)[0])
+      } : null,
       user: credentials.ownerFullName,
       userImage: credentials.userImage,
       userUuid: credentials.userUuid,

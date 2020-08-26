@@ -41,6 +41,18 @@ const CheckIn = Model.define('CheckIn', {
 
   longitude: {
     type: DataType.FLOAT
+  },
+
+  departureId: {
+    type: DataType.INTEGER
+  },
+
+  linkIndex: {
+    type: DataType.INTEGER
+  },
+
+  likes: {
+    type: DataType.INTEGER
   }
 
 }, {
@@ -57,7 +69,7 @@ const CheckIn = Model.define('CheckIn', {
   },
 
   indexes: [
-    { fields: ['id', 'uuid', 'clientId', 'placeId', 'nextCheckInId', 'prevCheckInId', 'latitude', 'longitude'] },
+    { fields: ['id', 'uuid', 'clientId', 'placeId', 'nextCheckInId', 'prevCheckInId', 'latitude', 'longitude', 'departureId', 'likes' ] },
   ],
 
 });

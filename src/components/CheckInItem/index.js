@@ -7,7 +7,7 @@ import s from './FeedItem.css';
 import FontIcon from 'material-ui/FontIcon';
 import CheckInItemContent from '../CheckInItemContent';
 import { setProperty, setDeepProperty } from '../../actions/properties';
-import { getFeedItem, deleteCheckIn, saveCheckIn } from '../../actions/posts';
+import { getFeedItem, deleteCheckIn, saveCheckIn } from '../../actions/checkIns';
 import Link from '../Link';
 import Terminal from '../EditCheckInItem/Terminal';
 import EditCheckInItem from '../EditCheckInItem';

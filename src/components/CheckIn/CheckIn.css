@@ -40,6 +40,23 @@
   display: none;
 }
 
+.checkInDeparture {
+  padding-left: 4px;
+  padding-right: 4px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.checkInDeparture .departureSummary {
+
+}
+
+.checkInDeparture .clearDeparture {
+  height: 18px;
+  margin-left: 4px;
+}
+
 .checkInControls {
   display: flex;
   justify-content: space-between;
