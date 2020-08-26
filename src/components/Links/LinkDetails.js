@@ -118,7 +118,7 @@ const LinkDetails = ({
                 getNavigationQuery({
                   locality: fromTerminal.locality,
                   transportTypes: selectedTransportTypes
-                })
+                }) + '&view=map'
               }>
                 { fromTerminal.locality }
               </Link>
@@ -130,7 +130,7 @@ const LinkDetails = ({
                 getNavigationQuery({
                   locality: toTerminal.locality,
                   transportTypes: selectedTransportTypes
-                })
+                }) + '&view=map'
               }>
                 { toTerminal.locality }
               </Link>

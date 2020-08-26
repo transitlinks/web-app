@@ -149,7 +149,7 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
                   locality: departureLocality,
                   linkedLocality: arrivalLocality,
                   transportTypes
-                })
+                }) + '&view=map'
               }>
                 { linkCount } arrivals
               </Link>
@@ -161,7 +161,7 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
                   getNavigationQuery({
                     locality: arrivalLocality,
                     transportTypes
-                  })
+                  }) + '&view=map'
                 }>{ arrivalLocality }</Link>
               </div>
             </div>
@@ -181,7 +181,7 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
                   getNavigationQuery({
                     locality: departureLocality,
                     transportTypes
-                  })
+                  }) + '&view=map'
                 }>{ departureLocality }</Link>
               </div>
             </div>
@@ -191,7 +191,7 @@ const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setPro
                   locality: departureLocality,
                   linkedLocality: arrivalLocality,
                   transportTypes
-                })
+                }) + '&view=map'
               }>
                 { linkCount } departures
               </Link>
@@ -432,7 +432,7 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                                         getNavigationQuery({
                                           locality: link.linkedLocality,
                                           transportTypes
-                                        })
+                                        }) + '&view=map'
                                       }>
                                         {link.linkedLocality}
                                       </Link>
@@ -486,7 +486,7 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                                           getNavigationQuery({
                                             locality: link.linkedLocality,
                                             transportTypes
-                                          })
+                                          }) + '&view=map'
                                         }>
                                           {link.linkedLocality}
                                         </Link>
@@ -602,7 +602,7 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
                                 getNavigationQuery({
                                   locality: terminal.linkedTerminal.locality,
                                   transportTypes: selectedTransportTypes
-                                })
+                                }) + '&view=map'
                               }>
                                 { terminal.linkedTerminal.locality }
                               </Link>&nbsp;
@@ -611,7 +611,7 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
                                   locality: terminal.locality,
                                   linkedLocality: terminal.linkedTerminal.locality,
                                   transportTypes: selectedTransportTypes
-                                })
+                                }) + '&view=map'
                               }>
                               &nbsp;{ terminal.linkCount }&nbsp;
                               </Link>)
@@ -634,7 +634,7 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
                                 getNavigationQuery({
                                   locality: terminal.linkedTerminal.locality,
                                   transportTypes: selectedTransportTypes
-                                })
+                                }) + '&view=map'
                               }>
                                 { terminal.linkedTerminal.locality }
                               </Link>&nbsp;
@@ -643,7 +643,7 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
                                 locality: terminal.locality,
                                 linkedLocality: terminal.linkedTerminal.locality,
                                 transportTypes: selectedTransportTypes
-                              })
+                              }) + '&view=map'
                             }>
                               &nbsp;{ terminal.linkCount }&nbsp;
                             </Link>)
@@ -887,7 +887,7 @@ const LinksView = (props) => {
               locality: displayLinksResult.linkedLocality,
               linkedLocality: displayLinksResult.locality,
               transportTypes: selectedTransportTypes
-            })
+            }) + '&view=map'
           }>
             { displayLinksResult.linkedLocality }
           </Link>
@@ -897,7 +897,7 @@ const LinksView = (props) => {
             getNavigationQuery({
               locality: displayLinksResult.locality,
               transportTypes: selectedTransportTypes
-            })
+            }) + '&view=map'
           }>
             <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
               clear
@@ -918,7 +918,7 @@ const LinksView = (props) => {
             getNavigationQuery({
               transportTypes: selectedTransportTypes,
               locality: displayLinksResult.from
-            })
+            }) + '&view=map'
           }>
             <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
               clear
@@ -1123,7 +1123,12 @@ const LinksView = (props) => {
         </div>
       }
       {
-        (searchResultType === 'links' || searchResultType === 'tagged' || searchResultType === 'route') ?
+        (
+          searchResultType === 'links' ||
+          searchResultType === 'tagged' ||
+          searchResultType === 'route' ||
+          (searchResultType === 'connections' && displayLinks.length === 1)
+        ) ?
           <div className={s.linksView}>
             {
               (viewMode || query.view) === 'map' &&
