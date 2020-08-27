@@ -295,7 +295,10 @@ const EditCheckInItemView = (props) => {
     newCheckIn, savedTerminal, frameId, disabledTags, activeTags, activeTag, hideContent, editTime, editCheckIn, fetchedFeedItem
   } = props;
 
-  const item = fetchedFeedItem || checkInItem;
+  let item = checkInItem;
+  if (fetchedFeedItem && fetchedFeedItem.fetchedAt > checkInItem.fetchedAt) {
+    item = fetchedFeedItem;
+  }
 
   let positionElem = null;
   if (geolocation) {

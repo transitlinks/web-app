@@ -34,15 +34,10 @@ class CheckIn extends React.Component {
     //this.updateComponent(this.props);
   }
 
-  /*
-  componentWillReceiveProps(props) {
-    this.updateComponent(props);
-  }
-   */
-
   componentDidUpdate(prevProps) {
 
     const props = this.props;
+
     if (props.deleted) {
       console.log('deleted check-in', props.deleted);
       props.setProperty('posts.deletedCheckIn', null);
