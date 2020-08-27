@@ -7,7 +7,7 @@ import Link from '../Link';
 import { injectIntl } from 'react-intl';
 import FontIcon from 'material-ui/FontIcon';
 
-const FilterHeader = ({ icon, user, tag, locality, clearUrl, getUrl }) => {
+const FilterHeader = ({ icon, user, tag, locality, label, clearUrl, getUrl }) => {
 
   let filterDisplay = null;
   let directionsUrl = null;
@@ -42,12 +42,17 @@ const FilterHeader = ({ icon, user, tag, locality, clearUrl, getUrl }) => {
   } else if (locality) {
     filterDisplay = (
       <div className={s.localityFilter}>
-        <div className={s.localityImage}>
-          <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
-            place
-          </FontIcon>
-        </div>
-        <div className={s.localityName}>{locality}</div>
+        {
+          label ||
+            <div>
+              <div className={s.localityImage}>
+                <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
+                  place
+                </FontIcon>
+              </div>
+              <div className={s.localityName}>{locality}</div>
+            </div>
+        }
       </div>
     );
     directionsUrl = '/links?locality=' + locality + '&view=map';

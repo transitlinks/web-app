@@ -181,7 +181,12 @@ export const TransitLinkQueryFields = {
 
         if (from && to) {
 
-          const routes = await terminalRepository.getRoute(from, to);
+          const routeSearchParams = {};
+          if (transportTypes && transportTypes.length > 0) {
+            routeSearchParams.transportTypes = transportTypes;
+          }
+
+          const routes = await terminalRepository.getRoute(from, to, routeSearchParams);
           const routeKeys = Object.keys(routes);
 
           if (routeKeys.length > 0) {

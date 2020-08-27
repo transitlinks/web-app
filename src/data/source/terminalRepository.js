@@ -58,7 +58,7 @@ export default {
 
   },
 
-  getRoute: async (from, to) => {
+  getRoute: async (from, to, params) => {
 
     /*
     const query = `
@@ -79,13 +79,21 @@ export default {
     `;
      */
 
+    let costExpression = 'distance';
+    if (params) {
+      const { transportTypes } = params;
+      if (transportTypes) {
+        costExpression = `(distance + (1 - (transport IN (${transportTypes.map(t => `''${t}''`).join(',')}))::integer) * 1000000)`;
+      }
+    }
+
     const query = `
       SELECT x.path_id, x.path_seq, t.*,
         CASE
            WHEN edge = -1 THEN agg_cost ELSE NULL END AS "total_cost"
         FROM
             pgr_ksp(
-                    'SELECT id, source, target, distance AS cost FROM "Connection"',
+                    'SELECT id, source, target, ${costExpression} AS cost FROM "Connection"',
                     (SELECT id FROM "Locality" WHERE name = '${from}'),
                     (SELECT id FROM "Locality" WHERE name = '${to}'),
                     5,
@@ -97,11 +105,11 @@ export default {
             x.path_id, x.path_seq;
     `;
 
-    const routes = {
-    };
+    console.log('GET ROUTE QUERY', query);
 
     const departures = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
 
+    const routes = {};
     for (let i = 0; i < departures.length; i++) {
       if (departures[i].linkedTerminalId) {
         departures[i].linkedTerminal = await terminalRepository.getTerminal({ id: departures[i].linkedTerminalId });
@@ -283,6 +291,7 @@ export default {
       '"targetLocality"': 'lt.locality',
       '"sourceFormattedAddress"': 't."formattedAddress"',
       '"targetFormattedAddress"': 'lt."formattedAddress"',
+      '"transport"': 't."transport"',
       'geom': 'ST_MakeLine(t.geom, lt.geom)::GEOMETRY(LineString,4326)',
       'distance': distance || 'ST_Distance(t.geom::GEOGRAPHY, lt.geom::GEOGRAPHY)/1000',
       'source': 'tl.id',

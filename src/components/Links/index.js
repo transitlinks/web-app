@@ -738,6 +738,15 @@ const getRoutesMapContent = (terminals, selectedRoute, selectedTerminal, onSelec
 
 };
 
+
+const getTripMapContent = (terminals, selectedTerminal, onSelect) => {
+  return terminals.map(terminal => {
+    let opacity = 0.5;
+    if (selectedTerminal && selectedTerminal.uuid === terminal.uuid) opacity = 1;
+    return [ createPolyLine(terminal, onSelect, '#FF0000', opacity) ];
+  });
+};
+
 const LinksView = (props) => {
 
   const {
@@ -758,7 +767,7 @@ const LinksView = (props) => {
     setProperty('links.selectedLocality', locality);
     setProperty('links.linkMode', 'external');
 
-    navigate(getNavigationPath({ locality, transportTypes: selectedTransportTypes }));
+    navigate(getNavigationPath({ locality, transportTypes: selectedTransportTypes, view: 'map' }));
     //getLinks({ locality });
   };
 
@@ -833,6 +842,16 @@ const LinksView = (props) => {
       filterOptions = {
         ...filterOptions,
         locality: displayLinksResult.locality,
+        label: (
+          <div className={s.linksListHeader}>
+            <div className={s.image}>
+              <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
+                place
+              </FontIcon>
+            </div>
+            <div className={s.label}>{displayLinksResult.locality}</div>
+          </div>
+        ),
         getUrl: () => getNavigationQuery({
           ...urlParams,
           locality: displayLinksResult.locality
@@ -857,7 +876,7 @@ const LinksView = (props) => {
                          onKeyDown={(e) => {
                            if (e.keyCode === 13) {
                              setProperty('links.routeSearchTerm', '');
-                             navigate(getNavigationPath({ from: displayLinksResult.locality, to: routeSearchTerm }));
+                             navigate(getNavigationPath({ from: displayLinksResult.locality, to: routeSearchTerm, view: 'map' }));
                            }
                          }}/>
             </div>
@@ -878,55 +897,62 @@ const LinksView = (props) => {
       listContent = renderLocationsList(displayLinks, selectedTransportTypes, onSelectLocality);
     }
   } else if (searchResultType === 'links') {
-    searchHeader = (
-      <div className={s.linksListHeader}>
-        <div className={s.locality}>{ displayLinksResult.locality }</div>
-        <div className={s.linkedLocality}>
-          <Link to={
-            getNavigationQuery({
-              locality: displayLinksResult.linkedLocality,
-              linkedLocality: displayLinksResult.locality,
-              transportTypes: selectedTransportTypes
-            }) + '&view=map'
-          }>
-            { displayLinksResult.linkedLocality }
-          </Link>
+
+    filterOptions = {
+      ...filterOptions,
+      locality: displayLinksResult.locality,
+      label: (
+        <div className={s.linksListHeader}>
+          <div className={s.locality}>{ displayLinksResult.locality }</div>
+          <div className={s.linkedLocality}>
+            <Link to={
+              getNavigationQuery({
+                locality: displayLinksResult.linkedLocality,
+                linkedLocality: displayLinksResult.locality,
+                transportTypes: selectedTransportTypes
+              }) + '&view=map'
+            }>
+              { displayLinksResult.linkedLocality }
+            </Link>
+          </div>
         </div>
-        <div className={s.undo}>
-          <Link to={
-            getNavigationQuery({
-              locality: displayLinksResult.locality,
-              transportTypes: selectedTransportTypes
-            }) + '&view=map'
-          }>
-            <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
-              clear
-            </FontIcon>
-          </Link>
-        </div>
-      </div>
-    );
+      ),
+      getUrl: () => getNavigationQuery({
+        ...urlParams,
+        locality: displayLinksResult.locality
+      }),
+      clearUrl: getNavigationQuery({
+        locality: displayLinksResult.locality,
+        transportTypes: selectedTransportTypes,
+        view: 'map'
+      })
+    };
+
+    searchHeader = <FilterHeader {...filterOptions} />;
     mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
     listContent = renderLinksList(props);
   } else if (searchResultType === 'route') {
 
-    searchHeader = (
-      <div className={s.taggedListHeader}>
-        <div className={s.tag}>{ displayLinksResult.from } - { displayLinksResult.to }</div>
-        <div className={s.undo}>
-          <Link to={
-            getNavigationQuery({
-              transportTypes: selectedTransportTypes,
-              locality: displayLinksResult.from
-            }) + '&view=map'
-          }>
-            <FontIcon className="material-icons" style={{ fontSize: '22px' }}>
-              clear
-            </FontIcon>
-          </Link>
+    filterOptions = {
+      ...filterOptions,
+      locality: 'blah',
+      label: (
+        <div className={s.taggedListHeader}>
+          <div className={s.tag}>{ displayLinksResult.from } - { displayLinksResult.to }</div>
         </div>
-      </div>
-    );
+      ),
+      getUrl: () => getNavigationQuery({
+        ...urlParams,
+        locality: displayLinksResult.from
+      }),
+      clearUrl: getNavigationQuery({
+        transportTypes: selectedTransportTypes,
+        locality: displayLinksResult.from,
+        view: 'map'
+      })
+    };
+
+    searchHeader = <FilterHeader {...filterOptions} />;
 
     mapContent = getRoutesMapContent(displayLinks[0].departures, selectedRoute, selectedTerminal, (terminal) => {
       setProperty('links.selectedRoute', terminal.routeId);
@@ -947,8 +973,12 @@ const LinksView = (props) => {
     };
 
     searchHeader = <FilterHeader {...filterOptions} />;
-    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
+
+    mapContent = getTripMapContent(displayLinks[0].departures, selectedTerminal, (terminal) => {
+      setProperty('links.selectedTerminal', terminal);
+    });
     listContent = renderLinksList(props);
+
   }
 
 
@@ -1014,11 +1044,11 @@ const LinksView = (props) => {
                                setProperty('links.selectedLinkedLocality', null);
                                navigate(getNavigationPath({
                                  search: input,
-                                 transportTypes: selectedTransportTypes
+                                 transportTypes: selectedTransportTypes,
+                                 view: 'map'
                                }));
-                               //getLinks({ ...(input.length === 0 ? {} : { locality: input }), transportTypes: selectedTransportTypes });
                              }
-                           }}/>
+                           }} />
               </div>
             </div>
           </div>
@@ -1035,68 +1065,6 @@ const LinksView = (props) => {
       }
       <div>
         { searchHeader }
-      </div>
-      <div className={s.filters}>
-        {
-          !showTransportTypes ?
-            <div className={s.selectedFiltersWrapper}>
-            <div className={s.selectedFilters} onClick={() => setProperty('links.showTransportTypes', true)}>
-              <div className={s.icon}>
-                <FontIcon className="material-icons" style={{ fontSize: '14px', marginTop: '4px' }}>tune</FontIcon>
-              </div>
-              <div className={s.values}>
-                {
-                  !selectedTransportTypes || selectedTransportTypes.length === 0 ?
-                    'All transport types' :
-                    (selectedTransportTypes || []).map((transportType, index) => {
-                      let selectedTransportType = transportType === 'all' ?
-                        'All transport types' :
-                        intl.formatMessage(msgTransport[transportType]);
-                      if (index < (selectedTransportTypes || []).length - 1) selectedTransportType += ', ';
-                      return selectedTransportType;
-                    })
-                }
-              </div>
-
-            </div>
-            </div> :
-            <div className={s.transportOptions} onClick={() => setProperty('links.showTransportTypes', false)}>
-              {
-                [{ slug: 'all' }].concat(transportTypes).map(transportType => (
-                  <div className={cx(s.transportOption, selectedTransportTypes.find(type => type === transportType.slug) ? s.selectedTransportOption : {})} onClick={() => {
-
-                    let newSelectedTransportTypes = selectedTransportTypes;
-                    if (transportType.slug === 'all') {
-                      newSelectedTransportTypes = [];
-                    } else {
-                      newSelectedTransportTypes =
-                        selectedTransportTypes.find(type => type === transportType.slug) ?
-                          selectedTransportTypes.filter(type => type !== transportType.slug) :
-                          selectedTransportTypes.concat(transportType.slug);
-                    }
-
-                    setProperty('links.selectedTransportTypes', newSelectedTransportTypes);
-
-                    navigate(getNavigationPath({
-                      locality: selectedLocality,
-                      linkedLocality: selectedLinkedLocality,
-                      search: searchTerm,
-                      transportTypes: newSelectedTransportTypes
-                    }));
-                    //getLinks({ locality: searchTerm, transportTypes: newSelectedTransportTypes });
-
-                  }}>
-                    {
-                      transportType.slug === 'all' ?
-                        'All' :
-                        intl.formatMessage(msgTransport[transportType.slug])
-                    }
-                  </div>
-                ))
-              }
-            </div>
-        }
-
       </div>
       {
         (
@@ -1115,6 +1083,77 @@ const LinksView = (props) => {
               })
             }
           </div>
+        </div>
+      }
+      {
+        searchResultType !== 'tagged' &&
+        <div className={s.filters}>
+          {
+            !showTransportTypes ?
+              <div className={s.selectedFiltersWrapper}>
+                <div className={s.selectedFilters} onClick={() => setProperty('links.showTransportTypes', true)}>
+                  <div className={s.icon}>
+                    <FontIcon className="material-icons" style={{ fontSize: '14px', marginTop: '4px' }}>tune</FontIcon>
+                  </div>
+                  <div className={s.values}>
+                    {
+                      !selectedTransportTypes || selectedTransportTypes.length === 0 ?
+                        'All transport types' :
+                        (selectedTransportTypes || []).map((transportType, index) => {
+                          let selectedTransportType = transportType === 'all' ?
+                            'All transport types' :
+                            intl.formatMessage(msgTransport[transportType]);
+                          if (index < (selectedTransportTypes || []).length - 1) selectedTransportType += ', ';
+                          return selectedTransportType;
+                        })
+                    }
+                  </div>
+
+                </div>
+              </div> :
+              <div className={s.transportOptions} onClick={() => setProperty('links.showTransportTypes', false)}>
+                {
+                  [{ slug: 'all' }].concat(transportTypes).map(transportType => (
+                    <div className={cx(s.transportOption, selectedTransportTypes.find(type => type === transportType.slug) ? s.selectedTransportOption : {})} onClick={() => {
+
+                      let newSelectedTransportTypes = selectedTransportTypes;
+                      if (transportType.slug === 'all') {
+                        newSelectedTransportTypes = [];
+                      } else {
+                        newSelectedTransportTypes =
+                          selectedTransportTypes.find(type => type === transportType.slug) ?
+                            selectedTransportTypes.filter(type => type !== transportType.slug) :
+                            selectedTransportTypes.concat(transportType.slug);
+                      }
+
+                      setProperty('links.selectedTransportTypes', newSelectedTransportTypes);
+
+                      const pathParams = {
+                        locality: selectedLocality,
+                        linkedLocality: selectedLinkedLocality,
+                        search: searchTerm,
+                        transportTypes: newSelectedTransportTypes,
+                        view: 'map'
+                      };
+
+                      if (query.from && query.to) {
+                        pathParams.from = query.from;
+                        pathParams.to = query.to;
+                      }
+
+                      navigate(getNavigationPath(pathParams));
+
+                    }}>
+                      {
+                        transportType.slug === 'all' ?
+                          'All' :
+                          intl.formatMessage(msgTransport[transportType.slug])
+                      }
+                    </div>
+                  ))
+                }
+              </div>
+          }
         </div>
       }
       {
