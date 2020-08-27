@@ -7,6 +7,7 @@
     "files": [
       "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
+      "src/components/ErrorHeader/messages.js",
       "src/components/Home/messages.js",
       "src/components/Links/messages.js"
     ]
@@ -19,6 +20,7 @@
     "files": [
       "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
+      "src/components/ErrorHeader/messages.js",
       "src/components/Home/messages.js",
       "src/components/Links/messages.js"
     ]

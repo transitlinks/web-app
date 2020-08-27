@@ -396,7 +396,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
       }
 
       const lastDepartureCheckIn = await checkInRepository.getLastCheckInWithDeparture(newDateTime, userId);
-      if (lastDepartureCheckIn) {
+      if (lastDepartureCheckIn && lastDepartureCheckIn.id !== existingCheckIn.id) {
         const lastCheckInDeparture = await terminalRepository.getTerminal({ checkInId: lastDepartureCheckIn.id });
         if (new Date(lastCheckInDeparture.createdAt).getTime() > newDateTime.getTime()) {
           throwTimelineConflictError('Cannot move check-in between another check-in and departure');
