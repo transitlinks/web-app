@@ -423,13 +423,19 @@ export default {
 
   },
 
-  getTerminalsBetween: async (departureDateTime, arrivalDateTime, userId) => {
+  getTerminalsBetween: async (departureDateTime, arrivalDateTime, userId, terminal, linkedTerminal) => {
 
-    const query = `
+    const terminalId = terminal ? terminal.id : null;
+    const linkedTerminalId = linkedTerminal ? linkedTerminal.id : null;
+
+    let query = `
         SELECT * FROM "Terminal" 
         WHERE "createdAt" > '${departureDateTime.toISOString()}'
         AND "createdAt" < '${arrivalDateTime.toISOString()}'
         AND "userId" = ${userId}`;
+
+    if (terminalId) query += ` AND id != ${terminalId}`;
+    if (linkedTerminalId) query += ` AND id != ${linkedTerminalId}`;
 
     return await sequelize.query(query, { model: Terminal, mapToModel: true });
 

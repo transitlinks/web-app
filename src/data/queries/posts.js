@@ -196,7 +196,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
         }
 
 
-        const terminalsBetween = await terminalRepository.getTerminalsBetween(departureDate, arrivalDate, userId);
+        const terminalsBetween = await terminalRepository.getTerminalsBetween(departureDate, arrivalDate, userId, existingTerminal, linkedTerminal);
         if (terminalsBetween.length > 0) {
           throwTimelineConflictError('Overlapping connections. Other departures and/or arrivals fall in specified time range.');
         }
