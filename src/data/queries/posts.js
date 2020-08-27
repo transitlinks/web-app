@@ -220,7 +220,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   const savedTerminal = await terminalRepository.saveTerminal(newTerminal);
 
-  if (savedTerminal.type === 'arrival' && (new Date(savedTerminal.createdAt)).getTime() > (new Date(checkIn.createdAt)).getTime()) {
+  if (savedTerminal.type === 'arrival') {
     await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminal.createdAt });
   }
 
@@ -435,14 +435,17 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   if (departureBeforeNew && departureBeforeNew.linkedTerminal) await adjustConnection(departureBeforeNew);
 
   if (checkInInput.tags) {
+    console.log('input tags', checkInInput.tags);
     const checkInTags = await tagRepository.getTagsByCheckInIds([savedCheckIn.id]);
-    const deletedTags = checkInTags.filter(tag => checkInInput.tags.indexOf(tag.value) === -1);
-    await tagRepository.deleteEntityTags({ checkInId: savedCheckIn.id, tagId: deletedTags.map(tag => tag.id) });
+    console.log('check-in tags', checkInTags);
+    const deletedEntityTags = checkInTags.filter(tag => checkInInput.tags.indexOf(tag.tag) === -1);
+    console.log('deleted tags', deletedEntityTags);
+    await tagRepository.deleteEntityTags({ id: deletedEntityTags.map(tag => tag.entityTagId) });
   }
 
   return {
     ...savedCheckIn.json(),
-    tags: (await tagRepository.getTagsByCheckInIds([savedCheckIn.id])).map(tag => tag.value),
+    tags: (await tagRepository.getTagsByCheckInIds([savedCheckIn.id])).map(tag => tag.tag),
     date: getLocalDateTime(savedCheckIn.createdAt, timeZone)
   };
 
