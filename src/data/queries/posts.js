@@ -188,9 +188,6 @@ const saveTerminal = async (terminalInput, clientId, request) => {
       if (type) {
         const departureDate = type === 'departure' ? newDateTime : linkedTerminal.createdAt;
         const arrivalDate = type === 'arrival' ? newDateTime : linkedTerminal.createdAt;
-        console.log('NEW DATE', newDateTime);
-        console.log('DEP DATE', departureDate);
-        console.log('ARR DATE', arrivalDate);
         if (new Date(departureDate).getTime() >= (new Date(arrivalDate)).getTime()) {
           throwTimelineConflictError('Departure cannot be later than arrival.');
         }
@@ -1026,12 +1023,15 @@ export const PostQueryFields = {
       clientId: { type: GraphQLString },
       tags: { type: GraphQLString },
       locality: { type: GraphQLString },
+      from: { type: GraphQLString },
+      to: { type: GraphQLString },
+      route: { type: GraphQLInt },
       user: { type: GraphQLString },
       transportTypes: { type: new GraphQLList(GraphQLString) },
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags, locality, user, transportTypes, offset, limit }) => {
+    resolve: async ({ request }, { clientId, tags, locality, from, to, user, transportTypes, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 

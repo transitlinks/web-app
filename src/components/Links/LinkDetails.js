@@ -129,8 +129,9 @@ const LinkDetails = ({
               <Link to={
                 getNavigationQuery({
                   locality: toTerminal.locality,
-                  transportTypes: selectedTransportTypes
-                }) + '&view=map'
+                  transportTypes: selectedTransportTypes,
+                  view: 'map'
+                })
               }>
                 { toTerminal.locality }
               </Link>

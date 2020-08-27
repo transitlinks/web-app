@@ -44,7 +44,7 @@ const FilterHeader = ({ icon, user, tag, locality, label, clearUrl, getUrl }) =>
       <div className={s.localityFilter}>
         {
           label ||
-            <div>
+            <div className={s.localityFilter}>
               <div className={s.localityImage}>
                 <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
                   place

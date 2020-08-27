@@ -193,6 +193,7 @@ export const getLinksQuery = (params) => {
   };
 
   delete query.view;
+  delete query.route;
 
   const paramsString = createParamString(query);
 

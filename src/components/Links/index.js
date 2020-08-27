@@ -681,7 +681,6 @@ const renderLinksList = (props) => {
   }));
 
   for (let i = 0; i < terminals.length; i++) {
-    //console.log('route id', terminals[i].routeId, routes);
     if (terminals[i].routeId) routes[terminals[i].routeId - 1].terminals.push(terminals[i]);
   }
 
@@ -933,6 +932,8 @@ const LinksView = (props) => {
     listContent = renderLinksList(props);
   } else if (searchResultType === 'route') {
 
+    const displayRoute = (selectedRoute || (query.route && parseInt(query.route))) || 1;
+
     filterOptions = {
       ...filterOptions,
       locality: 'blah',
@@ -943,7 +944,11 @@ const LinksView = (props) => {
       ),
       getUrl: () => getNavigationQuery({
         ...urlParams,
-        locality: displayLinksResult.from
+        locality: displayLinksResult.from,
+        from: displayLinksResult.from,
+        to: displayLinksResult.to,
+        route: displayRoute,
+        transportTypes: selectedTransportTypes
       }),
       clearUrl: getNavigationQuery({
         transportTypes: selectedTransportTypes,
@@ -954,7 +959,7 @@ const LinksView = (props) => {
 
     searchHeader = <FilterHeader {...filterOptions} />;
 
-    mapContent = getRoutesMapContent(displayLinks[0].departures, selectedRoute, selectedTerminal, (terminal) => {
+    mapContent = getRoutesMapContent(displayLinks[0].departures, displayRoute, selectedTerminal, (terminal) => {
       setProperty('links.selectedRoute', terminal.routeId);
       setProperty('links.selectedTerminal', terminal);
     });
@@ -1204,7 +1209,7 @@ export default injectIntl(
       selectedLinkedLocality: state.links.selectedLinkedLocality,
       selectedTag: state.links.selectedTag,
       selectedTerminal: state.links.selectedTerminal,
-      selectedRoute: state.links.selectedRoute || 1,
+      selectedRoute: state.links.selectedRoute,
       mapZoom: state.links.mapZoom,
       selectedLink: state.links.selectedLink,
       showTransportTypes: state.links.showTransportTypes,
