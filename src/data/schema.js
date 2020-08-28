@@ -15,6 +15,7 @@ import { CheckInQueryFields } from './queries/checkIns';
 import { DiscoverQueryFields } from './queries/discover';
 import { CommentMutationFields, CommentQueryFields } from './queries/comments';
 import { UserMutationFields, UserQueryFields } from './queries/users';
+import { TripMutationFields, TripQueryFields } from './queries/trips';
 
 const schema = new Schema({
 
@@ -38,6 +39,7 @@ const schema = new Schema({
       mediaItem: PostQueryFields.mediaItem,
       discover: DiscoverQueryFields.discover,
       transitLinks: TransitLinkQueryFields.transitLinks,
+      trips: TripQueryFields.trips,
       intl
     }
   }),
@@ -57,7 +59,8 @@ const schema = new Schema({
       terminal: PostMutationFields.terminal,
       deleteTerminal: PostMutationFields.deleteTerminal,
       mediaItem: PostMutationFields.mediaItem,
-      deleteMediaItem: PostMutationFields.deleteMediaItem
+      deleteMediaItem: PostMutationFields.deleteMediaItem,
+      trip: TripMutationFields.trip,
     },
   })
 

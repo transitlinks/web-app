@@ -5,6 +5,7 @@ import {
   GraphQLNonNull, GraphQLInputObjectType, GraphQLInt, GraphQLList, GraphQLBoolean,
 } from 'graphql';
 import CommentType from './CommentType';
+import TripType from './TripType';
 
 export const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -110,7 +111,8 @@ export const CheckInType = new GraphQLObjectType({
     likes: { type: GraphQLInt },
     comments: { type: new GraphQLList(CommentType) },
     likedByUser: { type: GraphQLBoolean },
-    nextUrl: { type: GraphQLString }
+    nextUrl: { type: GraphQLString },
+    trip: { type: TripType }
   },
 });
 

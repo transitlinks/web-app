@@ -4,6 +4,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import React from 'react';
 import { deleteCheckIn, saveCheckIn } from '../../actions/checkIns';
 import { setProperty } from '../../actions/properties';
+import { saveTrip } from '../../actions/trips';
 import s from './CheckIn.css';
 import FontIcon from 'material-ui/FontIcon';
 import DatePicker from 'material-ui/DatePicker';
@@ -13,7 +14,8 @@ import { getMonthName } from '../utils';
 import msgTransport from '../common/messages/transport';
 
 const CheckInControls = ({
-  intl, checkIn, savedCheckIn, editCheckIn, deleteCheckIn, saveCheckIn, setProperty
+  intl, checkIn, savedCheckIn,
+  deleteCheckIn, saveCheckIn, saveTrip
 }) => {
 
   const dateTime = ({ date, time }) => {
@@ -90,10 +92,12 @@ const CheckInControls = ({
 export default injectIntl(
   connect(state => ({
     editCheckIn: state.posts.editCheckIn || {},
-    savedCheckIn: state.posts.checkIn
+    savedCheckIn: state.posts.checkIn,
+    savedTrip: state.trips.savedTrip
   }), {
     deleteCheckIn,
     saveCheckIn,
-    setProperty
+    setProperty,
+    saveTrip
   })(withStyles(s)(CheckInControls))
 );

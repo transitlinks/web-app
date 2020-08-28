@@ -15,6 +15,7 @@ import profile from './profile';
 import posts from './posts';
 import discover from './discover';
 import links from './links';
+import trips from './trips';
 import home from './home';
 
 export default combineReducers({
@@ -34,5 +35,6 @@ export default combineReducers({
   posts,
   discover,
   links,
+  trips,
   home
 });

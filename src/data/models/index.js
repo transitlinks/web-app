@@ -107,6 +107,11 @@ Trip.belongsTo(CheckIn, {
   as: 'lastCheckIn'
 });
 
+Trip.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }

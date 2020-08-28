@@ -5,7 +5,6 @@ import React from 'react';
 import CheckIn from './CheckIn';
 import ErrorPage from '../../components/common/ErrorPage';
 import { createQuery, getFeedItemQuery } from '../../data/queries/queries';
-import { getClientId } from '../../core/utils';
 
 export default {
 

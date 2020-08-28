@@ -5,7 +5,7 @@ import React from 'react';
 import Home from './Home';
 import ErrorPage from '../../components/common/ErrorPage';
 import {getClientId, createParamString} from "../../core/utils";
-import { getCheckInQuery, getCommentsQuery, getFeedItemsQuery } from '../../data/queries/queries';
+import { getFeedItemsQuery } from '../../data/queries/queries';
 
 export default {
 

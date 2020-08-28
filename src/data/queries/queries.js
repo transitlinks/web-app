@@ -7,11 +7,31 @@ export const createQuery = (queries) => {
     `)}
   }`;
 
-}
+};
 
-export const getCommentsQuery = () => {
+
+export const getTripEntity = () => {
+  return  `
+    {
+      uuid,
+      name,
+      firstCheckIn {
+        uuid,
+        locality,
+        formattedAddress
+      },
+      lastCheckIn {
+        uuid,
+        locality,
+        formattedAddress
+      }
+    }
+  `;
+};
+
+export const getCommentEntity = () => {
   return `
-    comments {
+    {
       uuid,
       replyToUuid,
       checkInUuid,
@@ -30,9 +50,15 @@ export const getCommentsQuery = () => {
   `;
 };
 
-export const getCheckInQuery = () => {
+export const getCommentsQuery = () => {
   return `
-    checkIn {
+    comments ${getCommentEntity()}
+  `;
+};
+
+export const getCheckInEntity = () => {
+  return `
+    {
       uuid,
       clientId,
       user,
@@ -55,51 +81,63 @@ export const getCheckInQuery = () => {
         formattedAddress,
         transport
       }
-      ${getCommentsQuery()}
+      trip ${getTripEntity()}
+      comments ${getCommentEntity()}
+      
     }
   `;
 };
 
-export const getFeedItemsQuery = (topLevelQuery) => {
-  const topLevelQueryStr = topLevelQuery || 'feedItems {';
-  const query = `
-        ${topLevelQueryStr}
-          userAccess,
-          ${getCheckInQuery()},
-          inbound {
-            uuid,
+export const getFeedItemEntity = () => {
+  return `
+    {
+      userAccess,
+      checkIn ${getCheckInEntity()},
+      inbound {
+        uuid,
+        latitude,
+        longitude,
+        placeId,
+        formattedAddress,
+        locality,
+        country,
+        tags
+      },
+      outbound {
+        uuid,
+          latitude,
+          longitude,
+          placeId,
+          formattedAddress,
+          locality,
+          country
+      },
+      posts {
+        uuid,
+          text,
+          user,
+          mediaItems {
+          uuid,
+            type,
+            url,
             latitude,
             longitude,
-            placeId,
-            formattedAddress,
-            locality,
-            country,
-            tags
-          },
-          outbound {
-            uuid,
-            latitude,
-            longitude,
-            placeId,
-            formattedAddress,
-            locality,
-            country
-          },
-          posts {
-            uuid,
-            text,
-            user,
-            mediaItems {
-              uuid,
-              type,
-              url,
-              latitude,
-              longitude,
-              date
-            }
-          },
-          terminals {
-            uuid,
+            date
+        }
+      },
+      terminals {
+        uuid,
+          type,
+          transport,
+          transportId,
+          description,
+          localDateTime,
+          utcDateTime,
+          priceAmount,
+          priceCurrency,
+          comments ${getCommentEntity()},
+          linkedTerminal {
+          uuid,
             type,
             transport,
             transportId,
@@ -108,42 +146,26 @@ export const getFeedItemsQuery = (topLevelQuery) => {
             utcDateTime,
             priceAmount,
             priceCurrency,
-            ${getCommentsQuery()},
-            linkedTerminal {
-              uuid,
-              type,
-              transport,
-              transportId,
-              description,
-              localDateTime,
-              utcDateTime,
-              priceAmount,
-              priceCurrency,
-              checkIn {
-                uuid,
-                latitude,
-                longitude,
-                placeId,
-                formattedAddress,
-                locality,
-                country
-              }
-            }
+            checkIn {
+            uuid,
+              latitude,
+              longitude,
+              placeId,
+              formattedAddress,
+              locality,
+              country
           }
         }
-    `;
+      }
+    }`;
+};
 
-  return query;
+export const getFeedItemsQuery = () => {
+  return `feedItems ${getFeedItemEntity()}`;
 };
 
 export const getFeedItemQuery = (checkInUuid) => {
-
-  const topLevelQuery = checkInUuid ?
-    `feedItem (checkInUuid:"${checkInUuid}") {` :
-    'feedItem {';
-
-  return getFeedItemsQuery(topLevelQuery);
-
+  return `feedItem (checkInUuid:"${checkInUuid}") ${getFeedItemEntity()}`;
 };
 
 
@@ -162,7 +184,7 @@ export const getDiscoverQuery = (params) => {
           tag,
           userUuid
         },
-        ${getFeedItemQuery()},
+        feedItem ${getFeedItemEntity()},
         posts {
           uuid,
           text,
@@ -246,7 +268,7 @@ export const getLinksQuery = (params) => {
           }
           route { lat, lng },
           tags { tag, userUuid },
-          ${getCommentsQuery()}
+          comments ${getCommentEntity()}
         },
         arrivals {
           uuid,
@@ -284,7 +306,7 @@ export const getLinksQuery = (params) => {
           }
           route { lat, lng },
           tags { tag, userUuid },
-          ${getCommentsQuery()}
+          comments ${getCommentEntity()}
         },
         internal {
           uuid,
@@ -319,7 +341,7 @@ export const getLinksQuery = (params) => {
             description
           }
           route { lat, lng },
-          ${getCommentsQuery()}
+          comments ${getCommentEntity()}
         },
         departureCount,
         arrivalCount,
@@ -350,4 +372,10 @@ export const getLinksQuery = (params) => {
     }
   `;
 
+};
+
+export const getTripsQuery = (params) => {
+  const query = { ...params };
+  const queryStr = createParamString(query);
+  return `trips ${queryStr} ${getTripEntity()}`;
 };

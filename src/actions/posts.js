@@ -1,8 +1,6 @@
 import { toGraphQLObject } from '../core/utils';
 import { graphqlAction } from './utils';
-import { geocode, extractPlaceFields } from '../services/linkService';
 import { getClientId } from "../core/utils";
-import { createQuery, getFeedItemQuery, getFeedItemsQuery } from '../data/queries/queries';
 
 import {
   SAVE_POST_START,

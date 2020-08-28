@@ -5,7 +5,7 @@ import React from 'react';
 import ErrorPage from '../../components/common/ErrorPage';
 import Discover from './Discover';
 import { createParamString } from '../../core/utils';
-import { getDiscoverQuery, getFeedItemQuery } from '../../data/queries/queries';
+import { getDiscoverQuery } from '../../data/queries/queries';
 
 export default {
 
