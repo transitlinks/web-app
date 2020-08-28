@@ -1043,7 +1043,9 @@ export const PostQueryFields = {
       if (user || locality) {
         options.order = [['createdAt', 'DESC']];
       } else if (tags) {
-        options.order = [['createdAt', 'ASC']]
+        options.order = [['createdAt', 'ASC']];
+      } else {
+        options.order = [['id', 'DESC']];
       }
 
       if (offset) options.offset = offset;

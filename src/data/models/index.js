@@ -11,6 +11,7 @@ import Terminal from './Terminal';
 import Tag from './Tag';
 import EntityTag from './EntityTag';
 import Like from './Like';
+import Trip from './Trip';
 
 Comment.belongsTo(User, {
   foreignKey: 'userId',
@@ -96,9 +97,19 @@ Like.belongsTo(User, {
   foreignKey: 'userId'
 });
 
+Trip.belongsTo(CheckIn, {
+  foreignKey: 'firstCheckInId',
+  as: 'firstCheckIn'
+});
+
+Trip.belongsTo(CheckIn, {
+  foreignKey: 'lastCheckInId',
+  as: 'lastCheckIn'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, TransportType, Like, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag };
+export { User, Locality, TransitLink, TransportType, Like, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag, Trip };
