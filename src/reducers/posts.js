@@ -329,7 +329,7 @@ export default function reduce(state = {}, action) {
             }
 
             return {
-              feed: { ...stateFeed, ...additionalFields },
+              feed: { ...stateFeed, ...additionalFields, fetchedAt: (new Date()).getTime() },
               feedOffset: stateFeed.feedItems.length,
               loadingFeed: false,
               prevResultCount: feed.feedItems.length,

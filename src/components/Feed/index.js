@@ -9,7 +9,13 @@ import CheckInItem from '../CheckInItem';
 
 const FeedView = ({ feed, transportTypes, post, loadedFeed, savedCheckIn, fetchedFeedItems, feedUpdated, user }) => {
 
-  const currentFeed = (loadedFeed || feed) || {};
+  let currentFeed = feed;
+  if (loadedFeed && loadedFeed.fetchedAt > currentFeed.fetchedAt) {
+    currentFeed = loadedFeed
+  };
+
+  //const currentFeed = (loadedFeed || feed) || {};
+
   const feedItems = (currentFeed.feedItems || []).map(feedItem => {
     return { ...feedItem };
   });

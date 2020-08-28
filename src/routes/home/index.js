@@ -42,6 +42,7 @@ export default {
     }
 
     const paramsString = createParamString(queryParams);
+    console.log('FEED PARAM STRING', paramsString);
 
     try {
 
@@ -84,6 +85,7 @@ export default {
         feed.query = { user, tags, locality };
       }
 
+      feed.fetchedAt = (new Date()).getTime();
       return <Home feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} />;
 
     } catch (error) {

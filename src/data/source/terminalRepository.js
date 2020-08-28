@@ -180,7 +180,7 @@ export default {
   },
 
 
-  getInterTerminalsByLocality: async (locality, query = {}) => {
+  getInterTerminalsByLocality: async (locality, query = {}, options = {}) => {
 
     const terminals = await Terminal.findAll({
       where: {
@@ -189,7 +189,8 @@ export default {
         locality,
         ...query
       },
-      include: [{ all: true }]
+      include: [{ all: true }],
+      ...options
     });
 
     return terminals;

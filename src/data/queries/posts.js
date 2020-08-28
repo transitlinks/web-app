@@ -46,6 +46,7 @@ import {
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
 import { getLocalDateTime } from '../../core/utils';
 import { CheckIn } from '../models';
+import { findRoutePoints } from './links';
 
 const throwPrelaunchError = () => {
   throw Object.assign(new Error('Access error'), {
@@ -985,7 +986,6 @@ export const PostQueryFields = {
 
       log.info(graphLog(request, 'find-post-by-uuid','uuid=${uuid}'));
       const post = await postRepository.getPost({ uuid });
-      console.log('post', post.checkInUuid, post.checkInId);
       if (!post) {
         throw new Error(`Post (uuid ${uuid}) not found`);
       }
@@ -1023,6 +1023,7 @@ export const PostQueryFields = {
       clientId: { type: GraphQLString },
       tags: { type: GraphQLString },
       locality: { type: GraphQLString },
+      linkedLocality: { type: GraphQLString },
       from: { type: GraphQLString },
       to: { type: GraphQLString },
       route: { type: GraphQLInt },
@@ -1031,19 +1032,19 @@ export const PostQueryFields = {
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags, locality, from, to, user, transportTypes, offset, limit }) => {
+    resolve: async ({ request }, { clientId, tags, locality, linkedLocality, from, to, route, user, transportTypes, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 
       let checkIns = [];
 
-      const options = {
-        order: (user || tags || locality) ? [
-          ['createdAt', 'DESC']
-        ] : [
-          ['id', 'DESC']
-        ]
-      };
+      const options = {};
+
+      if (user || locality) {
+        options.order = [['createdAt', 'DESC']];
+      } else if (tags) {
+        options.order = [['createdAt', 'ASC']]
+      }
 
       if (offset) options.offset = offset;
       if (limit) options.limit = limit;
@@ -1053,15 +1054,56 @@ export const PostQueryFields = {
         userId = await userRepository.getUserIdByUuid(user);
       }
 
-      if (tags) {
+      if (from && to) {
+
+        const routeSearchParams = {};
+        if (transportTypes && transportTypes.length > 0) {
+          routeSearchParams.transportTypes = transportTypes;
+        }
+
+        const routes = await terminalRepository.getRoute(from, to, routeSearchParams);
+        let routeKeys = Object.keys(routes);
+        if (route) routeKeys = routeKeys.filter(key => parseInt(key) === route);
+
+        let checkInIds = [];
+        for (let i = 0; i < routeKeys.length; i++) {
+          const terminals = routes[routeKeys[i]].filter(terminal => terminal.linkedTerminalId);
+          await findRoutePoints(terminals);
+          checkInIds = terminals.flatMap((terminal, index) => (
+            ([terminal.checkInId]
+              .concat(terminal.routeCheckIns.map(checkIn => checkIn.id)))
+              .concat([terminal.linkedTerminal.checkInId])
+          ));
+          checkInIds = checkInIds.filter((id, index, self) => self.indexOf(id) === index);
+        }
+
+        let queryCheckInIds = checkInIds;
+        if (options.offset) {
+          queryCheckInIds = [];
+          let limit = options.limit ? offset + options.limit : checkInIds.length;
+          if (limit > checkInIds.length) limit = checkInIds.length;
+          for (let i = offset; i < checkInIds.length; i++) {
+            queryCheckInIds.push(checkInIds[i]);
+          }
+        }
+
+        const routeCheckIns = await checkInRepository.getCheckIns({ id: checkInIds });
+        checkIns = queryCheckInIds.map(id => routeCheckIns.find(checkIn => checkIn.id === id));
+        //console.log('check in ids', checkInIds);
+        //console.log(checkIns.map(checkIn => checkIn.id));
+
+      } else if (tags) {
         const tagsArray = tags.split(',');
         const query = { tags: tagsArray, userId };
         checkIns = await postRepository.getTaggedCheckIns(query, options);
+      } else if (locality && linkedLocality) {
+        const terminals = await terminalRepository.getInterTerminalsByLocality(locality, { linkedLocality }, options);
+        checkIns = terminals.map(terminal => terminal.checkIn);
       } else {
         const query = {};
         if (locality) query.locality = locality;
         if (userId) query.userId = userId;
-        checkIns = await postRepository.getFeedCheckIns(query, options);
+        checkIns = await checkInRepository.getFeedCheckIns(query, options);
       }
 
       // console.log('returning checkins', checkIns);

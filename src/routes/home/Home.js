@@ -18,6 +18,10 @@ const getParams = (props) => {
   const params = { limit: 8, offset: offset || 0 };
   if (query && query.tags) params.tags = query.tags;
   if (query && query.locality) params.locality = query.locality;
+  if (query && query.linkedLocality) params.linkedLocality = query.linkedLocality;
+  if (query && query.from) params.from = query.from;
+  if (query && query.to) params.to = query.to;
+  if (query && query.route) params.route = query.route;
   if (query && query.user) params.user = query.user;
   return params;
 };
@@ -174,12 +178,12 @@ class Home extends React.Component {
 
     this.context.setTitle(title);
 
-    const { feed, transportTypes, post } = this.props;
+    const { feed, query, transportTypes, post } = this.props;
 
     return (
       <div>
         <div className={s.root}>
-          <HomeView feed={feed} transportTypes={transportTypes} post={post} />
+          <HomeView feed={feed} query={query} transportTypes={transportTypes} post={post} />
         </div>
         {
           this.props.loadingFeed &&

@@ -10,7 +10,11 @@ import { navigate } from '../../actions/route';
 import { setProperty } from '../../actions/properties';
 import { injectIntl } from 'react-intl';
 import Link from '../Link';
-import FilterHeader from '../FilterHeader';
+import FilterHeader, {
+  renderLinkedLocalityLabel, renderLocalityLabel,
+  renderRouteLabel,
+  renderTagLabel,
+} from '../FilterHeader';
 import LinkDetails from './LinkDetails';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
@@ -128,121 +132,6 @@ const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, s
   );
 };
 
-const renderLinkInfo = (terminal, transportTypes, selectedTerminal, intl, setProperty) => {
-
-  if (!terminal.formattedAddress) {
-
-    const { locality, linkedTerminal, joinedTerminal } = terminal;
-
-    const renderArrivalStats = (departureLocality, arrivalLocality, linkCount) => {
-      return (
-        <div className={s.from}>
-          <div className={s.terminalIcon}>
-            <FontIcon className="material-icons" style={{ fontSize: '32px' }}>
-              call_received
-            </FontIcon>
-          </div>
-          <div className={s.terminalStats}>
-            <div className={s.routeStats}>
-              <Link to={
-                getNavigationQuery({
-                  locality: departureLocality,
-                  linkedLocality: arrivalLocality,
-                  transportTypes
-                }) + '&view=map'
-              }>
-                { linkCount } arrivals
-              </Link>
-            </div>
-            <div className={s.localityStats}>
-              <div className={s.directionLabel}>From</div>
-              <div className={s.directionLocality}>
-                <Link to={
-                  getNavigationQuery({
-                    locality: arrivalLocality,
-                    transportTypes
-                  }) + '&view=map'
-                }>{ arrivalLocality }</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    const renderDepartureStats = (departureLocality, arrivalLocality, linkCount) => {
-      return (
-        <div className={s.to}>
-          <div className={s.terminalStats}>
-            <div className={s.localityStats}>
-              <div className={s.directionLabel}>To</div>
-              <div className={s.directionLocality}>
-                <Link to={
-                  getNavigationQuery({
-                    locality: departureLocality,
-                    transportTypes
-                  }) + '&view=map'
-                }>{ departureLocality }</Link>
-              </div>
-            </div>
-            <div className={s.routeStats}>
-              <Link to={
-                getNavigationQuery({
-                  locality: departureLocality,
-                  linkedLocality: arrivalLocality,
-                  transportTypes
-                }) + '&view=map'
-              }>
-                { linkCount } departures
-              </Link>
-            </div>
-          </div>
-          <div className={s.terminalIcon}>
-            <FontIcon className="material-icons" style={{ fontSize: '32px' }}>
-              call_made
-            </FontIcon>
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div className={s.linkPopup}>
-        <div className={s.route}>
-          <div className={s.routePath}>
-            {
-              (terminal.type === 'arrival' && terminal.linkCount > 0) &&
-                renderArrivalStats(terminal.locality, terminal.linkedTerminal.locality, terminal.linkCount)
-            }
-            {
-              (terminal.type === 'departure' && terminal.reverseLinkCount > 0) &&
-                renderArrivalStats(terminal.locality, terminal.linkedTerminal.locality, terminal.reverseLinkCount)
-            }
-            <div className={s.locality}>
-              { locality }
-            </div>
-            {
-              (terminal.type === 'departure' && terminal.linkCount > 0) &&
-                renderDepartureStats(terminal.linkedTerminal.locality, terminal.locality, terminal.linkCount)
-            }
-            {
-              (terminal.type === 'arrival' && terminal.reverseLinkCount > 0) &&
-                renderDepartureStats(terminal.linkedTerminal.locality, terminal.locality, terminal.reverseLinkCount)
-            }
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={s.linkPopup}>
-      <LinkDetails terminal={terminal} selectedTransportTypes={transportTypes} />
-    </div>
-  );
-
-};
-
 const getLinesFromTerminal = (terminal) => {
 
   let lines = [{ lat: terminal.latitude, lng: terminal.longitude }];
@@ -281,105 +170,6 @@ const createPolyLine = (terminal, onSelect, color, opacity) => {
 
   return polyLine;
 
-};
-
-const drawLines = (links, transportTypes, type, selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType, selectedRoute) => {
-
-  return (links[type] || []).filter(terminal => !terminal.ignore).map((terminal, i) => {
-
-    const color = terminal.routeId ?
-      terminal.routeId === selectedRoute ? '#FF0000' : '#909090' :
-        (terminal.type === 'departure' ? '#FF0000' : '#909090');
-
-    const polyLine = {
-      line: createPolyLine(terminal, onSelect, color, (terminal.highlighted ? 1.0 : 0.5))
-    };
-
-    if (terminal.selected) {
-      polyLine.info = (
-        <InfoWindow position={{
-          lat: terminal.latitude,
-          lng: terminal.longitude
-        }}
-          options={{ maxWidth: '320px' }}
-          onCloseClick={() => {
-            terminal.selected = false;
-            onSelect(terminal);
-          }}>
-          { renderLinkInfo(terminal, transportTypes, selectedTerminal, intl, setProperty) }
-        </InfoWindow>
-      );
-    }
-    return polyLine;
-  });
-};
-
-const renderConnectionsMap = (linkStat, transportTypes, linkMode, selectedTerminal, onHighlight, onSelect, intl, setProperty) => {
-
-  const processTerminals = (terminals) => {
-
-    terminals.forEach(terminal => {
-
-      const joinedTerminal =
-        terminal.type === 'departure' ?
-          (linkStat.arrivals || []).find(t => (
-            t.locality === terminal.locality &&
-            t.linkedTerminal.locality === terminal.linkedTerminal.locality
-          )) :
-          (linkStat.departures || []).find(t => t.locality === terminal.locality);
-
-      terminal.departureCount = linkStat.departureCount;
-      terminal.arrivalCount = linkStat.arrivalCount;
-
-      if (joinedTerminal) {
-        terminal.joinedTerminal = joinedTerminal;
-        terminal.isJoined = true;
-        joinedTerminal.ignore = true;
-      }
-
-    });
-
-  };
-
-  processTerminals(linkStat.departures);
-
-  return (
-      linkMode === 'internal' ?
-        drawLines(linkStat, transportTypes, 'internal', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info]) :
-        [
-          drawLines(linkStat, transportTypes,'departures', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info]),
-          drawLines(linkStat, transportTypes, 'arrivals', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info])
-        ]
-  );
-};
-
-
-const renderLinksMap = (props, onHighlight, onSelect) => {
-
-  const { linksResult, selectedTransportTypes, linkMode, selectedTerminal, selectedRoute, setProperty, intl } = props;
-
-  let linkStat = linksResult.links && linksResult.links.length > 0 ? linksResult.links[0] : null;
-  if (!linkStat) {
-    return null;
-  }
-
-
-  if (selectedTerminal) {
-    linkStat = selectedTerminal.type === 'departure' ?
-      { departures: [selectedTerminal] } :
-      { arrivals: [selectedTerminal] };
-  }
-
-  const { searchResultType } = linksResult;
-
-  return (
-    linkMode === 'internal' ?
-      drawLines(linkStat, selectedTransportTypes, 'internal', selectedTerminal, onHighlight, onSelect, intl, setProperty).map(line => [line.line, line.info]) :
-      [
-        drawLines(linkStat, selectedTransportTypes,'departures', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType, selectedRoute).map(line => [line.line, line.info]),
-        drawLines(linkStat, selectedTransportTypes,'arrivals', selectedTerminal, onHighlight, onSelect, intl, setProperty, searchResultType, selectedRoute).map(line => [line.line, line.info])
-      ]
-  );
 };
 
 
@@ -746,6 +536,21 @@ const getTripMapContent = (terminals, selectedTerminal, onSelect) => {
   });
 };
 
+const getConnectionsMapContent = (terminals, onSelect) => {
+  return terminals.map(terminal => {
+    return [ createPolyLine(terminal, onSelect, terminal.type === 'departure' ? '#FF0000' : '#A0A0A0', 1) ];
+  });
+};
+
+const getLinksMapContent = (terminals, selectedTerminal, onSelect) => {
+  return terminals.map(terminal => {
+    const color = terminal.type === 'departure' ? '#FF0000' : '#A0A0A0';
+    let opacity = 0.5;
+    if (selectedTerminal && selectedTerminal.uuid === terminal.uuid) opacity = 1;
+    return [ createPolyLine(terminal, onSelect, color, opacity) ];
+  });
+};
+
 const LinksView = (props) => {
 
   const {
@@ -841,16 +646,7 @@ const LinksView = (props) => {
       filterOptions = {
         ...filterOptions,
         locality: displayLinksResult.locality,
-        label: (
-          <div className={s.linksListHeader}>
-            <div className={s.image}>
-              <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
-                place
-              </FontIcon>
-            </div>
-            <div className={s.label}>{displayLinksResult.locality}</div>
-          </div>
-        ),
+        label: renderLocalityLabel(displayLinksResult.locality),
         getUrl: () => getNavigationQuery({
           ...urlParams,
           locality: displayLinksResult.locality
@@ -884,41 +680,73 @@ const LinksView = (props) => {
       );
 
       if (displayLinks.length === 0) {
+
         const noResults = <div>No places found matching search criteria. Please contribute by creating new and exciting transit data! :)</div>;
         mapContent = null;
         listContent = noResults;
+
       } else {
-        mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
+
+        const links = displayLinks[0];
+        links.departures.forEach(terminal => {
+          const joinedTerminal =
+            terminal.type === 'departure' ?
+              (links.arrivals || []).find(t => (
+                t.locality === terminal.locality &&
+                t.linkedTerminal.locality === terminal.linkedTerminal.locality
+              )) :
+              (links.departures || []).find(t => t.locality === terminal.locality);
+
+          terminal.departureCount = links.departureCount;
+          terminal.arrivalCount = links.arrivalCount;
+
+          if (joinedTerminal) {
+            terminal.joinedTerminal = joinedTerminal;
+            terminal.isJoined = true;
+            joinedTerminal.ignore = true;
+          }
+        });
+
+        //mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
+        mapContent = getConnectionsMapContent(links.departures.filter(dep => !dep.ignore).concat(links.arrivals), terminal => {
+          console.log('terminal selected', terminal);
+          navigate(getNavigationPath({
+            locality: terminal.locality,
+            linkedLocality: terminal.linkedTerminal.locality,
+            transportTypes: selectedTransportTypes,
+            view: 'map'
+          }));
+        });
         listContent = renderConnectionsList(displayLinks[0], actualLinkMode, props);
+
       }
+
     } else {
       mapContent = renderLocationsMap(displayLinks, onSelectLocality);
       listContent = renderLocationsList(displayLinks, selectedTransportTypes, onSelectLocality);
     }
+
   } else if (searchResultType === 'links') {
+
+    const links = displayLinks[0];
 
     filterOptions = {
       ...filterOptions,
       locality: displayLinksResult.locality,
-      label: (
-        <div className={s.linksListHeader}>
-          <div className={s.locality}>{ displayLinksResult.locality }</div>
-          <div className={s.linkedLocality}>
-            <Link to={
-              getNavigationQuery({
-                locality: displayLinksResult.linkedLocality,
-                linkedLocality: displayLinksResult.locality,
-                transportTypes: selectedTransportTypes
-              }) + '&view=map'
-            }>
-              { displayLinksResult.linkedLocality }
-            </Link>
-          </div>
-        </div>
+      label: renderLinkedLocalityLabel(
+        displayLinksResult.locality,
+        displayLinksResult.linkedLocality,
+        getNavigationQuery({
+          locality: displayLinksResult.linkedLocality,
+          linkedLocality: displayLinksResult.locality,
+          transportTypes: selectedTransportTypes,
+          view: 'map'
+        })
       ),
       getUrl: () => getNavigationQuery({
         ...urlParams,
-        locality: displayLinksResult.locality
+        locality: displayLinksResult.locality,
+        linkedLocality: displayLinksResult.linkedLocality
       }),
       clearUrl: getNavigationQuery({
         locality: displayLinksResult.locality,
@@ -928,20 +756,21 @@ const LinksView = (props) => {
     };
 
     searchHeader = <FilterHeader {...filterOptions} />;
-    mapContent = renderLinksMap(props, onHighlightConnection, onSelectConnection);
+
+    mapContent = getLinksMapContent(links.departures.concat(links.arrivals), selectedTerminal, (terminal) => {
+      setProperty('links.selectedTerminal', terminal);
+    });
     listContent = renderLinksList(props);
+
   } else if (searchResultType === 'route') {
 
     const displayRoute = (selectedRoute || (query.route && parseInt(query.route))) || 1;
 
     filterOptions = {
       ...filterOptions,
-      locality: 'blah',
-      label: (
-        <div className={s.taggedListHeader}>
-          <div className={s.tag}>{ displayLinksResult.from } - { displayLinksResult.to }</div>
-        </div>
-      ),
+      from: displayLinksResult.from,
+      to: displayLinksResult.to,
+      label: renderRouteLabel(displayLinksResult.from, displayLinksResult.to),
       getUrl: () => getNavigationQuery({
         ...urlParams,
         locality: displayLinksResult.from,
@@ -966,11 +795,12 @@ const LinksView = (props) => {
 
     listContent = renderLinksList(props);
 
-  } else {
+  } else if (searchResultType === 'tagged') {
 
     filterOptions = {
       ...filterOptions,
       tag: selectedTag,
+      label: renderTagLabel(selectedTag, filterOptions.user),
       getUrl: () => getNavigationQuery({
         ...urlParams,
         tags: selectedTag

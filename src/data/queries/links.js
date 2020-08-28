@@ -106,7 +106,7 @@ export const TransitLinkMutationFields = {
 
 };
 
-const findRoutePoints = async (terminals) => {
+export const findRoutePoints = async (terminals) => {
   for (let i = 0; i < terminals.length; i++) {
     const terminal = terminals[i];
     const { linkedTerminal } = terminal;
@@ -121,10 +121,8 @@ const findRoutePoints = async (terminals) => {
       }, {
         order: [['createdAt', terminal.type === 'departure' ? 'ASC' : 'DESC']]
       });
-      console.log('ROUTE CHECVKINS FOR TERM', terminal.type, terminal.locality, terminal.createdAt);
-      console.log('ROUTE CHECVKINS FOR LINKED TERM ', linkedTerminal.type, linkedTerminal.locality, linkedTerminal.createdAt);
-      terminal.route = (routeCheckIns || {}).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
-      console.log('TERM ROUTE', terminal.route);
+      terminal.routeCheckIns = routeCheckIns || [];
+      terminal.route = (routeCheckIns || []).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
     }
   }
 };

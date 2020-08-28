@@ -148,7 +148,7 @@ const Comments = ({
                       comment.likedByUser ?
                         <div className={s.commentLikes} onClick={() => saveLike(comment.uuid, 'Comment', 'off', frameId, checkIn.uuid)}>
                           <div className={s.icon}>
-                            <FontIcon className="material-icons" style={{ fontSize: '16px' }}>
+                            <FontIcon className="material-icons" style={{ fontSize: '16px', color: '#FF0000' }}>
                               favorite
                             </FontIcon>
                           </div>

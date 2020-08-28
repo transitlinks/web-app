@@ -6,14 +6,20 @@ import Link from '../Link';
 
 import { injectIntl } from 'react-intl';
 import FontIcon from 'material-ui/FontIcon';
+import { getNavigationQuery } from '../utils';
 
-const FilterHeader = ({ icon, user, tag, locality, label, clearUrl, getUrl }) => {
+export const renderRouteLabel = (from, to) => {
+  return (
+    <div className={s.filterLabel}>
+      <div className={s.route}>{ from } - { to }</div>
+    </div>
+  )
+};
 
-  let filterDisplay = null;
-  let directionsUrl = null;
+export const renderTagLabel = (tag, user) => {
 
-  if (user && tag) {
-    filterDisplay = (
+  if (user) {
+    return (
       <div className={s.userTagFilter}>
         <div className={s.userImage}>
           <img src={user.userImage} />
@@ -24,60 +30,73 @@ const FilterHeader = ({ icon, user, tag, locality, label, clearUrl, getUrl }) =>
         </div>
       </div>
     );
-    directionsUrl = '/links?tag=' + tag + '&user=' + user.uuid + '&view=map';
-  } else if (user) {
-    filterDisplay = (
-      <div className={s.userFilter}>
-        <div className={s.userImage}>
-          <img src={user.userImage} />
-        </div>
-        <div className={s.userInfo}>
-          <div className={s.userInfoTitle}>
-            Viewing check-ins by
-          </div>
-          <div className={s.userName}>{user.userImage}</div>
-        </div>
-      </div>
-    );
-  } else if (locality) {
-    filterDisplay = (
-      <div className={s.localityFilter}>
-        {
-          label ||
-            <div className={s.localityFilter}>
-              <div className={s.localityImage}>
-                <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
-                  place
-                </FontIcon>
-              </div>
-              <div className={s.localityName}>{locality}</div>
-            </div>
-        }
-      </div>
-    );
-    directionsUrl = '/links?locality=' + locality + '&view=map';
-  } else if (tag) {
-    filterDisplay = (
-      <div className={s.tagFilter}>
-        <div className={s.tagName}>#{tag}</div>
-      </div>
-    );
-    directionsUrl = '/links?tag=' + tag + '&view=map';
   }
 
-  if (getUrl) directionsUrl = getUrl();
+  return (
+    <div className={s.tagFilter}>
+      <div className={s.tagName}>#{tag}</div>
+    </div>
+  );
+
+};
+
+export const renderLinkedLocalityLabel = (locality, linkedLocality, reverseUrl) => {
+  return (
+    <div className={s.linksListHeader}>
+      <div className={s.locality}>{ locality }</div>
+      <div className={s.linkedLocality}>
+        <Link to={reverseUrl}>
+          { linkedLocality }
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export const renderLocalityLabel = (locality) => {
+  return (
+    <div className={s.linksListHeader}>
+      <div className={s.image}>
+        <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
+          place
+        </FontIcon>
+      </div>
+      <div className={s.label}>{locality}</div>
+    </div>
+  );
+};
+
+export const renderUserLabel = (user) => {
+  return (
+    <div className={s.userFilter}>
+      <div className={s.userImage}>
+        <img src={user.userImage} />
+      </div>
+      <div className={s.userInfo}>
+        <div className={s.userInfoTitle}>
+          Viewing check-ins by
+        </div>
+        <div className={s.userName}>{user.userImage}</div>
+      </div>
+    </div>
+  );
+};
+
+const FilterHeader = ({ icon, user, tag, locality, linkedLocality, label, clearUrl, getUrl }) => {
+
+  let directionsUrl = null;
 
   return (
     <div className={s.container}>
-      <div className={s.filtersDisplay}>{filterDisplay}</div>
+      <div className={s.filtersDisplay}>{label}</div>
       <div className={s.filtersReset}>
         {
-          directionsUrl &&
-          <Link to={directionsUrl}>
-            <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
-              {icon}
-            </FontIcon>
-          </Link>
+          getUrl &&
+            <Link to={getUrl()}>
+              <FontIcon className="material-icons" style={{ fontSize: '30px' }}>
+                {icon}
+              </FontIcon>
+            </Link>
         }
         <Link to={clearUrl || '/'}>
           <FontIcon className="material-icons" style={{ fontSize: '30px' }}>

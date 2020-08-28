@@ -4,44 +4,72 @@ import { setProperty } from '../../actions/properties';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 import NewCheckIn from '../NewCheckIn';
-import FilterHeader from '../FilterHeader';
+import FilterHeader, {
+  renderLinkedLocalityLabel,
+  renderLocalityLabel,
+  renderRouteLabel,
+  renderTagLabel,
+} from '../FilterHeader';
 import ErrorHeader from '../ErrorHeader';
 
 import Feed from '../Feed';
 
 import { injectIntl } from 'react-intl';
 
-const HomeView = ({ intl, setProperty, feed, transportTypes, post, error }) => {
+const HomeView = ({ intl, setProperty, feed, query, transportTypes, post, error }) => {
 
-  let filterHeader = null;
-  if (feed.query) {
+  let filterOptions = null;
 
-    const { user, tags, locality } = feed.query;
-    const filterOptions = {
-      icon: 'directions',
-      tag: tags,
-      locality
+  const { user, tags, locality, linkedLocality, from, to, route } = query;
+
+  const userData = feed.user && {
+    uuid: user,
+    userName: feed.user,
+    userImage: feed.userImage
+  };
+
+  if (from && to) {
+    filterOptions = {
+      from,
+      to,
+      label: renderRouteLabel(from, to),
+      getUrl: () => `/links?from=${from}&to=${to}&route=${route}`,
+      clearUrl: `/?locality=${from}`
     };
-
-    if (user) {
-      filterOptions.user = {
-        uuid: user,
-        userName: feed.user,
-        userImage: feed.userImage
-      };
-    }
-
-    filterHeader = <FilterHeader {...filterOptions} />;
-
+  } else if (tags) {
+    filterOptions = {
+      label: renderTagLabel(tags, userData),
+      tag: tags,
+      getUrl: () => {
+        let url = '/links?tag=' + tags;
+        if (userData) url += '&user=' + userData.uuid + '&view=map';
+        return url;
+      }
+    };
+  } else if (locality && linkedLocality) {
+    filterOptions = {
+      locality,
+      label: renderLinkedLocalityLabel(locality, linkedLocality, `/?locality=${linkedLocality}&linkedLocality=${locality}`),
+      getUrl: () => `/links?locality=${locality}&linkedLocality=${linkedLocality}&view=map`,
+      clearUrl: `/?locality=${locality}`
+    };
+  } else if (locality) {
+    filterOptions = {
+      locality,
+      label: renderLocalityLabel(locality),
+      getUrl: () => `/links?locality=${locality}&view=map`
+    };
   }
 
-
+  if (userData) filterOptions.user = userData;
 
 	return (
     <div className={s.container}>
       <div>
         {
-          filterHeader || <NewCheckIn />
+          filterOptions ?
+            <FilterHeader {...{ icon: 'directions', ...filterOptions }} /> :
+            <NewCheckIn />
         }
       </div>
       <div>
