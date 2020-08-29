@@ -33,7 +33,7 @@ const HomeView = ({ intl, setProperty, feed, query, transportTypes, post, error 
       from,
       to,
       label: renderRouteLabel(from, to),
-      getUrl: () => `/links?from=${from}&to=${to}&route=${route}`,
+      getUrl: () => `/links?from=${from}&to=${to}&route=${route}&view=map`,
       clearUrl: `/?locality=${from}`
     };
   } else if (tags) {
