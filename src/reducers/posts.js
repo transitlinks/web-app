@@ -225,7 +225,8 @@ export default function reduce(state = {}, action) {
                 ...action.payload,
                 nextUrl: nextUrl !== '/' ? deleteCheckIn.nextUrl : '/',
                 deleted: (new Date()).getTime()
-              }
+              },
+              checkIn: null
             };
           },
           error: () => ({ deletedCheckIn: null })

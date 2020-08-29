@@ -50,7 +50,7 @@ const Terminal = ({
     setProperty('editTerminal.terminal', { ...editTerminal, [name]: value });
   };
 
-  const typedOpenTerminals = openTerminals.filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival') && terminal.checkIn.uuid !== checkIn.uuid));
+  const typedOpenTerminals = (openTerminals || []).filter(terminal => (terminal.type === (type === 'arrival' ? 'departure' : 'arrival') && terminal.checkIn.uuid !== checkIn.uuid));
 
   const openTerminalOptions = typedOpenTerminals.map(terminal => {
     const menuItemLabel = (
@@ -90,7 +90,7 @@ const Terminal = ({
   let linkedTerminal = null;
   if (linkedTerminalUuid !== 'not-linked') {
     if (typedOpenTerminals.length > 0) {
-      linkedTerminal = typedOpenTerminals.filter(terminal => terminal.uuid === (linkedTerminalUuid || typedOpenTerminals[0].uuid))[0];
+      linkedTerminal = (typedOpenTerminals || []).filter(terminal => terminal.uuid === (linkedTerminalUuid || typedOpenTerminals[0].uuid))[0];
     }
   }
 

@@ -40,12 +40,11 @@ import {
 
 import {
   requireOwnership,
-  throwMustBeLoggedInError, throwTimelineConflictError,
+  throwTimelineConflictError,
 } from './utils';
 
 import { STORAGE_PATH, MEDIA_PATH } from '../../config';
 import { getLocalDateTime } from '../../core/utils';
-import { CheckIn } from '../models';
 import { findRoutePoints } from './links';
 
 const throwPrelaunchError = () => {
