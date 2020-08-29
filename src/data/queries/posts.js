@@ -165,8 +165,11 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   if (terminalInput.date) {
 
+    log.info('TERM INPUT DATE', terminalInput.date);
     const tzDateTime = moment.tz(terminalInput.date, timeZone);
+    log.info('tzDateTime', tzDateTime);
     const tzDateTimeValue = tzDateTime.format();
+    log.info('tzDateTimeValue', tzDateTimeValue);
 
     const newDateTime = new Date(tzDateTimeValue);
     const now = new Date();
@@ -209,7 +212,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
     if (type === 'arrival') {
       const departureAfter = await terminalRepository.getArrivalAfter(newDateTime, userId);
-      if (departureAfter) throwTimelineConflictError('Overlapping arrival. Cannot save arrival immediately before another arrival.');
+      if (departureAfter && !(existingTerminal && existingTerminal.id === departureAfter.id)) throwTimelineConflictError('Overlapping arrival. Cannot save arrival immediately before another arrival.');
     }
 
     newTerminal.createdAt = tzDateTimeValue;
@@ -244,9 +247,12 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     await adjustConnection(departure);
   }
 
+  const localDateTime = getLocalDateTime(savedTerminal.createdAt, timeZone);
+  log.info('localDateTime', localDateTime);
+  log.info('utcDateTime', savedTerminal.createdAt);
   return {
     ...savedTerminal.toJSON(),
-    localDateTime: getLocalDateTime(savedTerminal.createdAt, timeZone),
+    localDateTime,
     utcDateTime: savedTerminal.createdAt
   };
 
@@ -367,7 +373,10 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   if (checkInInput.date) {
 
     const tzDateTime = moment.tz(checkInInput.date, timeZone);
+    log.info('CHECKIN INPUT DATE', checkInInput.date);
     const tzDateTimeValue = tzDateTime.format();
+    log.info('tzDateTimeValue', tzDateTimeValue);
+
     const newDateTime = new Date(tzDateTimeValue);
     const now = new Date();
     if (newDateTime.getTime() > now.getTime()) {
@@ -441,10 +450,13 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     await tagRepository.deleteEntityTags({ id: deletedEntityTags.map(tag => tag.entityTagId) });
   }
 
+  const localDateTime = getLocalDateTime(savedCheckIn.createdAt, timeZone);
+  log.info('localDateTime', localDateTime);
+
   return {
     ...savedCheckIn.json(),
     tags: (await tagRepository.getTagsByCheckInIds([savedCheckIn.id])).map(tag => tag.tag),
-    date: getLocalDateTime(savedCheckIn.createdAt, timeZone)
+    date: localDateTime
   };
 
 };
