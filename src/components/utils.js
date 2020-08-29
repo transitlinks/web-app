@@ -55,6 +55,24 @@ export const formatDate = (value, format) => {
 
 };
 
+export const getLocalDateTimeValue = (localDateTime) => {
+  const date = localDateTime.substring(0, 10);
+  const year = date.substring(0, 4);
+  const month = date.substring(5, 7);
+  const day = date.substring(8, 10);
+  const time = localDateTime.substring(11, 16);
+  const hours = time.substring(0, 2);
+  const minutes = time.substring(3, 5);
+  const localDate = new Date();
+  localDate.setFullYear(parseInt(year));
+  localDate.setMonth(parseInt(month) - 1);
+  localDate.setDate(parseInt(day));
+  localDate.setHours(parseInt(hours));
+  localDate.setMinutes((parseInt(minutes)));
+  return localDate;
+};
+
+
 export const formatDuration = (totalMinutes) => {
 
   if (!totalMinutes) {

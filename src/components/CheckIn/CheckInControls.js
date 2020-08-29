@@ -10,7 +10,7 @@ import FontIcon from 'material-ui/FontIcon';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import { getPaddedDate, getPaddedTime } from '../../core/utils';
-import { getMonthName } from '../utils';
+import { getMonthName, getLocalDateTimeValue } from '../utils';
 import msgTransport from '../common/messages/transport';
 
 const CheckInControls = ({
@@ -26,7 +26,6 @@ const CheckInControls = ({
   };
 
   const getFormattedDateTime = (localDateTime) => {
-
     const dateTime = new Date(localDateTime);
     const time = localDateTime.substring(11, 16);
     return getMonthName(dateTime) + ' ' + dateTime.getDate() + ' ' + time;
@@ -58,7 +57,7 @@ const CheckInControls = ({
             <div className={s.date}>
               <FontIcon className="material-icons" style={{ fontSize: '20px ' }}>today</FontIcon>
               <DatePicker id="checkin-date-picker"
-                          value={savedCheckIn ? new Date(savedCheckIn.date) : new Date(checkIn.date)}
+                          value={savedCheckIn ? getLocalDateTimeValue(savedCheckIn.date) : getLocalDateTimeValue(checkIn.date)}
                           autoOk
                           fullWidth
                           floatingLabelFixed
@@ -71,7 +70,7 @@ const CheckInControls = ({
             <div className={s.time}>
               <FontIcon className="material-icons" style={{ fontSize: '20px ' }}>access_time</FontIcon>
               <TimePicker id="checkin-time-picker"
-                          value={savedCheckIn ? new Date(savedCheckIn.date) : new Date(checkIn.date)}
+                          value={savedCheckIn ? getLocalDateTimeValue(savedCheckIn.date) : getLocalDateTimeValue(checkIn.date)}
                           format="24hr"
                           autoOk
                           fullWidth
