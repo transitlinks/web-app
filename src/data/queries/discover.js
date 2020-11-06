@@ -6,6 +6,7 @@ import {
   userRepository,
   localityRepository,
   tagRepository,
+  tripRepository,
   checkInRepository,
   terminalRepository
 } from '../source';
@@ -101,6 +102,44 @@ const getTagDiscovery = async (tag, request) => {
 
 };
 
+const getTripDiscovery = async (discovery, request) => {
+
+  const checkInCount = discovery.lastCheckInId ?
+    await checkInRepository.getCheckInCountByTrip(discovery.tripId) :
+    await checkInRepository.getCheckInCountByOpenTrip(discovery.tripId);
+
+  const tripCheckIns = discovery.lastCheckInId ?
+    await checkInRepository.getTripCheckInsWithPhotos(discovery.tripId) :
+    await checkInRepository.getOpenTripCheckInsWithPhotos(discovery.tripId);
+
+  const posts = await postRepository.getPostsByTrip(discovery.tripId, !discovery.lastCheckInId, 5);
+  const postCount = await postRepository.getPostCountByTrip(discovery.tripId, !discovery.lastCheckInId);
+
+  const localities = await localityRepository.getLocalitiesByTrip(discovery.tripId, !discovery.lastCheckInId, 14);
+  const localityCount = await localityRepository.getLocalityCountByTrip(discovery.tripId, !discovery.lastCheckInId);
+
+
+  const connectionCount = terminalRepository.getTerminalCountByTrip(discovery.tripId, !discovery.lastCheckInId);
+
+  const fullPosts = posts.map(async post => {
+    return await getPostContent(post);
+  });
+
+  return {
+    groupType: 'trip',
+    groupName: discovery.trip,
+    groupId: discovery.tripUuid,
+    checkInCount,
+    localityCount,
+    localities,
+    postCount,
+    connectionCount,
+    feedItem: tripCheckIns.length > 0 ? await getFeedItem(request, tripCheckIns[0]) : null,
+    posts: fullPosts
+  };
+
+};
+
 const getUserDiscovery = async (user, request) => {
 
   const checkInCount = await checkInRepository.getCheckInCountByUser(user.id);
@@ -132,24 +171,27 @@ export const DiscoverQueryFields = {
       offset: { type: GraphQLInt },
       localityOffset: { type: GraphQLInt },
       tagOffset: { type: GraphQLInt },
+      tripOffset: { type: GraphQLInt },
       userOffset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { search, type, offset, localityOffset, tagOffset, userOffset, limit }) => {
+    resolve: async ({ request }, { search, type, offset, localityOffset, tagOffset, tripOffset, userOffset, limit }) => {
 
       log.info(graphLog(request, 'discover',`search=${search} type=${type} offset=${offset} limit=${limit}`));
 
       const latestCheckIns = await checkInRepository.getLatestCheckIns(limit || 10, localityOffset || 0, search);
       const latestTags = await tagRepository.getLatestTags(limit || 10, tagOffset || 0, search);
+      const latestTrips = await tripRepository.getLatestTrips(limit || 10, tagOffset || 0, search);
       const matchingUsers = search && search.length > 0 ? await userRepository.getUsersBySearchTerm(limit || 10, userOffset || 0, search) : [];
 
-      const allDiscoveries = latestCheckIns.concat(latestTags);
+      const allDiscoveries = latestCheckIns.concat(latestTags).concat(latestTrips);
       const sortedDiscoveries = allDiscoveries.sort((a, b) => {
         return (new Date(b.lastCreated)).getTime() - (new Date(a.lastCreated)).getTime();
       });
 
       let calcLocalityOffset = 0;
       let calcTagOffset = 0;
+      let calcTripOffset = 0;
       let discoveries = [];
       for (let i = 0; i < (limit || 10) && i < sortedDiscoveries.length; i++) {
         const discovery = sortedDiscoveries[i];
@@ -159,6 +201,9 @@ export const DiscoverQueryFields = {
         } else if (discovery.tag) {
           calcTagOffset++;
           discoveries = discoveries.concat([await getTagDiscovery(discovery.tag, request)]);
+        } else if (discovery.trip) {
+          calcTripOffset++;
+          discoveries = discoveries.concat([await getTripDiscovery(discovery, request)]);
         }
       }
 
@@ -179,12 +224,14 @@ export const DiscoverQueryFields = {
 
       const newLocalityOffset = (localityOffset || 0) + calcLocalityOffset;
       const newTagOffset = (tagOffset || 0) + calcTagOffset;
+      const newTripOffset = (tripOffset || 0) + calcTripOffset;
       const newUserOffset = (userOffset || 0) + calcUserOffset;
 
       return {
         discoveries,
         localityOffset: newLocalityOffset,
         tagOffset: newTagOffset,
+        tripOffset: newTripOffset,
         userOffset: newUserOffset
       };
 

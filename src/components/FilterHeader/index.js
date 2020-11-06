@@ -40,6 +40,22 @@ export const renderTagLabel = (tag, user) => {
 
 };
 
+export const renderTripLabel = (tripName, user) => {
+
+  return (
+    <div className={s.userTagFilter}>
+      <div className={s.userImage}>
+        <img src={user.userImage} />
+      </div>
+      <div className={s.filterInfo}>
+        <div className={s.userName}>{user.userName}</div>
+        <div className={s.trip}>{tripName}</div>
+      </div>
+    </div>
+  );
+
+};
+
 export const renderLinkedLocalityLabel = (locality, linkedLocality, reverseUrl) => {
   return (
     <div className={s.linksListHeader}>

@@ -5,6 +5,12 @@ import sequelize from '../sequelize';
 import { Terminal, CheckIn, Post, User } from '../models';
 import postRepository from './postRepository';
 import { checkInRepository, terminalRepository } from './index';
+import {
+  OPEN_TRIP_QUERY_FROM,
+  OPEN_TRIP_QUERY_WHERE,
+  TRIP_QUERY_FROM,
+  TRIP_QUERY_WHERE,
+} from './queries';
 
 const updateTerminalGeom = async (terminalId) => {
   const updateGeom = `UPDATE "Terminal" SET geom = ST_SetSRID(ST_Point(latitude, longitude), 4326) WHERE id = ${terminalId}`;
@@ -219,6 +225,24 @@ export default {
     } else {
       return -1;
     }
+  },
+
+  getTerminalCountByTrip: async (tripId, open) => {
+
+    const query = `SELECT COUNT(term.id)
+      ${open ? OPEN_TRIP_QUERY_FROM : TRIP_QUERY_FROM}, "Terminal" term
+      WHERE t.id = ${tripId}
+      ${open ? OPEN_TRIP_QUERY_WHERE : TRIP_QUERY_WHERE}
+      AND term."checkInId" = ci.id AND term."linkedTerminalId" IS NOT NULL AND term."type" = 'departure';
+    `;
+
+    const terminalCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    if (terminalCount.length === 1) {
+      return terminalCount[0].count;
+    }
+
+    return -1;
+
   },
 
   getTerminalCountByLocality: async (locality) => {

@@ -23,6 +23,7 @@ const getParams = (props) => {
   if (query && query.to) params.to = query.to;
   if (query && query.route) params.route = query.route;
   if (query && query.user) params.user = query.user;
+  if (query && query.trip) params.trip = query.trip;
   return params;
 };
 
@@ -146,6 +147,17 @@ class Home extends React.Component {
       this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
     }
 
+    if (checkIn && this.props.savedTrip) {
+      this.props.setProperty('trips.savedTrip', null);
+      this.props.setProperty('trips.editTripName', null);
+      this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
+    }
+
+    if (checkIn && this.props.deletedTrip) {
+      this.props.setProperty('trips.deletedTrip', null);
+      this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
+    }
+
     if (prevQuery.tags !== query.tags || prevQuery.user !== query.user) {
       this.props.getFeed(clientId, params);
     }
@@ -212,7 +224,9 @@ export default connect(state => ({
   savedLike: state.posts.savedLike,
   offset: state.posts.feedOffset,
   loadingFeed: state.posts.loadingFeed,
-  loadFeedOffset: state.posts.loadFeedOffset
+  loadFeedOffset: state.posts.loadFeedOffset,
+  savedTrip: state.trips.savedTrip,
+  deletedTrip: state.trips.deletedTrip
 }), {
   getGeolocation,
   getFeed,

@@ -17,7 +17,7 @@ export default {
     const clientId = getClientId();
     const { frame } = query;
     if (frame) delete query.frame;
-    const { tags, user, locality } = query;
+    const { tags, trip, user, locality } = query;
     const queryParams = { clientId, limit: 8, ...query };
 
     const { type, uuid } = params;
@@ -71,7 +71,8 @@ export default {
               }
             },
             user,
-            userImage
+            userImage,
+            tripName
           },
           transportTypes { slug },
           ${contentQuery}
@@ -81,8 +82,8 @@ export default {
       const { feed, transportTypes, post } = data;
       log.info('event=received-feed-data', 'query=', query, data);
 
-      if (user || tags || locality) {
-        feed.query = { user, tags, locality };
+      if (user || tags || trip || locality) {
+        feed.query = { user, tags, trip, locality };
       }
 
       feed.fetchedAt = (new Date()).getTime();

@@ -7,6 +7,7 @@ import * as userRepositoryReal from './userRepository';
 import commentRepositoryReal from './commentRepository';
 import checkInRepositoryReal from './checkInRepository';
 import tagRepositoryReal from './tagRepository';
+import tripRepositoryReal from './tripRepository';
 import filesReal from './files';
 
 import placesApiReal from './placesApi';
@@ -21,6 +22,7 @@ let ratingRepository;
 let commentRepository;
 let checkInRepository;
 let tagRepository;
+let tripRepository;
 let files;
 let placesApi;
 
@@ -34,6 +36,7 @@ if (process.env.TEST_ENV === 'test') {
   commentRepository = commentRepositoryReal;
   checkInRepository = checkInRepositoryReal;
   tagRepository = tagRepositoryReal;
+  tripRepository = tripRepositoryReal;
   files = filesReal;
   placesApi = placesApiReal;
 } else {
@@ -46,6 +49,7 @@ if (process.env.TEST_ENV === 'test') {
   commentRepository = commentRepositoryReal;
   checkInRepository = checkInRepositoryReal;
   tagRepository = tagRepositoryReal;
+  tripRepository = tripRepositoryReal;
   files = filesReal;
   placesApi = placesApiReal;
 }
@@ -53,6 +57,6 @@ if (process.env.TEST_ENV === 'test') {
 export {
   localityRepository, linkRepository, userRepository, ratingRepository,
   postRepository, terminalRepository, commentRepository, checkInRepository,
-  tagRepository,
+  tagRepository, tripRepository,
   files, placesApi
 };

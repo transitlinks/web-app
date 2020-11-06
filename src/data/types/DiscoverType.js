@@ -26,6 +26,7 @@ export const DiscoveryItemType = new GraphQLObjectType({
   fields: () => ({
     groupType: { type: GraphQLString },
     groupName: { type: GraphQLString },
+    groupId: { type: GraphQLString },
     checkInCount: { type: GraphQLInt },
     postCount: { type: GraphQLInt },
     localityCount: { type: GraphQLInt },

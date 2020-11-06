@@ -61,6 +61,7 @@ const schema = new Schema({
       mediaItem: PostMutationFields.mediaItem,
       deleteMediaItem: PostMutationFields.deleteMediaItem,
       trip: TripMutationFields.trip,
+      deleteTrip: TripMutationFields.deleteTrip,
     },
   })
 

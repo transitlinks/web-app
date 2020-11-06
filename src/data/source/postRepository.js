@@ -3,6 +3,13 @@ const log = getLog('data/source/postRepository');
 
 import sequelize from '../sequelize';
 import { Post, Terminal, CheckIn, User, MediaItem, Tag, EntityTag } from '../models';
+import {
+  getTripQuery,
+  getOpenTripQuery,
+  TRIP_QUERY_FROM,
+  TRIP_QUERY_WHERE,
+  OPEN_TRIP_QUERY_FROM, OPEN_TRIP_QUERY_WHERE,
+} from './queries';
 
 export default {
 
@@ -223,7 +230,28 @@ export default {
   },
 
   getPostCountByTag: async (tag) => {
-    let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT et."checkInId" FROM "EntityTag" et, "Tag" t WHERE et."tagId" = t.id AND t.value = '${tag}')`;
+    const query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT et."checkInId" FROM "EntityTag" et, "Tag" t WHERE et."tagId" = t.id AND t.value = '${tag}')`;
+    const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return postCount[0].count;
+  },
+
+  getPostsByTrip: async (tripId, open, limit) => {
+    let query = `SELECT p.* ${open ? getOpenTripQuery(tripId, true) : getTripQuery(tripId, true)}`;
+    if (limit) query += ' LIMIT ' + limit;
+    const posts = await sequelize.query(query, { model: Post, mapToModel: true });
+    return posts;
+  },
+
+  getPostCountByTrip: async (tripId, open) => {
+
+    const query = `SELECT COUNT(p.id)
+      ${open ? OPEN_TRIP_QUERY_FROM : TRIP_QUERY_FROM}, "Post" p
+      WHERE t.id = ${tripId}
+      ${open ? OPEN_TRIP_QUERY_WHERE : TRIP_QUERY_WHERE}
+      AND p."checkInId" = ci.id;
+    `;
+
+    console.log('Post count query', query);
     const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return postCount[0].count;
   },

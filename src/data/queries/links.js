@@ -11,7 +11,7 @@ import {
   linkRepository,
   checkInRepository,
   terminalRepository,
-  userRepository
+  userRepository, tripRepository,
 } from '../source';
 
 import {
@@ -162,6 +162,7 @@ export const TransitLinkQueryFields = {
       from: { type: GraphQLString },
       to: { type: GraphQLString },
       tag: { type: GraphQLString },
+      trip: { type: GraphQLString },
       search: { type: GraphQLString },
       user: { type: GraphQLString },
       type: { type: GraphQLString },
@@ -169,277 +170,49 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, params) => {
 
-      const { locality, linkedLocality, from, to, tag, user, type, search, transportTypes } = params;
+      const { locality, linkedLocality, from, to, tag, trip, user, type, search, transportTypes } = params;
 
       log.info(graphLog(request, 'search-links',`search=${search} locality=${locality} tag=${tag} type=${type}`));
 
       const linkStats = [];
 
-      if (!tag) {
+      if (tag || trip) {
 
-        if (from && to) {
+        let filteredCheckIns = [];
+        let filteredUser = null;
+        let tripName = null;
 
-          const routeSearchParams = {};
-          if (transportTypes && transportTypes.length > 0) {
-            routeSearchParams.transportTypes = transportTypes;
+        if (tag) {
+          filteredCheckIns = await checkInRepository.getTaggedCheckIns(tag);
+          if (user) {
+            filteredUser = await userRepository.getByUuid(user);
           }
-
-          const routes = await terminalRepository.getRoute(from, to, routeSearchParams);
-          const routeKeys = Object.keys(routes);
-
-          if (routeKeys.length > 0) {
-
-            let terminals = [];
-
-            for (let i = 0; i < routeKeys.length; i++) {
-
-              const departures = routes[routeKeys[i]]
-                .filter(dep => dep.linkedTerminalId)
-                .map(dep => ({
-                  ...dep,
-                  routeId: parseInt(routeKeys[i]),
-                  routeIndex: dep.path_seq,
-                  localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
-                  utcDateTime: dep.createdAt,
-                  linkedTerminal: {
-                    ...dep.linkedTerminal.json(),
-                    localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
-                    utcDateTime: dep.linkedTerminal.createdAt,
-                  }
-                }));
-
-              await findRoutePoints(departures);
-
-              terminals = terminals.concat(departures);
-
+        } else if (trip) {
+          const tripEntity = await tripRepository.getTrip({ uuid: trip });
+          if (tripEntity) {
+            if (tripEntity.lastCheckInId) {
+              filteredCheckIns = await checkInRepository.getTripCheckIns(tripEntity.id);
+            } else {
+              filteredCheckIns = await checkInRepository.getOpenTripCheckIns(tripEntity.id);
             }
-
-            let terminal = null;
-            if (terminals.length > 0) terminal = terminals[0];
-
-            if (terminal) {
-              linkStats.push({
-                locality: terminal.locality,
-                latitude: terminal.latitude,
-                longitude: terminal.longitude,
-                from,
-                to,
-                departures: terminals,
-                arrivals: [],
-                internal: []
-              });
-
-            }
+            filteredUser = await userRepository.getById(tripEntity.userId);
+            tripName = tripEntity.name;
           }
-
-          return {
-            searchResultType: 'route',
-            from,
-            to,
-            links: linkStats
-          };
-
-        } else {
-
-          const localityQuery = { limit: 16 };
-          const transportQuery = {};
-
-          if (locality) localityQuery.locality = locality;
-          if (search) localityQuery.search = search;
-          if (transportTypes && transportTypes.length > 0) {
-            localityQuery.transportTypes = transportTypes;
-            transportQuery.transport = transportTypes;
-          }
-
-          const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
-          const singleLocality = localities.length === 1 ? localities[0] : null;
-
-          if (!linkedLocality) {
-
-            const baseQuery = {
-              ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes })
-            };
-
-            const getLinkedLocalityInfo = async (locality, linkedLocality, type) => {
-
-              const terminal = await terminalRepository.getTerminal({
-                locality,
-                linkedLocality,
-                type,
-                linkedTerminalId: { $ne: null }
-              });
-
-              if (!terminal) return null;
-
-              const counts = await terminalRepository.countInterTerminals({
-                locality, linkedLocality
-              });
-
-              const timeZone = geoTz(terminal.latitude, terminal.longitude)[0];
-              const formattedTerminal = {
-                ...terminal.json(),
-                localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
-                utcDateTime: terminal.createdAt,
-              };
-              delete formattedTerminal.formattedAddress;
-              delete formattedTerminal.linkedFormattedAddress;
-              formattedTerminal.linkCount = counts[type];
-              formattedTerminal.reverseLinkCount = counts[type === 'arrival' ? 'departure' : 'arrival'];
-
-              return {
-                terminal: formattedTerminal,
-                linkedLocality,
-                linkCount: counts[type]
-              };
-
-            };
-
-            for (let i = 0; i < localities.length; i++) {
-
-              const locality = localities[i];
-              const interTerminalCounts = await terminalRepository.countInterTerminals({
-                ...baseQuery, locality
-              });
-
-              const departureLinks = [];
-              const linkedDepartureLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
-                ...baseQuery, locality,
-                type: 'departure'
-              });
-              for (let i = 0; i < linkedDepartureLocalities.length; i++) {
-                departureLinks.push(await getLinkedLocalityInfo(locality, linkedDepartureLocalities[i], 'departure'));
-              }
-
-              const arrivalLinks = [];
-              const linkedArrivalLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
-                ...baseQuery, locality,
-                type: 'arrival'
-              });
-              for (let i = 0; i < linkedArrivalLocalities.length; i++) {
-                arrivalLinks.push(await getLinkedLocalityInfo(locality, linkedArrivalLocalities[i], 'arrival'));
-              }
-
-              const terminal = await terminalRepository.getTerminal({ locality });
-
-              const departures = departureLinks.filter(dep => dep).map(dep => dep.terminal);
-              const arrivals = arrivalLinks.filter(arr => arr).map(arr => arr.terminal);
-
-              const internal = await terminalRepository.getInternalDeparturesByLocality(locality, baseQuery);
-
-              const tags = await tagRepository.getLatestTagsByLocality(locality, 14);
-
-              linkStats.push({
-                locality,
-                latitude: terminal.latitude,
-                longitude: terminal.longitude,
-                departureCount: interTerminalCounts.arrival || 0,
-                arrivalCount: interTerminalCounts.departure || 0,
-                departures,
-                arrivals,
-                internal,
-                linkedDepartures: departures.map(dep => ({ linkedLocality: dep.linkedTerminal.locality })),
-                linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality })),
-                tags
-              });
-
-            }
-
-            return {
-              searchResultType: 'connections',
-              links: linkStats,
-              locality: singleLocality || locality
-            };
-
-          } else {
-
-            const baseQuery = {
-              ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes }),
-              linkedLocality
-            };
-
-            const locality = localities[0];
-            const interTerminals = await terminalRepository.getInterTerminalsByLocality(locality, baseQuery);
-            const departures = interTerminals.filter(terminal => terminal.type === 'departure');
-            const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
-            await findRoutePoints(departures);
-            await findRoutePoints(arrivals);
-            const departureTags = await findTags(departures);
-            const arrivalTags = await findTags(arrivals);
-            const allTags = departureTags;
-            allTags.push(
-              ...arrivalTags.filter(
-                arrTag => !departureTags.find(
-                  depTag => depTag.tag === arrTag.tag && depTag.userUuid === arrTag.userUuid
-                )
-              )
-            );
-
-            let terminal = null;
-            if (departures.length > 0) terminal = departures[0];
-            if (arrivals.length > 0) terminal = arrivals[0];
-
-            if (terminal) {
-              linkStats.push({
-                locality,
-                latitude: terminal.latitude,
-                longitude: terminal.longitude,
-                departures: departures.map(dep => ({
-                  route: dep.route,
-                  ...dep.json(),
-                  localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
-                  utcDateTime: dep.createdAt,
-                  linkedTerminal: {
-                    ...dep.linkedTerminal.json(),
-                    localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
-                    utcDateTime: dep.linkedTerminal.createdAt,
-                  }
-                })),
-                arrivals: arrivals.map(arr => ({
-                  route: arr.route,
-                  ...arr.json(),
-                  localDateTime: getLocalDateTime(arr.createdAt, geoTz(arr.latitude, arr.longitude)[0]),
-                  utcDateTime: arr.createdAt,
-                  linkedTerminal: {
-                    ...arr.linkedTerminal.json(),
-                    localDateTime: getLocalDateTime(arr.linkedTerminal.createdAt, geoTz(arr.linkedTerminal.latitude, arr.linkedTerminal.longitude)[0]),
-                    utcDateTime: arr.linkedTerminal.createdAt,
-                  }
-                })),
-                tags: allTags
-              });
-            }
-          }
-
-          return {
-            searchResultType: 'links',
-            locality,
-            linkedLocality,
-            links: linkStats
-          };
-
         }
 
-      } else {
 
-        const taggedCheckIns = await checkInRepository.getTaggedCheckIns(tag);
-
-        let tagUser = null;
-        if (user) {
-          tagUser = await userRepository.getByUuid(user);
-        }
-
-        if (taggedCheckIns.length > 0) {
+        if (filteredCheckIns.length > 0) {
 
           const query = {
-            checkInId: taggedCheckIns.map(checkIn => checkIn.id),
+            checkInId: filteredCheckIns.map(checkIn => checkIn.id),
             type: 'departure'
           };
 
-          if (tagUser) {
-            query.userId = tagUser.id;
+          if (filteredUser) {
+            query.userId = filteredUser.id;
           }
 
-          const departures = (await terminalRepository.getTerminals(query, { order: [ [ 'createdAt', 'ASC' ] ] }))
+          const departures = (await terminalRepository.getTerminals(query, { order: [['createdAt', 'ASC']] }))
             .filter(dep => dep.linkedTerminal)
             .map(dep => ({
               ...dep.json(),
@@ -468,13 +241,252 @@ export const TransitLinkQueryFields = {
         }
 
         return {
-          searchResultType: 'tagged',
+          searchResultType: tag ? 'tagged' : 'trip',
           links: linkStats,
-          user: tagUser ? `${tagUser.firstName} ${tagUser.lastName}` : null,
-          userImage: tagUser ? tagUser.photo : null
+          user: filteredUser ? `${filteredUser.firstName} ${filteredUser.lastName}` : null,
+          userImage: filteredUser ? filteredUser.photo : null,
+          tripName
         };
 
       }
+
+      if (from && to) {
+
+        const routeSearchParams = {};
+        if (transportTypes && transportTypes.length > 0) {
+          routeSearchParams.transportTypes = transportTypes;
+        }
+
+        const routes = await terminalRepository.getRoute(from, to, routeSearchParams);
+        const routeKeys = Object.keys(routes);
+
+        if (routeKeys.length > 0) {
+
+          let terminals = [];
+
+          for (let i = 0; i < routeKeys.length; i++) {
+
+            const departures = routes[routeKeys[i]]
+              .filter(dep => dep.linkedTerminalId)
+              .map(dep => ({
+                ...dep,
+                routeId: parseInt(routeKeys[i]),
+                routeIndex: dep.path_seq,
+                localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
+                utcDateTime: dep.createdAt,
+                linkedTerminal: {
+                  ...dep.linkedTerminal.json(),
+                  localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
+                  utcDateTime: dep.linkedTerminal.createdAt,
+                }
+              }));
+
+            await findRoutePoints(departures);
+
+            terminals = terminals.concat(departures);
+
+          }
+
+          let terminal = null;
+          if (terminals.length > 0) terminal = terminals[0];
+
+          if (terminal) {
+            linkStats.push({
+              locality: terminal.locality,
+              latitude: terminal.latitude,
+              longitude: terminal.longitude,
+              from,
+              to,
+              departures: terminals,
+              arrivals: [],
+              internal: []
+            });
+
+          }
+        }
+
+        return {
+          searchResultType: 'route',
+          from,
+          to,
+          links: linkStats
+        };
+
+      }
+
+      const localityQuery = { limit: 16 };
+      const transportQuery = {};
+
+      if (locality) localityQuery.locality = locality;
+      if (search) localityQuery.search = search;
+      if (transportTypes && transportTypes.length > 0) {
+        localityQuery.transportTypes = transportTypes;
+        transportQuery.transport = transportTypes;
+      }
+
+      const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
+      const singleLocality = localities.length === 1 ? localities[0] : null;
+
+      if (!linkedLocality) {
+
+        const baseQuery = {
+          ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes })
+        };
+
+        const getLinkedLocalityInfo = async (locality, linkedLocality, type) => {
+
+          const terminal = await terminalRepository.getTerminal({
+            locality,
+            linkedLocality,
+            type,
+            linkedTerminalId: { $ne: null }
+          });
+
+          if (!terminal) return null;
+
+          const counts = await terminalRepository.countInterTerminals({
+            locality, linkedLocality
+          });
+
+          const timeZone = geoTz(terminal.latitude, terminal.longitude)[0];
+          const formattedTerminal = {
+            ...terminal.json(),
+            localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
+            utcDateTime: terminal.createdAt,
+          };
+          delete formattedTerminal.formattedAddress;
+          delete formattedTerminal.linkedFormattedAddress;
+          formattedTerminal.linkCount = counts[type];
+          formattedTerminal.reverseLinkCount = counts[type === 'arrival' ? 'departure' : 'arrival'];
+
+          return {
+            terminal: formattedTerminal,
+            linkedLocality,
+            linkCount: counts[type]
+          };
+
+        };
+
+        for (let i = 0; i < localities.length; i++) {
+
+          const terminalLocality = localities[i];
+          const interTerminalCounts = await terminalRepository.countInterTerminals({
+            ...baseQuery, locality: terminalLocality
+          });
+
+          const departureLinks = [];
+          const linkedDepartureLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
+            ...baseQuery, locality: terminalLocality,
+            type: 'departure'
+          });
+          for (let i = 0; i < linkedDepartureLocalities.length; i++) {
+            departureLinks.push(await getLinkedLocalityInfo(terminalLocality, linkedDepartureLocalities[i], 'departure'));
+          }
+
+          const arrivalLinks = [];
+          const linkedArrivalLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
+            ...baseQuery, locality: terminalLocality,
+            type: 'arrival'
+          });
+          for (let i = 0; i < linkedArrivalLocalities.length; i++) {
+            arrivalLinks.push(await getLinkedLocalityInfo(terminalLocality, linkedArrivalLocalities[i], 'arrival'));
+          }
+
+          const terminal = await terminalRepository.getTerminal({ locality: terminalLocality });
+
+          const departures = departureLinks.filter(dep => dep).map(dep => dep.terminal);
+          const arrivals = arrivalLinks.filter(arr => arr).map(arr => arr.terminal);
+
+          const internal = await terminalRepository.getInternalDeparturesByLocality(terminalLocality, baseQuery);
+
+          const tags = await tagRepository.getLatestTagsByLocality(terminalLocality, 14);
+
+          linkStats.push({
+            locality: terminalLocality,
+            latitude: terminal.latitude,
+            longitude: terminal.longitude,
+            departureCount: interTerminalCounts.arrival || 0,
+            arrivalCount: interTerminalCounts.departure || 0,
+            departures,
+            arrivals,
+            internal,
+            linkedDepartures: departures.map(dep => ({ linkedLocality: dep.linkedTerminal.locality })),
+            linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality })),
+            tags
+          });
+
+        }
+
+        return {
+          searchResultType: 'connections',
+          links: linkStats,
+          locality: singleLocality || locality
+        };
+
+      }
+      const baseQuery = {
+        ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes }),
+        linkedLocality
+      };
+
+      const matchingLocality = localities[0];
+      const interTerminals = await terminalRepository.getInterTerminalsByLocality(matchingLocality, baseQuery);
+      const departures = interTerminals.filter(terminal => terminal.type === 'departure');
+      const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
+      await findRoutePoints(departures);
+      await findRoutePoints(arrivals);
+      const departureTags = await findTags(departures);
+      const arrivalTags = await findTags(arrivals);
+      const allTags = departureTags;
+      allTags.push(
+        ...arrivalTags.filter(
+          arrTag => !departureTags.find(
+            depTag => depTag.tag === arrTag.tag && depTag.userUuid === arrTag.userUuid
+          )
+        )
+      );
+
+      let terminal = null;
+      if (departures.length > 0) terminal = departures[0];
+      if (arrivals.length > 0) terminal = arrivals[0];
+
+      if (terminal) {
+        linkStats.push({
+          locality: matchingLocality,
+          latitude: terminal.latitude,
+          longitude: terminal.longitude,
+          departures: departures.map(dep => ({
+            route: dep.route,
+            ...dep.json(),
+            localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
+            utcDateTime: dep.createdAt,
+            linkedTerminal: {
+              ...dep.linkedTerminal.json(),
+              localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
+              utcDateTime: dep.linkedTerminal.createdAt,
+            }
+          })),
+          arrivals: arrivals.map(arr => ({
+            route: arr.route,
+            ...arr.json(),
+            localDateTime: getLocalDateTime(arr.createdAt, geoTz(arr.latitude, arr.longitude)[0]),
+            utcDateTime: arr.createdAt,
+            linkedTerminal: {
+              ...arr.linkedTerminal.json(),
+              localDateTime: getLocalDateTime(arr.linkedTerminal.createdAt, geoTz(arr.linkedTerminal.latitude, arr.linkedTerminal.longitude)[0]),
+              utcDateTime: arr.linkedTerminal.createdAt,
+            }
+          })),
+          tags: allTags
+        });
+      }
+
+      return {
+        searchResultType: 'links',
+        locality: matchingLocality,
+        linkedLocality,
+        links: linkStats
+      };
 
     }
 

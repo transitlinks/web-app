@@ -3,6 +3,7 @@ const log = getLog('data/source/checkInRepository');
 
 import sequelize from '../sequelize';
 import { CheckIn, EntityTag, Tag, Terminal, User } from '../models';
+import { getTripQuery, getOpenTripQuery } from './queries';
 
 export default {
 
@@ -147,6 +148,18 @@ export default {
     return checkInCount[0].count;
   },
 
+  getCheckInCountByTrip: async (tripId) => {
+    const query = `SELECT COUNT(ci.id) ${getTripQuery(tripId)}`;
+    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return checkInCount[0].count;
+  },
+
+  getCheckInCountByOpenTrip: async (tripId) => {
+    const query = `SELECT COUNT(ci.id) ${getOpenTripQuery(tripId)}`;
+    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return checkInCount[0].count;
+  },
+
   getCheckInCountByUser: async (userId) => {
     const query = `SELECT COUNT(id) FROM "CheckIn" WHERE "userId" = ${userId}`;
     const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
@@ -255,11 +268,67 @@ export default {
         AND EXISTS(SELECT id FROM "Terminal" WHERE type = 'departure' AND "checkInId" = ci.id)
         ORDER BY "createdAt" DESC LIMIT 1`;
 
-    console.log('CI QUERY', query);
     const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
     return checkIns.length > 0 ? checkIns[0] : null;
 
   },
 
+  getTripCheckIns: async (tripId) => {
+
+    const query = `
+      SELECT ci.* ${getTripQuery(tripId)}
+    `;
+
+    const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
+    return checkIns;
+
+  },
+
+  getTripCheckInsWithPhotos: async (tripId) => {
+
+    const queryWithPhotos = `
+      SELECT ci.* ${getTripQuery(tripId, true)}
+    `;
+
+    const queryWithoutPhotos = `
+      SELECT ci.* ${getTripQuery(tripId)}
+    `;
+
+    let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
+    if (checkIns.length === 0) {
+      checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
+    }
+    return checkIns;
+
+  },
+
+  getOpenTripCheckIns: async (tripId) => {
+
+    const query = `
+        SELECT ci.* ${getOpenTripQuery(tripId)}
+    `;
+
+    const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
+    return checkIns;
+
+  },
+
+  getOpenTripCheckInsWithPhotos: async (tripId) => {
+
+    const queryWithPhotos = `
+      SELECT ci.* ${getOpenTripQuery(tripId, true)}
+    `;
+
+    const queryWithoutPhotos = `
+      SELECT ci.* ${getOpenTripQuery(tripId)}
+    `;
+
+    let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
+    if (checkIns.length === 0) {
+      checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
+    }
+    return checkIns;
+
+  },
 
 };

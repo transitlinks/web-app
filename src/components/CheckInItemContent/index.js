@@ -223,9 +223,11 @@ const CheckInItemContent = ({
                 </div>
               </div>
             )) :
-            (checkIn.tags || []).map(tag => (
-              <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}&user=${checkIn.userUuid}`}>{tag}</Link></div>
-            ))
+            (checkIn.trip ? [
+              <div key={`${checkIn.uuid}-${checkIn.trip.name}`} className={s.trip}><Link to={`/?trip=${checkIn.trip.uuid}`}>{checkIn.trip.name}</Link></div>
+            ] : []).concat((checkIn.tags || []).map(tag => (
+              <div key={`${checkIn.uuid}-${tag}`} className={s.tag}>#<Link to={`/?tags=${tag}`}>{tag}</Link></div>
+            )))
         }
       </div>
       {

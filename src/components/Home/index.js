@@ -9,6 +9,7 @@ import FilterHeader, {
   renderLocalityLabel,
   renderRouteLabel,
   renderTagLabel,
+  renderTripLabel
 } from '../FilterHeader';
 import ErrorHeader from '../ErrorHeader';
 
@@ -16,11 +17,11 @@ import Feed from '../Feed';
 
 import { injectIntl } from 'react-intl';
 
-const HomeView = ({ intl, setProperty, feed, query, transportTypes, post, error }) => {
+const HomeView = ({ feed, query, transportTypes, post }) => {
 
   let filterOptions = null;
 
-  const { user, tags, locality, linkedLocality, from, to, route } = query;
+  const { user, tags, trip, locality, linkedLocality, from, to, route } = query;
 
   const userData = feed.user && {
     uuid: user,
@@ -39,10 +40,14 @@ const HomeView = ({ intl, setProperty, feed, query, transportTypes, post, error 
   } else if (tags) {
     filterOptions = {
       label: renderTagLabel(tags, userData),
-      tag: tags,
+      tag: tags
+    };
+  } else if (trip) {
+    filterOptions = {
+      label: renderTripLabel(feed.tripName, userData),
+      tag: trip,
       getUrl: () => {
-        let url = '/links?tag=' + tags;
-        if (userData) url += '&user=' + userData.uuid + '&view=map';
+        const url = '/links?trip=' + trip + '&view=map';
         return url;
       }
     };

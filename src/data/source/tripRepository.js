@@ -6,6 +6,11 @@ import { Trip } from '../models';
 
 export default {
 
+  deleteTrip: async (where) => {
+    const deleteResult = await Trip.destroy({ where });
+    return deleteResult;
+  },
+
   saveTrip: async (tripInput) => {
 
     const { id, uuid } = tripInput;
@@ -53,6 +58,47 @@ export default {
 
     return trips;
 
+  },
+
+  getLastStartedTrip: async (userId, dateTime) => {
+
+    const query = `
+        SELECT t.* FROM "Trip" t, "CheckIn" ci
+        WHERE t."userId" = ${userId}
+        AND t."firstCheckInId" = ci.id
+        AND ci."createdAt" <= '${dateTime.toISOString()}'
+        ORDER BY ci."createdAt" DESC LIMIT 1
+    `;
+
+    // AND NOT EXISTS (SELECT id FROM "CheckIn" WHERE id = t."lastCheckInId" AND "createdAt" > '${dateTime.toISOString()}')
+    console.log('OPEN TRIP QUERY', query);
+    const results = await sequelize.query(query, { model: Trip, mapToModel: true });
+    console.log('OPEN TRIP RESULTS', results);
+    return results.length > 0 ? results[0] : null;
+
+  },
+
+  getTripByCheckInId: async (checkInId) => {
+
+    const query = `
+      SELECT t.* FROM "Trip" t, "CheckIn" fci, "CheckIn" ci, "CheckIn" lci 
+      WHERE ci.id = ${checkInId} AND t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id 
+      AND ci."createdAt" BETWEEN fci."createdAt" AND lci."createdAt";
+    `;
+
+    const results = await sequelize.query(query, { model: Trip, mapToModel: true });
+    return results.length > 0 ? results[0] : null;
+
+  },
+
+  getLatestTrips: async (limit, offset, search) => {
+    let query = `SELECT DISTINCT "name" as "trip", id as "tripId", uuid as "tripUuid", "lastCheckInId", MAX("createdAt") as "lastCreated" FROM "Trip"`;
+    if (search) {
+      query += ` WHERE "name" ILIKE '%${search}%'`
+    }
+    query += ` GROUP BY "name", id, uuid ORDER BY "lastCreated" DESC, "name" LIMIT ${limit} OFFSET ${offset}`;
+    const latestTrips = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return latestTrips;
   },
 
 };

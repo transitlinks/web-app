@@ -11,9 +11,11 @@ import { setProperty } from '../../actions/properties';
 import { injectIntl } from 'react-intl';
 import Link from '../Link';
 import FilterHeader, {
-  renderLinkedLocalityLabel, renderLocalityLabel,
+  renderLinkedLocalityLabel,
+  renderLocalityLabel,
   renderRouteLabel,
   renderTagLabel,
+  renderTripLabel
 } from '../FilterHeader';
 import LinkDetails from './LinkDetails';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
@@ -303,7 +305,7 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                                 linkStat.tags.map(tag => {
                                   return (
                                     <div className={s.localityTag}>
-                                      #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{ tag.tag }</Link>
+                                      #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
                                     </div>
                                   );
                                 })
@@ -814,6 +816,25 @@ const LinksView = (props) => {
     });
     listContent = renderLinksList(props);
 
+  } else if (searchResultType === 'trip') {
+
+    filterOptions = {
+      ...filterOptions,
+      trip: query.trip,
+      label: renderTripLabel(displayLinksResult.tripName, filterOptions.user),
+      getUrl: () => getNavigationQuery({
+        ...urlParams,
+        trip: query.trip
+      })
+    };
+
+    searchHeader = <FilterHeader {...filterOptions} />;
+
+    mapContent = getTripMapContent(displayLinks[0].departures, selectedTerminal, (terminal) => {
+      setProperty('links.selectedTerminal', terminal);
+    });
+    listContent = renderLinksList(props);
+
   }
 
 
@@ -912,7 +933,7 @@ const LinksView = (props) => {
               ((displayLinks || []).flatMap(link => link.tags || [])).map(tag => {
                 return (
                   <div className={s.relevantTag}>
-                    #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{tag.tag}</Link>
+                    #<Link to={`/?tags=${tag.tag}`}>{tag.tag}</Link>
                   </div>
                 );
               })
@@ -921,7 +942,7 @@ const LinksView = (props) => {
         </div>
       }
       {
-        searchResultType !== 'tagged' &&
+        (searchResultType !== 'tagged' && searchResultType !== 'trip') &&
         <div className={s.filters}>
           {
             !showTransportTypes ?
@@ -1000,6 +1021,7 @@ const LinksView = (props) => {
         (
           searchResultType === 'links' ||
           searchResultType === 'tagged' ||
+          searchResultType === 'trip' ||
           searchResultType === 'route' ||
           (searchResultType === 'connections' && displayLinks.length === 1)
         ) ?

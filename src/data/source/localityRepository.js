@@ -3,6 +3,7 @@ const log = getLog('data/source/localityRepository');
 
 import sequelize from '../sequelize';
 import { Terminal, Locality } from '../models';
+import { getOpenTripQuery, getTripQuery } from './queries';
 
 export default {
 
@@ -55,6 +56,22 @@ export default {
 
   getLocalitiesByTag: async (tag, limit) => {
     let query = `SELECT DISTINCT et."locality" FROM "EntityTag" et, "Tag" t WHERE et."tagId"= t.id AND t."value" = '${tag}'`;
+    if (limit) query += ` LIMIT ${limit}`;
+    const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return localities.map(locality => locality.locality);
+  },
+
+  getLocalityCountByTrip: async (tripId, open) => {
+    const query = `SELECT COUNT(DISTINCT ci."locality") ${open ? getOpenTripQuery(tripId) : getTripQuery(tripId)}`;
+    const localityCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    if (localityCount.length === 1) {
+      return localityCount[0].count;
+    }
+    return -1;
+  },
+
+  getLocalitiesByTrip: async (tripId, open, limit) => {
+    let query = `SELECT DISTINCT ci."locality" ${open ? getOpenTripQuery(tripId) : getTripQuery(tripId)}`;
     if (limit) query += ` LIMIT ${limit}`;
     const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return localities.map(locality => locality.locality);

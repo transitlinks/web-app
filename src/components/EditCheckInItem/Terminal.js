@@ -16,6 +16,7 @@ import { getAvailableCurrencies } from '../../services/linkService';
 import msg from './messages.terminal';
 import { getClientId, getPaddedDate, getPaddedTime } from '../../core/utils';
 import FontIcon from 'material-ui/FontIcon';
+import { getLocalDateTimeValue } from '../utils';
 
 const labels = {
   departure: {
@@ -191,7 +192,11 @@ const Terminal = ({
                   <div className={s.linkedDateTime}>
                     <div className={s.date}>
                       <DatePicker id={`${type}-date-picker`}
-                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime}
+                                  value={
+                                    editTerminal.localDateTime ?
+                                      getLocalDateTimeValue(editTerminal.localDateTime) :
+                                      defaultDateTime
+                                  }
                                   autoOk
                                   fullWidth
                                   floatingLabelFixed
@@ -202,7 +207,11 @@ const Terminal = ({
                     </div>
                     <div className={s.time}>
                       <TimePicker id={`${type}-time-picker`}
-                                  value={editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime}
+                                  value={
+                                    editTerminal.localDateTime ?
+                                      getLocalDateTimeValue(editTerminal.localDateTime) :
+                                      defaultDateTime
+                                  }
                                   format="24hr"
                                   autoOk
                                   fullWidth

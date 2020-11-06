@@ -1,11 +1,14 @@
-import { graphqlReduce, propToState } from "./utils";
+import { graphqlReduce, propToState } from './utils';
 import {
   GET_TRIPS_START,
   GET_TRIPS_SUCCESS,
   GET_TRIPS_ERROR,
   SAVE_TRIP_START,
   SAVE_TRIP_SUCCESS,
-  SAVE_TRIP_ERROR
+  SAVE_TRIP_ERROR,
+  DELETE_TRIP_START,
+  DELETE_TRIP_SUCCESS,
+  DELETE_TRIP_ERROR
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -45,6 +48,24 @@ export default function reduce(state = {}, action) {
         SAVE_TRIP_SUCCESS,
         SAVE_TRIP_ERROR
       );
+
+    case DELETE_TRIP_START:
+    case DELETE_TRIP_SUCCESS:
+    case DELETE_TRIP_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            deletedTrip: action.payload.deleteTrip
+          }),
+          error: () => ({ deletedTrip: null })
+        },
+        DELETE_TRIP_START,
+        DELETE_TRIP_SUCCESS,
+        DELETE_TRIP_ERROR
+      );
+
 
   }
 

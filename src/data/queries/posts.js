@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 import geoTz from 'geo-tz';
+import uuidValidate from 'uuid-validate';
 import moment from 'moment-timezone';
 import { getDistance } from 'geolib';
 import ExifReader from 'exifreader';
@@ -16,7 +17,7 @@ import {
   tagRepository,
   checkInRepository,
   terminalRepository,
-  commentRepository, localityRepository,
+  commentRepository, localityRepository, tripRepository,
 } from '../source';
 
 import {
@@ -480,6 +481,15 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
     order: [[ 'createdAt', 'ASC' ]]
   });
 
+  const trip = await tripRepository.getTripByCheckInId(checkIn.id);
+  if (trip) {
+    if (trip.firstCheckInId === checkIn.id) {
+      await tripRepository.deleteTrip({ id: trip.id });
+    } else if (trip.lastCheckInId === checkIn.id) {
+      await tripRepository.saveTrip({ id: trip.id, lastCheckInId: null });
+    }
+  }
+
   const departureBefore = await terminalRepository.getDepartureBefore(checkIn);
 
   await postRepository.deletePosts({ checkInId: checkIn.id });
@@ -926,6 +936,29 @@ export const getFeedItem = async (request, checkIn) => {
     departure = await terminalRepository.getDepartureBefore(checkIn);
   }
 
+  let trip = null;
+  const lastStartedTrip = await tripRepository.getLastStartedTrip(checkIn.userId, checkIn.createdAt);
+  if (lastStartedTrip && lastStartedTrip.lastCheckInId) {
+    const lastTripCheckIn = await checkInRepository.getCheckIn({ id: lastStartedTrip.lastCheckInId });
+    console.log('last check in', lastTripCheckIn.createdAt, checkIn.createdAt);
+    if (lastTripCheckIn.createdAt.getTime() > checkIn.createdAt.getTime()) {
+      trip = lastStartedTrip;
+    }
+  } else {
+    trip = lastStartedTrip;
+  }
+
+  if (!trip) {
+    trip = await tripRepository.getTripByCheckInId(checkIn.id);
+  }
+
+  if (trip) {
+    trip = trip.json();
+    if (trip.firstCheckInId) trip.firstCheckIn = (await checkInRepository.getCheckIn({ id: trip.firstCheckInId })).json();
+    if (trip.lastCheckInId) trip.lastCheckIn = (await checkInRepository.getCheckIn({ id: trip.lastCheckInId })).json();
+  }
+
+
   return {
     userAccess: credentials.userAccess,
     checkIn: {
@@ -941,7 +974,8 @@ export const getFeedItem = async (request, checkIn) => {
       tags: (await tagRepository.getTags({ id: tagIds })).map(tag => tag.value),
       comments: await getComments({ checkInId: checkIn.id }),
       likes: await commentRepository.countLikes({ entityId: checkIn.id, entityType: 'CheckIn' }),
-      likedByUser: checkInLikedByUser
+      likedByUser: checkInLikedByUser,
+      trip,
     },
     ...linkedCheckIns,
     posts: posts.map(async (post) => {
@@ -953,9 +987,7 @@ export const getFeedItem = async (request, checkIn) => {
       };
     }),
     terminals: terminals.map(async (terminal) => {
-
       let linkedTerminal = null;
-
       if (terminal.linkedTerminalId) {
         linkedTerminal = await terminalRepository.getTerminal({ id: terminal.linkedTerminalId });
         const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
@@ -1039,11 +1071,12 @@ export const PostQueryFields = {
       to: { type: GraphQLString },
       route: { type: GraphQLInt },
       user: { type: GraphQLString },
+      trip: { type: GraphQLString },
       transportTypes: { type: new GraphQLList(GraphQLString) },
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, tags, locality, linkedLocality, from, to, route, user, transportTypes, offset, limit }) => {
+    resolve: async ({ request }, { clientId, trip, tags, locality, linkedLocality, from, to, route, user, transportTypes, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 
@@ -1067,6 +1100,7 @@ export const PostQueryFields = {
         userId = await userRepository.getUserIdByUuid(user);
       }
 
+      let tripName = null;
       if (from && to) {
 
         const routeSearchParams = {};
@@ -1109,6 +1143,19 @@ export const PostQueryFields = {
         const tagsArray = tags.split(',');
         const query = { tags: tagsArray, userId };
         checkIns = await postRepository.getTaggedCheckIns(query, options);
+      } else if (trip) {
+        const tripEntity = uuidValidate(trip) ?
+          await tripRepository.getTrip({ uuid: trip }) :
+          await tripRepository.getTrip({ name: trip });
+        if (tripEntity) {
+          tripName = tripEntity.name;
+          userId = tripEntity.userId;
+          if (tripEntity.lastCheckInId) {
+            checkIns = await checkInRepository.getTripCheckIns(tripEntity.id);
+          } else {
+            checkIns = await checkInRepository.getOpenTripCheckIns(tripEntity.id);
+          }
+        }
       } else if (locality && linkedLocality) {
         const terminals = await terminalRepository.getInterTerminalsByLocality(locality, { linkedLocality }, options);
         checkIns = terminals.map(terminal => terminal.checkIn);
@@ -1123,8 +1170,8 @@ export const PostQueryFields = {
       const openTerminalParams = { linkedTerminalId: null };
 
       if (request.user) {
-        const userId = await userRepository.getUserIdByUuid(request.user.uuid);
-        openTerminalParams.userId = userId;
+        const requestUserId = await userRepository.getUserIdByUuid(request.user.uuid);
+        openTerminalParams.userId = requestUserId;
       } else if (clientId) {
         openTerminalParams.clientId = clientId;
       }
@@ -1158,7 +1205,8 @@ export const PostQueryFields = {
           };
         }),
         user: userName,
-        userImage
+        userImage,
+        tripName
       };
 
     }

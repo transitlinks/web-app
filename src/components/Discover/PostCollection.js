@@ -15,7 +15,7 @@ import FontIcon from 'material-ui/FontIcon';
 
 const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, children, intl }) => {
 
-  const { groupName, groupType, postCount, connectionCount, localityCount, localities, tags } = discovery;
+  const { groupName, groupId, groupType, postCount, connectionCount, localityCount, localities, tags } = discovery;
 
   let secondaryPosts = posts.filter(post => ((checkInItem && checkInItem.posts) || []).map(post => post.uuid).indexOf(post.uuid) === -1);
 
@@ -23,8 +23,9 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
   if (groupType === 'tag') postCountUrl = `/?tags=${groupName}`;
   else if (groupType === 'user') postCountUrl = `/?user=${groupName}`;
 
-  let connectionCountUrl = `/links?locality=${groupName}&view=map`;
-  if (groupType === 'tag') connectionCountUrl = `/links?tag=${groupName}&view=map`;
+  let connectionCountUrl = null;
+  if (groupType === 'locality') connectionCountUrl = `/links?locality=${groupName}&view=map`;
+  else if (groupType === 'trip') connectionCountUrl = `/links?trip=${groupId}&view=map`;
   else if (groupType === 'user') connectionCountUrl = `/links?user=${groupName}&view=map`;
 
   const discoveryStatsElem = (
@@ -49,7 +50,11 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
               <FontIcon className="material-icons" style={{ fontSize: '24px' }}>directions</FontIcon>
             </div>
             <div className={s.discoveryStatNumber}>
-              <Link to={connectionCountUrl}> { connectionCount }</Link>
+              {
+                connectionCountUrl ?
+                  <Link to={connectionCountUrl}> { connectionCount }</Link> :
+                  <span> { connectionCount }</span>
+              }
             </div>
           </div>
           <div className={s.discoveryStatText}>

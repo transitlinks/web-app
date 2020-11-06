@@ -175,6 +175,7 @@ export const getDiscoverQuery = (params) => {
       discoveries {
         groupType,
         groupName,
+        groupId,
         checkInCount,
         postCount,
         connectionCount,
@@ -228,6 +229,7 @@ export const getLinksQuery = (params) => {
       to,
       user,
       userImage,
+      tripName,
       links {
         locality,
         latitude,

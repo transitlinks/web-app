@@ -176,7 +176,8 @@ export const getFeed = (clientId, params) => {
             }
           },
           user,
-          userImage
+          userImage,
+          tripName
         }
       }
     `;

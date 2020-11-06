@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { getDateString, getTimeString } from '../utils';
+import { getDateString, getLocalDateTimeValue, getTimeString } from '../utils';
 import s from './Terminal.css';
 
 import terminalMsg from '../EditCheckInItem/messages.terminal';
@@ -23,8 +23,8 @@ const Terminal = ({
       );
   }
 
-  const dateStr = terminal.localDateTime ? getDateString(terminal.localDateTime) : '';
-  const timeStr = terminal.localDateTime ? getTimeString(terminal.localDateTime) : '';
+  const dateStr = terminal.localDateTime ? getDateString(getLocalDateTimeValue(terminal.localDateTime)) : '';
+  const timeStr = terminal.localDateTime ? getTimeString(getLocalDateTimeValue(terminal.localDateTime)) : '';
 
   return (
     <div className={s.terminalEntry}>

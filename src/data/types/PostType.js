@@ -199,7 +199,8 @@ export const FeedType = new GraphQLObjectType({
     feedItems: { type: new GraphQLList(FeedItemType) },
     openTerminals: { type: new GraphQLList(TerminalType) },
     user: { type: GraphQLString },
-    userImage: { type: GraphQLString }
+    userImage: { type: GraphQLString },
+    tripName: { type: GraphQLString }
   }
 });
 

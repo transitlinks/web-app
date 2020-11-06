@@ -1,6 +1,9 @@
 import { graphqlAction } from './utils';
 import { getTripEntity, getTripsQuery } from '../data/queries/queries';
 import {
+  DELETE_TRIP_START,
+  DELETE_TRIP_SUCCESS,
+  DELETE_TRIP_ERROR,
   GET_TRIPS_ERROR,
   GET_TRIPS_START,
   GET_TRIPS_SUCCESS,
@@ -49,6 +52,34 @@ export const saveTrip = (trip) => {
       SAVE_TRIP_START,
       SAVE_TRIP_SUCCESS,
       SAVE_TRIP_ERROR
+    );
+
+  };
+
+};
+
+
+export const deleteTrip = (uuid) => {
+
+  return async (...args) => {
+
+
+    const clientId = getClientId();
+
+    const query = `
+      mutation deleteTrip {
+        deleteTrip(uuid:"${uuid}", clientId:"${clientId}") {
+          uuid
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'deleteTrip' ],
+      DELETE_TRIP_START,
+      DELETE_TRIP_SUCCESS,
+      DELETE_TRIP_ERROR
     );
 
   };

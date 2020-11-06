@@ -3,12 +3,12 @@ const log = getLog('data/queries/trips');
 
 import {
   checkInRepository,
-  tripRepository, userRepository,
+  tripRepository,
+  userRepository,
 } from '../source';
 import TripType, { TripInputType } from '../types/TripType';
 import { requireOwnership, throwMustBeLoggedInError } from './utils';
 import { GraphQLList, GraphQLString } from 'graphql';
-import ProfileType from '../types/ProfileType';
 
 
 export const TripMutationFields = {
@@ -27,28 +27,67 @@ export const TripMutationFields = {
 
       if (!request.user) throwMustBeLoggedInError();
 
+
+      const newTrip = {};
+
       let existingTrip = null;
+      let userId = null;
       if (trip.uuid) {
         existingTrip = await tripRepository.getTrip({ uuid: trip.uuid });
-        if (existingTrip) await requireOwnership(request, existingTrip, clientId);
+        if (existingTrip) {
+          userId = await requireOwnership(request, existingTrip, clientId);
+          newTrip.uuid = trip.uuid;
+        }
       }
 
-      const firstCheckIn = await checkInRepository.getCheckIn({ uuid: trip.firstCheckInUuid });
-      const userId = await requireOwnership(request, firstCheckIn, clientId);
+      if (trip.firstCheckInUuid) {
+        const firstCheckIn = await checkInRepository.getCheckIn({ uuid: trip.firstCheckInUuid });
+        newTrip.firstCheckInId = firstCheckIn.id;
+        userId = await requireOwnership(request, firstCheckIn, clientId);
+      }
 
-      const lastCheckIn = await checkInRepository.getCheckIn({ uuid: trip.lastCheckInUuid });
-      await requireOwnership(request, lastCheckIn, clientId);
+      if (trip.lastCheckInUuid) {
+        const lastCheckIn = await checkInRepository.getCheckIn({ uuid: trip.lastCheckInUuid });
+        newTrip.lastCheckInId = lastCheckIn.id;
+        userId = await requireOwnership(request, lastCheckIn, clientId);
+      }
 
-      const newTrip = {
-        userId,
-        firstCheckInId: firstCheckIn.id,
-        lastCheckInId: lastCheckIn.id,
-        name: trip.name
-      };
+      newTrip.userId = userId;
+      if (trip.name) newTrip.name = trip.name;
+
 
       const savedTrip = await tripRepository.saveTrip(newTrip);
 
       return savedTrip.json();
+
+    }
+
+  },
+
+  deleteTrip: {
+
+    type: TripType,
+    description: 'Delete a trip',
+    args: {
+      uuid: { type: GraphQLString },
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid, clientId }) => {
+
+      log.info(`graphql-request=delete-trip user=${request.user ? request.user.uuid : null} uuid=${uuid}`);
+
+      if (!request.user) throwMustBeLoggedInError();
+
+      const trip = await tripRepository.getTrip({ uuid });
+
+      if (trip) {
+        await requireOwnership(request, trip, clientId);
+        await tripRepository.deleteTrip({ id: trip.id });
+      } else {
+        throw new Error('Could not find trip to delete by uuid ' + uuid);
+      }
+
+      return trip.json();
 
     }
 

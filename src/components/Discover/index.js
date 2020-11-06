@@ -93,7 +93,7 @@ const DiscoverView = ({
                       discovery.tags.map(tag => {
                         return (
                           <div className={s.discoveryTag}>
-                            #<Link to={`/?tags=${tag.tag}&user=${tag.userUuid}`}>{ tag.tag }</Link>
+                            #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
                           </div>
                         );
                       })
@@ -168,6 +168,63 @@ const DiscoverView = ({
 
   };
 
+  const renderTripDiscovery = (discovery, index) => {
+
+    const frameId = `discover-${index}`;
+
+    const { posts, feedItem } = discovery;
+    const actualFeedItem = fetchedFeedItems[frameId] || feedItem;
+
+    return (
+      <div key={frameId} className={s.discoveryItem}>
+        <div className={s.discoveryHeader}>
+          <div className={s.discoveryGroupName}>
+            <Link to={`/?trip=${discovery.groupId}`}>{ discovery.groupName }</Link>
+          </div>
+          <div className={s.discoveryHeaderControls}>
+            <div className={s.checkInCount}>
+              <div className={s.checkInCountIcon}>
+                <FontIcon className="material-icons" style={{ fontSize: '16px' }}>place</FontIcon>
+              </div>
+              <div className={s.checkInCountValue}>
+                { discovery.checkInCount }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={s.postSummary}>
+          {
+            actualFeedItem &&
+            <div className={s.left}>
+              <CheckInItem checkInItem={actualFeedItem} frameId={frameId} transportTypes={transportTypes} target="discover" />
+              {
+                (discovery.localities && discovery.localities.length > 0) &&
+                <div className={s.discoveryLocalities}>
+                  <div className={s.label}>
+                    <FontIcon className="material-icons" style={{ fontSize: '22px' }}>public</FontIcon>
+                  </div>
+                  {
+                    discovery.localities.map(locality => {
+                      return (
+                        <div className={s.discoveryLocality}>
+                          <Link to={`/?locality=${locality}`}>{ locality }</Link>
+                        </div>
+                      );
+                    })
+                  }
+                </div>
+              }
+            </div>
+          }
+          <div className={s.right}>
+            <PostCollection discovery={discovery} checkInItem={actualFeedItem} posts={posts} frameId={frameId} transportTypes={transportTypes} />
+          </div>
+        </div>
+      </div>
+    )
+
+  };
+
   const renderUserDiscovery = (discovery, index) => {
 
     const frameId = `discover-${index}`;
@@ -209,6 +266,8 @@ const DiscoverView = ({
       return renderLocalityDiscovery(discovery, index);
     } else if (discovery.groupType === 'tag') {
       return renderTagDiscovery(discovery, index);
+    } else if (discovery.groupType === 'trip') {
+      return renderTripDiscovery(discovery, index);
     } else if (discovery.groupType === 'user') {
       return renderUserDiscovery(discovery, index);
     } else {

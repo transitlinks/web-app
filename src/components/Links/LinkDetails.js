@@ -164,7 +164,7 @@ const LinkDetails = ({
             (terminal.tags || []).map(tag => {
               return (
                 <div className={s.terminalTag}>
-                  #<Link to={`/links?tag=${tag.tag}&user=${tag.userUuid}&view=map`}>{tag.tag}</Link>
+                  #<Link to={`/?tags=${tag.tag}`}>{tag.tag}</Link>
                 </div>
               );
             })
