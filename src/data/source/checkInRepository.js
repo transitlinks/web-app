@@ -273,11 +273,15 @@ export default {
 
   },
 
-  getTripCheckIns: async (tripId) => {
+  getTripCheckIns: async (tripId, open, options) => {
 
-    const query = `
-      SELECT ci.* ${getTripQuery(tripId)}
-    `;
+    let query = `SELECT ci.* ${open ? getOpenTripQuery(tripId) : getTripQuery(tripId)}`;
+
+    if (options) {
+      const { offset, limit } = options;
+      if (offset) query += ` OFFSET ${offset}`;
+      if (limit) query += ` LIMIT ${limit}`;
+    }
 
     const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
     return checkIns;
@@ -298,17 +302,6 @@ export default {
     if (checkIns.length === 0) {
       checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
     }
-    return checkIns;
-
-  },
-
-  getOpenTripCheckIns: async (tripId) => {
-
-    const query = `
-        SELECT ci.* ${getOpenTripQuery(tripId)}
-    `;
-
-    const checkIns = await sequelize.query(query, { model: CheckIn, mapToModel: true });
     return checkIns;
 
   },

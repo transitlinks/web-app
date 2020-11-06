@@ -309,11 +309,11 @@ export default function reduce(state = {}, action) {
           },
           success: () => {
 
-            const { feed, variables: { add, user, tags, locality } } = action.payload;
+            const { feed, variables: { add, user, tags, locality, trip } } = action.payload;
 
             const additionalFields = {};
-            if (user || tags || locality) {
-              additionalFields.query = { user, tags, locality };
+            if (user || tags || locality || trip) {
+              additionalFields.query = { user, tags, locality, trip };
             }
 
             if (!add) {

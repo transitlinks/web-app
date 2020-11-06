@@ -1136,8 +1136,6 @@ export const PostQueryFields = {
 
         const routeCheckIns = await checkInRepository.getCheckIns({ id: checkInIds });
         checkIns = queryCheckInIds.map(id => routeCheckIns.find(checkIn => checkIn.id === id));
-        //console.log('check in ids', checkInIds);
-        //console.log(checkIns.map(checkIn => checkIn.id));
 
       } else if (tags) {
         const tagsArray = tags.split(',');
@@ -1150,11 +1148,7 @@ export const PostQueryFields = {
         if (tripEntity) {
           tripName = tripEntity.name;
           userId = tripEntity.userId;
-          if (tripEntity.lastCheckInId) {
-            checkIns = await checkInRepository.getTripCheckIns(tripEntity.id);
-          } else {
-            checkIns = await checkInRepository.getOpenTripCheckIns(tripEntity.id);
-          }
+          checkIns = await checkInRepository.getTripCheckIns(tripEntity.id, !tripEntity.lastCheckInId, options);
         }
       } else if (locality && linkedLocality) {
         const terminals = await terminalRepository.getInterTerminalsByLocality(locality, { linkedLocality }, options);
