@@ -204,6 +204,7 @@ export const getDiscoverQuery = (params) => {
       },
       localityOffset,
       tagOffset,
+      tripOffset,
       userOffset
     }
   `;
