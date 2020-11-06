@@ -22,7 +22,7 @@ class Discover extends React.Component {
 
     this.props.setProperty('posts.checkIn', null);
 
-    const { search, type, offset, localityOffset, tagOffset, userOffset } = this.props;
+    const { search, type, offset, localityOffset, tagOffset, tripOffset, userOffset } = this.props;
 
     window.onscroll = debounce(() => {
 
@@ -36,16 +36,16 @@ class Discover extends React.Component {
       if (
         Math.ceil(window.innerHeight + document.documentElement.scrollTop) >= document.documentElement.offsetHeight
       ) {
-        const { search, type, offset, localityOffset, tagOffset, userOffset } = this.props;
+        const { search, type, offset, localityOffset, tagOffset, tripOffset, userOffset } = this.props;
         console.log('debounce search', this.props, this.props.offset, this.state.prevOffset, userOffset);
         if (this.state.prevOffset !== offset) {
           this.setState({ prevOffset: offset });
-          this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, tagOffset, userOffset, limit: 6 });
+          this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, tagOffset, tripOffset, userOffset, limit: 6 });
         }
       }
     }, 100);
 
-    this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, tagOffset, userOffset, limit: 6 });
+    this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, tagOffset, tripOffset, userOffset, limit: 6 });
 
   }
 
@@ -111,6 +111,7 @@ export default connect(state => ({
   offset: state.discover.offset,
   localityOffset: state.discover.localityOffset,
   tagOffset: state.discover.tagOffset,
+  tripOffset: state.discover.tripOffset,
   userOffset: state.discover.userOffset,
   limit: state.discover.limit,
   search: state.discover.searchTerm,
