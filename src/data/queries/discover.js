@@ -181,7 +181,7 @@ export const DiscoverQueryFields = {
 
       const latestCheckIns = await checkInRepository.getLatestCheckIns(limit || 10, localityOffset || 0, search);
       const latestTags = await tagRepository.getLatestTags(limit || 10, tagOffset || 0, search);
-      const latestTrips = await tripRepository.getLatestTrips(limit || 10, tagOffset || 0, search);
+      const latestTrips = await tripRepository.getLatestTrips(limit || 10, tripOffset || 0, search);
       const matchingUsers = search && search.length > 0 ? await userRepository.getUsersBySearchTerm(limit || 10, userOffset || 0, search) : [];
 
       const allDiscoveries = latestCheckIns.concat(latestTags).concat(latestTrips);
