@@ -3,11 +3,6 @@ import {
   GET_DISCOVER_START,
   GET_DISCOVER_SUCCESS,
   GET_DISCOVER_ERROR,
-  SAVE_LIKE_START,
-  SAVE_LIKE_SUCCESS,
-  SAVE_LIKE_ERROR,
-  SAVE_COMMENT_START,
-  SAVE_COMMENT_SUCCESS, SAVE_COMMENT_ERROR,
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -27,7 +22,7 @@ export default function reduce(state = {}, action) {
             };
           },
           success: () => {
-            const { discover, variables: { reset, limit, offset } } = action.payload;
+            const { discover, variables: { reset } } = action.payload;
             const stateDiscover = (state.discover && !reset) ? state.discover : { discoveries: [] };
             for (let i = 0; i < discover.discoveries.length; i++) {
               stateDiscover.discoveries.push(discover.discoveries[i]);
@@ -37,6 +32,7 @@ export default function reduce(state = {}, action) {
               discover: stateDiscover,
               localityOffset: discover.localityOffset,
               tagOffset: discover.tagOffset,
+              tripOffset: discover.tripOffset,
               userOffset: discover.userOffset,
               offset: stateDiscover.discoveries.length,
               loadingDiscover: false,
