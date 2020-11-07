@@ -324,9 +324,11 @@ const EditCheckInItemView = (props) => {
   const { checkIn } = item;
 
   let defaultType = 'reaction';
+  let openDepartures = [];
+  let openArrivals = [];
   if (!editPost.uuid && openTerminals && openTerminals.length > 0) {
-    const openArrivals = openTerminals.filter(terminal => (terminal.type === 'arrival' && terminal.checkIn.uuid !== checkIn.uuid));
-    const openDepartures = openTerminals.filter(terminal => (terminal.type === 'departure' && terminal.checkIn.uuid !== checkIn.uuid));
+    openArrivals = openTerminals.filter(terminal => (terminal.type === 'arrival' && terminal.checkIn.uuid !== checkIn.uuid));
+    openDepartures = openTerminals.filter(terminal => (terminal.type === 'departure' && terminal.checkIn.uuid !== checkIn.uuid));
     if (openArrivals.length > 0) {
       defaultType = 'departure';
     } else if (openDepartures.length > 0) {
@@ -395,9 +397,8 @@ const EditCheckInItemView = (props) => {
             <div className={s.contentTypeContainer}>
               <div className={s.contentTypeSelectors}>
                 { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
-                { typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
-                { typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
-                { typeSelector('hotel', selectedType === 'lodging', () => setProperty('posts.addType', 'lodging')) }
+                { openDepartures.length === 0 && typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
+                { openDepartures.length > 0 && typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
               </div>
             </div>
           }

@@ -75,9 +75,12 @@ const CheckInItem = (
 
   const departures = item.terminals.filter(terminal => terminal.type === 'departure');
   const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
+  const openDepartures = (openTerminals || []).filter(terminal => terminal.type === 'departure' && (new Date(terminal.localDateTime)).getTime() < (new Date(item.checkIn.date)).getTime())
+
 
   if (!contentType) {
-    if (item.posts.length > 0) contentType = 'reaction';
+    if (openDepartures.length > 0) contentType = 'arrival';
+    else if (item.posts.length > 0) contentType = 'reaction';
     else if (departures.length > 0) contentType = 'departure';
     else if (arrivals.length > 0) contentType = 'arrival';
     else contentType = 'reaction';
@@ -111,11 +114,11 @@ const CheckInItem = (
     typeSelectors.push(typeSelector('tag_faces', contentType === 'reaction', () => selectContentType('reaction'), 'reaction'));
   }
 
-  if ((editable && showSettings) || departures.length > 0) {
+  if ((editable && showSettings && openDepartures.length === 0) || departures.length > 0) {
     typeSelectors.push(typeSelector('call_made', contentType === 'departure', () => selectContentType('departure'), 'departure'));
   }
 
-  if ((editable && showSettings) || arrivals.length > 0) {
+  if ((editable && showSettings && openDepartures.length > 0) || arrivals.length > 0) {
     typeSelectors.push(typeSelector('call_received', contentType === 'arrival', () => selectContentType('arrival'), 'arrival'));
   }
 
@@ -143,9 +146,9 @@ const CheckInItem = (
 
   let addTerminalElem = null;
   if (showAddTerminal === 'arrival') {
-    addTerminalElem = <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="arrival" terminal={{ type: 'arrival' }} />;
+    addTerminalElem = <Terminal transportTypes={transportTypes} openTerminals={openDepartures} checkIn={checkIn} type="arrival" terminal={{ type: 'arrival' }} />;
   } else if (showAddTerminal === 'departure') {
-    addTerminalElem = <Terminal transportTypes={transportTypes} openTerminals={openTerminals} checkIn={checkIn} type="departure" terminal={{ type: 'departure' }} />;
+    addTerminalElem = <Terminal transportTypes={transportTypes} openTerminals={[]} checkIn={checkIn} type="departure" terminal={{ type: 'departure' }} />;
   }
 
   return (
@@ -270,7 +273,7 @@ const CheckInItem = (
               (showSettings && contentType === 'reaction') &&
               <div className={s.addPost}>
                 <EditCheckInItem checkInItem={checkInItem}
-                                 openTerminals={openTerminals}
+                                 openTerminals={[]}
                                  transportTypes={transportTypes}
                                  hideContent
                                  frameId="frame-edit" />

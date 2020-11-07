@@ -11,6 +11,7 @@ import { saveTripCoord } from "../../actions/trips";
 import { getClientId } from "../../core/utils";
 
 import debounce from "lodash.debounce";
+import { updateLastCoords } from '../../services/linkService';
 
 const title = 'Transitlinks';
 
@@ -81,10 +82,6 @@ class Home extends React.Component {
     params.offset = 0;
     this.props.getFeed(clientId, params);
 
-    setTimeout(() => {
-      this.props.getLastCoords();
-    }, 10000);
-
   }
 
   componentDidUpdate(prevProps) {
@@ -108,18 +105,7 @@ class Home extends React.Component {
     const params = getParams(this.props);
     params.offset = 0;
 
-    console.log('LAST COORDS', this.props.lastCoords);
-    const lastCoords = this.props.lastCoords;
-    const prevLastCoords = prevProps.lastCoords;
-
-    if (lastCoords) {
-      if (!prevLastCoords || (
-        lastCoords.latitude !== prevLastCoords.latitude &&
-        lastCoords.longitude !== prevLastCoords.longitude
-      )) {
-        this.props.saveTripCoord(lastCoords);
-      }
-    }
+    updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {

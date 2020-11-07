@@ -7,6 +7,9 @@ import { navigate } from '../../actions/route';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './CheckIn.css';
 import CheckInView from '../../components/CheckIn';
+import { updateLastCoords } from '../../services/linkService';
+import { saveTripCoord } from '../../actions/trips';
+import { getLastCoords } from '../../actions/global';
 
 const title = 'Transitlinks - Check In';
 
@@ -39,6 +42,8 @@ class CheckIn extends React.Component {
   componentDidUpdate(prevProps) {
 
     const props = this.props;
+
+    updateLastCoords(props.lastCoords, prevProps.lastCoords, props.saveTripCoord, props.getLastCoords);
 
     if (props.deleted) {
       console.log('deleted check-in', props.deleted);
@@ -149,7 +154,13 @@ export default connect(state => ({
   deletedComment: state.posts.deletedComment,
   savedTrip: state.trips.savedTrip,
   deletedTrip: state.trips.deletedTrip,
-  savedLike: state.posts.savedLike
+  savedLike: state.posts.savedLike,
+  lastCoords: state.global['geolocation.lastCoords']
 }), {
-  getFeedItem, getComments, navigate, setProperty
+  getFeedItem,
+  getComments,
+  navigate,
+  setProperty,
+  saveTripCoord,
+  getLastCoords
 })(withStyles(s)(CheckIn));

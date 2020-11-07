@@ -7,6 +7,9 @@ import { getFeedItem } from '../../actions/checkIns';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
 import debounce from 'lodash.debounce';
+import { saveTripCoord } from '../../actions/trips';
+import { getLastCoords } from '../../actions/global';
+import { updateLastCoords } from '../../services/linkService';
 
 const title = 'Transitlinks - Discover';
 
@@ -49,9 +52,12 @@ class Discover extends React.Component {
 
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
 
     const { savedComment, deletedComment } = this.props;
+
+    updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
+
     if (savedComment) {
       this.props.setProperty('posts.savedComment', null);
       if (savedComment.checkInUuid) {
@@ -118,10 +124,13 @@ export default connect(state => ({
   loadingDiscover: state.discover.loadingDiscover,
   savedComment: state.posts.savedComment,
   deletedComment: state.posts.deletedComment,
-  savedLike: state.posts.savedLike
+  savedLike: state.posts.savedLike,
+  lastCoords: state.global['geolocation.lastCoords']
 }), {
   getDiscoveries,
   setProperty,
-  getFeedItem
+  getFeedItem,
+  saveTripCoord,
+  getLastCoords
 })(withStyles(s)(Discover));
 

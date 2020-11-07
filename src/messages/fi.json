@@ -517,8 +517,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.js",
-      "src/components/EditCheckInItem/messages.js",
       "src/components/Discover/messages.js",
+      "src/components/EditCheckInItem/messages.js",
       "src/components/Links/messages.js",
       "src/components/NewCheckIn/messages.js"
     ]

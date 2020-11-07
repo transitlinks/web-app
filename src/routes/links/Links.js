@@ -5,7 +5,9 @@ import LinksView from '../../components/Links';
 import { getLinks, setZoomLevel } from "../../actions/links";
 import { connect } from "react-redux";
 import { setProperty } from "../../actions/properties";
-import { getMapBounds } from '../../services/linkService';
+import { getMapBounds, updateLastCoords } from '../../services/linkService';
+import { saveTripCoord } from '../../actions/trips';
+import { getLastCoords } from '../../actions/global';
 
 const title = 'Transitlinks - Discover';
 
@@ -24,6 +26,8 @@ class Links extends React.Component {
 
     const linksResult = this.props.linksResult || this.props.loadedLinksResult;
     const prevLinksResult = prevProps.linksResult || prevProps.loadedLinksResult;
+
+    updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
 
     if (query.locality) {
       this.props.setProperty('links.selectedLocality', query.locality);
@@ -137,10 +141,13 @@ export default connect(state => ({
   linkMode: state.links.linkMode,
   mapZoom: state.links.mapZoom,
   mapBoundsHash: state.links.mapBoundsHash,
-  viewMode: state.links.viewMode
+  viewMode: state.links.viewMode,
+  lastCoords: state.global['geolocation.lastCoords']
 }), {
   getLinks,
   setProperty,
-  setZoomLevel
+  setZoomLevel,
+  saveTripCoord,
+  getLastCoords
 })(withStyles(s)(Links));
 
