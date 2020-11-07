@@ -93,7 +93,7 @@ const CheckInControls = ({
                   {
                     checkIn.trip.lastCheckIn &&
                     <div className={s.deleteTripButton}>
-                      <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                      <FontIcon className="material-icons" style={{ fontSize: '20px', marginTop: '-1px' }} onClick={() => {
                         deleteTrip(checkIn.trip.uuid);
                       }}>delete</FontIcon>
                     </div>

@@ -318,7 +318,7 @@ export default function reduce(state = {}, action) {
 
             if (!add) {
               return {
-                feed: { ...feed, ...additionalFields },
+                feed: { ...feed, ...additionalFields, fetchedAt: (new Date()).getTime() },
                 loadingFeed: false,
                 feedOffset: feed.feedItems.length
               };
