@@ -2,7 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/tripRepository');
 
 import sequelize from '../sequelize';
-import { Trip } from '../models';
+import { Trip, TripCoord } from '../models';
 
 export default {
 
@@ -100,5 +100,10 @@ export default {
     const latestTrips = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestTrips;
   },
+
+  saveTripCoord: async (tripCoord) => {
+    const created = await TripCoord.create(tripCoord);
+    return await TripCoord.findOne({ where: { id: created.id }, include: [{ all: true }] });
+  }
 
 };

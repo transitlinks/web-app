@@ -109,6 +109,17 @@ class Home extends React.Component {
     params.offset = 0;
 
     console.log('LAST COORDS', this.props.lastCoords);
+    const lastCoords = this.props.lastCoords;
+    const prevLastCoords = prevProps.lastCoords;
+
+    if (lastCoords) {
+      if (!prevLastCoords || (
+        lastCoords.latitude !== prevLastCoords.latitude &&
+        lastCoords.longitude !== prevLastCoords.longitude
+      )) {
+        this.props.saveTripCoord(lastCoords);
+      }
+    }
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
