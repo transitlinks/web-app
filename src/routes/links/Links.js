@@ -92,6 +92,16 @@ class Links extends React.Component {
         this.props.setZoomLevel(loadedLinks, this.props.linkMode);
     }
 
+    const selectedTerminal = this.props.selectedTerminal;
+    const prevSelectedTerminal = prevProps.selectedTerminal;
+    if (selectedTerminal) {
+      if (!prevSelectedTerminal || selectedTerminal.uuid !== prevSelectedTerminal.uuid) {
+        this.props.setZoomLevel([
+          { departures: [selectedTerminal] }
+        ], this.props.linkMode);
+      }
+    }
+
   }
 
   render() {
@@ -123,6 +133,7 @@ Links.contextTypes = { setTitle: PropTypes.func.isRequired };
 export default connect(state => ({
   loadedLinksResult: state.links.transitLinks,
   selectedLink: state.links.selectedLink,
+  selectedTerminal: state.links.selectedTerminal,
   selectedRouteLinks: state.links.selectedRouteLinks,
   displayLinks: state.links.displayLinks,
   locality: state.links.selectedLocality,
