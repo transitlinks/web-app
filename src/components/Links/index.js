@@ -486,7 +486,6 @@ const renderLinksList = (props) => {
                 <div className={route.routeId === selectedRoute ? s.selectedRoute : s.route}>
                   <div className={s.routeHeader} onClick={() => {
                     setProperty('links.selectedRoute', route.routeId);
-                    setProperty('links.selectedLink', null);
                     setProperty('links.selectedTerminal', null);
                   }}>Route {route.routeId}</div>
                   <div className={s.linksList}>
@@ -556,10 +555,10 @@ const getLinksMapContent = (terminals, selectedTerminal, onSelect) => {
 const LinksView = (props) => {
 
   const {
-    intl, linksResult, loadedLinksResult, loadedMapCenter, searchTerm, routeSearchTerm, viewMode, linkMode,
-    mapZoom, selectedLink, transportTypes, showTransportTypes, mapBoundsUpdated, query,
+    intl, linksResult, loadedMapCenter, searchTerm, routeSearchTerm, viewMode, linkMode,
+    mapZoom, transportTypes, showTransportTypes, mapBoundsUpdated, query,
     selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag, selectedRoute,
-    getLinks, setProperty, navigate
+    setProperty, navigate
   } = props;
 
   let displayLinksResult = linksResult || [];
@@ -568,37 +567,11 @@ const LinksView = (props) => {
 
   const onSelectLocality = (locality) => {
 
-    setProperty('links.selectedLink', null);
     setProperty('links.searchTerm', '');
     setProperty('links.selectedLocality', locality);
     setProperty('links.linkMode', 'external');
 
     navigate(getNavigationPath({ locality, transportTypes: selectedTransportTypes, view: 'map' }));
-    //getLinks({ locality });
-  };
-
-  const onHighlightConnection = (terminal) => {
-    if (terminal.highlighted) {
-      //setProperty('links.loadedMapCenter', null);
-      //setProperty('links.highlightedTerminal', terminal.uuid);
-    }
-    //else if (!selectedLink) setProperty('links.highlightedTerminal', null);
-  };
-
-  const onSelectConnection = (terminal) => {
-    if (terminal.routeId !== selectedRoute) {
-      setProperty('links.selectedRoute', terminal.routeId);
-      setProperty('links.selectedLink', null);
-      setProperty('links.selectedTerminal', null);
-    } else {
-      //if (selectedLink) selectedLink.selected = false;
-      //if (terminal.selected) {
-      //setProperty('links.loadedMapCenter', null);
-      setProperty('links.selectedLink', terminal);
-      setProperty('links.selectedTerminal', terminal);
-      //}
-      //else setProperty('links.selectedLink', null);
-    }
 
   };
 
@@ -846,12 +819,10 @@ const LinksView = (props) => {
     onMapLoad: (map) => {
       if (map) {
         if ((mapZoom && mapZoom.updated !== mapBoundsUpdated) || query.view !== viewMode) {
-          //console.log('fit bounds', map, mapZoom, displayLinks);
           if (mapZoom) {
             map.fitBounds(mapZoom.bounds);
           } else {
             setProperty('links.viewMode', query.view);
-            //map.fitBounds(displayLinks);
           }
         }
       }
@@ -861,14 +832,6 @@ const LinksView = (props) => {
     },
     content: mapContent
   };
-
-  if (selectedLink) {
-    //mapProps.center = mapCenter;
-  }
-
-  if (loadedMapCenter) {
-    //mapProps.center = loadedMapCenter;
-  }
 
   const mapView = (
     <div>
@@ -895,7 +858,6 @@ const LinksView = (props) => {
                              setProperty('links.searchTerm', input);
                              if (input.length > 2 || input.length === 0) {
                                setProperty('links.linkMode', 'external');
-                               setProperty('links.selectedLink', null);
                                setProperty('links.selectedLocality', null);
                                setProperty('links.selectedLinkedLocality', null);
                                navigate(getNavigationPath({
@@ -1063,7 +1025,6 @@ export default injectIntl(
       selectedTerminal: state.links.selectedTerminal,
       selectedRoute: state.links.selectedRoute,
       mapZoom: state.links.mapZoom,
-      selectedLink: state.links.selectedLink,
       showTransportTypes: state.links.showTransportTypes,
       selectedTransportTypes: state.links.selectedTransportTypes || []
     }

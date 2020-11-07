@@ -65,8 +65,6 @@ class Links extends React.Component {
     const selectedRouteLinks = this.props.selectedRouteLinks;
     const prevSelectedRouteLinks = prevProps.selectedRouteLinks;
 
-    const selectedLink = this.props.selectedLink;
-    const prevSelectedLink = prevProps.selectedLink;
     const loadedLinks = linksResult.links || [];
 
     const mb = getMapBounds(loadedLinks, this.props.linkMode);
@@ -74,13 +72,7 @@ class Links extends React.Component {
     const sw = mb.getSouthWest();
     const mapBoundsHash = ne.lng() + ne.lat() + sw.lng() + sw.lat();
 
-    if (selectedLink && (!prevSelectedLink || selectedLink.checkInUuid !== prevSelectedLink.checkInUuid)) {
-      this.props.setZoomLevel([
-        selectedLink.type === 'arrival' ?
-          { arrivals: [selectedLink] } :
-          { departures: [selectedLink] }
-        ], this.props.linkMode);
-    } else if (selectedRouteLinks && (!prevSelectedRouteLinks || selectedRouteLinks.routeId !== prevSelectedRouteLinks.routeId)) {
+    if (selectedRouteLinks && (!prevSelectedRouteLinks || selectedRouteLinks.routeId !== prevSelectedRouteLinks.routeId)) {
       this.props.setZoomLevel({ departures: selectedRouteLinks.terminals }, this.props.linkMode);
     } else if (
       this.props.viewMode !== prevProps.viewMode ||
@@ -99,6 +91,10 @@ class Links extends React.Component {
         this.props.setZoomLevel([
           { departures: [selectedTerminal] }
         ], this.props.linkMode);
+      }
+    } else {
+      if (prevSelectedTerminal) {
+        this.props.setZoomLevel(loadedLinks, this.props.linkMode);
       }
     }
 
