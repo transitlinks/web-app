@@ -85,9 +85,9 @@ const CheckInControls = ({
                   {
                     !checkIn.trip.lastCheckIn &&
                     <div className={s.endTripButton}>
-                      <FontIcon className="material-icons" style={{ fontSize: '20px ' }} onClick={() => {
+                      <FontIcon className="material-icons" style={{ fontSize: '16px ', marginLeft: '1px', display: 'block' }} onClick={() => {
                         saveTrip({ uuid: checkIn.trip.uuid, lastCheckInUuid: checkIn.uuid });
-                      }}>stop_circle</FontIcon>
+                      }}>stop</FontIcon>
                     </div>
                   }
                   {

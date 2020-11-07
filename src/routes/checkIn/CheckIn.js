@@ -30,6 +30,8 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.fetchedFeedItem', null);
     this.props.setProperty('posts.checkIn', null);
     this.props.setProperty('posts.savedCheckIn', null);
+    this.props.setProperty('posts.savedPost', null);
+    this.props.setProperty('posts.savedTerminal', null);
     //this.props.getFeedItem(this.props.feedItem.checkIn.uuid, 'frame-edit');
     //this.updateComponent(this.props);
   }
