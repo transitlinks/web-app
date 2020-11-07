@@ -2,7 +2,7 @@ import {
   GraphQLObjectType,
   GraphQLInputObjectType,
   GraphQLString,
-  GraphQLNonNull,
+  GraphQLNonNull, GraphQLFloat,
 
 } from 'graphql';
 import { CheckInType } from './PostType';
@@ -26,6 +26,24 @@ export const TripInputType = new GraphQLInputObjectType({
     name: { type: GraphQLString },
     firstCheckInUuid: { type: GraphQLString },
     lastCheckInUuid: { type: GraphQLString }
+  })
+});
+
+export const TripCoordType = new GraphQLObjectType({
+  name: 'TripCoord',
+  description: 'Coord point of a trip',
+  fields: () => ({
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat }
+  })
+});
+
+export const TripCoordInputType = new GraphQLInputObjectType({
+  name: 'TripCoordInput',
+  description: 'Input properties for TripCoord',
+  fields: () => ({
+    latitude: { type: GraphQLFloat },
+    longitude: { type: GraphQLFloat }
   })
 });
 

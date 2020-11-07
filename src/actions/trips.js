@@ -1,5 +1,5 @@
 import { graphqlAction } from './utils';
-import { getTripEntity, getTripsQuery } from '../data/queries/queries';
+import { getTripEntity, getTripCoordEntity, getTripsQuery } from '../data/queries/queries';
 import {
   DELETE_TRIP_START,
   DELETE_TRIP_SUCCESS,
@@ -10,6 +10,9 @@ import {
   SAVE_TRIP_ERROR,
   SAVE_TRIP_START,
   SAVE_TRIP_SUCCESS,
+  SAVE_TRIP_COORD_ERROR,
+  SAVE_TRIP_COORD_START,
+  SAVE_TRIP_COORD_SUCCESS,
 } from '../constants';
 import { getClientId, toGraphQLObject } from '../core/utils';
 
@@ -80,6 +83,30 @@ export const deleteTrip = (uuid) => {
       DELETE_TRIP_START,
       DELETE_TRIP_SUCCESS,
       DELETE_TRIP_ERROR
+    );
+
+  };
+
+};
+
+export const saveTripCoord = (tripCoord) => {
+
+  return async (...args) => {
+
+    const clientId = getClientId();
+
+    const query = `
+      mutation saveTripCoord {
+        tripCoord(tripCoord:${toGraphQLObject(tripCoord)}, clientId:"${clientId}") ${getTripCoordEntity()}
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'tripCoord' ],
+      SAVE_TRIP_COORD_START,
+      SAVE_TRIP_COORD_SUCCESS,
+      SAVE_TRIP_COORD_ERROR
     );
 
   };

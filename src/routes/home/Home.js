@@ -4,10 +4,11 @@ import s from './Home.css';
 import HomeView from '../../components/Home';
 
 import { connect } from "react-redux";
-import { getGeolocation } from "../../actions/global";
+import { getGeolocation, getLastCoords } from "../../actions/global";
 import { getFeed, getFeedItem } from "../../actions/checkIns";
 import { setProperty } from "../../actions/properties";
-import {getClientId} from "../../core/utils";
+import { saveTripCoord } from "../../actions/trips";
+import { getClientId } from "../../core/utils";
 
 import debounce from "lodash.debounce";
 
@@ -80,6 +81,10 @@ class Home extends React.Component {
     params.offset = 0;
     this.props.getFeed(clientId, params);
 
+    setTimeout(() => {
+      this.props.getLastCoords();
+    }, 10000);
+
   }
 
   componentDidUpdate(prevProps) {
@@ -102,6 +107,8 @@ class Home extends React.Component {
     const clientId = getClientId();
     const params = getParams(this.props);
     params.offset = 0;
+
+    console.log('LAST COORDS', this.props.lastCoords);
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
@@ -226,10 +233,13 @@ export default connect(state => ({
   loadingFeed: state.posts.loadingFeed,
   loadFeedOffset: state.posts.loadFeedOffset,
   savedTrip: state.trips.savedTrip,
-  deletedTrip: state.trips.deletedTrip
+  deletedTrip: state.trips.deletedTrip,
+  lastCoords: state.global['geolocation.lastCoords']
 }), {
   getGeolocation,
   getFeed,
   getFeedItem,
-  setProperty
+  setProperty,
+  saveTripCoord,
+  getLastCoords
 })(withStyles(s)(Home));

@@ -12,6 +12,7 @@ import Tag from './Tag';
 import EntityTag from './EntityTag';
 import Like from './Like';
 import Trip from './Trip';
+import TripCoord from './TripCoord';
 
 Comment.belongsTo(User, {
   foreignKey: 'userId',
@@ -112,9 +113,14 @@ Trip.belongsTo(User, {
   as: 'user'
 });
 
+TripCoord.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user'
+});
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
 
 export default { sync };
-export { User, Locality, TransitLink, TransportType, Like, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag, Trip };
+export { User, Locality, TransitLink, TransportType, Like, MediaItem, Comment, Post, CheckIn, Terminal, Tag, EntityTag, Trip, TripCoord };

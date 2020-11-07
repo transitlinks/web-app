@@ -6,6 +6,9 @@ import {
   SAVE_TRIP_START,
   SAVE_TRIP_SUCCESS,
   SAVE_TRIP_ERROR,
+  SAVE_TRIP_COORD_START,
+  SAVE_TRIP_COORD_SUCCESS,
+  SAVE_TRIP_COORD_ERROR,
   DELETE_TRIP_START,
   DELETE_TRIP_SUCCESS,
   DELETE_TRIP_ERROR
@@ -47,6 +50,23 @@ export default function reduce(state = {}, action) {
         SAVE_TRIP_START,
         SAVE_TRIP_SUCCESS,
         SAVE_TRIP_ERROR
+      );
+
+    case SAVE_TRIP_COORD_START:
+    case SAVE_TRIP_COORD_SUCCESS:
+    case SAVE_TRIP_COORD_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            savedTripCoord: action.payload.tripCoord
+          }),
+          error: () => ({ savedTripCoord: null })
+        },
+        SAVE_TRIP_COORD_START,
+        SAVE_TRIP_COORD_SUCCESS,
+        SAVE_TRIP_COORD_ERROR
       );
 
     case DELETE_TRIP_START:

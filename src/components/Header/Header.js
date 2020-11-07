@@ -5,7 +5,10 @@ import Link from '../Link';
 import Navigation from '../Navigation';
 import FontIcon from 'material-ui/FontIcon';
 
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
+import { connect } from 'react-redux';
+import { setProperty } from '../../actions/properties';
+import { saveTripCoord } from '../../actions/trips';
 
 function Header() {
   return (
@@ -34,4 +37,9 @@ function Header() {
   );
 }
 
-export default injectIntl(withStyles(s)(Header));
+export default injectIntl(
+  connect(state => ({
+  }), {
+    setProperty, saveTripCoord
+  })(withStyles(s)(Header))
+);

@@ -155,12 +155,13 @@
   display: flex;
   margin-bottom: 2px;
   margin-left: 6px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid black;
   border-radius: 3px;
   margin-top: -5px;
-  background-color: #e0e0e0;
   padding-left: 2px;
-  padding-right: 2px;
+  padding-right: 3px;
+  padding-bottom: 2px;
+  padding-top: 2px;
 }
 
 .existingTrip .tripName {
@@ -168,14 +169,13 @@
   white-space: nowrap;
   height: 20px;
   margin-left: 3px;
+  margin-top: -1px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .existingTrip .endTripButton {
   margin-left: 4px;
-  margin-top: 1px;
-  width: 20px;
   height: 20px;
 }
 

@@ -6,12 +6,34 @@ import {
   tripRepository,
   userRepository,
 } from '../source';
-import TripType, { TripInputType } from '../types/TripType';
+import TripType, { TripInputType, TripCoordInputType, TripCoordType } from '../types/TripType';
 import { requireOwnership, throwMustBeLoggedInError } from './utils';
 import { GraphQLList, GraphQLString } from 'graphql';
 
 
 export const TripMutationFields = {
+
+  tripCoord: {
+
+    type: TripCoordType,
+    description: 'Save a trip coord',
+    args: {
+      tripCoord: { type: TripCoordInputType },
+      clientId: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { tripCoord, clientId }) => {
+
+      log.info(`graphql-request=save-trip-coord user=${request.user ? request.user.uuid : null} lat=${tripCoord.latitude} lng=${tripCoord.longitude}`);
+
+      if (!request.user) throw new Error('Trip logging for logged in users only');
+
+      const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+      const savedTripCoord = await tripRepository.saveTripCoord({ userId, ...tripCoord });
+      return savedTripCoord.json();
+
+    }
+
+  },
 
   trip: {
 

@@ -9,6 +9,14 @@ export const createQuery = (queries) => {
 
 };
 
+export const getTripCoordEntity = () => {
+  return  `
+    {
+      latitude,
+      longitude
+    }
+  `;
+};
 
 export const getTripEntity = () => {
   return  `
