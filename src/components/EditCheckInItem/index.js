@@ -114,9 +114,8 @@ const getTabContent = (type, props) => {
       }
     }
 
-    const inboundTags = (inbound && inbound.length > 0) ? inbound[0].tags : [];
     const distinct = (value, index, self) => self.indexOf(value) === index;
-    return allTags.concat(inboundTags).filter(distinct).filter(tag => tag && tag.length > 0);
+    return allTags.filter(distinct).filter(tag => tag && tag.length > 0);
 
   };
 
