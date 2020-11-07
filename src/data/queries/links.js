@@ -107,6 +107,7 @@ export const TransitLinkMutationFields = {
 };
 
 export const findRoutePoints = async (terminals) => {
+
   for (let i = 0; i < terminals.length; i++) {
     const terminal = terminals[i];
     const { linkedTerminal } = terminal;
@@ -121,8 +122,21 @@ export const findRoutePoints = async (terminals) => {
       }, {
         order: [['createdAt', terminal.type === 'departure' ? 'ASC' : 'DESC']]
       });
+      const routeCoords = await tripRepository.getTripCoords({
+        createdAt: {
+          $gt: terminal.type === 'departure' ? terminal.createdAt : linkedTerminal.createdAt,
+          $lt: terminal.type === 'departure' ? linkedTerminal.createdAt : terminal.createdAt
+        },
+        userId: terminal.userId
+      }, {
+        order: [['createdAt', terminal.type === 'departure' ? 'ASC' : 'DESC']]
+      });
       terminal.routeCheckIns = routeCheckIns || [];
-      terminal.route = (routeCheckIns || []).map(checkIn => ({ lat: checkIn.latitude, lng: checkIn.longitude }));
+      terminal.route = (routeCheckIns || []).concat(routeCoords || []).sort((a, b) => {
+        const aTime = new Date(a.createdAt).getTime();
+        const bTime = new Date(b.createdAt).getTime();
+        return terminal.type === 'departure' ? aTime - bTime : bTime - aTime;
+      }).map(loc => ({ lat: loc.latitude, lng: loc.longitude }));
     }
   }
 };

@@ -104,6 +104,18 @@ export default {
   saveTripCoord: async (tripCoord) => {
     const created = await TripCoord.create(tripCoord);
     return await TripCoord.findOne({ where: { id: created.id }, include: [{ all: true }] });
-  }
+  },
+
+  getTripCoords: async (where, options = {}) => {
+
+    const tripCoords = await TripCoord.findAll({
+      where,
+      include: [{ all: true }],
+      ...options
+    });
+
+    return tripCoords;
+
+  },
 
 };
