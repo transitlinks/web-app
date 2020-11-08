@@ -26,7 +26,7 @@ class Account extends React.Component {
     } else if (props.userLinks) {
       sectionName = 'links';
       section = (
-        <UserLinks userLinks={props.userLinks} />
+        <div>Links</div>
       );
     }
 

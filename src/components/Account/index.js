@@ -19,16 +19,6 @@ const AccountView = ({ children, section, intl }) => {
                       onClick={() => { location.href = "/logout" }} />
       </div>
       <div className={s.sectionLinks}>
-        <div className={cx(s.sectionLink, (section === 'profile') ? s.selected : null)}>
-          <Link to="/account/profile">
-            <FormattedMessage {...msg['profile-link']} />
-          </Link>
-        </div>
-        <div className={cx(s.sectionLink, (section === 'links') ? s.selected : null)}>
-          <Link to="/account/links">
-            <FormattedMessage {...msg['links-link']} />
-          </Link>
-        </div>
       </div>
       <div className={s.sectionContent}>
         {children}

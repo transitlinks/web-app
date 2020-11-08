@@ -7,6 +7,8 @@ import s from './Terminal.css';
 
 import terminalMsg from '../EditCheckInItem/messages.terminal';
 import Link from '../Link';
+import cx from 'classnames';
+import FontIcon from 'material-ui/FontIcon';
 
 const Terminal = ({
   terminal, env
@@ -26,6 +28,7 @@ const Terminal = ({
   const dateStr = terminal.localDateTime ? getDateString(getLocalDateTimeValue(terminal.localDateTime)) : '';
   const timeStr = terminal.localDateTime ? getTimeString(getLocalDateTimeValue(terminal.localDateTime)) : '';
 
+  console.log('TERM', terminal);
   return (
     <div className={s.terminalEntry}>
       <div className={s.terminalEntryRow1}>
@@ -36,9 +39,27 @@ const Terminal = ({
           { dateStr } { timeStr }
         </div>
       </div>
-      <div className={s.terminalEntryTransportId}>
-        { terminal.transportId }
+      <div className={s.terminalEntryRow2}>
+        {
+          terminal.transportId &&
+            <div className={s.transportId}>
+              { terminal.transportId }
+            </div>
+        }
+        {
+          terminal.priceAmount &&
+            <div className={s.price}>
+              <FontIcon className="material-icons" style={{ marginRight: '4px' }}>payment</FontIcon>
+              { terminal.priceAmount } { terminal.priceCurrency }
+            </div>
+        }
       </div>
+      {
+        terminal.description &&
+          <div className={s.terminalDescription}>
+            { terminal.description }
+          </div>
+      }
       { linkedTerminalAddress }
     </div>
   );

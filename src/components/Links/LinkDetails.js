@@ -149,10 +149,17 @@ const LinkDetails = ({
               </span>
           }
           {
-            (terminal.description || terminal.linkedTerminal.description) &&
+            terminal.description &&
               <span>
-                <span className={s.label}>Description:</span>
-                <span className={s.content}>{ terminal.description || terminal.linkedTerminal.description }</span>
+                <span className={s.label}>{ terminal.type === 'departure' ? 'Departure' : 'Arrival' }</span>
+                <span className={s.content}>{ terminal.description }</span>
+              </span>
+          }
+          {
+            terminal.linkedTerminal.description &&
+              <span>
+                <span className={s.label}>{ terminal.linkedTerminal.type === 'departure' ? 'Departure:' : 'Arrival:' }</span>
+                <span className={s.content}>{ terminal.linkedTerminal.description }</span>
               </span>
           }
         </p>

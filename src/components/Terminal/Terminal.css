@@ -40,10 +40,6 @@
 .terminal .transport {
 }
 
-.transportId {
-  color: #888;
-}
-
 .terminal .date {
   display: flex;
   justify-content: flex-end;
@@ -108,11 +104,30 @@
 .terminalEntry .terminalEntryTime {
 }
 
-.terminalEntryTransportId {
-  color: #888888;
+.terminalEntryRow2 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.terminalEntryRow2 .transportId {
+  border: 1px solid black;
   margin-top: 6px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+
+.terminalEntryRow2 .price {
+  display: flex;
+  align-items: center;
 }
 
 .terminalEntry .terminalEntryAddress {
   margin-top: 6px;
 }
+
+.terminalDescription {
+  color: #888888;
+  margin-top: 6px;
+}
+

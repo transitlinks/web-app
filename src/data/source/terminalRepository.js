@@ -257,10 +257,10 @@ export default {
 
   saveTerminal: async (terminal) => {
 
-    if (terminal.uuid) {
+    if (terminal.uuid || terminal.id) {
 
       const result = await Terminal.update(terminal, {
-        where: { uuid: terminal.uuid }
+        where: terminal.uuid ? { uuid: terminal.uuid } : { id: terminal.id }
       });
 
       if (result.length !== 1 || result[0] !== 1) {
@@ -268,7 +268,7 @@ export default {
       }
 
       const updated = await Terminal.findOne({
-        where: { uuid: terminal.uuid },
+        where: terminal.uuid ? { uuid: terminal.uuid } : { id: terminal.id },
         include: [{ all: true }]
       });
       await updateTerminalGeom(updated.id);

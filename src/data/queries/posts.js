@@ -157,6 +157,9 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     newTerminal.linkedTerminalId = newLinkedTerminal.id;
     newTerminal.linkedLocality = newLinkedTerminal.locality;
     newTerminal.linkedFormattedAddress = newLinkedTerminal.formattedAddress;
+    if (!terminalInput.transportId) newTerminal.transportId = newLinkedTerminal.transportId;
+    if (!terminalInput.priceAmount) newTerminal.priceAmount = newLinkedTerminal.priceAmount;
+    if (!terminalInput.priceCurrency) newTerminal.priceCurrency = newLinkedTerminal.priceCurrency;
   }
 
   copyNonNull(terminalInput, newTerminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
@@ -245,6 +248,13 @@ const saveTerminal = async (terminalInput, clientId, request) => {
       await terminalRepository.getTerminal({ id: savedTerminal.id }) :
       await terminalRepository.getTerminal({ id: savedTerminal.linkedTerminalId });
     await adjustConnection(departure);
+    const linkedTerminalUpdate = copyNonNull(terminalInput, {}, [ 'transport', 'transportId', 'priceAmount', 'priceCurrency' ]);
+    if (Object.keys(linkedTerminalUpdate).length > 0) {
+      await terminalRepository.saveTerminal({
+        id: savedTerminal.linkedTerminalId,
+        ...linkedTerminalUpdate
+      });
+    }
   }
 
   const localDateTime = getLocalDateTime(savedTerminal.createdAt, timeZone);

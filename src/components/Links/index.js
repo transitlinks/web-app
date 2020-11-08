@@ -628,39 +628,45 @@ const LinksView = (props) => {
         })
       };
 
-      searchHeader = (
-        <div>
-          <FilterHeader {...filterOptions} />
-          <div className={s.routeSearch}>
-            <FontIcon className={cx(s.routeSearchIcon, 'material-icons')}>directions</FontIcon>
-            <div className={s.routeSearchField}>
-              <TextField id="link-search-input"
-                         value={routeSearchTerm}
-                         fullWidth
-                         style={{ height: '46px' }}
-                         hintText={`Search route to...`}
-                         onChange={(event) => {
-                           const input = event.target.value;
-                           setProperty('links.routeSearchTerm', input);
-                         }}
-                         onKeyDown={(e) => {
-                           if (e.keyCode === 13) {
-                             setProperty('links.routeSearchTerm', '');
-                             navigate(getNavigationPath({ from: displayLinksResult.locality, to: routeSearchTerm, view: 'map' }));
-                           }
-                         }}/>
-            </div>
-          </div>
-        </div>
-      );
-
       if (displayLinks.length === 0) {
 
-        const noResults = <div>No places found matching search criteria. Please contribute by creating new and exciting transit data! :)</div>;
+        const noResults = (
+          <div className={s.noResults}>
+            No places found matching search criteria :(
+            <br /><br />
+            Please contribute by creating new and exciting transit data! :)
+          </div>
+        );
         mapContent = null;
         listContent = noResults;
 
       } else {
+
+        searchHeader = (
+          <div>
+            <FilterHeader {...filterOptions} />
+            <div className={s.routeSearch}>
+              <FontIcon className={cx(s.routeSearchIcon, 'material-icons')}>directions</FontIcon>
+              <div className={s.routeSearchField}>
+                <TextField id="link-search-input"
+                           value={routeSearchTerm}
+                           fullWidth
+                           style={{ height: '46px' }}
+                           hintText={`Search route to...`}
+                           onChange={(event) => {
+                             const input = event.target.value;
+                             setProperty('links.routeSearchTerm', input);
+                           }}
+                           onKeyDown={(e) => {
+                             if (e.keyCode === 13) {
+                               setProperty('links.routeSearchTerm', '');
+                               navigate(getNavigationPath({ from: displayLinksResult.locality, to: routeSearchTerm, view: 'map' }));
+                             }
+                           }}/>
+              </div>
+            </div>
+          </div>
+        );
 
         const links = displayLinks[0];
         links.departures.forEach(terminal => {
@@ -763,12 +769,24 @@ const LinksView = (props) => {
 
     searchHeader = <FilterHeader {...filterOptions} />;
 
-    mapContent = getRoutesMapContent(displayLinks[0].departures, displayRoute, selectedTerminal, (terminal) => {
-      setProperty('links.selectedRoute', terminal.routeId);
-      setProperty('links.selectedTerminal', terminal);
-    });
+    if (displayLinks.length > 0) {
+      mapContent = getRoutesMapContent(displayLinks[0].departures, displayRoute, selectedTerminal, (terminal) => {
+        setProperty('links.selectedRoute', terminal.routeId);
+        setProperty('links.selectedTerminal', terminal);
+      });
+      listContent = renderLinksList(props);
+    } else {
+      const noResults = (
+        <div className={s.noResults}>
+          We can't find any routes from {displayLinksResult.from} to {displayLinksResult.to} yet.
+          <br /><br />
+          Please help us develop Transitlinks and contribute route information!
+        </div>
+      );
+      mapContent = null;
+      listContent = noResults;
+    }
 
-    listContent = renderLinksList(props);
 
   } else if (searchResultType === 'tagged') {
 
@@ -803,10 +821,20 @@ const LinksView = (props) => {
 
     searchHeader = <FilterHeader {...filterOptions} />;
 
-    mapContent = getTripMapContent(displayLinks[0].departures, selectedTerminal, (terminal) => {
-      setProperty('links.selectedTerminal', terminal);
-    });
-    listContent = renderLinksList(props);
+    if (displayLinks.length > 0) {
+      mapContent = getTripMapContent(displayLinks[0].departures, selectedTerminal, (terminal) => {
+        setProperty('links.selectedTerminal', terminal);
+      });
+      listContent = renderLinksList(props);
+    } else {
+      const noResults = (
+        <div className={s.noResults}>
+          Unfortunately this trip does not have any transit information.
+        </div>
+      );
+      mapContent = null;
+      listContent = noResults;
+    }
 
   }
 
@@ -842,7 +870,7 @@ const LinksView = (props) => {
   return (
     <div className={s.container}>
       {
-        (!searchResultType || (searchResultType === 'connections' && displayLinks.length > 1)) &&
+        (!searchResultType || (searchResultType === 'connections' && (displayLinks.length > 1 || displayLinks.length === 0))) &&
         <div className={s.functionBar}>
           <div className={s.searchFieldContainer}>
             <div className={s.search}>
@@ -981,10 +1009,10 @@ const LinksView = (props) => {
       }
       {
         (
-          searchResultType === 'links' ||
+          (searchResultType === 'links' && displayLinks.length > 0) ||
           searchResultType === 'tagged' ||
-          searchResultType === 'trip' ||
-          searchResultType === 'route' ||
+          (searchResultType === 'trip' && displayLinks.length > 0) ||
+          (searchResultType === 'route' && displayLinks.length > 0) ||
           (searchResultType === 'connections' && displayLinks.length === 1)
         ) ?
           <div className={s.linksView}>
