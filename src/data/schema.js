@@ -40,6 +40,7 @@ const schema = new Schema({
       discover: DiscoverQueryFields.discover,
       transitLinks: TransitLinkQueryFields.transitLinks,
       trips: TripQueryFields.trips,
+      activeTrip: TripQueryFields.activeTrip,
       intl
     }
   }),

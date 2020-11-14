@@ -3,6 +3,9 @@ import {
   GET_TRIPS_START,
   GET_TRIPS_SUCCESS,
   GET_TRIPS_ERROR,
+  GET_ACTIVE_TRIP_START,
+  GET_ACTIVE_TRIP_SUCCESS,
+  GET_ACTIVE_TRIP_ERROR,
   SAVE_TRIP_START,
   SAVE_TRIP_SUCCESS,
   SAVE_TRIP_ERROR,
@@ -34,7 +37,23 @@ export default function reduce(state = {}, action) {
         GET_TRIPS_SUCCESS,
         GET_TRIPS_ERROR
       );
-
+    case GET_ACTIVE_TRIP_START:
+    case GET_ACTIVE_TRIP_SUCCESS:
+    case GET_ACTIVE_TRIP_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            activeTrip: action.payload.activeTrip,
+            activeTripUpdatedAt: (new Date()).getTime()
+          }),
+          error: () => ({ activeTrip: null })
+        },
+        GET_ACTIVE_TRIP_START,
+        GET_ACTIVE_TRIP_SUCCESS,
+        GET_ACTIVE_TRIP_ERROR
+      );
     case SAVE_TRIP_START:
     case SAVE_TRIP_SUCCESS:
     case SAVE_TRIP_ERROR:

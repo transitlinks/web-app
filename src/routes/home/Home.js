@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { getGeolocation, getLastCoords } from "../../actions/global";
 import { getFeed, getFeedItem } from "../../actions/checkIns";
 import { setProperty } from "../../actions/properties";
-import { saveTripCoord } from "../../actions/trips";
+import { saveTripCoord, getActiveTrip } from "../../actions/trips";
 import { getClientId } from "../../core/utils";
 
 import debounce from "lodash.debounce";
@@ -105,7 +105,10 @@ class Home extends React.Component {
     const params = getParams(this.props);
     params.offset = 0;
 
-    updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
+    const activeTrip = this.props.feed.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
+    //if (activeTrip) {
+      updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
+    //}
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
@@ -155,11 +158,13 @@ class Home extends React.Component {
       this.props.setProperty('trips.savedTrip', null);
       this.props.setProperty('trips.editTripName', null);
       this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
+      this.props.getActiveTrip();
     }
 
     if (checkIn && this.props.deletedTrip) {
       this.props.setProperty('trips.deletedTrip', null);
       this.props.getFeedItem(checkIn.uuid, 'frame-new', true);
+      this.props.getActiveTrip();
     }
 
     if (prevQuery.tags !== query.tags || prevQuery.user !== query.user) {
@@ -230,6 +235,8 @@ export default connect(state => ({
   loadingFeed: state.posts.loadingFeed,
   loadFeedOffset: state.posts.loadFeedOffset,
   savedTrip: state.trips.savedTrip,
+  updatedActiveTrip: state.trips.activeTrip,
+  activeTripUpdatedAt: state.trips.activeTripUpdatedAt,
   deletedTrip: state.trips.deletedTrip,
   lastCoords: state.global['geolocation.lastCoords']
 }), {
@@ -238,5 +245,6 @@ export default connect(state => ({
   getFeedItem,
   setProperty,
   saveTripCoord,
-  getLastCoords
+  getLastCoords,
+  getActiveTrip
 })(withStyles(s)(Home));

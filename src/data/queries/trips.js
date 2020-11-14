@@ -1,10 +1,12 @@
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/trips');
 
+import { getDistance } from 'geolib';
 import {
   checkInRepository,
   tripRepository,
   userRepository,
+  terminalRepository
 } from '../source';
 import TripType, { TripInputType, TripCoordInputType, TripCoordType } from '../types/TripType';
 import { requireOwnership, throwMustBeLoggedInError } from './utils';
@@ -28,8 +30,31 @@ export const TripMutationFields = {
       if (!request.user) throw new Error('Trip logging for logged in users only');
 
       const userId = await userRepository.getUserIdByUuid(request.user.uuid);
-      const savedTripCoord = await tripRepository.saveTripCoord({ userId, ...tripCoord });
-      return savedTripCoord.json();
+      const lastTrip = await tripRepository.getLastUserTrip(userId);
+      if (lastTrip && !lastTrip.lastCheckInId) {
+        const savedTripCoord = await tripRepository.saveTripCoord({ userId, ...tripCoord });
+        const firstCheckIn = await checkInRepository.getCheckIn({ id: lastTrip.firstCheckInId });
+        const lastTerminal = await terminalRepository.getTerminal({ userId, createdAt: { $gte: firstCheckIn.createdAt } }, { order: [[ 'createdAt', 'DESC' ]], limit: 1 });
+        let coordsSince = firstCheckIn.createdAt;
+        if (lastTerminal) {
+          coordsSince = lastTerminal.createdAt;
+        }
+        const tripCoords = await tripRepository.getTripCoords({ userId, createdAt: { $gte: coordsSince }}, { order: [[ 'createdAt', 'DESC' ]] });
+        const allTripCoords = [savedTripCoord, ...tripCoords];
+        if (allTripCoords.length > 10) {
+          let distances = [];
+          for (let i = 0; i < allTripCoords.length - 2; i++) {
+            const distance = getDistance(allTripCoords[i], allTripCoords[i + 2]);
+            distances.push({ distance, index: i + 1 });
+          }
+          distances = distances.sort((a, b) => a.distance - b.distance);
+          const removeIndexes = distances.slice(0, allTripCoords.length - 10).map(d => allTripCoords[d.index].id);
+          await tripRepository.deleteTripCoords({ id: removeIndexes });
+        }
+        return savedTripCoord.json();
+      }
+
+      return null;
 
     }
 
@@ -127,13 +152,22 @@ export const TripQueryFields = {
       user: { type: GraphQLString }
     },
     resolve: async ({ request }, { user }) => {
-
       const userId = await userRepository.getUserIdByUuid(user);
       const trips = await tripRepository.getTrips({ userId });
       return trips.map(trip => trip.json());
-
     }
 
+  },
+
+  activeTrip: {
+    type: TripType,
+    description: 'The last trip of the user',
+    resolve: async ({ request }) => {
+      if (!request.user) return null;
+      const userId = await userRepository.getUserIdByUuid(request.user.uuid);
+      const lastTrip = await tripRepository.getLastUserTrip(userId);
+      return (lastTrip && !lastTrip.lastCheckInId) ? lastTrip.json() : null;
+    }
   }
 
 };

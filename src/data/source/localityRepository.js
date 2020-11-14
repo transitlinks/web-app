@@ -38,7 +38,6 @@ export default {
     if (options.offset) query += ` OFFSET ${options.offset}`;
     if (options.limit) query += ` LIMIT ${options.limit}`;
 
-    console.log('LAST LOCS QUERY', query);
     const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return localities.map(locality => locality.locality);
 

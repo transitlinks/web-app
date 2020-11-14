@@ -1,5 +1,10 @@
 import { graphqlAction } from './utils';
-import { getTripEntity, getTripCoordEntity, getTripsQuery } from '../data/queries/queries';
+import {
+  getTripEntity,
+  getTripCoordEntity,
+  getTripsQuery,
+  getActiveTripQuery,
+} from '../data/queries/queries';
 import {
   DELETE_TRIP_START,
   DELETE_TRIP_SUCCESS,
@@ -7,6 +12,9 @@ import {
   GET_TRIPS_ERROR,
   GET_TRIPS_START,
   GET_TRIPS_SUCCESS,
+  GET_ACTIVE_TRIP_ERROR,
+  GET_ACTIVE_TRIP_START,
+  GET_ACTIVE_TRIP_SUCCESS,
   SAVE_TRIP_ERROR,
   SAVE_TRIP_START,
   SAVE_TRIP_SUCCESS,
@@ -107,6 +115,27 @@ export const saveTripCoord = (tripCoord) => {
       SAVE_TRIP_COORD_START,
       SAVE_TRIP_COORD_SUCCESS,
       SAVE_TRIP_COORD_ERROR
+    );
+
+  };
+
+};
+
+export const getActiveTrip = () => {
+
+  return async (...args) => {
+
+    const query = `
+      query {
+        ${getActiveTripQuery()}
+      }`;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'activeTrip' ],
+      GET_ACTIVE_TRIP_START,
+      GET_ACTIVE_TRIP_SUCCESS,
+      GET_ACTIVE_TRIP_ERROR
     );
 
   };

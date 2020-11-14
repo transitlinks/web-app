@@ -45,7 +45,8 @@ export default {
 
     let terminal = await Terminal.findOne({
       where,
-      include: [ { all: true } ]
+      include: [ { all: true } ],
+      ...options
     });
 
     return terminal;
@@ -110,8 +111,6 @@ export default {
         ORDER BY
             x.path_id, x.path_seq;
     `;
-
-    console.log('GET ROUTE QUERY', query);
 
     const departures = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
 
@@ -309,8 +308,6 @@ export default {
                 AND "targetTerminalId" = ${targetTerminalId}`
     );
 
-    console.log('EXISTING', existingConnections[0]);
-
     const fields = {
       '"sourceLocality"': 't.locality',
       '"targetLocality"': 'lt.locality',
@@ -351,7 +348,6 @@ export default {
     `;
 
     const query = existingConnections[0].length > 0 ? updateStatement : insertStatement;
-    console.log('CONN QUERY', query);
     await sequelize.query(query);
 
   },
@@ -382,7 +378,6 @@ export default {
           AND id NOT IN (${departure.checkInId}, ${arrival.checkInId})
           ORDER BY "createdAt" ASC
         `;
-      console.log('ROUTEPOINT QUERY', query);
       const routePoints = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
       return routePoints;
     }
@@ -401,10 +396,8 @@ export default {
       const query = `
         SELECT ST_Distance(ST_SetSRID(ST_Point(${point.latitude}, ${point.longitude}), 4326)::GEOGRAPHY, ST_SetSRID(ST_Point(${nextPoint.latitude}, ${nextPoint.longitude}), 4326)::GEOGRAPHY)/1000 AS distance
       `;
-      console.log('dist query', query);
       const distanceResult = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
       if (distanceResult.length > 0) distances.push(distanceResult[0].distance);
-      console.log(distanceResult);
     }
 
     let totalDistance = 0;

@@ -251,7 +251,6 @@ export default {
       AND p."checkInId" = ci.id;
     `;
 
-    console.log('Post count query', query);
     const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return postCount[0].count;
   },

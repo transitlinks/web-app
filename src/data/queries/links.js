@@ -204,16 +204,11 @@ export const TransitLinkQueryFields = {
         } else if (trip) {
           const tripEntity = await tripRepository.getTrip({ uuid: trip });
           if (tripEntity) {
-            if (tripEntity.lastCheckInId) {
-              filteredCheckIns = await checkInRepository.getTripCheckIns(tripEntity.id);
-            } else {
-              filteredCheckIns = await checkInRepository.getOpenTripCheckIns(tripEntity.id);
-            }
+            filteredCheckIns = await checkInRepository.getTripCheckIns(tripEntity.id, !tripEntity.lastCheckInId);
             filteredUser = await userRepository.getById(tripEntity.userId);
             tripName = tripEntity.name;
           }
         }
-
 
         if (filteredCheckIns.length > 0) {
 

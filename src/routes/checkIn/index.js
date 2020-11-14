@@ -4,7 +4,12 @@ const log = getLog('routes/checkIn');
 import React from 'react';
 import CheckIn from './CheckIn';
 import ErrorPage from '../../components/common/ErrorPage';
-import { createQuery, getFeedItemQuery } from '../../data/queries/queries';
+import {
+  createQuery,
+  getActiveTripQuery,
+  getFeedItemQuery,
+  getTripEntity,
+} from '../../data/queries/queries';
 
 export default {
 
@@ -49,7 +54,8 @@ export default {
                 locality,
                 country
               }
-          }`
+          }`,
+          getActiveTripQuery()
         ]);
 
         const { data } = await graphqlRequest(query);
@@ -57,7 +63,7 @@ export default {
         log.info("event=received-check-in", "data:", data);
 
         const edit = params.action === 'edit';
-        const { feedItem, transportTypes, openTerminals } = data;
+        const { feedItem, transportTypes, openTerminals, activeTrip } = data;
         feedItem.fetchedAt = (new Date()).getTime();
 
         const props = {
@@ -65,6 +71,7 @@ export default {
           feedItem,
           transportTypes,
           openTerminals,
+          activeTrip,
           view
         };
 
@@ -76,7 +83,8 @@ export default {
 
         return <CheckIn edit={true}
           checkIn={{}}
-          transportTypes={data.transportTypes} />;
+          transportTypes={data.transportTypes}
+          activeTrip={data.activeTrip} />;
 
       }
 

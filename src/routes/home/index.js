@@ -5,7 +5,7 @@ import React from 'react';
 import Home from './Home';
 import ErrorPage from '../../components/common/ErrorPage';
 import {getClientId, createParamString} from "../../core/utils";
-import { getFeedItemsQuery } from '../../data/queries/queries';
+import { getActiveTripQuery, getFeedItemsQuery, getTripEntity } from '../../data/queries/queries';
 
 export default {
 
@@ -42,7 +42,6 @@ export default {
     }
 
     const paramsString = createParamString(queryParams);
-    console.log('FEED PARAM STRING', paramsString);
 
     try {
 
@@ -75,11 +74,12 @@ export default {
             tripName
           },
           transportTypes { slug },
+          ${getActiveTripQuery()},
           ${contentQuery}
         }`
       );
 
-      const { feed, transportTypes, post } = data;
+      const { feed, transportTypes, post, activeTrip } = data;
       log.info('event=received-feed-data', 'query=', query, data);
 
       if (user || tags || trip || locality) {
@@ -87,7 +87,7 @@ export default {
       }
 
       feed.fetchedAt = (new Date()).getTime();
-      return <Home feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} />;
+      return <Home feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} activeTrip={activeTrip} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

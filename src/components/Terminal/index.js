@@ -28,7 +28,6 @@ const Terminal = ({
   const dateStr = terminal.localDateTime ? getDateString(getLocalDateTimeValue(terminal.localDateTime)) : '';
   const timeStr = terminal.localDateTime ? getTimeString(getLocalDateTimeValue(terminal.localDateTime)) : '';
 
-  console.log('TERM', terminal);
   return (
     <div className={s.terminalEntry}>
       <div className={s.terminalEntryRow1}>

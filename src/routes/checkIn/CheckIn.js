@@ -8,7 +8,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './CheckIn.css';
 import CheckInView from '../../components/CheckIn';
 import { updateLastCoords } from '../../services/linkService';
-import { saveTripCoord } from '../../actions/trips';
+import { saveTripCoord, getActiveTrip } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
 
 const title = 'Transitlinks - Check In';
@@ -35,15 +35,17 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.savedCheckIn', null);
     this.props.setProperty('posts.savedPost', null);
     this.props.setProperty('posts.savedTerminal', null);
-    //this.props.getFeedItem(this.props.feedItem.checkIn.uuid, 'frame-edit');
-    //this.updateComponent(this.props);
   }
 
   componentDidUpdate(prevProps) {
 
     const props = this.props;
 
-    updateLastCoords(props.lastCoords, prevProps.lastCoords, props.saveTripCoord, props.getLastCoords);
+
+    const activeTrip = this.props.feedItem.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
+    if (activeTrip) {
+      updateLastCoords(props.lastCoords, prevProps.lastCoords, props.saveTripCoord, props.getLastCoords);
+    }
 
     if (props.deleted) {
       console.log('deleted check-in', props.deleted);
@@ -82,11 +84,13 @@ class CheckIn extends React.Component {
       props.setProperty('trips.savedTrip', null);
       props.setProperty('trips.editTripName', null);
       props.getFeedItem(props.feedItem.checkIn.uuid, 'frame-edit', true);
+      props.getActiveTrip();
     }
 
     if (props.deletedTrip) {
       props.setProperty('trips.deletedTrip', null);
       props.getFeedItem(props.feedItem.checkIn.uuid, 'frame-edit', true);
+      props.getActiveTrip();
     }
 
     const { savedComment, deletedComment } = props;
@@ -155,6 +159,8 @@ export default connect(state => ({
   savedTrip: state.trips.savedTrip,
   deletedTrip: state.trips.deletedTrip,
   savedLike: state.posts.savedLike,
+  updatedActiveTrip: state.trips.activeTrip,
+  activeTripUpdatedAt: state.trips.activeTripUpdatedAt,
   lastCoords: state.global['geolocation.lastCoords']
 }), {
   getFeedItem,
@@ -162,5 +168,6 @@ export default connect(state => ({
   navigate,
   setProperty,
   saveTripCoord,
-  getLastCoords
+  getLastCoords,
+  getActiveTrip
 })(withStyles(s)(CheckIn));

@@ -71,9 +71,7 @@ export default {
     `;
 
     // AND NOT EXISTS (SELECT id FROM "CheckIn" WHERE id = t."lastCheckInId" AND "createdAt" > '${dateTime.toISOString()}')
-    console.log('OPEN TRIP QUERY', query);
     const results = await sequelize.query(query, { model: Trip, mapToModel: true });
-    console.log('OPEN TRIP RESULTS', results);
     return results.length > 0 ? results[0] : null;
 
   },
@@ -101,6 +99,11 @@ export default {
     return latestTrips;
   },
 
+  deleteTripCoords: async (where) => {
+    const deleteResult = await TripCoord.destroy({ where });
+    return deleteResult;
+  },
+
   saveTripCoord: async (tripCoord) => {
     const created = await TripCoord.create(tripCoord);
     return await TripCoord.findOne({ where: { id: created.id }, include: [{ all: true }] });
@@ -117,5 +120,15 @@ export default {
     return tripCoords;
 
   },
+
+  getLastUserTrip: async (userId) => {
+    const query = `
+        SELECT t.* FROM "Trip" t, "CheckIn" ci
+            WHERE t."firstCheckInId" = ci.id
+            ORDER BY ci."createdAt" DESC LIMIT 1
+    `;
+    const results = await sequelize.query(query, { model: Trip, mapToModel: true });
+    return results.length > 0 ? results[0] : null;
+  }
 
 };

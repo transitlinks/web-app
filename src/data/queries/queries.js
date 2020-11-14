@@ -9,8 +9,17 @@ export const createQuery = (queries) => {
 
 };
 
+export const getActiveTripQuery = () => {
+  return `
+    activeTrip {
+      uuid,
+      name
+    }
+  `;
+};
+
 export const getTripCoordEntity = () => {
-  return  `
+  return `
     {
       latitude,
       longitude

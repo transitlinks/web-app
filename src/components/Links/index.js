@@ -690,7 +690,6 @@ const LinksView = (props) => {
 
         //mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
         mapContent = getConnectionsMapContent(links.departures.filter(dep => !dep.ignore).concat(links.arrivals), terminal => {
-          console.log('terminal selected', terminal);
           navigate(getNavigationPath({
             locality: terminal.locality,
             linkedLocality: terminal.linkedTerminal.locality,
