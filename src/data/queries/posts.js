@@ -224,12 +224,16 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   const savedTerminal = await terminalRepository.saveTerminal(newTerminal);
 
+  const checkInTimeSeconds = new Date(checkIn.createdAt).getSeconds();
+  const savedTerminalCreatedTime = new Date(savedTerminal.createdAt).getTime();
+  const savedTerminalTimeWithSeconds = new Date(savedTerminalCreatedTime + (checkInTimeSeconds * 1000));
+
   if (savedTerminal.type === 'arrival') {
-    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminal.createdAt });
+    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminalTimeWithSeconds });
   }
 
   if (savedTerminal.type === 'departure' && (new Date(savedTerminal.createdAt)).getTime() < (new Date(checkIn.createdAt)).getTime()) {
-    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminal.createdAt });
+    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminalTimeWithSeconds });
   }
 
   if (newLinkedTerminal) {
@@ -452,16 +456,12 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   if (departureBeforeNew && departureBeforeNew.linkedTerminal) await adjustConnection(departureBeforeNew);
 
   if (checkInInput.tags) {
-    console.log('input tags', checkInInput.tags);
     const checkInTags = await tagRepository.getTagsByCheckInIds([savedCheckIn.id]);
-    console.log('check-in tags', checkInTags);
     const deletedEntityTags = checkInTags.filter(tag => checkInInput.tags.indexOf(tag.tag) === -1);
-    console.log('deleted tags', deletedEntityTags);
     await tagRepository.deleteEntityTags({ id: deletedEntityTags.map(tag => tag.entityTagId) });
   }
 
   const localDateTime = getLocalDateTime(savedCheckIn.createdAt, timeZone);
-  log.info('localDateTime', localDateTime);
 
   return {
     ...savedCheckIn.json(),
@@ -882,7 +882,6 @@ export const PostMutationFields = {
       });
 
       const filePath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), mediaItem.url);
-      console.log('DELETING MEDIA ITEM:', mediaItem.json(), filePath);
       await postRepository.deleteMediaItems({ uuid: mediaItem.uuid });
       fs.unlinkSync(filePath);
 
@@ -950,7 +949,6 @@ export const getFeedItem = async (request, checkIn) => {
   const lastStartedTrip = await tripRepository.getLastStartedTrip(checkIn.userId, checkIn.createdAt);
   if (lastStartedTrip && lastStartedTrip.lastCheckInId) {
     const lastTripCheckIn = await checkInRepository.getCheckIn({ id: lastStartedTrip.lastCheckInId });
-    console.log('last check in', lastTripCheckIn.createdAt, checkIn.createdAt);
     if (lastTripCheckIn.createdAt.getTime() > checkIn.createdAt.getTime()) {
       trip = lastStartedTrip;
     }

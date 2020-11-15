@@ -10,45 +10,54 @@ import EmailInput from '../EmailInput';
 import PasswordInput from '../PasswordInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.profile';
+import { emailValid } from '../../core/utils';
 
-const Profile = ({ 
+const Profile = ({
   intl,
   setProperty,
   resetPassword, saveProfile,
-  email, emailValid, password, passwordValid,
+  email, username, password, passwordValid,
   saveProfileResult, resetPasswordResult,
   profile
-}) => {	
+}) => {
 
   const handleEmailChange = (input) => {
     setProperty('profile-email', { email: input.value, valid: input.pass });
   };
-  
+
   const handlePasswordChange = (input) => {
     setProperty('profile-password', { password: input.value, valid: input.pass });
   };
-  
-  const emailValue = (email === null) ? profile.email : email;
+
+  const emailValue = (email === null || email === undefined) ? profile.email : email;
+  const usernameValue = (username === null || username === undefined) ? profile.username : username;
+
 	return (
     <div>
       <div id="profile-fields" className={s.profile}>
-        <div>
+        <div className={s.email}>
           <EmailInput id="profile-email" name="profile-email" value={emailValue} onChange={handleEmailChange} />
         </div>
-        <div className={s.save}>
-          { 
-            saveProfileResult === 'success' &&
-              <FormattedMessage {...msg['save-profile-success']} />
-          }
-          { 
-            saveProfileResult === 'error' &&
-              <FormattedMessage {...msg['save-profile-error']} />
-          }
-          <RaisedButton className={s.button} 
-            disabled={!(emailValid)}
-            label={intl.formatMessage(msg['save-profile'])} 
-            onClick={() => saveProfile(profile.uuid, { email })} />
+        <div className={s.username}>
+          <TextField style={{ width: '100%' }}
+                     floatingLabelText="Username"
+                     value={usernameValue}
+                     onChange={(event) => setProperty('profile.username', event.target.value)} />
         </div>
+      </div>
+      <div className={s.save}>
+        {
+          saveProfileResult === 'success' &&
+          <FormattedMessage {...msg['save-profile-success']} />
+        }
+        {
+          saveProfileResult === 'error' &&
+          <FormattedMessage {...msg['save-profile-error']} />
+        }
+        <RaisedButton className={s.button}
+                      disabled={!emailValid(emailValue).pass || (emailValue === profile.email && usernameValue === profile.username)}
+                      label={intl.formatMessage(msg['save-profile'])}
+                      onClick={() => saveProfile(profile.uuid, { email: emailValue, username: usernameValue })} />
       </div>
       <div id="password-reset" className={s.password}>
         <div>
@@ -56,17 +65,17 @@ const Profile = ({
           <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
         </div>
         <div className={s.save}>
-          { 
+          {
             resetPasswordResult === 'success' &&
               <FormattedMessage {...msg['reset-password-success']} />
           }
-          { 
+          {
             resetPasswordResult === 'error' &&
               <FormattedMessage {...msg['reset-password-error']} />
           }
-          <RaisedButton className={s.button} 
+          <RaisedButton className={s.button}
             disabled={!(password && passwordValid)}
-            label={intl.formatMessage(msg['confirm-reset'])} 
+            label={intl.formatMessage(msg['confirm-reset'])}
             onClick={() => resetPassword(profile.uuid, password)} />
         </div>
       </div>
@@ -75,11 +84,12 @@ const Profile = ({
     </div>
   );
 
-}; 
+};
 
 export default injectIntl(
   connect(state => ({
     email: state.profile.email,
+    username: state.profile.username,
     emailValid: state.profile.emailValid,
     password: state.profile.password,
     passwordValid: state.profile.passwordValid,

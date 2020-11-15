@@ -10,6 +10,7 @@ import CheckInView from '../../components/CheckIn';
 import { updateLastCoords } from '../../services/linkService';
 import { saveTripCoord, getActiveTrip } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
+import { isMobile } from '../../components/utils';
 
 const title = 'Transitlinks - Check In';
 
@@ -43,12 +44,11 @@ class CheckIn extends React.Component {
 
 
     const activeTrip = this.props.feedItem.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
-    if (activeTrip) {
+    if (activeTrip && isMobile()) {
       updateLastCoords(props.lastCoords, prevProps.lastCoords, props.saveTripCoord, props.getLastCoords);
     }
 
     if (props.deleted) {
-      console.log('deleted check-in', props.deleted);
       props.setProperty('posts.deletedCheckIn', null);
       props.setProperty('posts.editCheckIn', false);
       props.navigate(props.deleted.nextUrl);
@@ -128,7 +128,6 @@ class CheckIn extends React.Component {
       openTerminals,
       view
     } = this.props;
-
     return (
       <div className={s.root}>
         <div className={s.container}>

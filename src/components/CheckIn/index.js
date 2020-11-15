@@ -11,7 +11,6 @@ const CheckIn = ({
   checkInItem, openTerminals, transportTypes, edit, addPost, editPost, editTerminal, savedTerninal, view, error
 }) => {
 
-  console.log('checkin item', checkInItem.checkIn.uuid);
   return (
     <div className={s.container}>
       <ErrorHeader />

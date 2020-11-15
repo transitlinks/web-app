@@ -12,6 +12,7 @@ import { getClientId } from "../../core/utils";
 
 import debounce from "lodash.debounce";
 import { updateLastCoords } from '../../services/linkService';
+import { isMobile } from '../../components/utils';
 
 const title = 'Transitlinks';
 
@@ -106,9 +107,9 @@ class Home extends React.Component {
     params.offset = 0;
 
     const activeTrip = this.props.feed.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
-    //if (activeTrip) {
+    if (activeTrip && isMobile()) {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
-    //}
+    }
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {

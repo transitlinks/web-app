@@ -23,6 +23,7 @@ export const UserInputType = new GraphQLInputObjectType({
   fields: () => ({
     uuid: { type: GraphQLString },
     email: { type: GraphQLString },
+    username: { type: GraphQLString },
     password: { type: GraphQLString }
   })
 });

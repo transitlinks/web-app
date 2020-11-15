@@ -41,14 +41,18 @@ export const TripMutationFields = {
         }
         const tripCoords = await tripRepository.getTripCoords({ userId, createdAt: { $gte: coordsSince }}, { order: [[ 'createdAt', 'DESC' ]] });
         const allTripCoords = [savedTripCoord, ...tripCoords];
+        console.log('all trip coords size:', allTripCoords.length);
         if (allTripCoords.length > 10) {
           let distances = [];
           for (let i = 0; i < allTripCoords.length - 2; i++) {
-            const distance = getDistance(allTripCoords[i], allTripCoords[i + 2]);
+            const from = allTripCoords[i];
+            const to = allTripCoords[i + 2];
+            const distance = getDistance(from.json(), to.json());
             distances.push({ distance, index: i + 1 });
           }
           distances = distances.sort((a, b) => a.distance - b.distance);
           const removeIndexes = distances.slice(0, allTripCoords.length - 10).map(d => allTripCoords[d.index].id);
+          console.log('remove indexes:', removeIndexes);
           await tripRepository.deleteTripCoords({ id: removeIndexes });
         }
         return savedTripCoord.json();

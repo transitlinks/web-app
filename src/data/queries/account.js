@@ -15,7 +15,7 @@ export const AccountQueryFields = {
     resolve: async ({ request }, { uuid }) => {
       requireOwnership(request, uuid);
       const user = await userRepository.getByUuid(uuid);
-      return { uuid: user.uuid, email: user.email, photo: user.photo };
+      return { uuid: user.uuid, email: user.email, username: user.username, photo: user.photo };
     }
 
   }

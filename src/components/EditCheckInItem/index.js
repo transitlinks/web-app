@@ -323,23 +323,31 @@ const EditCheckInItemView = (props) => {
 
   const { checkIn } = item;
 
+  const departures = item.terminals.filter(terminal => terminal.type === 'departure');
+  const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
+
   let defaultType = 'reaction';
   let openDepartures = [];
   let openArrivals = [];
   if (!editPost.uuid && openTerminals && openTerminals.length > 0) {
     openArrivals = openTerminals.filter(terminal => (terminal.type === 'arrival' && terminal.checkIn.uuid !== checkIn.uuid));
-    openDepartures = openTerminals.filter(terminal => (terminal.type === 'departure' && terminal.checkIn.uuid !== checkIn.uuid));
+    openDepartures = openTerminals.filter(terminal => (
+      terminal.type === 'departure' &&
+      terminal.checkIn.uuid !== checkIn.uuid &&
+      !arrivals.find(arr => arr.linkedTerminal.uuid === terminal.uuid)
+    ));
     if (openArrivals.length > 0) {
       defaultType = 'departure';
     } else if (openDepartures.length > 0) {
       defaultType = 'arrival';
+    } else if (departures.length > 0 && item.posts.length === 0) {
+      defaultType = 'departure';
+    } else if (savedTerminal) {
+      defaultType = savedTerminal.type;
     }
   }
 
   const selectedType = type || defaultType;
-
-  const departures = item.terminals.filter(terminal => terminal.type === 'departure');
-  const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
 
   const showSavedTerminal = (
     (departures.length > 0 && selectedType === 'departure') ||
@@ -398,7 +406,7 @@ const EditCheckInItemView = (props) => {
               <div className={s.contentTypeSelectors}>
                 { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
                 { openDepartures.length === 0 && typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
-                { openDepartures.length > 0 && typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
+                { (openDepartures.length > 0 || arrivals.length > 0) && typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
               </div>
             </div>
           }

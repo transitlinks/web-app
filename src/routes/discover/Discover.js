@@ -10,6 +10,7 @@ import debounce from 'lodash.debounce';
 import { saveTripCoord } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
 import { updateLastCoords } from '../../services/linkService';
+import { isMobile } from '../../components/utils';
 
 const title = 'Transitlinks - Discover';
 
@@ -56,7 +57,7 @@ class Discover extends React.Component {
 
     const { savedComment, deletedComment } = this.props;
 
-    if (this.props.activeTrip) {
+    if (this.props.activeTrip && isMobile()) {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
     }
 

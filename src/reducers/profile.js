@@ -5,12 +5,13 @@ import {
   RESET_PASSWORD_SUCCESS,
   RESET_PASSWORD_ERROR
 } from '../constants';
+import { propToState } from './utils';
 
 export default function reduce(state = { email: null, password: '' }, action) {
-  
-  delete state.saveProfileResult; 
-  delete state.resetPasswordResult; 
-  
+
+  delete state.saveProfileResult;
+  delete state.resetPasswordResult;
+
   if (action.type === SET_PROPERTY) {
     switch (action.payload.name) {
       case 'profile-email':
@@ -31,6 +32,6 @@ export default function reduce(state = { email: null, password: '' }, action) {
       return { ...state, resetPasswordResult: 'error' };
   }
 
-  return state;
+  return propToState(action, 'profile', { ...state });
 
 }

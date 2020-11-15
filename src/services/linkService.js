@@ -349,15 +349,15 @@ export const getBoundsZoomLevel = (bounds, mapDim) => {
 export const updateLastCoords = (lastCoords, prevLastCoords, saveTripCoord, getLastCoords) => {
 
   if (lastCoords) {
-    //if (!prevLastCoords || (
-    //  lastCoords.latitude !== prevLastCoords.latitude &&
-    //  lastCoords.longitude !== prevLastCoords.longitude
-    //)) {
+    if (!prevLastCoords || (
+      lastCoords.latitude !== prevLastCoords.latitude &&
+      lastCoords.longitude !== prevLastCoords.longitude
+    )) {
       saveTripCoord({
         latitude: lastCoords.latitude,
         longitude: lastCoords.longitude,
       });
-    //}
+    }
   }
 
   if (!lastCoords || (new Date()).getTime() - lastCoords.receivedAt > 60000) {

@@ -99,23 +99,22 @@ const Terminal = ({
 
   const linkedTerminalLabel = type === 'arrival' ? 'Link to departure' : 'Link to arrival';
 
+
+  const getDefaultTerminalTime = () => {
+    const checkInDateTime = new Date(checkIn.date);
+    const timeDiff = Math.abs(now.getTime() - checkInDateTime.getTime());
+    return (timeDiff < 1000 * 60 * 60 * 48) ? now : checkInDateTime;
+  };
+
+  const defaultDateTime = (linkedTerminal && !editTerminal.uuid) ?
+    new Date(editTerminal.localDateTime || getDefaultTerminalTime()) :
+    new Date(editTerminal.localDateTime || getDefaultTerminalTime());
+
   const dateTime = ({ date, time }) => {
     const newDate = date ? getPaddedDate(date) : getPaddedDate(editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime);
     const newTime = time ? getPaddedTime(time) : getPaddedTime(editTerminal.localDateTime ? new Date(editTerminal.localDateTime) : defaultDateTime);
     return newDate + 'T' + newTime;
   };
-
-
-  const getDefaultLinkedTime = () => {
-    const checkInDateTime = new Date(checkIn.date);
-    const timeDiff = Math.abs(now.getTime() - checkInDateTime.getTime());
-    console.log('time diff', timeDiff);
-    return (timeDiff < 1000 * 60 * 60 * 48) ? now : checkInDateTime;
-  };
-
-  const defaultDateTime = (linkedTerminal && !editTerminal.uuid) ?
-    new Date(editTerminal.localDateTime || getDefaultLinkedTime()) :
-    new Date(editTerminal.localDateTime || checkIn.date);
 
   const save = () => {
 

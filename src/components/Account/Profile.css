@@ -1,12 +1,32 @@
 @import '../../components/variables.css';
 
-.root {  
+.root {
 }
 
 .container {
 }
 
-.email {
+.profile {
+}
+
+@media(min-width: 400px) {
+  .profile {
+    display: flex;
+  }
+  .profile .email {
+    width: 50%;
+    margin-right: 4px;
+  }
+  .profile .username {
+    width: 50%;
+    margin-left: 4px;
+  }
+}
+
+.profile .email {
+}
+
+.profile .username {
 }
 
 .password {

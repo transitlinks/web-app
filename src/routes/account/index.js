@@ -10,7 +10,7 @@ export default {
   path: '/account/:section?/:uuid?',
 
   async action({ params, context }) {
-    
+
     let uuid = params.uuid;
     if (!uuid) {
       const state = context.store.getState();
@@ -19,30 +19,31 @@ export default {
         uuid = auth.user.uuid;
       }
     }
-    
+
     const { graphqlRequest } = context.store.helpers;
- 
-    try { 
-      
+
+    try {
+
       const section = params.section || 'profile';
-      
+
       if (section === 'profile') {
-        
+
         const { data } = await graphqlRequest(
           `query {
             profile (uuid: "${uuid}") {
               uuid,
               email,
+              username,
               photo
             }
           }`
         );
-        
+
         log.info("event=received-profile-data", data);
         return <Account profile={data.profile} />;
 
       } else if (section === 'links') {
-        
+
         const { data } = await graphqlRequest(
           `query {
             userLinks (uuid: "${uuid}") {
@@ -60,14 +61,14 @@ export default {
             }
           }`
         );
-        
+
         log.info("event=received-user-links-data", data);
         return <Account userLinks={data.userLinks} />;
-      
+
       }
-   
+
       throw new Error('Unknown section');
-    
+
     } catch (error) {
       return <ErrorPage errors={error.errors} />
     }

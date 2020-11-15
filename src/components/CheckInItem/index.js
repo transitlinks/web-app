@@ -75,8 +75,11 @@ const CheckInItem = (
 
   const departures = item.terminals.filter(terminal => terminal.type === 'departure');
   const arrivals = item.terminals.filter(terminal => terminal.type === 'arrival');
-  const openDepartures = (openTerminals || []).filter(terminal => terminal.type === 'departure' && (new Date(terminal.localDateTime)).getTime() < (new Date(item.checkIn.date)).getTime())
-
+  const openDepartures = (openTerminals || []).filter(terminal => (
+    terminal.type === 'departure' &&
+    terminal.checkIn.uuid !== item.checkIn.uuid &&
+    !arrivals.find(arr => arr.linkedTerminal.uuid === terminal.uuid)
+  ));
 
   if (!contentType) {
     if (openDepartures.length > 0) contentType = 'arrival';
@@ -273,7 +276,7 @@ const CheckInItem = (
               (showSettings && contentType === 'reaction') &&
               <div className={s.addPost}>
                 <EditCheckInItem checkInItem={checkInItem}
-                                 openTerminals={[]}
+                                 openTerminals={openTerminals}
                                  transportTypes={transportTypes}
                                  hideContent
                                  frameId="frame-edit" />

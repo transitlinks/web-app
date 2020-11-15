@@ -7,6 +7,7 @@ import s from './CheckIn.css';
 import { getGeolocation } from '../../actions/global';
 import { saveCheckIn } from '../../actions/checkIns';
 import { setProperty } from '../../actions/properties';
+import { saveTripCoord } from '../../actions/trips';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
 
@@ -34,7 +35,7 @@ const createCheckIn = (geolocation, selectedLocation) => {
 };
 
 
-const CheckInView = ({ geolocation, searchLocation, selectedLocation, setProperty, getGeolocation, saveCheckIn }) => {
+const CheckInView = ({ geolocation, searchLocation, selectedLocation, setProperty, saveTripCoord, getGeolocation, saveCheckIn }) => {
 
   let positionElem = null;
 
@@ -82,6 +83,13 @@ const CheckInView = ({ geolocation, searchLocation, selectedLocation, setPropert
         <div className={s.placeSelector}>
           <div className={s.positionContainer}>
             <div className={s.positionButton} onClick={() => {
+              saveTripCoord(selectedLocation ?
+                  { latitude: selectedLocation.lat, longitude: selectedLocation.lng } :
+                  { latitude: geolocation.position.coords.latitude, longitude: geolocation.position.coords.longitude });
+            }}>
+              <FontIcon className="material-icons" style={{ fontSize: '30px' }}>arrow_circle_down</FontIcon>
+            </div>
+            <div className={s.positionButton} onClick={() => {
               setProperty('posts.searchLocation', false);
               setProperty('departure', null);
               getGeolocation();
@@ -121,6 +129,7 @@ export default injectIntl(
   }), {
     setProperty,
     getGeolocation,
-    saveCheckIn
+    saveCheckIn,
+    saveTripCoord
   })(withStyles(s)(CheckInView))
 );

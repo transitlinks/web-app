@@ -8,6 +8,7 @@ import { setProperty } from "../../actions/properties";
 import { getMapBounds, updateLastCoords } from '../../services/linkService';
 import { saveTripCoord } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
+import { isMobile } from '../../components/utils';
 
 const title = 'Transitlinks - Discover';
 
@@ -27,7 +28,7 @@ class Links extends React.Component {
     const linksResult = this.props.linksResult || this.props.loadedLinksResult;
     const prevLinksResult = prevProps.linksResult || prevProps.loadedLinksResult;
 
-    if (this.props.activeTrip) {
+    if (this.props.activeTrip && isMobile()) {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
     }
 

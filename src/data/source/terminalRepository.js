@@ -412,7 +412,7 @@ export default {
 
   getDepartureBefore: async (dateTime, userId, checkIn) => {
     const query = {
-      createdAt: { $lt: dateTime },
+      createdAt: { $lte: dateTime },
       userId
     };
 
