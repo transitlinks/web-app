@@ -42,11 +42,12 @@ class CheckIn extends React.Component {
 
     const props = this.props;
 
-
+    /*
     const activeTrip = this.props.feedItem.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
     if (activeTrip && isMobile()) {
       updateLastCoords(props.lastCoords, prevProps.lastCoords, props.saveTripCoord, props.getLastCoords);
     }
+     */
 
     if (props.deleted) {
       props.setProperty('posts.deletedCheckIn', null);

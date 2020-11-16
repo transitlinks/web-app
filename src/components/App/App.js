@@ -9,14 +9,10 @@ import { connect } from 'react-redux';
 import { getLastCoords } from '../../actions/global';
 import { setProperty } from '../../actions/properties';
 import { getActiveTrip, saveTripCoord } from '../../actions/trips';
+import { updateLastCoords } from '../../services/linkService';
+import { isMobile } from '../utils';
 
 class App extends Component {
-
-
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
 
   static propTypes = {
     context: PropTypes.shape({
@@ -37,6 +33,13 @@ class App extends Component {
     setMeta: PropTypes.func.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      lastCoordsUpdatedAt: 0
+    };
+  }
+
   getChildContext() {
     const context = this.props.context;
     return {
@@ -52,37 +55,60 @@ class App extends Component {
     this.removeCss = insertCss(s);
   }
 
-  componentWillUnmount() {
-    this.removeCss();
-  }
-
   componentDidMount() {
-    console.log('APP COMPONENT MOUNTED');
-    let hidden, visibilityChange;
-    if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-      hidden = "hidden";
-      visibilityChange = "visibilitychange";
-    } else if (typeof document.msHidden !== "undefined") {
-      hidden = "msHidden";
-      visibilityChange = "msvisibilitychange";
-    } else if (typeof document.webkitHidden !== "undefined") {
-      hidden = "webkitHidden";
-      visibilityChange = "webkitvisibilitychange";
+
+    //if (!isMobile()) return;
+
+    let hidden;
+    let visibilityChange;
+    if (typeof document.hidden !== 'undefined') {
+      hidden = 'hidden';
+      visibilityChange = 'visibilitychange';
+    } else if (typeof document.msHidden !== 'undefined') {
+      hidden = 'msHidden';
+      visibilityChange = 'msvisibilitychange';
+    } else if (typeof document.webkitHidden !== 'undefined') {
+      hidden = 'webkitHidden';
+      visibilityChange = 'webkitvisibilitychange';
     }
-    console.log('hidden/visChange', hidden, visibilityChange);
+
     const handleVisibilityChange = () => {
       if (!document[hidden]) {
         const now = (new Date()).toISOString();
-        console.log('TXLINKS BECAME VISIBLE ' + now);
         this.setState({ lastVisibility: now });
+        this.props.getLastCoords();
+        this.props.getActiveTrip();
       }
     };
 
-    if (typeof document.addEventListener === "undefined" || hidden === undefined) {
+    if (typeof document.addEventListener === 'undefined' || hidden === undefined) {
       console.log('Page Visibility API not supported. Automatic trip coordinate saving not enabled.');
     } else {
       document.addEventListener(visibilityChange, handleVisibilityChange, false);
     }
+
+    this.props.getLastCoords();
+    this.props.getActiveTrip();
+
+  }
+
+  componentDidUpdate() {
+
+    const lastCoords = this.props.lastCoords;
+    const activeTrip = this.props.activeTrip;
+    const lastCoordsUpdatedDiff = (new Date()).getTime() - this.state.lastCoordsUpdatedAt;
+    if (lastCoordsUpdatedDiff > 60000 && activeTrip && lastCoords) {
+      this.setState({ lastCoordsUpdatedAt: (new Date()).getTime() });
+      this.props.saveTripCoord({
+        latitude: lastCoords.latitude,
+        longitude: lastCoords.longitude,
+      });
+    }
+
+  }
+
+  componentWillUnmount() {
+    this.removeCss();
   }
 
   render() {
@@ -99,7 +125,6 @@ class App extends Component {
 
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
-          <div>LAST VISIBILITY: {this.state.lastVisibility}</div>
           <Header />
           {this.props.children}
           <Footer />
@@ -111,9 +136,12 @@ class App extends Component {
 
 }
 
-//export default App;
-
 export default connect(state => ({
+  activeTrip: state.trips.activeTrip,
+  deletedTrip: state.trips.deletedTrip,
+  savedTrip: state.trips.savedTrip,
+  lastCoords: state.global['geolocation.lastCoords'],
+  lastCoordsReceivedAt: state.global['geolocation.lastCoordsReceivedAt']
 }), {
   setProperty,
   saveTripCoord,

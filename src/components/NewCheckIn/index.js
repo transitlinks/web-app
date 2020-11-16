@@ -83,13 +83,6 @@ const CheckInView = ({ geolocation, searchLocation, selectedLocation, setPropert
         <div className={s.placeSelector}>
           <div className={s.positionContainer}>
             <div className={s.positionButton} onClick={() => {
-              saveTripCoord(selectedLocation ?
-                  { latitude: selectedLocation.lat, longitude: selectedLocation.lng } :
-                  { latitude: geolocation.position.coords.latitude, longitude: geolocation.position.coords.longitude });
-            }}>
-              <FontIcon className="material-icons" style={{ fontSize: '30px' }}>arrow_circle_down</FontIcon>
-            </div>
-            <div className={s.positionButton} onClick={() => {
               setProperty('posts.searchLocation', false);
               setProperty('departure', null);
               getGeolocation();

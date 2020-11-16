@@ -81,20 +81,27 @@ export default function reduce(state = {}, action) {
       return graphqlReduce(
         state, action,
         {
-          start: () => ({}),
-          success: () => {
-
+          start: () => {
             const { like, variables: { frameId, checkInUuid } } = action.payload;
-
             return {
-              savedLike: {
-                ...like,
+              sentLike: {
                 frameId,
                 checkInUuid
               }
             };
           },
-          error: () => ({ like: null })
+          success: () => {
+            const { like, variables: { frameId, checkInUuid } } = action.payload;
+            return {
+              savedLike: {
+                ...like,
+                frameId,
+                checkInUuid
+              },
+              sentLike: null
+            };
+          },
+          error: () => ({ like: null, sentLike: null })
         },
         SAVE_LIKE_START,
         SAVE_LIKE_SUCCESS,

@@ -30,10 +30,8 @@ export default function global(state = {}, action) {
     case GET_COORDS_SUCCESS:
       endState['geolocation.coordUpdateStatus'] = 'located';
       endState['geolocation.coordUpdateError'] = null;
-      endState['geolocation.lastCoords'] = {
-        ...action.payload,
-        receivedAt: (new Date()).getTime()
-      };
+      endState['geolocation.lastCoords'] = action.payload;
+      endState['geolocation.lastCoordsReceivedAt'] = (new Date()).getTime();
       return endState;
     case GET_COORDS_ERROR:
       endState['geolocation.coordUpdateStatus'] = 'error';

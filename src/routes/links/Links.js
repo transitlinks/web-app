@@ -28,9 +28,11 @@ class Links extends React.Component {
     const linksResult = this.props.linksResult || this.props.loadedLinksResult;
     const prevLinksResult = prevProps.linksResult || prevProps.loadedLinksResult;
 
+    /*
     if (this.props.activeTrip && isMobile()) {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
     }
+     */
 
     if (query.locality) {
       this.props.setProperty('links.selectedLocality', query.locality);

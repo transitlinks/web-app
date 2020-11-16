@@ -57,9 +57,11 @@ class Discover extends React.Component {
 
     const { savedComment, deletedComment } = this.props;
 
+    /*
     if (this.props.activeTrip && isMobile()) {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
     }
+     */
 
     if (savedComment) {
       this.props.setProperty('posts.savedComment', null);

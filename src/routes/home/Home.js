@@ -106,10 +106,12 @@ class Home extends React.Component {
     const params = getParams(this.props);
     params.offset = 0;
 
+    /*
     const activeTrip = this.props.feed.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
     if (activeTrip && isMobile()) {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
     }
+     */
 
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {

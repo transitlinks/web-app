@@ -18,7 +18,7 @@ import TextField from 'material-ui/TextField';
 
 const CheckInItemContent = ({
   checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
-  savedTerminal, feedItemIndex, savedCheckIn, feedUpdated, commentText,
+  savedTerminal, feedItemIndex, savedCheckIn, feedUpdated, commentText, sentLike,
   setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, saveComment,
   editable
 }) => {
@@ -186,15 +186,21 @@ const CheckInItemContent = ({
                   <div className={s.likes}>
                     <div className={s.heart}>
                       {
-                        checkIn.likedByUser ?
-                          <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'red' }}
-                                    onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'off', frameId, checkIn.uuid)}>
-                            favorite
-                          </FontIcon> :
-                          <FontIcon className="material-icons" style={{ fontSize: '20px' }}
-                                    onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'on', frameId, checkIn.uuid)}>
-                            favorite_border
-                          </FontIcon>
+                        (sentLike && sentLike.checkInUuid === checkIn.uuid && sentLike.frameId === frameId) ?
+                            <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'gray' }}
+                                      onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'off', frameId, checkIn.uuid)}>
+                              favorite
+                            </FontIcon> : (
+                            checkIn.likedByUser ?
+                              <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'red' }}
+                                        onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'off', frameId, checkIn.uuid)}>
+                                favorite
+                              </FontIcon> :
+                              <FontIcon className="material-icons" style={{ fontSize: '20px' }}
+                                        onClick={() => saveLike(checkIn.uuid, 'CheckIn', 'on', frameId, checkIn.uuid)}>
+                                favorite_border
+                              </FontIcon>
+                          )
                       }
                     </div>
                     <div className={s.count}>
@@ -255,6 +261,7 @@ export default injectIntl(
     savedTerminal: state.editTerminal.savedTerminal,
     showSettings: state.posts.showSettings,
     savedCheckIn: state.posts.checkIn,
+    sentLike: state.posts.sentLike,
     feedUpdated: state.posts.feedUpdated,
     commentText: state.posts.commentText,
   }), {

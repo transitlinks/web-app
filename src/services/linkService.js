@@ -348,7 +348,11 @@ export const getBoundsZoomLevel = (bounds, mapDim) => {
 
 export const updateLastCoords = (lastCoords, prevLastCoords, saveTripCoord, getLastCoords) => {
 
+  console.log('UPDATE LAST COORDS', lastCoords, prevLastCoords);
+  let lastChecked = 0;
   if (lastCoords) {
+    lastChecked = (new Date()).getTime() - lastCoords.receivedAt;
+    console.log('LAST CHECKED', lastChecked);
     if (!prevLastCoords || (
       lastCoords.latitude !== prevLastCoords.latitude &&
       lastCoords.longitude !== prevLastCoords.longitude
@@ -360,7 +364,8 @@ export const updateLastCoords = (lastCoords, prevLastCoords, saveTripCoord, getL
     }
   }
 
-  if (!lastCoords || (new Date()).getTime() - lastCoords.receivedAt > 60000) {
+  if (!lastCoords || lastChecked > 60000) {
+    console.log('GET LAST COORDS');
     getLastCoords();
   }
 
