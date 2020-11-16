@@ -5,8 +5,18 @@ import Header from '../Header';
 import Footer from '../Footer';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { connect } from 'react-redux';
+import { getLastCoords } from '../../actions/global';
+import { setProperty } from '../../actions/properties';
+import { getActiveTrip, saveTripCoord } from '../../actions/trips';
 
 class App extends Component {
+
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
   static propTypes = {
     context: PropTypes.shape({
@@ -46,6 +56,35 @@ class App extends Component {
     this.removeCss();
   }
 
+  componentDidMount() {
+    console.log('APP COMPONENT MOUNTED');
+    let hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+    }
+    console.log('hidden/visChange', hidden, visibilityChange);
+    const handleVisibilityChange = () => {
+      if (!document[hidden]) {
+        const now = (new Date()).toISOString();
+        console.log('TXLINKS BECAME VISIBLE ' + now);
+        this.setState({ lastVisibility: now });
+      }
+    };
+
+    if (typeof document.addEventListener === "undefined" || hidden === undefined) {
+      console.log('Page Visibility API not supported. Automatic trip coordinate saving not enabled.');
+    } else {
+      document.addEventListener(visibilityChange, handleVisibilityChange, false);
+    }
+  }
+
   render() {
 
     if (this.props.error) {
@@ -60,6 +99,7 @@ class App extends Component {
 
       <MuiThemeProvider muiTheme={getMuiTheme({}, { userAgent })}>
         <div>
+          <div>LAST VISIBILITY: {this.state.lastVisibility}</div>
           <Header />
           {this.props.children}
           <Footer />
@@ -71,4 +111,12 @@ class App extends Component {
 
 }
 
-export default App;
+//export default App;
+
+export default connect(state => ({
+}), {
+  setProperty,
+  saveTripCoord,
+  getLastCoords,
+  getActiveTrip
+})(App);

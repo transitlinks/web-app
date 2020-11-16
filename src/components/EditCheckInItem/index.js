@@ -157,25 +157,28 @@ const getTabContent = (type, props) => {
                         cancel
                       </FontIcon>
                     </div>
-                    <div className={s.copyExif}>
-                      <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'black' }}
-                                onClick={() => {
-                                  const { latitude, longitude, date } = mediaItem;
-                                  if (latitude && longitude) {
-                                    saveCheckIn({
-                                      checkIn: {
-                                        uuid: checkIn.uuid,
-                                        latitude,
-                                        longitude,
-                                        date,
-                                        exif: true
+                    {
+                      (mediaItem.latitude && mediaItem.longitude) &&
+                        <div className={s.copyExif}>
+                          <FontIcon className="material-icons" style={{ fontSize: '20px', color: 'black' }}
+                                    onClick={() => {
+                                      const { latitude, longitude, date } = mediaItem;
+                                      if (latitude && longitude) {
+                                        saveCheckIn({
+                                          checkIn: {
+                                            uuid: checkIn.uuid,
+                                            latitude,
+                                            longitude,
+                                            date,
+                                            exif: true
+                                          }
+                                        });
                                       }
-                                    });
-                                  }
-                                }}>
-                        get_app
-                      </FontIcon>
-                    </div>
+                                    }}>
+                            get_app
+                          </FontIcon>
+                        </div>
+                    }
                     {
                       mediaItem.type === 'image' ?
                         <img src={env.MEDIA_URL + mediaItem.url} width="100%" /> :
