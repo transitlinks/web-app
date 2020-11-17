@@ -476,14 +476,23 @@ const renderLinksList = (props) => {
     .filter((routeId, index, self) => self.indexOf(routeId) === index)
     .sort((id1, id2) => id1 - id2);
 
-  const routes = routeIds.map(routeId => ({
-    routeId,
-    terminals: []
+  let routeCosts = terminals.map(terminal => terminal.routeCost)
+    .filter((routeCost, index, self) => self.indexOf(routeCost) === index)
+    .sort((cost1, cost2) => cost2 - cost1);
+
+  const routes = routeCosts.map(routeCost => ({
+    routeId: terminals.find(t => t.routeCost === routeCost).routeId,
+    routeCost,
+    terminals: terminals.filter(t => t.routeId && t.routeCost === routeCost)
   }));
 
+  console.log('ROUTES', routes);
+
+  /*
   for (let i = 0; i < terminals.length; i++) {
     if (terminals[i].routeId) routes[terminals[i].routeId - 1].terminals.push(terminals[i]);
   }
+   */
 
   return (
     <div>
@@ -491,12 +500,12 @@ const renderLinksList = (props) => {
         routes.length > 1 ?
           <div className={s.routesList}>
             {
-              routes.map(route => (
+              routes.map((route, i) => (
                 <div className={route.routeId === selectedRoute ? s.selectedRoute : s.route}>
                   <div className={s.routeHeader} onClick={() => {
                     setProperty('links.selectedRoute', route.routeId);
                     setProperty('links.selectedTerminal', null);
-                  }}>Route {route.routeId}</div>
+                  }}>Route {i + 1}</div>
                   <div className={s.linksList}>
                     {
                       route.terminals.sort((t1, t2) => t1.routeIndex - t2.routeIndex)

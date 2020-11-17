@@ -257,6 +257,7 @@ export const getLinksQuery = (params) => {
         latitude,
         longitude,
         routeId,
+        routeCost,
         departures {
           uuid,
           type,
@@ -268,6 +269,7 @@ export const getLinksQuery = (params) => {
           priceAmount,
           priceCurrency,
           routeId,
+          routeCost,
           routeIndex,
           localDateTime,
           utcDateTime,
@@ -313,6 +315,7 @@ export const getLinksQuery = (params) => {
           linkCount,
           reverseLinkCount,
           routeId,
+          routeCost,
           routeIndex,
           linkedTerminal {
             uuid,
@@ -350,6 +353,7 @@ export const getLinksQuery = (params) => {
           description,
           linkCount,
           routeId,
+          routeCost,
           routeIndex,
           linkedTerminal {
             uuid,

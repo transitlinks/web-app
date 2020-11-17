@@ -294,11 +294,12 @@ export const TransitLinkQueryFields = {
 
           for (let i = 0; i < routeKeys.length; i++) {
 
-            const departures = routes[routeKeys[i]]
+            const departures = routes[routeKeys[i]].departures
               .filter(dep => dep.linkedTerminalId)
               .map(dep => ({
                 ...dep,
                 routeId: parseInt(routeKeys[i]),
+                routeCost: routes[routeKeys[i]].cost,
                 routeIndex: dep.path_seq,
                 localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
                 utcDateTime: dep.createdAt,
@@ -319,6 +320,7 @@ export const TransitLinkQueryFields = {
           if (terminals.length > 0) terminal = terminals[0];
 
           if (terminal) {
+            terminals = terminals.sort((a, b) => a.routeCost - b.routeCost);
             linkStats.push({
               locality: terminal.locality,
               latitude: terminal.latitude,

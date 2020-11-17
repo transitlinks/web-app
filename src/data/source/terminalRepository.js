@@ -90,12 +90,12 @@ export default {
     if (params) {
       const { transportTypes } = params;
       if (transportTypes) {
-        costExpression = `(distance + (1 - (transport IN (${transportTypes.map(t => `''${t}''`).join(',')}))::integer) * 1000000)`;
+        costExpression = `(distance + ((transport IN (${transportTypes.map(t => `''${t}''`).join(',')}))::integer) * 1000000)`;
       }
     }
 
     const query = `
-      SELECT x.path_id, x.path_seq, t.*,
+      SELECT x.path_id, x.path_seq, x.cost, t.*,
         CASE
            WHEN edge = -1 THEN agg_cost ELSE NULL END AS "total_cost"
         FROM
@@ -112,6 +112,7 @@ export default {
             x.path_id, x.path_seq;
     `;
 
+    console.log('ROUTE QUERY', query);
     const departures = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
 
     const routes = {};
@@ -119,8 +120,9 @@ export default {
       if (departures[i].linkedTerminalId) {
         departures[i].linkedTerminal = await terminalRepository.getTerminal({ id: departures[i].linkedTerminalId });
         departures[i].checkIn = await checkInRepository.getCheckIn({ id: departures[i].checkInId });
-        if (!routes[departures[i].path_id]) routes[departures[i].path_id] = [];
-        routes[departures[i].path_id].push(departures[i]);
+        if (!routes[departures[i].path_id]) routes[departures[i].path_id] = { cost: 0, departures: [] };
+        routes[departures[i].path_id].departures.push(departures[i]);
+        routes[departures[i].path_id].cost += Math.round(departures[i].cost);
       }
     }
 
