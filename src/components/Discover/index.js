@@ -88,8 +88,12 @@ const DiscoverView = ({
                              transportTypes={transportTypes} target="discover" />
                 {
                   hasTrips &&
-                    <div className={s.contentScroller}>
-                      <div className={s.scrollingContent} style={{ textAlign: 'right' }}>
+                    <div className={s.contentScroller} style={{ direction: 'rtl' }}>
+                      <div className={s.scrollingContent} style={{ textAlign: 'right', paddingLeft: '6px' }}>
+                        <div className={s.label}>
+                          <FontIcon className="material-icons"
+                                    style={{ fontSize: '22px' }}>public</FontIcon>
+                        </div>
                         {
                           discovery.trips.map(trip => {
                             return (
@@ -99,10 +103,6 @@ const DiscoverView = ({
                             );
                           })
                         }
-                        <div className={s.label}>
-                          <FontIcon className="material-icons"
-                                    style={{ fontSize: '22px' }}>public</FontIcon>
-                        </div>
                       </div>
                     </div>
                 }

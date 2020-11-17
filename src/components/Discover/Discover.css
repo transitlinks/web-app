@@ -306,6 +306,7 @@
   margin-bottom: 6px;
   margin-top: 4px;
   padding-left: 8px;
+  display: inline-block;
   white-space: nowrap;
 }
 
