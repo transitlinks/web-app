@@ -51,7 +51,8 @@ const getLocalityDiscovery = async (locality, request) => {
   const firstCheckIn = await checkInRepository.getCheckInWithPostsByLocality(locality);
   const checkInCount = await postRepository.getCheckInCount(locality);
   const postCount = await postRepository.getPostCountByLocality(locality);
-  const tags = await tagRepository.getLatestTagsByLocality(locality, 14);
+  const tags = await tagRepository.getLatestTagsByLocality(locality, 6);
+  const trips = await tripRepository.getLatestTripsByLocality(locality, 6);
   const connectionCount = await terminalRepository.getTerminalCountByLocality(locality);
 
   const posts = await postRepository.getPostsByLocality(locality, 5);
@@ -65,6 +66,7 @@ const getLocalityDiscovery = async (locality, request) => {
     checkInCount,
     postCount,
     tags,
+    trips,
     connectionCount,
     feedItem: firstCheckIn ? await getFeedItem(request, firstCheckIn) : null,
     posts: fullPosts,

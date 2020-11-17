@@ -300,7 +300,16 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                           }
                           {
                             linkStat.tags && linkStat.tags.length > 0 &&
-                            <div className={s.localityTags}>
+                            <div className={s.localityLinks}>
+                              {
+                                linkStat.trips.map(trip => {
+                                  return (
+                                    <div className={s.localityTrip}>
+                                      <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
+                                    </div>
+                                  );
+                                })
+                              }
                               {
                                 linkStat.tags.map(tag => {
                                   return (
@@ -918,6 +927,15 @@ const LinksView = (props) => {
         ) &&
         <div className={s.filters}>
           <div className={s.relevantTags}>
+            {
+              ((displayLinks || []).flatMap(link => link.trips || [])).map(trip => {
+                return (
+                  <div className={s.relevantTrip}>
+                    <Link to={`/?trip=${trip.uuid}`}>{trip.name}</Link>
+                  </div>
+                );
+              })
+            }
             {
               ((displayLinks || []).flatMap(link => link.tags || [])).map(tag => {
                 return (

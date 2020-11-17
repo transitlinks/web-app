@@ -885,22 +885,37 @@
   cursor: pointer;
 }
 
-.relevantTag {
+.terminalTags .terminalTrip, .relevantTags .relevantTrip {
+  border: 1px solid #808080;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.relevantTag, .relevantTrip {
   display: inline;
   padding-top: 1px;
   padding-bottom: 2px;
 }
 
-.terminalTag {
+.relevantTrip {
+  font-size: 14px;
+}
+
+.terminalTag, .terminalTrip {
   display: flex;
 }
 
-.terminalTag a, .relevantTag a {
+.terminalTag a, .relevantTag a, .relevantTrip a {
   color: black;
   text-decoration: none;
 }
 
-.localityTags {
+.localityLinks {
   display: flex;
   margin-top: 12px;
   margin-left: 6px;
@@ -908,7 +923,7 @@
   flex-wrap: wrap;
 }
 
-.localityTags .localityTag {
+.localityLinks .localityTag {
   background-color: #e0e0e0;
   border-radius: 4px;
   padding-right: 5px;
@@ -921,11 +936,28 @@
   cursor: pointer;
 }
 
-.localityTags .localityTag a {
+.localityLinks .localityTag a {
   color: black;
   text-decoration: none;
 }
 
+.localityLinks .localityTrip {
+  border: 1px solid #808080;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.localityLinks .localityTrip a {
+  color: black;
+  text-decoration: none;
+}
 
 .filtersContainer {
   display: flex;

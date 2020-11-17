@@ -56,6 +56,9 @@ const DiscoverView = ({
     const { posts, feedItem } = discovery;
     const actualFeedItem = fetchedFeedItems[frameId] || feedItem;
 
+    const hasTrips = discovery.trips && discovery.trips.length > 0;
+    const hasTags = discovery.tags && discovery.tags.length > 0;
+
     return (
       <div key={frameId} className={s.discoveryItem}>
         <div className={s.discoveryHeader}>
@@ -83,23 +86,42 @@ const DiscoverView = ({
               <div className={s.left}>
                 <CheckInItem checkInItem={actualFeedItem} frameId={frameId}
                              transportTypes={transportTypes} target="discover"/>
-                {
-                  (discovery.tags && discovery.tags.length > 0) &&
-                  <div className={s.discoveryTags}>
-                    <div className={s.label}>
-                      <FontIcon className="material-icons" style={{ fontSize: '22px' }}>local_offer</FontIcon>
-                    </div>
-                    {
-                      discovery.tags.map(tag => {
-                        return (
-                          <div className={s.discoveryTag}>
-                            #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
-                          </div>
-                        );
-                      })
-                    }
-                  </div>
-                }
+                <div className={s.discoveryLinks}>
+                  {
+                    hasTrips && (
+                      <div className={s.label}>
+                        <FontIcon className="material-icons"
+                                  style={{ fontSize: '22px' }}>public</FontIcon>
+                      </div>
+                    )
+                  }
+                  {
+                    discovery.trips.map(trip => {
+                      return (
+                        <div className={s.discoveryTrip}>
+                          <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
+                        </div>
+                      );
+                    })
+                  }
+                  {
+                    hasTags && (
+                      <div className={s.label}>
+                        <FontIcon className="material-icons"
+                                  style={{ fontSize: '22px' }}>local_offer</FontIcon>
+                      </div>
+                    )
+                  }
+                  {
+                    discovery.tags.map(tag => {
+                      return (
+                        <div className={s.discoveryTag}>
+                          #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
+                        </div>
+                      );
+                    })
+                  }
+                </div>
               </div>
           }
           <div className={s.right}>
@@ -144,7 +166,7 @@ const DiscoverView = ({
                   (discovery.localities && discovery.localities.length > 0) &&
                   <div className={s.discoveryLocalities}>
                     <div className={s.label}>
-                      <FontIcon className="material-icons" style={{ fontSize: '22px' }}>public</FontIcon>
+                      <FontIcon className="material-icons" style={{ fontSize: '22px' }}>location_city</FontIcon>
                     </div>
                     {
                       discovery.localities.map(locality => {
@@ -201,7 +223,7 @@ const DiscoverView = ({
                 (discovery.localities && discovery.localities.length > 0) &&
                 <div className={s.discoveryLocalities}>
                   <div className={s.label}>
-                    <FontIcon className="material-icons" style={{ fontSize: '22px' }}>public</FontIcon>
+                    <FontIcon className="material-icons" style={{ fontSize: '22px' }}>location_city</FontIcon>
                   </div>
                   {
                     discovery.localities.map(locality => {

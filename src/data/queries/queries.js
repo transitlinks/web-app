@@ -202,6 +202,10 @@ export const getDiscoverQuery = (params) => {
           tag,
           userUuid
         },
+        trips {
+          uuid,
+          name
+        },
         feedItem ${getFeedItemEntity()},
         posts {
           uuid,
@@ -288,6 +292,7 @@ export const getLinksQuery = (params) => {
           }
           route { lat, lng },
           tags { tag, userUuid },
+          trips { uuid, name },
           comments ${getCommentEntity()}
         },
         arrivals {
@@ -326,6 +331,7 @@ export const getLinksQuery = (params) => {
           }
           route { lat, lng },
           tags { tag, userUuid },
+          trips { uuid, name },
           comments ${getCommentEntity()}
         },
         internal {
@@ -387,7 +393,8 @@ export const getLinksQuery = (params) => {
           linkedLocalityLongitude,
           linkCount
         },
-        tags { tag, userUuid }
+        tags { tag, userUuid },
+        trips { uuid, name }
       }
     }
   `;

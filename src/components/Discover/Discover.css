@@ -289,7 +289,7 @@
 
 }
 
-.discoveryTags, .discoveryLocalities {
+.discoveryLinks, .discoveryLocalities {
   display: flex;
   justify-content: flex-end;
   margin-top: -6px;
@@ -298,17 +298,7 @@
   flex-wrap: wrap;
 }
 
-.discoveryTags .label {
-  height: 22px;
-  margin-right: 5px;
-}
-
-.discoveryLocalities .label {
-  height: 22px;
-  margin-right: 3px;
-}
-
-.discoveryTags .discoveryTag {
+.discoveryLinks .discoveryTag {
   margin-top: 2px;
   margin-bottom: 2px;
   margin-right: 4px;
@@ -319,9 +309,35 @@
   padding-bottom: 2px;
 }
 
-.discoveryTags .discoveryTag a {
+.discoveryLinks .discoveryTag a {
   color: black;
   text-decoration: none;
+}
+
+.discoveryLinks .discoveryTrip {
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #808080;
+}
+
+.discoveryLinks .discoveryTrip a {
+  color: black;
+  text-decoration: none;
+}
+
+.discoveryLinks .label {
+  height: 22px;
+  margin-right: 5px;
+  margin-left: 6px;
+}
+
+.discoveryLocalities .label {
+  height: 22px;
+  margin-right: 3px;
 }
 
 .discoveryLocalities .discoveryLocality {

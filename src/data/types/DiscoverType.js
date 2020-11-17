@@ -20,6 +20,15 @@ export const DiscoveryTagType = new GraphQLObjectType({
   })
 });
 
+export const DiscoveryTripType = new GraphQLObjectType({
+  name: 'DiscoveryTrip',
+  description: 'A trip related to a discovery',
+  fields: () => ({
+    uuid: { type: GraphQLString },
+    name: { type: GraphQLString }
+  })
+});
+
 export const DiscoveryItemType = new GraphQLObjectType({
   name: 'DiscoveryItem',
   description: 'Transitlinks Discovery Item object',
@@ -35,6 +44,7 @@ export const DiscoveryItemType = new GraphQLObjectType({
     feedItem: { type: FeedItemType },
     posts: { type: new GraphQLList(PostType) },
     tags: { type: new GraphQLList(DiscoveryTagType) },
+    trips: { type: new GraphQLList(DiscoveryTripType) },
     connectionsFrom: { type: new GraphQLList(GraphQLString) },
     connectionsTo: { type: new GraphQLList(GraphQLString) }
   })

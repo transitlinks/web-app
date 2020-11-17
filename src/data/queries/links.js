@@ -164,6 +164,25 @@ const findTags = async (terminals) => {
   return allTags;
 };
 
+const findTrips = async (terminals) => {
+  const allTrips = [];
+  for (let i = 0; i < terminals.length; i++) {
+    const terminal = terminals[i];
+    const trips = await tripRepository.getTripsByCheckInIds([terminal.checkInId]);
+    const { linkedTerminal } = terminal;
+    if (linkedTerminal) {
+      const linkedTrips = await tripRepository.getTripsByCheckInIds([linkedTerminal.checkInId]);
+      trips.push(
+        ...linkedTrips.filter(linkedTrip => !trips.find(trip => trip.uuid === linkedTrip.uuid))
+      );
+    }
+
+    allTrips.push(...trips);
+    terminal.trips = trips;
+  }
+  return allTrips;
+};
+
 export const TransitLinkQueryFields = {
 
   transitLinks: {
@@ -409,6 +428,7 @@ export const TransitLinkQueryFields = {
           const internal = await terminalRepository.getInternalDeparturesByLocality(terminalLocality, baseQuery);
 
           const tags = await tagRepository.getLatestTagsByLocality(terminalLocality, 14);
+          const trips = await tripRepository.getLatestTripsByLocality(terminalLocality, 14);
 
           linkStats.push({
             locality: terminalLocality,
@@ -421,7 +441,8 @@ export const TransitLinkQueryFields = {
             internal,
             linkedDepartures: departures.map(dep => ({ linkedLocality: dep.linkedTerminal.locality })),
             linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality })),
-            tags
+            tags,
+            trips
           });
 
         }
@@ -444,6 +465,7 @@ export const TransitLinkQueryFields = {
       const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
       await findRoutePoints(departures);
       await findRoutePoints(arrivals);
+
       const departureTags = await findTags(departures);
       const arrivalTags = await findTags(arrivals);
       const allTags = departureTags;
@@ -453,6 +475,13 @@ export const TransitLinkQueryFields = {
             depTag => depTag.tag === arrTag.tag && depTag.userUuid === arrTag.userUuid
           )
         )
+      );
+
+      const departureTrips = await findTrips(departures);
+      const arrivalTrips = await findTrips(arrivals);
+      const allTrips = departureTrips;
+      allTrips.push(
+        ...arrivalTrips.filter(arrTrip => !departureTrips.find(depTrip => depTrip.uuid === arrTrip.uuid))
       );
 
       let terminal = null;
@@ -486,7 +515,8 @@ export const TransitLinkQueryFields = {
               utcDateTime: arr.linkedTerminal.createdAt,
             }
           })),
-          tags: allTags
+          tags: allTags,
+          trips: allTrips
         });
       }
 
