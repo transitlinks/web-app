@@ -286,7 +286,27 @@
 }
 
 .postSummary .right {
+  margin-top: 6px;
+}
 
+.contentScroller {
+  width: 100%;
+  position: relative;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.contentScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollingContent {
+  margin-bottom: 6px;
+  margin-top: 4px;
+  padding-left: 8px;
+  white-space: nowrap;
 }
 
 .discoveryLinks, .discoveryLocalities {
@@ -298,7 +318,7 @@
   flex-wrap: wrap;
 }
 
-.discoveryLinks .discoveryTag {
+.scrollingContent .discoveryTag {
   margin-top: 2px;
   margin-bottom: 2px;
   margin-right: 4px;
@@ -307,14 +327,16 @@
   padding-right: 5px;
   padding-left: 5px;
   padding-bottom: 2px;
+  font-size: 17px;
+  display: inline;
 }
 
-.discoveryLinks .discoveryTag a {
+.scrollingContent .discoveryTag a {
   color: black;
   text-decoration: none;
 }
 
-.discoveryLinks .discoveryTrip {
+.scrollingContent .discoveryTrip {
   border-radius: 4px;
   padding-right: 5px;
   padding-left: 5px;
@@ -322,17 +344,20 @@
   display: flex;
   align-items: center;
   border: 1px solid #808080;
+  display: inline;
 }
 
-.discoveryLinks .discoveryTrip a {
+.scrollingContent .discoveryTrip a {
   color: black;
   text-decoration: none;
 }
 
-.discoveryLinks .label {
+.scrollingContent .label {
   height: 22px;
-  margin-right: 5px;
-  margin-left: 6px;
+  margin-right: 6px;
+  margin-left: 0px;
+  display: inline-block;
+  vertical-align: bottom;
 }
 
 .discoveryLocalities .label {
@@ -383,6 +408,7 @@
 
   .postSummary .right {
     flex: 1;
+    margin-top: initial;
   }
 
   .discoveryStats .discoveryStatItem .discoveryStatText {

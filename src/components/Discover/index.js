@@ -85,43 +85,48 @@ const DiscoverView = ({
             actualFeedItem &&
               <div className={s.left}>
                 <CheckInItem checkInItem={actualFeedItem} frameId={frameId}
-                             transportTypes={transportTypes} target="discover"/>
-                <div className={s.discoveryLinks}>
-                  {
-                    hasTrips && (
-                      <div className={s.label}>
-                        <FontIcon className="material-icons"
-                                  style={{ fontSize: '22px' }}>public</FontIcon>
-                      </div>
-                    )
-                  }
-                  {
-                    discovery.trips.map(trip => {
-                      return (
-                        <div className={s.discoveryTrip}>
-                          <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
+                             transportTypes={transportTypes} target="discover" />
+                {
+                  hasTrips &&
+                    <div className={s.contentScroller}>
+                      <div className={s.scrollingContent} style={{ textAlign: 'right' }}>
+                        {
+                          discovery.trips.map(trip => {
+                            return (
+                              <div className={s.discoveryTrip}>
+                                <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
+                              </div>
+                            );
+                          })
+                        }
+                        <div className={s.label}>
+                          <FontIcon className="material-icons"
+                                    style={{ fontSize: '22px' }}>public</FontIcon>
                         </div>
-                      );
-                    })
-                  }
-                  {
-                    hasTags && (
+                      </div>
+                    </div>
+                }
+
+                {
+                  hasTags &&
+                  <div className={s.contentScroller}>
+                    <div className={s.scrollingContent} style={{ textAlign: 'left' }}>
                       <div className={s.label}>
                         <FontIcon className="material-icons"
                                   style={{ fontSize: '22px' }}>local_offer</FontIcon>
                       </div>
-                    )
-                  }
-                  {
-                    discovery.tags.map(tag => {
-                      return (
-                        <div className={s.discoveryTag}>
-                          #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
-                        </div>
-                      );
-                    })
-                  }
-                </div>
+                      {
+                        discovery.tags.map(tag => {
+                          return (
+                            <div className={s.discoveryTag}>
+                              #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
+                            </div>
+                          );
+                        })
+                      }
+                    </div>
+                  </div>
+                }
               </div>
           }
           <div className={s.right}>

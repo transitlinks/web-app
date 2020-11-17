@@ -900,6 +900,7 @@
   display: inline;
   padding-top: 1px;
   padding-bottom: 2px;
+  white-space: nowrap;
 }
 
 .relevantTrip {
