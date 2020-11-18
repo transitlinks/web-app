@@ -90,7 +90,7 @@ export default {
     if (params) {
       const { transportTypes } = params;
       if (transportTypes) {
-        costExpression = `(distance + ((transport IN (${transportTypes.map(t => `''${t}''`).join(',')}))::integer) * 1000000)`;
+        costExpression = `(distance / (1 + ((transport IN (${transportTypes.map(t => `''${t}''`).join(',')}))::integer * 999)))`;
       }
     }
 
@@ -115,7 +115,7 @@ export default {
     console.log('ROUTE QUERY', query);
     const departures = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
 
-    const routes = {};
+    let routes = {};
     for (let i = 0; i < departures.length; i++) {
       if (departures[i].linkedTerminalId) {
         departures[i].linkedTerminal = await terminalRepository.getTerminal({ id: departures[i].linkedTerminalId });
@@ -126,7 +126,13 @@ export default {
       }
     }
 
-    return routes;
+    const sortedRoutes = {};
+    const routeCosts = Object.keys(routes).map(pathId => routes[pathId].cost).sort((a, b) => a - b);
+    for (let i = 0; i < routeCosts.length; i++) {
+      sortedRoutes[`${i + 1}`] = routes[Object.keys(routes).find(pathId => routes[pathId].cost === routeCosts[i])].departures;
+    }
+
+    return sortedRoutes;
 
   },
 
