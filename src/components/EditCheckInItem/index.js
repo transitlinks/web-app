@@ -24,11 +24,12 @@ import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
 import CheckInControls from '../CheckIn/CheckInControls';
 
-const typeSelector = (iconName, isSelected, onClick) => {
+const typeSelector = (iconName, isSelected, onClick, setProperty) => {
   return (
     <div className={cx(s.contentTypeSelector, isSelected ? s.typeSelected : {})} onClick={() => {
-      setProperty('editTerminal.terminal', {});
-      setProperty('posts.editPost', {});
+      //setProperty('editTerminal.terminal', {});
+      //setProperty('posts.editPost', {});
+      setProperty('posts.deleteCandidate', null);
       onClick();
     }}>
       <div>
@@ -36,20 +37,6 @@ const typeSelector = (iconName, isSelected, onClick) => {
       </div>
     </div>
   );
-};
-
-const createCheckIn = (geolocation) => {
-
-  const { position } = geolocation;
-  const clientId = getClientId();
-
-  if (position) {
-    const { coords: { latitude, longitude } } = position;
-    return { latitude, longitude, clientId };
-  }
-
-  return null;
-
 };
 
 const createPost = (props) =>  {
@@ -78,12 +65,12 @@ const createPost = (props) =>  {
 const getTabContent = (type, props) => {
 
   const {
-    item, transportTypes, openTerminals, postText, mediaItems, env, editTerminal, editPost,
-    savePost, saveCheckIn, uploadFiles, getMediaItem, deleteMediaItem, setProperty, uploadingMedia,
-    loadedMediaItemChanged, loadMediaItem, loadMediaItemError, disabledTags, newCheckIn, savedTerminal
+    item, transportTypes, openTerminals, mediaItems, env, editTerminal, editPost,
+    savePost, saveCheckIn, uploadFiles, getMediaItem, deleteMediaItem, setProperty,
+    loadedMediaItemChanged, loadMediaItem, loadMediaItemError, disabledTags
   } = props;
 
-  const { checkIn, inbound } = item;
+  const { checkIn } = item;
 
   const onFileInputChange = (event) => {
     uploadFiles({
@@ -407,9 +394,9 @@ const EditCheckInItemView = (props) => {
             (!hideContent && (!editPost.uuid && !editTerminal.uuid && !addPost) || newCheckIn) &&
             <div className={s.contentTypeContainer}>
               <div className={s.contentTypeSelectors}>
-                { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction')) }
-                { openDepartures.length === 0 && typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure')) }
-                { (openDepartures.length > 0 || arrivals.length > 0) && typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival')) }
+                { typeSelector('tag_faces', selectedType === 'reaction', () => setProperty('posts.addType', 'reaction'), setProperty) }
+                { openDepartures.length === 0 && typeSelector('call_made', selectedType === 'departure', () => setProperty('posts.addType', 'departure'), setProperty) }
+                { (openDepartures.length > 0 || arrivals.length > 0) && typeSelector('call_received', selectedType === 'arrival', () => setProperty('posts.addType', 'arrival'), setProperty) }
               </div>
             </div>
           }

@@ -36,6 +36,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.savedCheckIn', null);
     this.props.setProperty('posts.savedPost', null);
     this.props.setProperty('posts.savedTerminal', null);
+    this.props.setProperty('posts.deleteCandidate', null);
   }
 
   componentDidUpdate(prevProps) {

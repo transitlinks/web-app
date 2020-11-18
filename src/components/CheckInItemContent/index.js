@@ -14,12 +14,12 @@ import { deletePost, deleteTerminal } from '../../actions/posts';
 import { saveCheckIn } from '../../actions/checkIns';
 import PropTypes from 'prop-types';
 import { saveLike, saveComment } from '../../actions/comments';
-import TextField from 'material-ui/TextField';
+import DeleteContentDialog from '../common/DeleteContentDialog';
 
 const CheckInItemContent = ({
   checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
-  savedTerminal, feedItemIndex, savedCheckIn, feedUpdated, commentText, sentLike,
-  setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, saveComment,
+  savedTerminal, sentLike, deleteCandidate,
+  setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike,
   editable
 }) => {
 
@@ -30,9 +30,6 @@ const CheckInItemContent = ({
 
   const departures = terminals.filter(terminal => terminal.type === 'departure');
   const departure = departures.length > 0 ? departures[0] : null;
-
-  const savedArrival = savedTerminal && savedTerminal.type === 'arrival' ? savedTerminal : null;
-  const savedDeparture = savedTerminal && savedTerminal.type === 'departure' ? savedTerminal : null;
 
   let content = null;
   let comments = null;
@@ -129,6 +126,11 @@ const CheckInItemContent = ({
     commentsAttributes.terminal = arrival;
   }
 
+  let deleteContentDialog = null;
+  if ((frameId === true || frameId === 'frame-edit') && deleteCandidate && (deleteCandidate.type === 'post' || deleteCandidate.type === 'terminal')) {
+    deleteContentDialog = <DeleteContentDialog />;
+  }
+
   return (
     <div className={s.feedItemContent} id={`content-${frameId}`}>
       {
@@ -174,11 +176,26 @@ const CheckInItemContent = ({
                   }}>edit</FontIcon>
                   <FontIcon className="material-icons" style={{ fontSize: '20px', marginLeftt: '4px' }} onClick={() => {
                     if (contentType === 'reaction') {
-                      deletePost(posts[activePost].uuid);
+                      setProperty('posts.deleteCandidate', {
+                        type: 'post',
+                        dialogText: <span>Delete post?</span>,
+                        deleteItem: deletePost,
+                        uuid: posts[activePost].uuid
+                      });
                     } else if (contentType === 'arrival') {
-                      deleteTerminal(arrival.uuid);
+                      setProperty('posts.deleteCandidate', {
+                        type: 'terminal',
+                        dialogText: <span>Delete arrival?</span>,
+                        deleteItem: deleteTerminal,
+                        uuid: arrival.uuid
+                      });
                     } else if (contentType === 'departure') {
-                      deleteTerminal(departure.uuid);
+                      setProperty('posts.deleteCandidate', {
+                        type: 'terminal',
+                        dialogText: <span>Delete departure?</span>,
+                        deleteItem: deleteTerminal,
+                        uuid: departure.uuid
+                      });
                     }
                   }}>delete</FontIcon>
                 </div> :
@@ -213,6 +230,7 @@ const CheckInItemContent = ({
           </div>
         </div>
       }
+      {deleteContentDialog}
       {content}
       <div className={s.tags}>
         {
@@ -264,6 +282,7 @@ export default injectIntl(
     sentLike: state.posts.sentLike,
     feedUpdated: state.posts.feedUpdated,
     commentText: state.posts.commentText,
+    deleteCandidate: state.posts.deleteCandidate
   }), {
     setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike, saveComment
   })(withStyles(s)(CheckInItemContent))

@@ -1092,9 +1092,9 @@ export const PostQueryFields = {
 
       const options = {};
 
-      if (user || locality) {
+      if (user || locality || tags) {
         options.order = [['createdAt', 'DESC']];
-      } else if (tags || trip) {
+      } else if (trip) {
         options.order = [['createdAt', 'ASC']];
       } else {
         options.order = [['id', 'DESC']];

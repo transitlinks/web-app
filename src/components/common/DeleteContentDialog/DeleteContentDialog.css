@@ -1,0 +1,91 @@
+.deleteDialog {
+  width: 100%;
+}
+
+.deleteDialog .deleteDialogText {
+  width: calc(100% - 8px);
+  padding-left: 4px;
+  padding-right: 4px;
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.deleteDialog .deleteDialogText .highlight {
+  font-weight: 600;
+}
+
+.deleteDialog .deleteDialogButtons {
+  display: flex;
+  margin: 2px;
+}
+
+.deleteDialog .deleteDialogButtons .cancelDelete {
+  display: flex;
+  justify-content: center;
+  border: 1px solid #808080;
+  flex-grow: 2;
+  margin-left: 2px;
+  margin-right: 1px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.deleteDialog .deleteDialogButtons .confirmDelete {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+  background-color: black;
+  border: 1px solid #808080;
+  color: #e0e0e0;
+  margin-left: 2px;
+  margin-right: 2px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.compactDeleteDialog {
+  width: calc(100% - 6px);
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  margin-right: 4px;
+  margin-left: 2px;
+}
+
+.compactDeleteDialog .deleteDialogText {
+  padding-left: 4px;
+  padding-right: 4px;
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.compactDeleteDialog .deleteDialogButtons {
+  display: flex;
+  margin: 2px;
+  font-size: 14px;
+}
+
+.compactDeleteDialog .deleteDialogButtons .cancelDelete {
+  border: 1px solid #808080;
+  cursor: pointer;
+  padding-left: 4px;
+  padding-right: 4px;
+  margin-right: 4px;
+  height: 21px;
+}
+
+.compactDeleteDialog .deleteDialogButtons .confirmDelete {
+  background-color: black;
+  border: 1px solid #808080;
+  color: #e0e0e0;
+  cursor: pointer;
+  padding-left: 4px;
+  padding-right: 4px;
+  height: 21px;
+}
+
+

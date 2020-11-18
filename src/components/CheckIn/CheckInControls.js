@@ -6,6 +6,7 @@ import { deleteCheckIn, saveCheckIn } from '../../actions/checkIns';
 import { setProperty } from '../../actions/properties';
 import { saveTrip, deleteTrip } from '../../actions/trips';
 import s from './CheckIn.css';
+import DeleteContentDialog from '../common/DeleteContentDialog';
 import FontIcon from 'material-ui/FontIcon';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
@@ -15,7 +16,7 @@ import msgTransport from '../common/messages/transport';
 import TextField from 'material-ui/TextField';
 
 const CheckInControls = ({
-  intl, checkIn, savedCheckIn, editTrip, editTripName,
+  intl, checkIn, savedCheckIn, editTrip, editTripName, deleteCandidate,
   setProperty, deleteCheckIn, saveCheckIn, saveTrip, deleteTrip
 }) => {
 
@@ -31,6 +32,11 @@ const CheckInControls = ({
     const time = localDateTime.substring(11, 16);
     return getMonthName(dateTime) + ' ' + dateTime.getDate() + ' ' + time;
   };
+
+  let deleteDialog = null;
+  if (deleteCandidate && (deleteCandidate.type === 'checkIn' || deleteCandidate.type === 'trip')) {
+    deleteDialog = <DeleteContentDialog />;
+  }
 
   return (
     <div>
@@ -51,7 +57,12 @@ const CheckInControls = ({
       <div className={s.checkInControls}>
         <div className={s.checkInControlsLeft}>
           <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {
-            deleteCheckIn(checkIn.uuid);
+            setProperty('posts.deleteCandidate', {
+              type: 'checkIn',
+              dialogText: <div><span>Delete check-in</span>&nbsp;<span className={s.highlight}>including all content</span>?</div>,
+              deleteItem: deleteCheckIn,
+              uuid: checkIn.uuid
+            });
           }}>delete</FontIcon>
         </div>
         <div className={s.tripInfoAndLocality}>
@@ -94,7 +105,12 @@ const CheckInControls = ({
                     checkIn.trip.lastCheckIn &&
                     <div className={s.deleteTripButton}>
                       <FontIcon className="material-icons" style={{ fontSize: '20px', marginTop: '-1px' }} onClick={() => {
-                        deleteTrip(checkIn.trip.uuid);
+                        setProperty('posts.deleteCandidate', {
+                          type: 'trip',
+                          dialogText: <span><span>Delete trip</span>&nbsp;<span className={s.highlight}>{checkIn.trip.name}</span></span>,
+                          deleteItem: deleteTrip,
+                          uuid: checkIn.trip.uuid
+                        });
                       }}>delete</FontIcon>
                     </div>
                   }
@@ -134,6 +150,7 @@ const CheckInControls = ({
           </div>
         </div>
       </div>
+      { deleteDialog }
     </div>
   );
 
@@ -145,7 +162,8 @@ export default injectIntl(
     savedCheckIn: state.posts.checkIn,
     savedTrip: state.trips.savedTrip,
     editTrip: state.trips.editTrip,
-    editTripName: state.trips.editTripName
+    editTripName: state.trips.editTripName,
+    deleteCandidate: state.posts.deleteCandidate
   }), {
     deleteCheckIn,
     saveCheckIn,

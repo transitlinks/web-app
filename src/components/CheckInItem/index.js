@@ -109,6 +109,8 @@ const CheckInItem = (
   }
 
   const selectContentType = (value) => {
+    setProperty('posts.deleteCandidate', null);
+    setProperty('posts.addType', value);
     setDeepProperty('posts', ['feedProperties', frameId, 'contentType'], value);
   };
 
@@ -128,15 +130,6 @@ const CheckInItem = (
   if (typeSelectors.length === 1) {
     typeSelectors = [];
   }
-
-  /*
-  if (typeSelectors.length < 2) {
-    if (typeSelectors.length === 1) {
-      contentType = defaultContentType;
-    }
-    typeSelectors = null;
-  }
-  */
 
   let showAddTerminal = null;
   if (editable && showSettings) {

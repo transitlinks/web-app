@@ -73,6 +73,8 @@ class Home extends React.Component {
     this.props.setProperty('posts.showSettings', false);
     this.props.setProperty('posts.fetchedFeedItems', {});
     this.props.setProperty('posts.checkIn', null);
+    this.props.setProperty('posts.deleteCandidate', null);
+
     const checkIn = this.props.savedCheckIn;
     if (checkIn) {
       this.props.getFeedItem(checkIn.uuid, 'frame-new');
