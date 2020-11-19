@@ -275,7 +275,7 @@ export default {
 
   getTripCheckIns: async (tripId, open, options) => {
 
-    let query = `SELECT ci.* ${open ? getOpenTripQuery(tripId) : getTripQuery(tripId)}`;
+    let query = `SELECT ci.* ${open ? getOpenTripQuery(tripId) : getTripQuery(tripId)} ORDER BY ci."createdAt" ASC`;
 
     if (options) {
       const { offset, limit } = options;
