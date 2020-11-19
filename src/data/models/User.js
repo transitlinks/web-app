@@ -8,7 +8,7 @@ const User = Model.define('User', {
     autoIncrement: true,
     primaryKey: true
   },
-  
+
   uuid: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
@@ -19,20 +19,24 @@ const User = Model.define('User', {
     type: DataType.STRING(255),
     validate: { isEmail: true },
   },
-  
+
   username: {
     type: DataType.STRING
   },
-  
+
   firstName: {
     type: DataType.STRING
   },
-  
+
   lastName: {
     type: DataType.STRING
   },
-    
+
   password: {
+    type: DataType.STRING
+  },
+
+  resetPasswordCode: {
     type: DataType.STRING
   },
 
@@ -40,13 +44,13 @@ const User = Model.define('User', {
     type: DataType.BOOLEAN,
     defaultValue: false,
   },
-  
+
   photo: {
     type: DataType.STRING
   }
 
 }, {
-  
+
   instanceMethods: {
     json: function() {
       return {

@@ -22,6 +22,7 @@ import checkIn from './checkIn';
 import login from './login';
 import account from './account';
 import content from './content';
+import password from './password';
 import error from './error';
 
 import { locales, MEDIA_URL, ADMINS, DEV_MODE } from '../config';
@@ -38,6 +39,7 @@ const routes = {
     login,
     account,
     checkIn,
+    password,
     content,
     error,
   ],

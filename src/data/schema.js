@@ -29,6 +29,7 @@ const schema = new Schema({
       transportTypes,
       linkInstanceMedia: TransitLinkQueryFields.linkInstanceMedia,
       user: UserQueryFields.user,
+      resetPassword: UserQueryFields.resetPassword,
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
       post: PostQueryFields.post,
@@ -50,6 +51,8 @@ const schema = new Schema({
     fields: {
       instanceFiles: TransitLinkMutationFields.instanceFiles,
       user: UserMutationFields.user,
+      codeResetPassword: UserMutationFields.codeResetPassword,
+      requestResetPassword: UserMutationFields.requestResetPassword,
       comment: CommentMutationFields.comment,
       deleteComment: CommentMutationFields.deleteComment,
       like: CommentMutationFields.like,

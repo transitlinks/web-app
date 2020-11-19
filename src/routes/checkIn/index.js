@@ -7,8 +7,7 @@ import ErrorPage from '../../components/common/ErrorPage';
 import {
   createQuery,
   getActiveTripQuery,
-  getFeedItemQuery,
-  getTripEntity,
+  getFeedItemQuery
 } from '../../data/queries/queries';
 
 export default {

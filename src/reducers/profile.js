@@ -3,9 +3,15 @@ import {
   SAVE_PROFILE_SUCCESS,
   SAVE_PROFILE_ERROR,
   RESET_PASSWORD_SUCCESS,
-  RESET_PASSWORD_ERROR
+  RESET_PASSWORD_ERROR,
+  CODE_RESET_PASSWORD_START,
+  CODE_RESET_PASSWORD_SUCCESS,
+  CODE_RESET_PASSWORD_ERROR,
+  REQUEST_RESET_PASSWORD_START,
+  REQUEST_RESET_PASSWORD_SUCCESS,
+  REQUEST_RESET_PASSWORD_ERROR
 } from '../constants';
-import { propToState } from './utils';
+import { graphqlReduce, propToState } from './utils';
 
 export default function reduce(state = { email: null, password: '' }, action) {
 
@@ -30,6 +36,34 @@ export default function reduce(state = { email: null, password: '' }, action) {
       return { ...state, resetPasswordResult: 'success' };
     case RESET_PASSWORD_ERROR:
       return { ...state, resetPasswordResult: 'error' };
+    case REQUEST_RESET_PASSWORD_START:
+    case REQUEST_RESET_PASSWORD_SUCCESS:
+    case REQUEST_RESET_PASSWORD_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({ requestResetPassword: action.payload.requestResetPassword }),
+          error: () => ({ requestResetPassword: 'ERROR' })
+        },
+        REQUEST_RESET_PASSWORD_START,
+        REQUEST_RESET_PASSWORD_SUCCESS,
+        REQUEST_RESET_PASSWORD_ERROR
+      );
+    case CODE_RESET_PASSWORD_START:
+    case CODE_RESET_PASSWORD_SUCCESS:
+    case CODE_RESET_PASSWORD_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({ codeResetPassword: action.payload.codeResetPassword }),
+          error: () => ({ codeResetPassword: 'ERROR' })
+        },
+        CODE_RESET_PASSWORD_START,
+        CODE_RESET_PASSWORD_SUCCESS,
+        CODE_RESET_PASSWORD_ERROR
+      );
   }
 
   return propToState(action, 'profile', { ...state });

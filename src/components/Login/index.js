@@ -11,22 +11,22 @@ import PasswordInput from '../PasswordInput';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages';
 
-const LoginView = ({ 
-  intl, error, 
-  setProperty, 
+const LoginView = ({
+  intl, error,
+  setProperty,
   email, emailValid, password, passwordValid
 }) => {
-    
+
   const disableLogin = !(emailValid && passwordValid);
-	 
+
   const handleEmailChange = (input) => {
     setProperty('login-email', { email: input.value, valid: input.pass });
   };
-  
+
   const handlePasswordChange = (input) => {
     setProperty('login-password', { password: input.value, valid: input.pass });
   };
-		
+
 	return (
     <div>
       <div>
@@ -47,7 +47,7 @@ const LoginView = ({
               <div className={s.fbText}>
                 <FormattedMessage {...msg['facebook']} />
               </div>
-            </a>  
+            </a>
           </div>
           <div className={s.gLogin}>
             <a href="/login/google">
@@ -57,7 +57,7 @@ const LoginView = ({
               <div className={s.gText}>
                 <FormattedMessage {...msg['google']} />
               </div>
-            </a>  
+            </a>
           </div>
         </div>
         {
@@ -80,15 +80,15 @@ const LoginView = ({
               <PasswordInput id="login-password" name="password" value={password || ''} onChange={handlePasswordChange} />
             </div>
           </div>
-          <div className={s.formSubmit}>  
+          <div className={s.formSubmit}>
             <div className={s.recoveryLink}>
-              <a href="/login/recovery">
+              <a href="/reset-password">
                 <FormattedMessage {...msg['reset-password']} />
               </a>
             </div>
             <div className={s.submitButton}>
               <RaisedButton disabled={disableLogin}
-                secondary={true} type="submit" 
+                secondary={true} type="submit"
                 label={intl.formatMessage(msg['sign-in'])}>
               </RaisedButton>
             </div>
@@ -100,7 +100,7 @@ const LoginView = ({
     </div>
   );
 
-}; 
+};
 
 LoginView.contextTypes = { setTitle: PropTypes.func.isRequired };
 

@@ -33,7 +33,11 @@ export const {
   MAPS_JS_API_KEY,
   LOG_LEVEL_NODE,
   LOG_LEVEL_BROWSER = 'ALL',
-  GA_TRACKING_ID 
+  GA_TRACKING_ID,
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER,
+  SMTP_PASSWORD
 } = env;
 
 // default locale is the first one
