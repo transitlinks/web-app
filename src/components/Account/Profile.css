@@ -6,31 +6,28 @@
 .container {
 }
 
-.profile {
+.emailPassword {
+  width: 100%;
+}
+
+
+.emailPassword .password {
+  margin-top: 36px;
 }
 
 @media(min-width: 400px) {
-  .profile {
+  .emailPassword {
     display: flex;
+    align-items: flex-end;
   }
-  .profile .email {
+  .emailPassword .email {
     width: 50%;
     margin-right: 4px;
   }
-  .profile .username {
+  .emailPassword .password {
     width: 50%;
     margin-left: 4px;
   }
-}
-
-.profile .email {
-}
-
-.profile .username {
-}
-
-.password {
-  margin-top: 36px;
 }
 
 .save {

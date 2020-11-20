@@ -1,0 +1,39 @@
+.root {
+}
+.container {
+  width: 100%;
+}
+
+.userName {
+}
+
+.avatar {
+}
+
+.avatar .avatarImage {
+  border: 1px dashed #e0e0e0;
+  height: 60px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar .avatarInfo {
+}
+
+@media(min-width: 400px) {
+  .container {
+    display: flex;
+    align-items: flex-end;
+  }
+  .userName {
+    width: 50%;
+    margin-right: 4px;
+  }
+  .avatar {
+    width: 50%;
+    margin-left: 4px;
+  }
+}
+

@@ -8,6 +8,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import EmailInput from '../EmailInput';
 import PasswordInput from '../PasswordInput';
+import ProfileSettings from './ProfileSettings';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.profile';
 import { emailValid } from '../../core/utils';
@@ -34,52 +35,47 @@ const Profile = ({
 
 	return (
     <div>
-      <div id="profile-fields" className={s.profile}>
+      <div>
+        <ProfileSettings />
+      </div>
+      <div id="profile-fields" className={s.emailPassword}>
         <div className={s.email}>
           <EmailInput id="profile-email" name="profile-email" value={emailValue} onChange={handleEmailChange} />
+          <div className={s.save}>
+            {
+              saveProfileResult === 'success' &&
+              <FormattedMessage {...msg['save-profile-success']} />
+            }
+            {
+              saveProfileResult === 'error' &&
+              <FormattedMessage {...msg['save-profile-error']} />
+            }
+            <RaisedButton className={s.button}
+                          disabled={!emailValid(emailValue).pass || (emailValue === profile.email && usernameValue === profile.username)}
+                          label={intl.formatMessage(msg['save-profile'])}
+                          onClick={() => saveProfile(profile.uuid, { email: emailValue, username: usernameValue })} />
+          </div>
         </div>
-        <div className={s.username}>
-          <TextField style={{ width: '100%' }}
-                     floatingLabelText="Username"
-                     value={usernameValue}
-                     onChange={(event) => setProperty('profile.username', event.target.value)} />
-        </div>
-      </div>
-      <div className={s.save}>
-        {
-          saveProfileResult === 'success' &&
-          <FormattedMessage {...msg['save-profile-success']} />
-        }
-        {
-          saveProfileResult === 'error' &&
-          <FormattedMessage {...msg['save-profile-error']} />
-        }
-        <RaisedButton className={s.button}
-                      disabled={!emailValid(emailValue).pass || (emailValue === profile.email && usernameValue === profile.username)}
-                      label={intl.formatMessage(msg['save-profile'])}
-                      onClick={() => saveProfile(profile.uuid, { email: emailValue, username: usernameValue })} />
-      </div>
-      <div id="password-reset" className={s.password}>
-        <div>
-          <FormattedMessage {...msg['reset-password']} />
-          <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
-        </div>
-        <div className={s.save}>
-          {
-            resetPasswordResult === 'success' &&
+        <div id="password-reset" className={s.password}>
+          <div>
+            <FormattedMessage {...msg['reset-password']} />
+            <PasswordInput id="profile-password" name="profile-password" value={password || ''} onChange={handlePasswordChange} />
+          </div>
+          <div className={s.save}>
+            {
+              resetPasswordResult === 'success' &&
               <FormattedMessage {...msg['reset-password-success']} />
-          }
-          {
-            resetPasswordResult === 'error' &&
+            }
+            {
+              resetPasswordResult === 'error' &&
               <FormattedMessage {...msg['reset-password-error']} />
-          }
-          <RaisedButton className={s.button}
-            disabled={!(password && passwordValid)}
-            label={intl.formatMessage(msg['confirm-reset'])}
-            onClick={() => resetPassword(profile.uuid, password)} />
+            }
+            <RaisedButton className={s.button}
+                          disabled={!(password && passwordValid)}
+                          label={intl.formatMessage(msg['confirm-reset'])}
+                          onClick={() => resetPassword(profile.uuid, password)} />
+          </div>
         </div>
-      </div>
-      <div>
       </div>
     </div>
   );
