@@ -78,7 +78,7 @@
     "recompose": "^0.30.0",
     "redux": "^3.4.0",
     "redux-thunk": "^2.1.0",
-    "sequelize": "^3.23.4",
+    "sequelize": "^5.15.1",
     "sequelize-cli": "^2.5.1",
     "sequelize-fixtures": "^0.5.4",
     "sharp": "^0.23.2",
