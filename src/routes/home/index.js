@@ -20,25 +20,11 @@ export default {
     const { tags, trip, user, locality } = query;
     const queryParams = { clientId, limit: 8, ...query };
 
-    const { type, uuid } = params;
-
-    let contentQuery = '';
-    if (type === 'post') {
-      contentQuery = `
-        post (uuid: "${uuid}") {
-          uuid,
-          text,
-          user,
-          checkInUuid,
-          mediaItems {
-            uuid,
-            type,
-            url,
-            latitude,
-            longitude
-          }
-        }
-      `;
+    const state = context.store.getState();
+    const { auth } = state.auth;
+    let uuid = null;
+    if (auth.loggedIn) {
+      uuid = auth.user.uuid;
     }
 
     const paramsString = createParamString(queryParams);
@@ -75,11 +61,18 @@ export default {
           },
           transportTypes { slug },
           ${getActiveTripQuery()},
-          ${contentQuery}
+          ${uuid ? `profile (uuid: "${uuid}") {
+            uuid,
+            email,
+            username,
+            photo,
+            avatar,
+            logins
+          }` : ''}
         }`
       );
 
-      const { feed, transportTypes, post, activeTrip } = data;
+      const { profile, feed, transportTypes, post, activeTrip } = data;
       log.info('event=received-feed-data', 'query=', query, data);
 
       if (user || tags || trip || locality) {
@@ -87,7 +80,7 @@ export default {
       }
 
       feed.fetchedAt = (new Date()).getTime();
-      return <Home feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} activeTrip={activeTrip} />;
+      return <Home profile={profile} feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} activeTrip={activeTrip} />;
 
     } catch (error) {
       return <ErrorPage errors={error.errors} />

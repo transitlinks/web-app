@@ -11,7 +11,7 @@ import PasswordInput from '../PasswordInput';
 import ProfileSettings from './ProfileSettings';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import msg from './messages.profile';
-import { emailValid } from '../../core/utils';
+import { displayNameValid, emailValid } from '../../core/utils';
 
 const Profile = ({
   intl,
@@ -19,7 +19,7 @@ const Profile = ({
   resetPassword, saveProfile,
   email, username, password, passwordValid,
   saveProfileResult, resetPasswordResult,
-  profile
+  profile, savedProfile
 }) => {
 
   const handleEmailChange = (input) => {
@@ -30,13 +30,14 @@ const Profile = ({
     setProperty('profile-password', { password: input.value, valid: input.pass });
   };
 
-  const emailValue = (email === null || email === undefined) ? profile.email : email;
-  const usernameValue = (username === null || username === undefined) ? profile.username : username;
+  const userProfile = savedProfile || profile;
+  const emailValue = (email === null || email === undefined) ? userProfile.email : email;
+  const usernameValue = (username === null || username === undefined) ? userProfile.username : username;
 
 	return (
     <div>
       <div>
-        <ProfileSettings />
+        <ProfileSettings profile={profile} />
       </div>
       <div id="profile-fields" className={s.emailPassword}>
         <div className={s.email}>
@@ -51,7 +52,7 @@ const Profile = ({
               <FormattedMessage {...msg['save-profile-error']} />
             }
             <RaisedButton className={s.button}
-                          disabled={!emailValid(emailValue).pass || (emailValue === profile.email && usernameValue === profile.username)}
+                          disabled={!emailValid(emailValue).pass || !displayNameValid(usernameValue).pass || (emailValue === userProfile.email && usernameValue === userProfile.username)}
                           label={intl.formatMessage(msg['save-profile'])}
                           onClick={() => saveProfile(profile.uuid, { email: emailValue, username: usernameValue })} />
           </div>
@@ -90,7 +91,8 @@ export default injectIntl(
     password: state.profile.password,
     passwordValid: state.profile.passwordValid,
     saveProfileResult: state.profile.saveProfileResult,
-    resetPasswordResult: state.profile.resetPasswordResult
+    resetPasswordResult: state.profile.resetPasswordResult,
+    savedProfile: state.profile.savedProfile
   }), {
     setProperty, resetPassword, saveProfile
   })(withStyles(s)(Profile))

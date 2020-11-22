@@ -2,7 +2,7 @@ import {
   GraphQLObjectType,
   GraphQLInputObjectType,
   GraphQLString,
-  GraphQLNonNull
+  GraphQLNonNull, GraphQLInt,
 } from 'graphql';
 
 export const UserType = new GraphQLObjectType({
@@ -13,7 +13,9 @@ export const UserType = new GraphQLObjectType({
     username: { type: GraphQLString },
     firstName: { type: GraphQLString },
     lastName: { type: GraphQLString },
-    photo: { type: GraphQLString }
+    photo: { type: GraphQLString },
+    avatar: { type: GraphQLString },
+    logins: { type: GraphQLInt }
   },
 });
 
@@ -24,7 +26,8 @@ export const UserInputType = new GraphQLInputObjectType({
     uuid: { type: GraphQLString },
     email: { type: GraphQLString },
     username: { type: GraphQLString },
-    password: { type: GraphQLString }
+    password: { type: GraphQLString },
+    avatar: { type: GraphQLString }
   })
 });
 

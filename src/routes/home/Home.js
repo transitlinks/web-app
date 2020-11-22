@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 import HomeView from '../../components/Home';
+import ProfileSettings from '../../components/Account/ProfileSettings';
 
 import { connect } from "react-redux";
 import { getGeolocation, getLastCoords } from "../../actions/global";
@@ -108,13 +109,6 @@ class Home extends React.Component {
     const params = getParams(this.props);
     params.offset = 0;
 
-    /*
-    const activeTrip = this.props.feed.fetchedAt > (this.props.activeTripUpdatedAt || 0) ? this.props.activeTrip : this.props.updatedActiveTrip;
-    if (activeTrip && isMobile()) {
-      updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
-    }
-     */
-
     if (checkIn) {
       if (!prevCheckIn || prevCheckIn.saved !== checkIn.saved) {
         this.props.getFeed(clientId, params);
@@ -204,7 +198,17 @@ class Home extends React.Component {
 
     this.context.setTitle(title);
 
-    const { feed, query, transportTypes, post } = this.props;
+    const { profile, savedProfile, feed, query, transportTypes, post } = this.props;
+
+    if (profile && profile.logins === 1 && !savedProfile) {
+      return (
+        <div>
+          <div className={s.root}>
+            <ProfileSettings profile={profile} withSubmit />
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div>
@@ -243,7 +247,8 @@ export default connect(state => ({
   updatedActiveTrip: state.trips.activeTrip,
   activeTripUpdatedAt: state.trips.activeTripUpdatedAt,
   deletedTrip: state.trips.deletedTrip,
-  lastCoords: state.global['geolocation.lastCoords']
+  lastCoords: state.global['geolocation.lastCoords'],
+  savedProfile: state.profile.savedProfile
 }), {
   getGeolocation,
   getFeed,

@@ -34,7 +34,8 @@ export default {
               uuid,
               email,
               username,
-              photo
+              photo,
+              avatar
             }
           }`
         );

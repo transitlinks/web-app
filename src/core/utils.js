@@ -98,6 +98,32 @@ export function passwordValid(password) {
 
 }
 
+
+export function displayNameValid(displayName) {
+
+  if (!displayName) {
+    return {
+      text: 'Display name',
+      style: {}
+    };
+  }
+
+  if ((displayName.trim()).length < 4) {
+    return {
+      text: 'Display name too short',
+      style: { color: 'orange' }
+    };
+  }
+
+  return {
+    text: 'Display name',
+    style: { color: 'green' },
+    pass: true
+  };
+
+
+}
+
 export function getClientId() {
 
 

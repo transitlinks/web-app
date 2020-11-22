@@ -47,6 +47,15 @@ const User = Model.define('User', {
 
   photo: {
     type: DataType.STRING
+  },
+
+  avatar: {
+    type: DataType.STRING
+  },
+
+  logins: {
+    type: DataType.INTEGER,
+    defaultValue: 0
   }
 
 }, {

@@ -24,7 +24,9 @@ const saveUser = (uuid, values, startCode, successCode, errorCode) => {
       mutation saveUser {
         user (uuid: "${uuid}", values: ${toGraphQLObject(values)}) {
           uuid,
-          email
+          email,
+          username,
+          avatar
         }
       }
     `;

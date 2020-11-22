@@ -1,20 +1,46 @@
 import { getLog } from './log';
 const log = getLog('passport');
 
+import fs from 'fs';
+import { https } from 'follow-redirects';
+import path from 'path';
 import passport from 'passport';
-import bcrypt from 'bcrypt-nodejs';
+import jdenticon from 'jdenticon';
 import { login } from './auth';
 import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
 import {
-	APP_URL,
+  APP_URL,
   FB_GRAPH_API,
   AUTH_FB_APPID, AUTH_FB_SECRET,
-  GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SECRET
+  GOOGLE_OAUTH_ID, GOOGLE_OAUTH_SECRET, MEDIA_PATH, MEDIA_URL
 } from '../config';
+import { userRepository } from '../data/source';
 
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+const downloadPhoto = async (photoUrl, userUuid) => {
+
+  const mediaPath = MEDIA_PATH || path.join(__dirname, 'public');
+  const fileName = `${userUuid}.jpg`;
+  const mediaFilePath = path.join(mediaPath, fileName);
+
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(mediaFilePath);
+    console.log('GET:', photoUrl);
+    https.get(photoUrl, (response) => {
+      response.pipe(file);
+      file.on('finish', () => {
+        file.close(resolve);  // close() is async, call cb after close completes.
+      });
+    }).on('error', (err) => { // Handle errors
+      fs.unlink(mediaFilePath); // Delete the file async. (But we don't check the result)
+      reject(err.message);
+    });
+  });
+
+};
 
 passport.serializeUser((user, done) => {
   log.debug('passport.serializeUser', `user.uuid=${user.uuid}`);
@@ -36,6 +62,9 @@ passport.use('login-local', new LocalStrategy({
     if (email) {
       try {
         const user = await login({ email, password });
+        const png = jdenticon.toPng(user.uuid, 74);
+        fs.writeFileSync(path.join(MEDIA_PATH || path.join(__dirname, 'public'), `${user.uuid}.png`), png);
+        await userRepository.update(user.uuid, { photo: `${MEDIA_URL}/${user.uuid}.png`, avatar: `/${user.uuid}.png` });
         done(null, user);
       } catch (err) {
         done({ message: err.message });
@@ -66,7 +95,9 @@ passport.use('login-facebook', new FacebookStrategy({
       const email = emails[0].value;
       const photo = `${FB_GRAPH_API}/${profile.id}/picture?type=large`;
       try {
-        const user = await login({ email, firstName, lastName, photo });
+        const user = await login({ email, firstName, lastName, username: `${firstName} ${lastName}`, photo });
+        await downloadPhoto(photo, user.uuid);
+        await userRepository.update(user.uuid, { avatar: `/${user.uuid}.jpg` });
         done(null, user);
       } catch (err) {
         done({ message: err.message });
@@ -105,7 +136,9 @@ passport.use('login-google', new GoogleStrategy({
         }
       }
       try {
-        const user = await login({ email, firstName, lastName, photo });
+        const user = await login({ email, firstName, lastName, username: `${firstName} ${lastName}`, photo });
+        const photoDownloadResult = await downloadPhoto(photo, user.uuid);
+        await userRepository.update(user.uuid, { avatar: `/${user.uuid}.jpg` });
         done(null, user);
       } catch (err) {
         done({ message: err.message });
