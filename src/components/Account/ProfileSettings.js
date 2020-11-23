@@ -4,24 +4,58 @@ import FontIcon from 'material-ui/FontIcon';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ProfileSettings.css';
 import { setProperty } from '../../actions/properties';
-import { saveProfile} from '../../actions/account';
+import { saveProfile } from '../../actions/account';
+import { uploadFiles } from '../../actions/posts';
 import { injectIntl } from 'react-intl';
 import TextField from 'material-ui/TextField';
 import AvatarEditor from 'react-avatar-editor';
 import * as utils from '../../core/utils';
 import RaisedButton from 'material-ui/RaisedButton';
 
-const ProfileSettings = ({ profile, withSubmit, env, savedProfile, username, uploadAvatar, setProperty, saveProfile }) => {
+const ProfileSettings = ({
+  profile, withSubmit, env, savedProfile, username, avatarFile, avatarPosition, avatarEditor,
+  setProperty, saveProfile, uploadFiles
+}) => {
 
   const userProfile = savedProfile || profile;
   const usernameValue = username === undefined || username === null ? userProfile.username : username;
 
   const onFileInputChange = (event) => {
-    setProperty('profile.uploadAvatar', event.target.files[0]);
+    setProperty('profile.avatarFile', event.target.files[0]);
   };
 
 
   const displayNameStatus = utils.displayNameValid(usernameValue);
+
+  const saveUserProfile = () => {
+
+    const avatarPositionValues = {};
+    if (avatarPosition) {
+      avatarPositionValues.avatarX = avatarPosition.x;
+      avatarPositionValues.avatarY = avatarPosition.y;
+    }
+
+    if (avatarFile) {
+      uploadFiles({
+        entityType: 'AvatarSource',
+        entityUuid: userProfile.uuid
+      }, [avatarFile]);
+    }
+
+    if (avatarFile || avatarPosition) {
+      const canvasScaled = avatarEditor.getImageScaledToCanvas();
+      canvasScaled.toBlob((blob) => {
+        const file = new File([blob], `${userProfile.uuid}.jpg`, { type: 'image/jpeg' });
+        uploadFiles({
+          entityType: 'Avatar',
+          entityUuid: userProfile.uuid
+        }, [file]);
+      }, 'image/jpeg');
+    }
+
+    saveProfile(userProfile.uuid, { username: usernameValue, ...avatarPositionValues });
+
+  };
 
   return (
     <div className={s.root}>
@@ -43,13 +77,21 @@ const ProfileSettings = ({ profile, withSubmit, env, savedProfile, username, upl
             {
                 <div className={s.editAvatar}>
                   <AvatarEditor
-                    image={uploadAvatar || `${env.MEDIA_URL}${userProfile.avatar}`}
+                    ref={(editor) => {
+                      if (!avatarEditor && editor && !editor.loaded) {
+                        editor.loaded = true;
+                        setProperty('profile.avatarEditor', editor);
+                      }
+                    }}
+                    onPositionChange={(position) => setProperty('profile.avatarPosition', position)}
+                    image={avatarFile || `${env.MEDIA_URL}${userProfile.avatarSource}`}
                     width={74}
                     height={74}
                     border={2}
+                    position={avatarPosition || { x: userProfile.avatarX, y: userProfile.avatarY }}
                     borderRadius={37}
                     color={[255, 255, 255, 0.6]} // RGBA
-                    scale={1.2}
+                    scale={1}
                     rotate={0}
                   />
                   <div className={s.editAvatarButton}>
@@ -69,7 +111,9 @@ const ProfileSettings = ({ profile, withSubmit, env, savedProfile, username, upl
             <div className={s.submit}>
               <RaisedButton disabled={!displayNameStatus.pass}
                             label={'Confirm profile settings'}
-                            onClick={() => saveProfile(userProfile.uuid, { username: usernameValue })} />
+                            onClick={() => {
+                              saveUserProfile();
+                            }} />
             </div>
         }
       </div>
@@ -85,9 +129,12 @@ export default injectIntl(
     env: state.env,
     savedProfile: state.profile.savedProfile,
     username: state.profile.username,
-    uploadAvatar: state.profile.uploadAvatar
+    avatarFile: state.profile.avatarFile,
+    avatarPosition: state.profile.avatarPosition,
+    avatarEditor: state.profile.avatarEditor
   }), {
     setProperty,
-    saveProfile
+    saveProfile,
+    uploadFiles
   })(withStyles(s)(ProfileSettings))
 );

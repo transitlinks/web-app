@@ -35,7 +35,12 @@ export default {
               email,
               username,
               photo,
-              avatar
+              avatar,
+              avatarSource,
+              avatarX,
+              avatarY,
+              avatarScale,
+              logins
             }
           }`
         );

@@ -1,28 +1,39 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { setAuth } from '../../actions/auth';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
-import Avatar from 'material-ui/Avatar';
-import FontIcon from 'material-ui/FontIcon';
 import Link from '../Link';
 import msg from './messages';
 
-const Navigation = ({ setAuth, auth, className }) => {
+const Navigation = ({ env, auth, savedProfile, className }) => {
 
-  const loginElem = auth.loggedIn ? (
-    <div id="logout-link">
-      <Link to="/account">
-        <Avatar src={auth.user.photo} size={40} />
+  const user = savedProfile || auth.user;
+
+  let loginElem = null;
+
+  if (auth.loggedIn && user) {
+
+    console.log('USER AVATAR', user.avatar, savedProfile);
+
+    loginElem = (
+      <div id="logout-link">
+        <Link to="/account">
+          <div className={s.avatar}>
+            <img src={user.avatar ? `${env.MEDIA_URL}${user.avatar}?${(new Date()).getTime()}` : user.photo} />
+          </div>
+        </Link>
+      </div>
+    );
+  } else {
+    loginElem = (
+      <Link className={s.link} id="login-link" to="/login">
+        <FormattedMessage {...msg.login} />
       </Link>
-    </div>
-  ) : (
-    <Link className={s.link} id="login-link" to="/login">
-      <FormattedMessage {...msg.login} />
-    </Link>
-  );
+    );
+  }
 
   return (
     <div className={cx(s.root, className)} role="navigation">
@@ -38,7 +49,9 @@ Navigation.propTypes = {
 };
 
 export default connect(state => ({
-  auth: state.auth.auth
+  auth: state.auth.auth,
+  env: state.env,
+  savedProfile: state.profile.savedProfile
 }), {
   setAuth
 })(withStyles(s)(Navigation));

@@ -49,14 +49,30 @@ const User = Model.define('User', {
     type: DataType.STRING
   },
 
+  logins: {
+    type: DataType.INTEGER,
+    defaultValue: 0
+  },
+
   avatar: {
     type: DataType.STRING
   },
 
-  logins: {
-    type: DataType.INTEGER,
-    defaultValue: 0
-  }
+  avatarSource: {
+    type: DataType.STRING
+  },
+
+  avatarX: {
+    type: DataType.FLOAT
+  },
+
+  avatarY: {
+    type: DataType.FLOAT
+  },
+
+  avatarScale: {
+    type: DataType.FLOAT
+  },
 
 }, {
 
@@ -65,7 +81,13 @@ const User = Model.define('User', {
       return {
         uuid: this.get('uuid'),
         email: this.get('email'),
-        photo: this.get('photo')
+        username: this.get('username'),
+        photo: this.get('photo'),
+        avatar: this.get('avatar'),
+        avatarSource: this.get('avatarSource'),
+        avatarX: this.get('avatarX'),
+        avatarY: this.get('avatarY'),
+        avatarScale: this.get('avatarScale')
       };
     }
   },

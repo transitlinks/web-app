@@ -26,7 +26,11 @@ const saveUser = (uuid, values, startCode, successCode, errorCode) => {
           uuid,
           email,
           username,
-          avatar
+          avatar,
+          avatarSource,
+          avatarX,
+          avatarY,
+          avatarScale
         }
       }
     `;

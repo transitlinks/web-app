@@ -764,36 +764,51 @@ export const PostMutationFields = {
       const { file } = request;
 
       console.log('uploading file', file);
+
+      let entity = null;
+      let entityUuid = null;
+      let mediaDir = null;
+      if (mediaItem.entityType === 'CheckIn') {
+        entity = await postRepository.getCheckIn({ uuid: mediaItem.entityUuid });
+        entityUuid = entity.uuid;
+        mediaDir = 'instance-media';
+      } else if (mediaItem.entityType === 'Avatar' || mediaItem.entityType === 'AvatarSource') {
+        mediaDir = 'users';
+        entityUuid = mediaItem.entityUuid;
+      } else {
+        throw new Error(`Invalid entity type: ` + mediaItem.entityType);
+      }
+
       const nameParts = file.originalname.split('.');
       const extension = nameParts[nameParts.length - 1];
       const savePath = STORAGE_PATH || path.join(__dirname, 'public');
       const filePath = path.join(savePath, file.filename);
 
-      const mediaPath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), 'instance-media');
-      const entityPath = path.join(mediaPath, mediaItem.entityUuid);
+      const mediaPath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), mediaDir);
+      const entityPath = path.join(mediaPath, entityUuid);
 
       if (fs.existsSync(filePath)) {
 
         if (!fs.existsSync(mediaPath)) {
           fs.mkdirSync(mediaPath);
         }
+
         if (!fs.existsSync(entityPath)) {
           fs.mkdirSync(entityPath);
         }
 
         const now = (new Date()).getTime();
-        const entityFileName = `${now}.${extension}`;
-        const entityFilePath = path.join(entityPath, entityFileName);
+        let entityFileName = null;
 
-        let entity = null;
-        let entityUuid = null;
         if (mediaItem.entityType === 'CheckIn') {
-          entity = await postRepository.getCheckIn({ uuid: mediaItem.entityUuid });
-          entityUuid = entity.uuid;
-        } else {
-          throw new Error(`Invalid entity type: ` + mediaItem.entityType);
+          entityFileName = `${now}.${extension}`;
+        } else if (mediaItem.entityType === 'AvatarSource') {
+          entityFileName = `avatar-source.${extension}`;
+        } else if (mediaItem.entityType === 'Avatar') {
+          entityFileName = `avatar.${extension}`;
         }
 
+        const entityFilePath = path.join(entityPath, entityFileName);
 
         let savedMediaItem = null;
         console.log('file mimetype', file.mimetype);
@@ -801,41 +816,58 @@ export const PostMutationFields = {
 
           log.info(`graphql-request=upload-instance-file user=${request.user ? request.user.uuid : null} image-file-name=${entityFileName}`);
 
+          const additionalFields = {};
+
           const exif = getExifData(filePath);
           console.log('exif data for file', exif);
-          const additionalFields = {};
-          if (exif && exif.gps) {
-            log.info('adding exif data', exif.exif.GPSTimeStamp, exif.exif.DateTime);
-            if (exif.exif) {
-              let dateTime = exif.exif.DateTimeOriginal || exif.exif.DateTime;
-              let timeZone = geoTz(exif.gps.Latitude, exif.gps.Longitude);
-              if (dateTime.value && dateTime.value.length > 0 && timeZone.length > 0) {
-                dateTime = dateTime.value[0].split(' ');
-                if (dateTime.length === 2) {
-                  console.log(dateTime[0]);
-                  dateTime = dateTime[0].split(':').join('-') + ' ' + dateTime[1];
-                  timeZone = timeZone[0];
-                  const tzDateTime = moment.tz(dateTime, timeZone);
-                  const tzDateTimeValue = tzDateTime.format();
-                  additionalFields.date = new Date(tzDateTimeValue);
+
+          if (exif) {
+
+            if (mediaItem.entityType === 'CheckIn' && exif.gps) {
+              log.info('adding exif data', exif.exif.GPSTimeStamp, exif.exif.DateTime);
+              if (exif.exif) {
+                let dateTime = exif.exif.DateTimeOriginal || exif.exif.DateTime;
+                let timeZone = geoTz(exif.gps.Latitude, exif.gps.Longitude);
+                if (dateTime.value && dateTime.value.length > 0 && timeZone.length > 0) {
+                  dateTime = dateTime.value[0].split(' ');
+                  if (dateTime.length === 2) {
+                    console.log(dateTime[0]);
+                    dateTime = dateTime[0].split(':')
+                      .join('-') + ' ' + dateTime[1];
+                    timeZone = timeZone[0];
+                    const tzDateTime = moment.tz(dateTime, timeZone);
+                    const tzDateTimeValue = tzDateTime.format();
+                    additionalFields.date = new Date(tzDateTimeValue);
+                  }
                 }
               }
+              if (!additionalFields.date) {
+                log.info('Failed to parse date from EXIF', exif.exif);
+              }
+              additionalFields.latitude = exif.gps.Latitude;
+              additionalFields.longitude = exif.gps.Longitude;
+              additionalFields.altitude = exif.gps.Altitude;
+
+            } else if (mediaItem.entityType === 'User') {
+              // TODO: Get exif data for avatars?
             }
-            if (!additionalFields.date) {
-              log.info('Failed to parse date from EXIF', exif.exif);
-            }
-            additionalFields.latitude = exif.gps.Latitude;
-            additionalFields.longitude = exif.gps.Longitude;
-            additionalFields.altitude = exif.gps.Altitude;
+
           }
 
           await processImage(filePath, entityFilePath);
 
+          const mediaUrl = `/${mediaDir}/${entityUuid}/${entityFileName}`;
+          if (mediaItem.entityType === 'Avatar') {
+            await userRepository.update(mediaItem.entityUuid, { avatar: mediaUrl });
+          } else if (mediaItem.entityType === 'AvatarSource') {
+            await userRepository.update(mediaItem.entityUuid, { avatarSource: mediaUrl });
+          }
+
           savedMediaItem = await postRepository.saveMediaItem({
-            entityUuid: entity.uuid,
+            entityUuid,
             type: 'image',
             flag: false,
-            url: `/instance-media/${entityUuid}/${entityFileName}`,
+            mediaUrl,
             uploadStatus: 'uploaded',
             uploadProgress: 100,
             ...additionalFields

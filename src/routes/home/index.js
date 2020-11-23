@@ -67,6 +67,10 @@ export default {
             username,
             photo,
             avatar,
+            avatarSource,
+            avatarX,
+            avatarY,
+            avatarScale,
             logins
           }` : ''}
         }`

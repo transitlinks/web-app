@@ -66,8 +66,11 @@ export const UserMutationFields = {
       if (password && password.length > 0) {
         values.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
       }
-      const user = await userRepository.update(uuid, values);
-      return user;
+
+      let user = await userRepository.update(uuid, values);
+      if (user.logins === 1) user = await userRepository.update(uuid, { logins: 2 });
+      console.log(user);
+      return user.json();
     }
 
   },

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
 import { resetPassword, saveProfile } from '../../actions/account';
+import { uploadFiles } from '../../actions/posts';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Profile.css';
 import TextField from 'material-ui/TextField';
@@ -15,11 +16,11 @@ import { displayNameValid, emailValid } from '../../core/utils';
 
 const Profile = ({
   intl,
-  setProperty,
-  resetPassword, saveProfile,
-  email, username, password, passwordValid,
+  setProperty, resetPassword, saveProfile, uploadFiles,
+  email, username, avatarFile, password, passwordValid,
+  avatarEditor,
   saveProfileResult, resetPasswordResult,
-  profile, savedProfile
+  profile, savedProfile, avatarPosition,
 }) => {
 
   const handleEmailChange = (input) => {
@@ -33,6 +34,46 @@ const Profile = ({
   const userProfile = savedProfile || profile;
   const emailValue = (email === null || email === undefined) ? userProfile.email : email;
   const usernameValue = (username === null || username === undefined) ? userProfile.username : username;
+
+  let settingsChanged = false;
+  if (avatarPosition) {
+    if (avatarPosition.x !== userProfile.avatarX || avatarPosition.y !== userProfile.avatarY) {
+      settingsChanged = true;
+    }
+  }
+  if (emailValue !== userProfile.email || usernameValue !== userProfile.username) {
+    settingsChanged = true;
+  }
+
+  const saveUserProfile = () => {
+
+    const avatarPositionValues = {};
+    if (avatarPosition) {
+      avatarPositionValues.avatarX = avatarPosition.x;
+      avatarPositionValues.avatarY = avatarPosition.y;
+    }
+
+    if (avatarFile) {
+      uploadFiles({
+        entityType: 'AvatarSource',
+        entityUuid: userProfile.uuid
+      }, [avatarFile]);
+    }
+
+    if (avatarFile || avatarPosition) {
+      const canvasScaled = avatarEditor.getImageScaledToCanvas();
+      canvasScaled.toBlob((blob) => {
+        const file = new File([blob], `${userProfile.uuid}.jpg`, { type: 'image/jpeg' });
+        uploadFiles({
+          entityType: 'Avatar',
+          entityUuid: userProfile.uuid
+        }, [file]);
+      }, 'image/jpeg');
+    }
+
+    saveProfile(userProfile.uuid, { email: emailValue, username: usernameValue, ...avatarPositionValues });
+
+  };
 
 	return (
     <div>
@@ -52,9 +93,11 @@ const Profile = ({
               <FormattedMessage {...msg['save-profile-error']} />
             }
             <RaisedButton className={s.button}
-                          disabled={!emailValid(emailValue).pass || !displayNameValid(usernameValue).pass || (emailValue === userProfile.email && usernameValue === userProfile.username)}
+                          disabled={!emailValid(emailValue).pass || !displayNameValid(usernameValue).pass || !settingsChanged}
                           label={intl.formatMessage(msg['save-profile'])}
-                          onClick={() => saveProfile(profile.uuid, { email: emailValue, username: usernameValue })} />
+                          onClick={() => {
+                            saveUserProfile();
+                          }} />
           </div>
         </div>
         <div id="password-reset" className={s.password}>
@@ -92,8 +135,11 @@ export default injectIntl(
     passwordValid: state.profile.passwordValid,
     saveProfileResult: state.profile.saveProfileResult,
     resetPasswordResult: state.profile.resetPasswordResult,
-    savedProfile: state.profile.savedProfile
+    savedProfile: state.profile.savedProfile,
+    avatarPosition: state.profile.avatarPosition,
+    avatarFile: state.profile.avatarFile,
+    avatarEditor: state.profile.avatarEditor
   }), {
-    setProperty, resetPassword, saveProfile
+    setProperty, resetPassword, saveProfile, uploadFiles
   })(withStyles(s)(Profile))
 );

@@ -61,6 +61,19 @@
 .optional {
 }
 
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.avatar img {
+  width: 40px;
+  position: absolute;
+}
+
 @media (max-width: 425px) {
   .optional {
     display: none;

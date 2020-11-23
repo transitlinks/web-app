@@ -39,11 +39,7 @@ export default function reduce(state = { email: null, password: '' }, action) {
     case SAVE_PROFILE_SUCCESS:
       return {
         ...state,
-        savedProfile: {
-          username: action.payload.user.username,
-          email: action.payload.user.email,
-          avatar: action.payload.user.avatar
-        },
+        savedProfile: action.payload.user,
         saveProfileResult: 'success'
       };
     case SAVE_PROFILE_ERROR:

@@ -22,9 +22,14 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const downloadPhoto = async (photoUrl, userUuid) => {
 
-  const mediaPath = MEDIA_PATH || path.join(__dirname, 'public');
-  const fileName = `${userUuid}.jpg`;
-  const mediaFilePath = path.join(mediaPath, fileName);
+  const usersPath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), 'users');
+  const userMediaPath = path.join(usersPath, userUuid);
+  console.log('USER MEDIA PATH', usersPath, userMediaPath);
+  if (!fs.existsSync(userMediaPath)) {
+    fs.mkdirSync(userMediaPath);
+  }
+
+  const mediaFilePath = path.join(userMediaPath, 'photo.jpg');
 
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(mediaFilePath);
@@ -41,6 +46,24 @@ const downloadPhoto = async (photoUrl, userUuid) => {
   });
 
 };
+
+const getAvatarPaths = (user, extension) => {
+
+  const basePath = MEDIA_PATH || path.join(__dirname, 'public');
+  const userPath = `/users/${user.uuid}`;
+  const avatarSourceFilePath = `${userPath}/avatar-source.${extension}`;
+  const avatarFilePath = `${userPath}/avatar.${extension}`;
+  if (!fs.existsSync(path.join(basePath, userPath))) {
+    fs.mkdirSync(path.join(basePath, userPath));
+  }
+  return {
+    basePath,
+    avatarSourceFilePath,
+    avatarFilePath
+  };
+
+};
+
 
 passport.serializeUser((user, done) => {
   log.debug('passport.serializeUser', `user.uuid=${user.uuid}`);
@@ -63,8 +86,14 @@ passport.use('login-local', new LocalStrategy({
       try {
         const user = await login({ email, password });
         const png = jdenticon.toPng(user.uuid, 74);
-        fs.writeFileSync(path.join(MEDIA_PATH || path.join(__dirname, 'public'), `${user.uuid}.png`), png);
-        await userRepository.update(user.uuid, { photo: `${MEDIA_URL}/${user.uuid}.png`, avatar: `/${user.uuid}.png` });
+        const { basePath, avatarSourceFilePath, avatarFilePath } = getAvatarPaths(user, 'png');
+        fs.writeFileSync(path.join(basePath, avatarSourceFilePath), png);
+        fs.writeFileSync(path.join(basePath, avatarFilePath), png);
+        await userRepository.update(user.uuid, {
+          photo: `${MEDIA_URL}/${user.uuid}.png`,
+          avatarSource: avatarSourceFilePath,
+          avatar: avatarFilePath
+        });
         done(null, user);
       } catch (err) {
         done({ message: err.message });
@@ -97,7 +126,9 @@ passport.use('login-facebook', new FacebookStrategy({
       try {
         const user = await login({ email, firstName, lastName, username: `${firstName} ${lastName}`, photo });
         await downloadPhoto(photo, user.uuid);
-        await userRepository.update(user.uuid, { avatar: `/${user.uuid}.jpg` });
+        if (!user.avatar) {
+          await userRepository.update(user.uuid, { avatar: `/users/${user.uuid}/photo.jpg`, avatarSource: `/users/${user.uuid}/photo.jpg` });
+        }
         done(null, user);
       } catch (err) {
         done({ message: err.message });
@@ -137,8 +168,10 @@ passport.use('login-google', new GoogleStrategy({
       }
       try {
         const user = await login({ email, firstName, lastName, username: `${firstName} ${lastName}`, photo });
-        const photoDownloadResult = await downloadPhoto(photo, user.uuid);
-        await userRepository.update(user.uuid, { avatar: `/${user.uuid}.jpg` });
+        await downloadPhoto(photo, user.uuid);
+        if (!user.avatar) {
+          await userRepository.update(user.uuid, { avatar: `/users/${user.uuid}/photo.jpg`, avatarSource: `/users/${user.uuid}/photo.jpg` });
+        }
         done(null, user);
       } catch (err) {
         done({ message: err.message });

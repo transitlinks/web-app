@@ -1,7 +1,7 @@
 import {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLNonNull, GraphQLInt,
+  GraphQLNonNull, GraphQLInt, GraphQLFloat,
 } from 'graphql';
 
 const ProfileType = new GraphQLObjectType({
@@ -12,6 +12,10 @@ const ProfileType = new GraphQLObjectType({
     username: { type: GraphQLString },
     photo: { type: GraphQLString },
     avatar: { type: GraphQLString },
+    avatarSource: { type: GraphQLString },
+    avatarX: { type: GraphQLFloat },
+    avatarY: { type: GraphQLFloat },
+    avatarScale: { type: GraphQLFloat },
     logins: { type: GraphQLInt }
   },
 });

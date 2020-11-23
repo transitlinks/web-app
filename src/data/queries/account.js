@@ -21,6 +21,10 @@ export const AccountQueryFields = {
         username: user.username,
         photo: user.photo,
         avatar: user.avatar,
+        avatarSource: user.avatarSource,
+        avatarX: user.avatarX,
+        avatarY: user.avatarY,
+        avatarScale: user.avatarScale,
         logins: user.logins
       };
     }
