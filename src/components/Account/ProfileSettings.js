@@ -84,7 +84,7 @@ const ProfileSettings = ({
                       }
                     }}
                     onPositionChange={(position) => setProperty('profile.avatarPosition', position)}
-                    image={avatarFile || `${env.MEDIA_URL}${userProfile.avatarSource}`}
+                    image={avatarFile || `${env.MEDIA_URL}${userProfile.avatarSource}?${(new Date()).getTime()}`}
                     width={74}
                     height={74}
                     border={2}
