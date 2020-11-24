@@ -57,7 +57,7 @@ class App extends Component {
 
   componentDidMount() {
 
-    //if (!isMobile()) return;
+    if (!isMobile()) return;
 
     let hidden;
     let visibilityChange;
@@ -94,6 +94,8 @@ class App extends Component {
 
   componentDidUpdate() {
 
+    if (!isMobile()) return;
+    
     const lastCoords = this.props.lastCoords;
     const activeTrip = this.props.activeTrip;
     const lastCoordsUpdatedDiff = (new Date()).getTime() - this.state.lastCoordsUpdatedAt;

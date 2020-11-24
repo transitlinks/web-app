@@ -44,6 +44,9 @@ const Profile = ({
   if (emailValue !== userProfile.email || usernameValue !== userProfile.username) {
     settingsChanged = true;
   }
+  if (avatarFile) {
+    settingsChanged = true;
+  }
 
   const saveUserProfile = () => {
 

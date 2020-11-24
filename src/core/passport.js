@@ -7,7 +7,7 @@ import path from 'path';
 import passport from 'passport';
 import jdenticon from 'jdenticon';
 import { login } from './auth';
-import { User, UserLogin, UserClaim, UserProfile } from '../data/models';
+import { User } from '../data/models';
 import {
   APP_URL,
   FB_GRAPH_API,
@@ -24,7 +24,6 @@ const downloadPhoto = async (photoUrl, userUuid) => {
 
   const usersPath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), 'users');
   const userMediaPath = path.join(usersPath, userUuid);
-  console.log('USER MEDIA PATH', usersPath, userMediaPath);
   if (!fs.existsSync(userMediaPath)) {
     fs.mkdirSync(userMediaPath);
   }
@@ -86,14 +85,18 @@ passport.use('login-local', new LocalStrategy({
       try {
         const user = await login({ email, password });
         const png = jdenticon.toPng(user.uuid, 74);
-        const { basePath, avatarSourceFilePath, avatarFilePath } = getAvatarPaths(user, 'png');
-        fs.writeFileSync(path.join(basePath, avatarSourceFilePath), png);
-        fs.writeFileSync(path.join(basePath, avatarFilePath), png);
-        await userRepository.update(user.uuid, {
-          photo: `${MEDIA_URL}/${user.uuid}.png`,
-          avatarSource: avatarSourceFilePath,
-          avatar: avatarFilePath
-        });
+        if (!user.avatar) {
+          const { basePath, avatarSourceFilePath, avatarFilePath } = getAvatarPaths(user, 'png');
+          fs.writeFileSync(path.join(basePath, avatarSourceFilePath), png);
+          fs.writeFileSync(path.join(basePath, avatarFilePath), png);
+          const username = user.email.substring(0, user.email.indexOf('@'));
+          await userRepository.update(user.uuid, {
+            photo: `${MEDIA_URL}/${user.uuid}.png`,
+            avatarSource: avatarSourceFilePath,
+            avatar: avatarFilePath,
+            username
+          });
+        }
         done(null, user);
       } catch (err) {
         done({ message: err.message });
