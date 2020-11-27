@@ -5,11 +5,12 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 import NewCheckIn from '../NewCheckIn';
 import FilterHeader, {
+  renderCountryLabel,
   renderLinkedLocalityLabel,
   renderLocalityLabel,
   renderRouteLabel,
   renderTagLabel,
-  renderTripLabel
+  renderTripLabel,
 } from '../FilterHeader';
 import ErrorHeader from '../ErrorHeader';
 
@@ -21,7 +22,7 @@ const HomeView = ({ feed, query, transportTypes, post }) => {
 
   let filterOptions = null;
 
-  const { user, tags, trip, locality, linkedLocality, from, to, route } = query;
+  const { user, tags, trip, locality, country, linkedLocality, from, to, route } = query;
 
   const userData = feed.user && {
     uuid: user,
@@ -50,6 +51,12 @@ const HomeView = ({ feed, query, transportTypes, post }) => {
         const url = '/links?trip=' + trip + '&view=map';
         return url;
       }
+    };
+  } else if (country) {
+    filterOptions = {
+      country,
+      label: renderCountryLabel(country),
+      getUrl: () => `/links?country=${country}&view=map`
     };
   } else if (locality && linkedLocality) {
     filterOptions = {

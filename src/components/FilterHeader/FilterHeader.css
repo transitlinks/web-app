@@ -8,6 +8,7 @@
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 8px;
+  position: relative;
 }
 
 .filtersContainer .filtersDisplay {
@@ -138,7 +139,7 @@
   justify-content: center;
   margin-bottom: 4px;
   padding-right: 6px;
-  padding-left: 6px;
+  padding-left: 2px;
 }
 
 .linksListHeader .image {
@@ -149,6 +150,9 @@
 
 .linksListHeader .label {
   font-size: 26px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .linksListHeader .locality {
@@ -165,4 +169,8 @@
 
 .linksListHeader .linkedLocality {
   font-size: 18px;
+}
+
+.filterDisplay {
+  max-width: calc(100% - 60px);
 }

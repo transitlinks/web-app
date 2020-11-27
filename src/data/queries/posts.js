@@ -1106,6 +1106,7 @@ export const PostQueryFields = {
       clientId: { type: GraphQLString },
       tags: { type: GraphQLString },
       locality: { type: GraphQLString },
+      country: { type: GraphQLString },
       linkedLocality: { type: GraphQLString },
       from: { type: GraphQLString },
       to: { type: GraphQLString },
@@ -1116,7 +1117,7 @@ export const PostQueryFields = {
       offset: { type: GraphQLInt },
       limit: { type: GraphQLInt }
     },
-    resolve: async ({ request }, { clientId, trip, tags, locality, linkedLocality, from, to, route, user, transportTypes, offset, limit }) => {
+    resolve: async ({ request }, { clientId, trip, tags, locality, country, linkedLocality, from, to, route, user, transportTypes, offset, limit }) => {
 
       log.info(graphLog(request, 'get-feed'));
 
@@ -1124,7 +1125,7 @@ export const PostQueryFields = {
 
       const options = {};
 
-      if (user || locality || tags) {
+      if (user || locality || country || tags) {
         options.order = [['createdAt', 'DESC']];
       } else if (trip) {
         options.order = [['createdAt', 'ASC']];
@@ -1190,6 +1191,10 @@ export const PostQueryFields = {
           userId = tripEntity.userId;
           checkIns = await checkInRepository.getTripCheckIns(tripEntity.id, !tripEntity.lastCheckInId, options);
         }
+      } else if (country) {
+        const query = { country };
+        if (userId) query.userId = userId;
+        checkIns = await checkInRepository.getFeedCheckIns(query, options);
       } else if (locality && linkedLocality) {
         const terminals = await terminalRepository.getInterTerminalsByLocality(locality, { linkedLocality }, options);
         checkIns = terminals.map(terminal => terminal.checkIn);

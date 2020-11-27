@@ -253,11 +253,30 @@ const CheckInItem = (
             </div>
           </div> :
           <div>
+
             {
-              (editable && showSettings) &&
-              <div className={s.checkInControls}>
-                <CheckInControls checkIn={checkIn} />
-              </div>
+              (editable && showSettings) ?
+                <div className={s.checkInControls}>
+                  <CheckInControls checkIn={checkIn} />
+                </div> :
+                <div className={s.checkInLocalityAndCountry}>
+                  <div className={cx(s.locationElement, s.locality)}>
+                    <div className={s.icon}>
+                      <FontIcon className="material-icons" style={{ fontSize: '21px', color: '#a0a0a0' }}>location_city</FontIcon>
+                    </div>
+                    <div className={s.label} onClick={() => navigate({ pathname: '/', search: `?locality=${checkIn.locality}` })}>
+                      {checkIn.locality}
+                    </div>
+                  </div>
+                  <div className={cx(s.locationElement, s.country)}>
+                    <div className={s.icon}>
+                      <FontIcon className="material-icons" style={{ fontSize: '21px', color: '#a0a0a0' }}>flag</FontIcon>
+                    </div>
+                    <div className={s.label} onClick={() => navigate({ pathname: '/', search: `?country=${checkIn.country}` })}>
+                      {checkIn.country}
+                    </div>
+                  </div>
+                </div>
             }
 
             <div className={s.contentTypeContainer}>

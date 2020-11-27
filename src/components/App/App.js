@@ -95,7 +95,7 @@ class App extends Component {
   componentDidUpdate() {
 
     if (!isMobile()) return;
-    
+
     const lastCoords = this.props.lastCoords;
     const activeTrip = this.props.activeTrip;
     const lastCoordsUpdatedDiff = (new Date()).getTime() - this.state.lastCoordsUpdatedAt;

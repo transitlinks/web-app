@@ -217,6 +217,47 @@
   margin-top: -2px;
 }
 
+.checkInLocalityAndCountry {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.checkInLocalityAndCountry .locationElement {
+  display: flex;
+  margin-right: 6px;
+  align-items: center;
+  font-size: 19px;
+  color: #808080;
+}
+
+.checkInLocalityAndCountry :first-child {
+  max-width: 66%;
+}
+
+.checkInLocalityAndCountry .locationElement .icon {
+  display: flex;
+  margin-left: 2px;
+}
+
+.checkInLocalityAndCountry .locality {
+  max-width: 66%;
+}
+
+.checkInLocalityAndCountry .country {
+  max-width: 33%;
+}
+
+
+.checkInLocalityAndCountry .locationElement .label {
+  cursor: pointer;
+  text-decoration: underline;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .loading {
   height: 200px;
   display: flex;

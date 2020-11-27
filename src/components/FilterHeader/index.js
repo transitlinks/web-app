@@ -82,6 +82,19 @@ export const renderLocalityLabel = (locality) => {
   );
 };
 
+export const renderCountryLabel = (country) => {
+  return (
+    <div className={s.linksListHeader}>
+      <div className={s.image}>
+        <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
+          flag
+        </FontIcon>
+      </div>
+      &nbsp;<div className={s.label}>{country}</div>
+    </div>
+  );
+};
+
 export const renderUserLabel = (user) => {
   return (
     <div className={s.userFilter}>
