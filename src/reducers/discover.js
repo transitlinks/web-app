@@ -31,6 +31,7 @@ export default function reduce(state = {}, action) {
             return {
               discover: stateDiscover,
               localityOffset: discover.localityOffset,
+              countryOffset: discover.countryOffset,
               tagOffset: discover.tagOffset,
               tripOffset: discover.tripOffset,
               userOffset: discover.userOffset,

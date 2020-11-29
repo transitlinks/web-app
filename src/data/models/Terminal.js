@@ -43,6 +43,10 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  country: {
+    type: DataType.STRING
+  },
+
   latitude: {
     type: DataType.FLOAT
   },

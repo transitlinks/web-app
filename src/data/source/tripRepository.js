@@ -120,6 +120,27 @@ export default {
 
   },
 
+  getLatestTripsByCountry: async (country, limit) => {
+
+    let query = `
+        SELECT t.uuid, t.name FROM "Trip" t, "CheckIn" fci, "CheckIn" lci
+            WHERE t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id
+            AND (
+                fci.country = '${country}' OR lci.country = '${country}'
+                OR EXISTS(SELECT ci.id
+                FROM "CheckIn" ci
+                WHERE country = '${country}' AND "createdAt" BETWEEN fci."createdAt" AND lci."createdAt")
+            )
+            ORDER BY t."createdAt" DESC
+    `;
+
+    if (limit) query += ` LIMIT ${limit}`;
+
+    const latestTrips = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return latestTrips;
+
+  },
+
   getTripsByCheckInIds: async (checkInIds, limit) => {
 
     let query = `

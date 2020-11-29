@@ -45,6 +45,21 @@ export default {
 
   },
 
+  getCheckInWithPostsByCountry: async (country) => {
+
+    let queryWithPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p, "MediaItem" mi WHERE ci."country" = '${country}' AND ci."id" = p."checkInId" AND mi."entityUuid" = p."uuid"::varchar`;
+    let queryWithoutPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p WHERE ci."country" = '${country}' AND ci."id" = p."checkInId"`;
+
+    let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
+    if (checkIns.length === 0) {
+      checkIns = await sequelize.query(queryWithoutPhotos, { model: CheckIn, mapToModel: true });
+    }
+    if (checkIns.length === 0) return null;
+
+    return checkIns[0];
+
+  },
+
   getCheckIns: async (where, options = {}) => {
 
     const checkIns = await CheckIn.findAll({
@@ -142,6 +157,12 @@ export default {
     return checkInCount[0].count;
   },
 
+  getCheckInCountByCountry: async (country) => {
+    const query = `SELECT COUNT(id) FROM "CheckIn" WHERE country = '${country}'`;
+    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return checkInCount[0].count;
+  },
+
   getCheckInCountByTag: async (tag) => {
     const query = `SELECT COUNT(id) FROM "CheckIn" as ci WHERE EXISTS (SELECT 1 FROM "EntityTag" et, "Tag" t WHERE et."checkInId" = ci.id AND t.id = et."tagId" AND t."value" = '${tag}')`;
     const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
@@ -219,9 +240,19 @@ export default {
   getLatestCheckIns: async (limit, offset, search) => {
     let query = `SELECT DISTINCT "locality", MAX("createdAt") as "lastCreated" FROM "CheckIn"`;
     if (search) {
-      query += ` WHERE "locality" ILIKE '%${search}%'`
+      query += ` WHERE "locality" ILIKE '%${search}%' OR "country" ILIKE '%${search}%'`;
     }
     query += ` GROUP BY "locality" ORDER BY "lastCreated" DESC, "locality" LIMIT ${limit} OFFSET ${offset}`;
+    const latestCheckIns = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return latestCheckIns;
+  },
+
+  getLatestCountries: async (limit, offset, search) => {
+    let query = `SELECT DISTINCT "country", MAX("createdAt") as "lastCreated" FROM "CheckIn"`;
+    if (search) {
+      query += ` WHERE "country" ILIKE '%${search}%'`
+    }
+    query += ` GROUP BY "country" ORDER BY "lastCreated" DESC, "country" LIMIT ${limit} OFFSET ${offset}`;
     const latestCheckIns = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestCheckIns;
   },

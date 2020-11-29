@@ -262,6 +262,16 @@ export default {
     }
   },
 
+  getTerminalCountByCountry: async (country) => {
+    const query = `SELECT count(id) FROM "Terminal" WHERE "country" = '${country}' AND "linkedLocality" != "locality"`;
+    const terminalCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    if (terminalCount.length === 1) {
+      return terminalCount[0].count;
+    } else {
+      return -1;
+    }
+  },
+
   saveTerminal: async (terminal) => {
 
     if (terminal.uuid || terminal.id) {

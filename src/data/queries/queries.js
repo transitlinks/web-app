@@ -224,6 +224,7 @@ export const getDiscoverQuery = (params) => {
         connectionsTo
       },
       localityOffset,
+      countryOffset,
       tagOffset,
       tripOffset,
       userOffset

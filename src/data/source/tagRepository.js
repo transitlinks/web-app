@@ -18,7 +18,7 @@ export default {
       const checkIn = await CheckIn.findById(post.checkInId);
       const entityTag = await EntityTag.findOne({ where: { checkInId: checkIn.id, tagId: tag.id } });
       if (!entityTag) {
-        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id, userUuid, locality: checkIn.locality });
+        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id, userUuid, locality: checkIn.locality, country: checkIn.country });
       } else {
         console.log(entity, entityId, 'already tagged with', tagValue);
       }
@@ -79,6 +79,13 @@ export default {
 
   getLatestTagsByLocality: async (locality, limit) => {
     let query = `SELECT "value" as "tag", MAX("createdAt") as "lastCreated", "userUuid" as "userUuid" FROM (SELECT t.value as "value", et."createdAt" AS "createdAt", et."userUuid" AS "userUuid" FROM "Tag" t, "EntityTag" et WHERE t.id = et."tagId" AND et."locality" = '${locality}') AS tags`;
+    query += ` GROUP BY "value", "userUuid" ORDER BY "lastCreated" DESC, "value" LIMIT ${limit}`;
+    const latestTags = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return latestTags;
+  },
+
+  getLatestTagsByCountry: async (country, limit) => {
+    let query = `SELECT "value" as "tag", MAX("createdAt") as "lastCreated", "userUuid" as "userUuid" FROM (SELECT t.value as "value", et."createdAt" AS "createdAt", et."userUuid" AS "userUuid" FROM "Tag" t, "EntityTag" et WHERE t.id = et."tagId" AND et."country" = '${country}') AS tags`;
     query += ` GROUP BY "value", "userUuid" ORDER BY "lastCreated" DESC, "value" LIMIT ${limit}`;
     const latestTags = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestTags;

@@ -22,6 +22,7 @@ const getParams = (props) => {
   const params = { limit: 8, offset: offset || 0 };
   if (query && query.tags) params.tags = query.tags;
   if (query && query.locality) params.locality = query.locality;
+  if (query && query.country) params.country = query.country;
   if (query && query.linkedLocality) params.linkedLocality = query.linkedLocality;
   if (query && query.from) params.from = query.from;
   if (query && query.to) params.to = query.to;

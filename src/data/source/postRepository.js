@@ -216,8 +216,21 @@ export default {
     return posts;
   },
 
+  getPostsByCountry: async (country, limit) => {
+    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE country = '${country}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE mi."type" = 'image' AND p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
+    if (limit) query += ' LIMIT ' + limit;
+    const posts = await sequelize.query(query, { model: Post, mapToModel: true });
+    return posts;
+  },
+
   getPostCountByLocality: async (locality) => {
     let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}')`;
+    const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return postCount[0].count;
+  },
+
+  getPostCountByCountry: async (country) => {
+    let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE country = '${country}')`;
     const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return postCount[0].count;
   },
@@ -257,6 +270,12 @@ export default {
 
   getConnectionsByLocality: async(locality, type) => {
     const query = `SELECT DISTINCT ci1.locality FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2.locality = '${locality}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
+    const connections = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    return connections.map(c => c.locality);
+  },
+
+  getConnectionsByCountry: async(country, type) => {
+    const query = `SELECT DISTINCT ci1.locality FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2.country = '${country}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
     const connections = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return connections.map(c => c.locality);
   },

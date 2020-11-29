@@ -138,6 +138,96 @@ const DiscoverView = ({
 
   };
 
+  const renderCountryDiscovery = (discovery, index) => {
+
+    const frameId = `discover-${index}`;
+
+    const { posts, feedItem } = discovery;
+    const actualFeedItem = fetchedFeedItems[frameId] || feedItem;
+
+    const hasTrips = discovery.trips && discovery.trips.length > 0;
+    const hasTags = discovery.tags && discovery.tags.length > 0;
+
+    return (
+      <div key={frameId} className={s.discoveryItem}>
+        <div className={s.discoveryHeader}>
+          <div className={s.discoveryGroupName}>
+            <Link to={`/?country=${discovery.groupName}`}>{ discovery.groupName || 'Unnamed' }</Link>
+          </div>
+          <div className={s.discoveryHeaderControls}>
+            <div className={s.checkInCount}>
+              <div className={s.checkInCountIcon}>
+                <FontIcon className="material-icons" style={{ fontSize: '16px' }}>place</FontIcon>
+              </div>
+              <div className={s.checkInCountValue}>
+                { discovery.checkInCount }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={s.terminalSummary}>
+          { discovery.connectionsFrom > 0 && renderTerminalsList('arrival', discovery.connectionsFrom, discovery.groupName) }
+          { discovery.connectionsTo > 0 && renderTerminalsList('departure', discovery.connectionsTo, discovery.groupName) }
+        </div>
+        <div className={s.postSummary}>
+          {
+            actualFeedItem &&
+            <div className={s.left}>
+              <CheckInItem checkInItem={actualFeedItem} frameId={frameId}
+                           transportTypes={transportTypes} target="discover" />
+              {
+                hasTrips &&
+                <div className={s.contentScroller} style={{ direction: 'rtl' }}>
+                  <div className={s.scrollingContent} style={{ textAlign: 'right', paddingLeft: '6px' }}>
+                    <div className={s.label}>
+                      <FontIcon className="material-icons"
+                                style={{ fontSize: '22px' }}>public</FontIcon>
+                    </div>
+                    {
+                      discovery.trips.map(trip => {
+                        return (
+                          <div className={s.discoveryTrip}>
+                            <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                </div>
+              }
+
+              {
+                hasTags &&
+                <div className={s.contentScroller}>
+                  <div className={s.scrollingContent} style={{ textAlign: 'left' }}>
+                    <div className={s.label}>
+                      <FontIcon className="material-icons"
+                                style={{ fontSize: '22px' }}>local_offer</FontIcon>
+                    </div>
+                    {
+                      discovery.tags.map(tag => {
+                        return (
+                          <div className={s.discoveryTag}>
+                            #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          <div className={s.right}>
+            <PostCollection discovery={discovery} checkInItem={actualFeedItem} posts={posts} frameId={frameId} transportTypes={transportTypes} />
+          </div>
+        </div>
+      </div>
+    );
+
+  };
+
+
   const renderTagDiscovery = (discovery, index) => {
 
     const frameId = `discover-${index}`;
@@ -291,6 +381,8 @@ const DiscoverView = ({
 
     if (discovery.groupType === 'locality') {
       return renderLocalityDiscovery(discovery, index);
+    } else if (discovery.groupType === 'country') {
+      return renderCountryDiscovery(discovery, index);
     } else if (discovery.groupType === 'tag') {
       return renderTagDiscovery(discovery, index);
     } else if (discovery.groupType === 'trip') {

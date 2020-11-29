@@ -146,6 +146,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     checkInId: checkIn.id,
     checkInUuid: checkIn.uuid,
     locality: checkIn.locality,
+    country: checkIn.country,
     latitude: checkIn.latitude,
     longitude: checkIn.longitude,
     formattedAddress: checkIn.formattedAddress
