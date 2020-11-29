@@ -802,6 +802,7 @@ export const PostMutationFields = {
 
         if (mediaItem.entityType === 'CheckIn') {
           entityFileName = `${now}.${extension}`;
+          console.log('SAVE FILE TO', entityFileName);
         } else if (mediaItem.entityType === 'AvatarSource') {
           entityFileName = `avatar-source.${extension}`;
         } else if (mediaItem.entityType === 'Avatar') {
@@ -867,7 +868,7 @@ export const PostMutationFields = {
             entityUuid,
             type: 'image',
             flag: false,
-            mediaUrl,
+            url: mediaUrl,
             uploadStatus: 'uploaded',
             uploadProgress: 100,
             ...additionalFields
@@ -877,8 +878,9 @@ export const PostMutationFields = {
 
           log.info(`graphql-request=upload-instance-file-video user=${request.user ? request.user.uuid : null}`);
 
+          console.log('SAVE AS', entityUuid);
           savedMediaItem = await postRepository.saveMediaItem({
-            entityUuid: entity.uuid,
+            entityUuid,
             type: 'video',
             flag: false,
             uploadProgress: 0

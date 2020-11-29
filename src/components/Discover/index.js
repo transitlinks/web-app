@@ -263,7 +263,7 @@ const DiscoverView = ({
       <div key={frameId} className={s.discoveryItem}>
         <div className={s.discoveryHeader}>
           <div className={s.discoveryGroupName}>
-            <Link to={`/?user=${discovery.groupName}`}>{ discovery.groupName }</Link>
+            <Link to={`/?user=${discovery.groupId}`}>{ discovery.groupName }</Link>
           </div>
           <div className={s.discoveryHeaderControls}>
             <div className={s.checkInCount}>
