@@ -39,6 +39,10 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  localityUuid: {
+    type: DataType.STRING
+  },
+
   locality: {
     type: DataType.STRING
   },
@@ -56,6 +60,10 @@ const Terminal = Model.define('Terminal', {
   },
 
   formattedAddress: {
+    type: DataType.STRING
+  },
+
+  linkedLocalityUuid: {
     type: DataType.STRING
   },
 

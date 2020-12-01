@@ -145,6 +145,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
   const newTerminal = {
     checkInId: checkIn.id,
     checkInUuid: checkIn.uuid,
+    localityUuid: checkIn.localityUuid,
     locality: checkIn.locality,
     country: checkIn.country,
     latitude: checkIn.latitude,
@@ -156,6 +157,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
 
   if (newLinkedTerminal) {
     newTerminal.linkedTerminalId = newLinkedTerminal.id;
+    newTerminal.linkedLocalityUuid = newLinkedTerminal.localityUuid;
     newTerminal.linkedLocality = newLinkedTerminal.locality;
     newTerminal.linkedFormattedAddress = newLinkedTerminal.formattedAddress;
     if (!terminalInput.transportId) newTerminal.transportId = newLinkedTerminal.transportId;
@@ -242,6 +244,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     await terminalRepository.saveTerminal({
       uuid: newLinkedTerminal.uuid,
       linkedTerminalId: savedTerminal.id,
+      linkedLocalityUuid: savedTerminal.localityUuid,
       linkedLocality: savedTerminal.locality,
       linkedFormattedAddress: savedTerminal.formattedAddress,
       ...linkedTerminalUpdate
@@ -359,6 +362,7 @@ const deleteTerminal = async (uuid, clientId, request) => {
       uuid: linkedTerminal.uuid,
       linkedTerminalId: null,
       linkedLocality: null,
+      linkedLocalityUuid: null,
       linkedFormattedAddress: null
     });
   }
@@ -438,7 +442,6 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   if (!existingCheckIn) {
     newCheckIn.userId = userId;
-    await localityRepository.saveLocality(newCheckIn.locality);
   }
 
   let departureBeforeExisting = null;
@@ -449,6 +452,27 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   let departureBeforeNew = null;
   if (newCheckIn.createdAt) {
     departureBeforeNew = await terminalRepository.getDepartureBefore(newCheckIn.createdAt, userId);
+  }
+
+  const localities = await localityRepository.getLocalities({ name: newCheckIn.locality });
+  const matchingLocality = localities.find(locality => {
+    if (locality.country !== newCheckIn.country) return false;
+    const distance = getDistance(locality.toJSON(), newCheckIn);
+    if (distance > 100000) return false;
+    return true;
+  });
+
+  if (!matchingLocality) {
+    log.debug(`create-locality name=${newCheckIn.locality} country=${newCheckIn.country} latitude=${newCheckIn.latitude} longitude=${newCheckIn.longitude}`);
+    const savedLocality = await localityRepository.saveLocality({
+      name: newCheckIn.locality,
+      latitude: newCheckIn.latitude,
+      longitude: newCheckIn.longitude,
+      country: newCheckIn.country
+    });
+    newCheckIn.localityUuid = savedLocality.uuid;
+  } else {
+    newCheckIn.localityUuid = matchingLocality.uuid;
   }
 
   const savedCheckIn = await postRepository.saveCheckIn(newCheckIn);

@@ -254,6 +254,7 @@ export const getLinksQuery = (params) => {
       userImage,
       tripName,
       links {
+        localityUuid,
         locality,
         latitude,
         longitude,
@@ -264,6 +265,7 @@ export const getLinksQuery = (params) => {
           type,
           latitude,
           longitude,
+          localityUuid,
           locality,
           transport,
           transportId,
@@ -282,6 +284,7 @@ export const getLinksQuery = (params) => {
           linkedTerminal {
             latitude,
             longitude,
+            localityUuid,
             locality,
             transport,
             transportId,
@@ -303,6 +306,7 @@ export const getLinksQuery = (params) => {
           type,
           latitude,
           longitude,
+          localityUuid,
           locality,
           transport,
           transportId,
@@ -322,6 +326,7 @@ export const getLinksQuery = (params) => {
             uuid,
             latitude,
             longitude,
+            localityUuid,
             locality,
             transport,
             transportId,
@@ -342,6 +347,7 @@ export const getLinksQuery = (params) => {
           uuid,
           latitude,
           longitude,
+          localityUuid,
           locality,
           transport,
           transportId,
@@ -359,7 +365,8 @@ export const getLinksQuery = (params) => {
           linkedTerminal {
             uuid,
             latitude,
-            longitude,
+            longitude,  
+            localityUuid,
             locality,
             transport,
             transportId,
@@ -377,7 +384,9 @@ export const getLinksQuery = (params) => {
         departureCount,
         arrivalCount,
         linkedDepartures {
+          localityUuid,
           locality,
+          linkedLocalityUuid,
           linkedLocality,
           from,
           to,
@@ -387,8 +396,10 @@ export const getLinksQuery = (params) => {
           linkedLocalityLongitude,
           linkCount
         },
-        linkedArrivals {
+        linkedArrivals { 
+          localityUuid,
           locality,
+          linkedLocalityUuid,
           linkedLocality,
           from,
           to,

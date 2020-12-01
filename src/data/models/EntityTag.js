@@ -23,6 +23,10 @@ const EntityTag = Model.define('EntityTag', {
     type: DataType.STRING
   },
 
+  localityUuid: {
+    type: DataType.STRING
+  },
+
   locality: {
     type: DataType.STRING
   },

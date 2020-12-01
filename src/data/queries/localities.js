@@ -5,7 +5,7 @@ import { placesApi } from '../source';
 export default {
 
   type: new GraphQLList(LocalityType),
-  description: 'List of places from Google Maps Places API for autocomplete search', 
+  description: 'List of places from Google Maps Places API for autocomplete search',
   args: {
     input: { type: GraphQLString },
     types: { type: GraphQLString },
@@ -20,8 +20,8 @@ export default {
       apiId: prediction.place_id,
       description: prediction.description,
       countryLong: prediction.terms[prediction.terms.length - 1].value,
-      lat: "0",
-      lng: "0"
+      latitude: "0",
+      longitude: "0"
     }));
 
   }

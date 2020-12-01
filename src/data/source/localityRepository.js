@@ -19,11 +19,11 @@ export default {
 
   getMostTravelledLocalities: async (options) => {
 
-    let query = 'SELECT t."locality" FROM "Terminal" t';
+    let query = 'SELECT t."locality", t."localityUuid" FROM "Terminal" t';
 
     const searchParams = [];
     if (options.locality) searchParams.push(`t."locality" = '${options.locality}'`);
-    else if (options.search) searchParams.push(`t."locality" ILIKE '%${options.search}%'`);
+    else if (options.search) searchParams.push(`t."locality" ILIKE '%${options.search}%' OR t."country" ILIKE '%${options.search}%'`);
     if (options.transport) searchParams.push(`t."transport" = '${options.transport}'`);
     searchParams.push('t."linkedTerminalId" IS NOT NULL');
     if (options.transportTypes && options.transportTypes.length > 0) {
@@ -34,12 +34,12 @@ export default {
     }
     if (searchParams.length > 0) query += ` WHERE ${searchParams.join(' AND ')}`;
 
-    query += ' GROUP BY t."locality" ORDER BY COUNT(t."id") DESC';
+    query += ' GROUP BY t."locality", t."localityUuid" ORDER BY COUNT(t."id") DESC';
     if (options.offset) query += ` OFFSET ${options.offset}`;
     if (options.limit) query += ` LIMIT ${options.limit}`;
 
     const localities = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return localities.map(locality => locality.locality);
+    return localities;
 
   },
 
@@ -51,6 +51,11 @@ export default {
     } else {
       return -1;
     }
+  },
+
+  getLocalities: async (where) => {
+    const localities = await Locality.findAll({ where });
+    return localities;
   },
 
   getLocalitiesByTag: async (tag, limit) => {
@@ -83,10 +88,19 @@ export default {
   },
 
   saveLocality: async (locality) => {
-    const existing = await Locality.findOne({ where: { name: locality } });
-    if (!existing) {
-      await Locality.create({ name: locality });
+
+    const { uuid } = locality;
+    delete locality.uuid;
+
+    if (uuid) {
+      const existingLocality = await Locality.findOne({ where: { uuid } });
+      if (!existingLocality) throw new Error('Locality with uuid ' + uuid + ' not found.');
+      return await Locality.update(locality, { where: { uuid: existingLocality.uuid } });
     }
+
+    const createdLocality = await Locality.create(locality);
+    return createdLocality;
+
   }
 
 };

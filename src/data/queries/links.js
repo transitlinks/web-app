@@ -191,6 +191,7 @@ export const TransitLinkQueryFields = {
     description: 'Search terminals',
     args: {
       locality: { type: GraphQLString },
+      country: { type: GraphQLString },
       linkedLocality: { type: GraphQLString },
       from: { type: GraphQLString },
       to: { type: GraphQLString },
@@ -203,7 +204,7 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, params) => {
 
-      const { locality, linkedLocality, from, to, tag, trip, user, type, search, transportTypes } = params;
+      const { locality, country, linkedLocality, from, to, tag, trip, user, type, search, transportTypes } = params;
 
       log.info(graphLog(request, 'search-links',`search=${search} locality=${locality} tag=${tag} type=${type}`));
 
@@ -353,7 +354,8 @@ export const TransitLinkQueryFields = {
       }
 
       const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
-      const singleLocality = localities.length === 1 ? localities[0] : null;
+      console.log('GET LOCALITIES', localities);
+      const singleLocality = localities.length === 1 ? localities[0].locality : null;
 
       if (!linkedLocality) {
 
@@ -361,11 +363,11 @@ export const TransitLinkQueryFields = {
           ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes })
         };
 
-        const getLinkedLocalityInfo = async (locality, linkedLocality, type) => {
+        const getLinkedLocalityInfo = async (localityUuid, linkedLocality, type) => {
 
           const terminal = await terminalRepository.getTerminal({
-            locality,
-            linkedLocality,
+            localityUuid,
+            linkedLocalityUuid: linkedLocality.linkedLocalityUuid,
             type,
             linkedTerminalId: { $ne: null }
           });
@@ -373,7 +375,7 @@ export const TransitLinkQueryFields = {
           if (!terminal) return null;
 
           const counts = await terminalRepository.countInterTerminals({
-            locality, linkedLocality
+            localityUuid, linkedLocalityUuid: linkedLocality.linkedLocalityUuid
           });
 
           const timeZone = geoTz(terminal.latitude, terminal.longitude)[0];
@@ -389,7 +391,7 @@ export const TransitLinkQueryFields = {
 
           return {
             terminal: formattedTerminal,
-            linkedLocality,
+            linkedLocality: linkedLocality.linkedLocality,
             linkCount: counts[type]
           };
 
@@ -397,28 +399,31 @@ export const TransitLinkQueryFields = {
 
         for (let i = 0; i < localities.length; i++) {
 
-          const terminalLocality = localities[i];
+          const terminalLocality = localities[i].locality;
+          const terminalLocalityUuid = localities[i].localityUuid;
           const interTerminalCounts = await terminalRepository.countInterTerminals({
             ...baseQuery, locality: terminalLocality
           });
 
           const departureLinks = [];
           const linkedDepartureLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
-            ...baseQuery, locality: terminalLocality,
+            ...baseQuery, localityUuid: terminalLocalityUuid,
             type: 'departure'
           });
           for (let i = 0; i < linkedDepartureLocalities.length; i++) {
-            departureLinks.push(await getLinkedLocalityInfo(terminalLocality, linkedDepartureLocalities[i], 'departure'));
+            departureLinks.push(await getLinkedLocalityInfo(terminalLocalityUuid, linkedDepartureLocalities[i], 'departure'));
           }
+          console.log('DEPS', linkedDepartureLocalities);
 
           const arrivalLinks = [];
           const linkedArrivalLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
-            ...baseQuery, locality: terminalLocality,
+            ...baseQuery, localityUuid: terminalLocalityUuid,
             type: 'arrival'
           });
           for (let i = 0; i < linkedArrivalLocalities.length; i++) {
-            arrivalLinks.push(await getLinkedLocalityInfo(terminalLocality, linkedArrivalLocalities[i], 'arrival'));
+            arrivalLinks.push(await getLinkedLocalityInfo(terminalLocalityUuid, linkedArrivalLocalities[i], 'arrival'));
           }
+          console.log('ARRS', linkedArrivalLocalities);
 
           const terminal = await terminalRepository.getTerminal({ locality: terminalLocality });
 

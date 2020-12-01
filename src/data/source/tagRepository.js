@@ -2,7 +2,7 @@ import { getLog } from '../../core/log';
 const log = getLog('data/source/tagRepository');
 
 import sequelize from '../sequelize';
-import {CheckIn, EntityTag, Post, Tag, User} from '../models';
+import {CheckIn, EntityTag, Post, Tag} from '../models';
 
 export default {
 
@@ -18,7 +18,14 @@ export default {
       const checkIn = await CheckIn.findById(post.checkInId);
       const entityTag = await EntityTag.findOne({ where: { checkInId: checkIn.id, tagId: tag.id } });
       if (!entityTag) {
-        await EntityTag.create({ checkInId: checkIn.id, tagId: tag.id, userUuid, locality: checkIn.locality, country: checkIn.country });
+        await EntityTag.create({
+          checkInId: checkIn.id,
+          tagId: tag.id,
+          userUuid,
+          locality: checkIn.locality,
+          localityUuid: checkIn.localityUuid,
+          country: checkIn.country
+        });
       } else {
         console.log(entity, entityId, 'already tagged with', tagValue);
       }

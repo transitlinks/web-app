@@ -52,6 +52,7 @@ export const LinkTerminalType = new GraphQLObjectType({
     routeIndex: { type: GraphQLInt },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat },
+    localityUuid: { type: GraphQLString },
     locality: { type: GraphQLString },
     priceAmount: { type: GraphQLFloat },
     priceCurrency: { type: GraphQLString },
@@ -73,8 +74,10 @@ export const LinkedLocalityResultType = new GraphQLObjectType({
   name: 'LinkedLocalityResult',
   description: 'Basic info about linked locality',
   fields: () => ({
+    localityUuid: { type: GraphQLString },
     locality: { type: GraphQLString },
     linkedLocality: { type: GraphQLString },
+    linkedLocalityUuid: { type: GraphQLString },
     linkedTerminalType: { type: GraphQLString },
     from: { type: GraphQLString },
     to: { type: GraphQLString },
@@ -89,6 +92,7 @@ export const TransitLinkType = new GraphQLObjectType({
   name: 'TransitLink',
   description: 'Transitlink between two localities.',
   fields: () => ({
+    localityUuid: { type: GraphQLString },
     locality: { type: GraphQLString },
     latitude: { type: GraphQLFloat },
     longitude: { type: GraphQLFloat },
@@ -111,8 +115,10 @@ export const LinkSearchResultType = new GraphQLObjectType({
   description: 'Transitlink search result.',
   fields: () => ({
     searchResultType: { type: GraphQLString },
+    localityUuid: { type: GraphQLString },
     locality: { type: GraphQLString },
     linkedLocality: { type: GraphQLString },
+    linkedLocalityUuid: { type: GraphQLString },
     from: { type: GraphQLString },
     to: { type: GraphQLString },
     user: { type: GraphQLString },

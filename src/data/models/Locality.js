@@ -8,13 +8,13 @@ const Locality = Model.define('Locality', {
     autoIncrement: true,
     primaryKey: true
   },
-  
+
   uuid: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
     unique: true,
   },
-    
+
   apiId: {
     type: DataType.STRING,
     unique: true
@@ -27,8 +27,8 @@ const Locality = Model.define('Locality', {
   countryLong: {
     type: DataType.STRING
   },
-  
-  countryShort: {
+
+  country: {
     type: DataType.STRING
   },
 
@@ -36,11 +36,11 @@ const Locality = Model.define('Locality', {
     type: DataType.STRING
   },
 
-  lat: {
+  latitude: {
     type: DataType.DOUBLE
   },
-  
-  lng: {
+
+  longitude: {
     type: DataType.DOUBLE
   },
 

@@ -156,15 +156,18 @@ export default {
 
     const linkedLocalities = await Terminal.findAll({
       where: {
-        linkedLocality: { $ne: sequelize.col('Terminal.locality') },
+        linkedLocalityUuid: { $ne: sequelize.col('Terminal.localityUuid') },
         ...query
       },
-      attributes: [[sequelize.fn('DISTINCT', sequelize.col('linkedLocality')), 'linkedLocality']],
-      group: ['Terminal.linkedLocality'],
+      attributes: [
+        [sequelize.fn('DISTINCT', sequelize.col('linkedLocalityUuid')), 'linkedLocalityUuid'],
+        'linkedLocality'
+      ],
+      group: ['Terminal.linkedLocalityUuid', 'Terminal.linkedLocality'],
       raw: true
     });
 
-    return linkedLocalities.map(loc => loc.linkedLocality);
+    return linkedLocalities;
 
   },
 
@@ -172,7 +175,7 @@ export default {
 
     const counts = await Terminal.findAll({
       where: {
-        linkedLocality: { $ne: sequelize.col('Terminal.locality') },
+        linkedLocalityUuid: { $ne: sequelize.col('Terminal.localityUuid') },
         ...query
       },
       attributes: ['type', [sequelize.fn('count', sequelize.col('type')), 'count']],
