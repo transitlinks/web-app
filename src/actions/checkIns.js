@@ -37,6 +37,8 @@ export const saveCheckIn = ({ checkIn }) => {
 
       const checkInLocation = await geocodeCheckInLocation();
       completedCheckIn.locality = checkInLocation.locality;
+      completedCheckIn.adminArea1 = checkInLocation.adminArea1;
+      completedCheckIn.adminArea2 = checkInLocation.adminArea2;
       completedCheckIn.country = checkInLocation.country;
       if (checkIn.exif) {
         completedCheckIn.formattedAddress = checkInLocation.result.formatted_address;

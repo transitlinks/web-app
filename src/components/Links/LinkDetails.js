@@ -116,11 +116,11 @@ const LinkDetails = ({
             <div className={s.terminalLocality}>
               <Link to={
                 getNavigationQuery({
-                  locality: fromTerminal.locality,
+                  localityUuid: fromTerminal.localityUuid,
                   transportTypes: selectedTransportTypes
                 }) + '&view=map'
               }>
-                { fromTerminal.locality }
+                { fromTerminal.localityLong }
               </Link>
             </div>
           </div>
@@ -128,12 +128,12 @@ const LinkDetails = ({
             <div className={s.terminalLocality}>
               <Link to={
                 getNavigationQuery({
-                  locality: toTerminal.locality,
+                  localityUuid: toTerminal.localityUuid,
                   transportTypes: selectedTransportTypes,
                   view: 'map'
                 })
               }>
-                { toTerminal.locality }
+                { toTerminal.localityLong }
               </Link>
             </div>
           </div>

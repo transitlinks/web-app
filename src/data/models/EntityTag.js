@@ -31,6 +31,10 @@ const EntityTag = Model.define('EntityTag', {
     type: DataType.STRING
   },
 
+  localityLong: {
+    type: DataType.STRING
+  },
+
   country: {
     type: DataType.STRING
   }

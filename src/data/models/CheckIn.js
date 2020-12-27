@@ -31,6 +31,18 @@ const CheckIn = Model.define('CheckIn', {
     type: DataType.STRING
   },
 
+  localityLong: {
+    type: DataType.STRING
+  },
+
+  adminArea1: {
+    type: DataType.STRING
+  },
+
+  adminArea2: {
+    type: DataType.STRING
+  },
+
   country: {
     type: DataType.STRING
   },

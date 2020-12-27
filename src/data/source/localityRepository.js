@@ -19,10 +19,11 @@ export default {
 
   getMostTravelledLocalities: async (options) => {
 
-    let query = 'SELECT t."locality", t."localityUuid" FROM "Terminal" t';
+    let query = 'SELECT t."locality", t."localityLong", t."localityUuid" FROM "Terminal" t';
 
     const searchParams = [];
     if (options.locality) searchParams.push(`t."locality" = '${options.locality}'`);
+    else if (options.localityUuid) searchParams.push(`t."localityUuid" = '${options.localityUuid}'`);
     else if (options.search) searchParams.push(`t."locality" ILIKE '%${options.search}%' OR t."country" ILIKE '%${options.search}%'`);
     if (options.transport) searchParams.push(`t."transport" = '${options.transport}'`);
     searchParams.push('t."linkedTerminalId" IS NOT NULL');
@@ -34,7 +35,7 @@ export default {
     }
     if (searchParams.length > 0) query += ` WHERE ${searchParams.join(' AND ')}`;
 
-    query += ' GROUP BY t."locality", t."localityUuid" ORDER BY COUNT(t."id") DESC';
+    query += ' GROUP BY t."locality", t."localityLong", t."localityUuid" ORDER BY COUNT(t."id") DESC';
     if (options.offset) query += ` OFFSET ${options.offset}`;
     if (options.limit) query += ` LIMIT ${options.limit}`;
 
@@ -51,6 +52,11 @@ export default {
     } else {
       return -1;
     }
+  },
+
+  getLocality: async (where) => {
+    const locality = await Locality.findOne({ where });
+    return locality;
   },
 
   getLocalities: async (where) => {
@@ -101,6 +107,31 @@ export default {
     const createdLocality = await Locality.create(locality);
     return createdLocality;
 
-  }
+  },
+
+  deleteLocalities: async (where) => {
+    return await Locality.destroy({ where });
+  },
+
+  setAdminLevel: async (locality, country, adminLevel1, adminLevel2) => {
+
+    let adminLevel = '';
+    if (country) adminLevel = ` || ', ' || loc.country`;
+    if (adminLevel1) adminLevel = ` || ', ' || loc."adminArea1" || ', ' || loc.country`;
+    if (adminLevel2) adminLevel = ` || ', ' || loc."adminArea2" || ', ' || loc."adminArea1"`;
+
+    let adminLevelQuery = '';
+    if (country) adminLevelQuery = ` AND loc.country = '${country}'`;
+    if (adminLevel1) adminLevelQuery = ` AND loc.country = '${country}'`;
+    const query = `
+        UPDATE "Locality" loc SET "nameLong" = loc.name ${adminLevel}
+          WHERE loc.name = '${locality}'
+            ${adminLevelQuery}
+    `;
+
+    console.log('loc admin level query', query);
+    await sequelize.query(query);
+
+  },
 
 };

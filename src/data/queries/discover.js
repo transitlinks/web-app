@@ -44,25 +44,26 @@ const getPostContent = async (post) => {
 
 }
 
-const getLocalityDiscovery = async (locality, request) => {
+const getLocalityDiscovery = async (localityUuid, request) => {
 
-  const connectionsFrom = await postRepository.getConnectionsByLocality(locality, 'arrival');
-  const connectionsTo = await postRepository.getConnectionsByLocality(locality, 'departure');
-  const firstCheckIn = await checkInRepository.getCheckInWithPostsByLocality(locality);
-  const checkInCount = await postRepository.getCheckInCount(locality);
-  const postCount = await postRepository.getPostCountByLocality(locality);
-  const tags = await tagRepository.getLatestTagsByLocality(locality, 6);
-  const trips = await tripRepository.getLatestTripsByLocality(locality, 6);
-  const connectionCount = await terminalRepository.getTerminalCountByLocality(locality);
+  const locality = await localityRepository.getLocality({ uuid: localityUuid });
+  const connectionsFrom = await postRepository.getConnectionsByLocality(localityUuid, 'arrival');
+  const connectionsTo = await postRepository.getConnectionsByLocality(localityUuid, 'departure');
+  const firstCheckIn = await checkInRepository.getCheckInWithPostsByLocality(localityUuid);
+  const checkInCount = await checkInRepository.getCheckInCount(localityUuid);
+  const postCount = await postRepository.getPostCountByLocality(localityUuid);
+  const tags = await tagRepository.getLatestTagsByLocality(localityUuid, 6);
+  const trips = await tripRepository.getLatestTripsByLocality(localityUuid, 6);
+  const connectionCount = await terminalRepository.getTerminalCountByLocality(localityUuid);
 
-  const posts = await postRepository.getPostsByLocality(locality, 5);
+  const posts = await postRepository.getPostsByLocality(localityUuid, 5);
   const fullPosts = posts.map(async post => {
     return await getPostContent(post);
   });
 
   return {
     groupType: 'locality',
-    groupName: locality,
+    groupName: locality.localityLong,
     checkInCount,
     postCount,
     tags,
@@ -235,9 +236,9 @@ export const DiscoverQueryFields = {
         if (discovery.country) {
           calcCountryOffset++;
           discoveries = discoveries.concat([await getCountryDiscovery(discovery.country, request)]);
-        } else if (discovery.locality) {
+        } else if (discovery.localityUuid) {
           calcLocalityOffset++;
-          discoveries = discoveries.concat([await getLocalityDiscovery(discovery.locality, request)]);
+          discoveries = discoveries.concat([await getLocalityDiscovery(discovery.localityUuid, request)]);
         } else if (discovery.tag) {
           calcTagOffset++;
           discoveries = discoveries.concat([await getTagDiscovery(discovery.tag, request)]);

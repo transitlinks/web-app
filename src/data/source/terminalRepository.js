@@ -101,8 +101,8 @@ export default {
         FROM
             pgr_ksp(
                     'SELECT id, source, target, ${costExpression} AS cost FROM "Connection"',
-                    (SELECT id FROM "Locality" WHERE name = '${from}'),
-                    (SELECT id FROM "Locality" WHERE name = '${to}'),
+                    (SELECT id FROM "Locality" WHERE uuid = '${from}'),
+                    (SELECT id FROM "Locality" WHERE uuid = '${to}'),
                     5,
                     directed := TRUE
                 ) as x
@@ -136,12 +136,12 @@ export default {
 
   },
 
-  getInternalDeparturesByLocality: async (locality, query = {}) => {
+  getInternalDeparturesByLocality: async (localityUuid, query = {}) => {
 
     const terminals = await Terminal.findAll({
       where: {
-        linkedLocality: { $eq: sequelize.col('Terminal.locality') },
-        locality,
+        linkedLocalityUuid: { $eq: sequelize.col('Terminal.localityUuid') },
+        localityUuid,
         type: 'departure',
         ...query
       },
@@ -196,13 +196,13 @@ export default {
   },
 
 
-  getInterTerminalsByLocality: async (locality, query = {}, options = {}) => {
+  getInterTerminalsByLocality: async (localityUuid, query = {}, options = {}) => {
 
     const terminals = await Terminal.findAll({
       where: {
-        linkedLocality: { $ne: sequelize.col('Terminal.locality') },
+        linkedLocalityUuid: { $ne: sequelize.col('Terminal.localityUuid') },
         linkedTerminalId: { $ne: null },
-        locality,
+        localityUuid,
         ...query
       },
       include: [{ all: true }],
@@ -255,8 +255,8 @@ export default {
 
   },
 
-  getTerminalCountByLocality: async (locality) => {
-    const query = `SELECT count(id) FROM "Terminal" WHERE "locality" = '${locality}' AND "linkedLocality" != "locality"`;
+  getTerminalCountByLocality: async (localityUuid) => {
+    const query = `SELECT count(id) FROM "Terminal" WHERE "localityUuid" = '${localityUuid}' AND "linkedLocalityUuid" != "localityUuid"`;
     const terminalCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     if (terminalCount.length === 1) {
       return terminalCount[0].count;
@@ -330,8 +330,8 @@ export default {
     );
 
     const fields = {
-      '"sourceLocality"': 't.locality',
-      '"targetLocality"': 'lt.locality',
+      '"sourceLocality"': 't."localityUuid"',
+      '"targetLocality"': 'lt."localityUuid"',
       '"sourceFormattedAddress"': 't."formattedAddress"',
       '"targetFormattedAddress"': 'lt."formattedAddress"',
       '"transport"': 't."transport"',
@@ -353,8 +353,8 @@ export default {
         t.id = "sourceTerminalId" AND
         lt.id = "targetTerminalId" AND
         lt.id = t."linkedTerminalId" AND
-        t.locality = tl.name AND
-        lt.locality = ltl.name
+        t."localityUuid" = tl.uuid::varchar AND
+        lt."localityUuid" = ltl.uuid::varchar
     `;
 
     const insertStatement = `
@@ -364,8 +364,8 @@ export default {
         WHERE
             t.id = ${sourceTerminalId} AND 
             t."linkedTerminalId" = lt.id AND 
-            t.locality = tl.name AND 
-            lt.locality = ltl.name
+            t."localityUuid" = tl.uuid::varchar AND 
+            lt."localityUuid" = ltl.uuid::varchar 
     `;
 
     const query = existingConnections[0].length > 0 ? updateStatement : insertStatement;
@@ -487,6 +487,35 @@ export default {
 
     return await sequelize.query(query, { model: Terminal, mapToModel: true });
 
-  }
+  },
+
+  setLocalityAdminLevel: async (locality, country, adminLevel1, adminLevel2) => {
+
+    let adminLevel = '';
+    if (country) adminLevel = ` || ', ' || loc.country`;
+    if (adminLevel1) adminLevel = ` || ', ' || loc."adminArea1"`;
+    if (adminLevel2) adminLevel = ` || ', ' || loc."adminArea2"`;
+
+    const localityQuery = `
+        UPDATE "Terminal" t SET "localityLong" = loc.name ${adminLevel}
+          FROM "Locality" loc
+          WHERE t.locality = '${locality}'
+            AND loc.uuid = t."localityUuid"::uuid;
+    `;
+
+    const linkedLocalityQuery = `
+        UPDATE "Terminal" t SET "linkedLocalityLong" = loc.name ${adminLevel}
+          FROM "Locality" loc
+          WHERE t."linkedLocality" = '${locality}'
+            AND loc.uuid = t."linkedLocalityUuid"::uuid;
+    `;
+
+    console.log('terminal admin lvl', localityQuery);
+    console.log('lnkd terminal admin lvl', linkedLocalityQuery);
+
+    await sequelize.query(localityQuery);
+    await sequelize.query(linkedLocalityQuery);
+
+  },
 
 };

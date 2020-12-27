@@ -24,6 +24,18 @@ const Locality = Model.define('Locality', {
     type: DataType.STRING
   },
 
+  nameLong: {
+    type: DataType.STRING
+  },
+
+  adminArea1: {
+    type: DataType.STRING
+  },
+
+  adminArea2: {
+    type: DataType.STRING
+  },
+
   countryLong: {
     type: DataType.STRING
   },

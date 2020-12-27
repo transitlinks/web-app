@@ -84,8 +84,8 @@ export default {
     return latestTags;
   },
 
-  getLatestTagsByLocality: async (locality, limit) => {
-    let query = `SELECT "value" as "tag", MAX("createdAt") as "lastCreated", "userUuid" as "userUuid" FROM (SELECT t.value as "value", et."createdAt" AS "createdAt", et."userUuid" AS "userUuid" FROM "Tag" t, "EntityTag" et WHERE t.id = et."tagId" AND et."locality" = '${locality}') AS tags`;
+  getLatestTagsByLocality: async (localityUuid, limit) => {
+    let query = `SELECT "value" as "tag", MAX("createdAt") as "lastCreated", "userUuid" as "userUuid" FROM (SELECT t.value as "value", et."createdAt" AS "createdAt", et."userUuid" AS "userUuid" FROM "Tag" t, "EntityTag" et WHERE t.id = et."tagId" AND et."localityUuid" = '${localityUuid}') AS tags`;
     query += ` GROUP BY "value", "userUuid" ORDER BY "lastCreated" DESC, "value" LIMIT ${limit}`;
     const latestTags = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestTags;

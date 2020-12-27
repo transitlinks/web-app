@@ -99,16 +99,16 @@ export default {
     return latestTrips;
   },
 
-  getLatestTripsByLocality: async (locality, limit) => {
+  getLatestTripsByLocality: async (localityUuid, limit) => {
 
     let query = `
         SELECT t.uuid, t.name FROM "Trip" t, "CheckIn" fci, "CheckIn" lci
             WHERE t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id
             AND (
-                fci.locality = '${locality}' OR lci.locality = '${locality}'
+                fci."localityUuid" = '${localityUuid}' OR lci."localityUuid" = '${localityUuid}'
                 OR EXISTS(SELECT ci.id
                 FROM "CheckIn" ci
-                WHERE locality = '${locality}' AND "createdAt" BETWEEN fci."createdAt" AND lci."createdAt")
+                WHERE "localityUuid" = '${localityUuid}' AND "createdAt" BETWEEN fci."createdAt" AND lci."createdAt")
             )
             ORDER BY t."createdAt" DESC
     `;

@@ -190,9 +190,9 @@ export const TransitLinkQueryFields = {
     type: LinkSearchResultType,
     description: 'Search terminals',
     args: {
-      locality: { type: GraphQLString },
+      localityUuid: { type: GraphQLString },
       country: { type: GraphQLString },
-      linkedLocality: { type: GraphQLString },
+      linkedLocalityUuid: { type: GraphQLString },
       from: { type: GraphQLString },
       to: { type: GraphQLString },
       tag: { type: GraphQLString },
@@ -204,9 +204,9 @@ export const TransitLinkQueryFields = {
     },
     resolve: async ({ request }, params) => {
 
-      const { locality, country, linkedLocality, from, to, tag, trip, user, type, search, transportTypes } = params;
+      const { localityUuid, country, linkedLocalityUuid, from, to, tag, trip, user, type, search, transportTypes } = params;
 
-      log.info(graphLog(request, 'search-links',`search=${search} locality=${locality} tag=${tag} type=${type}`));
+      log.info(graphLog(request, 'search-links',`search=${search} localityUuid=${localityUuid} tag=${tag} type=${type}`));
 
       const linkStats = [];
 
@@ -260,6 +260,8 @@ export const TransitLinkQueryFields = {
           if (terminal) {
             linkStats.push({
               locality: terminal.locality,
+              localityUuid: terminal.localityUuid,
+              localityLong: terminal.localityLong,
               latitude: terminal.latitude,
               longitude: terminal.longitude,
               departures,
@@ -286,6 +288,8 @@ export const TransitLinkQueryFields = {
           routeSearchParams.transportTypes = transportTypes;
         }
 
+        const fromLocality = await localityRepository.getLocality({ uuid: from });
+        const toLocality = await localityRepository.getLocality({ uuid: to });
         const routes = await terminalRepository.getRoute(from, to, routeSearchParams);
         const routeKeys = Object.keys(routes);
 
@@ -322,10 +326,11 @@ export const TransitLinkQueryFields = {
           if (terminal) {
             linkStats.push({
               locality: terminal.locality,
+              localityLong: terminal.localityLong,
               latitude: terminal.latitude,
               longitude: terminal.longitude,
-              from,
-              to,
+              from: fromLocality.name,
+              to: toLocality.name,
               departures: terminals,
               arrivals: [],
               internal: []
@@ -346,7 +351,7 @@ export const TransitLinkQueryFields = {
       const localityQuery = { limit: 16 };
       const transportQuery = {};
 
-      if (locality) localityQuery.locality = locality;
+      if (localityUuid) localityQuery.localityUuid = localityUuid;
       if (search) localityQuery.search = search;
       if (transportTypes && transportTypes.length > 0) {
         localityQuery.transportTypes = transportTypes;
@@ -356,18 +361,21 @@ export const TransitLinkQueryFields = {
       const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
       console.log('GET LOCALITIES', localities);
       const singleLocality = localities.length === 1 ? localities[0].locality : null;
+      const singleLocalityLong = localities.length === 1 ? localities[0].localityLong : null;
+      const singleLocalityUuid = localities.length === 1 ? localities[0].localityUuid : null;
 
+      const linkedLocality = await localityRepository.getLocality({ uuid: linkedLocalityUuid });
       if (!linkedLocality) {
 
         const baseQuery = {
           ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes })
         };
 
-        const getLinkedLocalityInfo = async (localityUuid, linkedLocality, type) => {
+        const getLinkedLocalityInfo = async (uuid, linked, type) => {
 
           const terminal = await terminalRepository.getTerminal({
-            localityUuid,
-            linkedLocalityUuid: linkedLocality.linkedLocalityUuid,
+            localityUuid: uuid,
+            linkedLocalityUuid: linked.linkedLocalityUuid,
             type,
             linkedTerminalId: { $ne: null }
           });
@@ -375,7 +383,7 @@ export const TransitLinkQueryFields = {
           if (!terminal) return null;
 
           const counts = await terminalRepository.countInterTerminals({
-            localityUuid, linkedLocalityUuid: linkedLocality.linkedLocalityUuid
+            localityUuid: uuid, linkedLocalityUuid: linked.linkedLocalityUuid
           });
 
           const timeZone = geoTz(terminal.latitude, terminal.longitude)[0];
@@ -391,7 +399,8 @@ export const TransitLinkQueryFields = {
 
           return {
             terminal: formattedTerminal,
-            linkedLocality: linkedLocality.linkedLocality,
+            linkedLocality: linked.linkedLocality,
+            linkedLocalityLong: linked.linkedLocalityLong,
             linkCount: counts[type]
           };
 
@@ -401,8 +410,9 @@ export const TransitLinkQueryFields = {
 
           const terminalLocality = localities[i].locality;
           const terminalLocalityUuid = localities[i].localityUuid;
+          const terminalLocalityLong = localities[i].localityLong;
           const interTerminalCounts = await terminalRepository.countInterTerminals({
-            ...baseQuery, locality: terminalLocality
+            ...baseQuery, localityUuid: terminalLocalityUuid
           });
 
           const departureLinks = [];
@@ -425,18 +435,20 @@ export const TransitLinkQueryFields = {
           }
           console.log('ARRS', linkedArrivalLocalities);
 
-          const terminal = await terminalRepository.getTerminal({ locality: terminalLocality });
+          const terminal = await terminalRepository.getTerminal({ localityUuid: terminalLocalityUuid });
 
           const departures = departureLinks.filter(dep => dep).map(dep => dep.terminal);
           const arrivals = arrivalLinks.filter(arr => arr).map(arr => arr.terminal);
 
-          const internal = await terminalRepository.getInternalDeparturesByLocality(terminalLocality, baseQuery);
+          const internal = await terminalRepository.getInternalDeparturesByLocality(terminalLocalityUuid, baseQuery);
 
-          const tags = await tagRepository.getLatestTagsByLocality(terminalLocality, 7);
-          const trips = await tripRepository.getLatestTripsByLocality(terminalLocality, 7);
+          const tags = await tagRepository.getLatestTagsByLocality(terminalLocalityUuid, 7);
+          const trips = await tripRepository.getLatestTripsByLocality(terminalLocalityUuid, 7);
 
           linkStats.push({
             locality: terminalLocality,
+            localityLong: terminalLocalityLong,
+            localityUuid: terminalLocalityUuid,
             latitude: terminal.latitude,
             longitude: terminal.longitude,
             departureCount: interTerminalCounts.arrival || 0,
@@ -444,28 +456,39 @@ export const TransitLinkQueryFields = {
             departures,
             arrivals,
             internal,
-            linkedDepartures: departures.map(dep => ({ linkedLocality: dep.linkedTerminal.locality })),
-            linkedArrivals: arrivals.map(arr => ({ linkedLocality: arr.linkedTerminal.locality })),
+            linkedDepartures: departures.map(dep => ({
+              linkedLocality: dep.linkedTerminal.locality,
+              linkedLocalityLong: dep.linkedTerminal.localityLong,
+              linkedLocalityUuid: dep.linkedTerminal.localityUuid,
+            })),
+            linkedArrivals: arrivals.map(arr => ({
+              linkedLocality: arr.linkedTerminal.locality,
+              linkedLocalityLong: arr.linkedTerminal.localityLong,
+              linkedLocalityUuid: arr.linkedTerminal.localityUuid
+            })),
             tags,
             trips
           });
 
         }
 
+        console.log('SINGLE OOCA', singleLocality, singleLocalityLong, singleLocalityUuid);
         return {
           searchResultType: 'connections',
           links: linkStats,
-          locality: singleLocality || locality
+          locality: singleLocality,
+          localityLong: singleLocalityLong,
+          localityUuid: singleLocalityUuid
         };
 
       }
       const baseQuery = {
         ...((transportTypes && transportTypes.length > 0) && { transport: transportTypes }),
-        linkedLocality
+        linkedLocalityUuid
       };
 
       const matchingLocality = localities[0];
-      const interTerminals = await terminalRepository.getInterTerminalsByLocality(matchingLocality, baseQuery);
+      const interTerminals = await terminalRepository.getInterTerminalsByLocality(matchingLocality.localityUuid, baseQuery);
       const departures = interTerminals.filter(terminal => terminal.type === 'departure');
       const arrivals = interTerminals.filter(terminal => terminal.type === 'arrival');
       await findRoutePoints(departures);
@@ -495,7 +518,8 @@ export const TransitLinkQueryFields = {
 
       if (terminal) {
         linkStats.push({
-          locality: matchingLocality,
+          locality: matchingLocality.locality,
+          localityLong: matchingLocality.localityLong,
           latitude: terminal.latitude,
           longitude: terminal.longitude,
           departures: departures.map(dep => ({
@@ -527,8 +551,10 @@ export const TransitLinkQueryFields = {
 
       return {
         searchResultType: 'links',
-        locality: matchingLocality,
-        linkedLocality,
+        locality: matchingLocality.locality,
+        localityLong: matchingLocality.localityLong,
+        linkedLocality: linkedLocality.name,
+        linkedLocalityLong: linkedLocality.nameLong,
         links: linkStats
       };
 

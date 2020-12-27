@@ -203,14 +203,8 @@ export default {
 
   },
 
-  getCheckInCount: async (locality) => {
-    const query = `SELECT COUNT(id) FROM "CheckIn" WHERE locality = '${locality}'`;
-    const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return checkInCount[0].count;
-  },
-
-  getPostsByLocality: async (locality, limit) => {
-    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE mi."type" = 'image' AND p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
+  getPostsByLocality: async (localityUuid, limit) => {
+    let query = `SELECT * FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE "localityUuid" = '${localityUuid}') AND (SELECT COUNT(id) FROM "MediaItem" mi WHERE mi."type" = 'image' AND p."uuid"::varchar = mi."entityUuid") > 0 ORDER BY "createdAt" DESC`;
     if (limit) query += ' LIMIT ' + limit;
     const posts = await sequelize.query(query, { model: Post, mapToModel: true });
     return posts;
@@ -223,8 +217,8 @@ export default {
     return posts;
   },
 
-  getPostCountByLocality: async (locality) => {
-    let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE locality = '${locality}')`;
+  getPostCountByLocality: async (localityUuid) => {
+    let query = `SELECT COUNT(id) FROM "Post" p WHERE "checkInId" IN (SELECT id FROM "CheckIn" WHERE "localityUuid" = '${localityUuid}')`;
     const postCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return postCount[0].count;
   },
@@ -268,10 +262,10 @@ export default {
     return postCount[0].count;
   },
 
-  getConnectionsByLocality: async(locality, type) => {
-    const query = `SELECT DISTINCT ci1.locality FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2.locality = '${locality}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
+  getConnectionsByLocality: async(localityUuid, type) => {
+    const query = `SELECT DISTINCT ci1."localityLong" FROM "Terminal" as t1, "CheckIn" as ci1 WHERE  t1."checkInId" = ci1.id AND t1."linkedTerminalId" IN (SELECT t2.id FROM "CheckIn" as ci2, "Terminal" as t2 WHERE ci2."localityUuid" = '${localityUuid}' AND ci2.id = t2."checkInId" AND t2.type = '${type}')`;
     const connections = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    return connections.map(c => c.locality);
+    return connections.map(c => c.localityLong);
   },
 
   getConnectionsByCountry: async(country, type) => {

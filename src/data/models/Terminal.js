@@ -47,6 +47,10 @@ const Terminal = Model.define('Terminal', {
     type: DataType.STRING
   },
 
+  localityLong: {
+    type: DataType.STRING
+  },
+
   country: {
     type: DataType.STRING
   },
@@ -68,6 +72,10 @@ const Terminal = Model.define('Terminal', {
   },
 
   linkedLocality: {
+    type: DataType.STRING
+  },
+
+  linkedLocalityLong: {
     type: DataType.STRING
   },
 

@@ -150,6 +150,14 @@ const extractLocality = (results) => {
   return sortedComponents[0].long_name;
 };
 
+const extractAdminArea = (results, level) => {
+  const sortedResults = results.filter(result => result.types[0] === `administrative_area_level_${level}`);
+  if (sortedResults.length === 0) return null;
+  const sortedComponents = sortedResults[0].address_components.sort((a, b) => compareAdminAreaLevel(a, b, 'address'));
+  console.log('sortedComponents', sortedResults, sortedComponents);
+  return sortedComponents[0].short_name;
+};
+
 const extractCountry = (results) => {
   for (let i = 0; i < results.length; i++) {
     const { types } = results[i];
@@ -194,6 +202,8 @@ export const geocode = (latLng, callback) => {
           result: results[0],
           locality: extractLocality(results),
           country: extractCountry(results),
+          adminArea1: extractAdminArea(results, 1),
+          adminArea2: extractAdminArea(results, 2),
           localityOptions: extractLocalityOptions(results)
         });
       } else {

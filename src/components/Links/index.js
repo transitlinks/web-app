@@ -66,8 +66,8 @@ const renderLocationsMap = (linkStats, onSelect) => {
       <OverlayView position={{ lat: linkStat.latitude, lng: linkStat.longitude }}
                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
         <div className={s.localityOverlay}>
-          <div className={s.localityName} onClick={() => onSelect(linkStat.locality)}>
-            {linkStat.locality}
+          <div className={s.localityName} onClick={() => onSelect(linkStat.localityUuid)}>
+            {linkStat.localityLong}
           </div>
           <div className={s.localityStats}>
             <span className="material-icons">call_made</span> {linkStat.departureCount}
@@ -222,11 +222,11 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                                     <div className={s.connection} style={{ ...(index === 0 && { marginLeft: '40px' }) }}>
                                       <Link to={
                                         getNavigationQuery({
-                                          locality: link.linkedLocality,
+                                          localityUuid: link.linkedLocalityUuid,
                                           transportTypes
                                         }) + '&view=map'
                                       }>
-                                        {link.linkedLocality}
+                                        {link.linkedLocalityLong}
                                       </Link>
                                       {
                                         index === 0 &&
@@ -252,9 +252,9 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                           <div className={s.ruler}></div>
                       }
                       <div className={s.mainLocality}
-                        onClick={() => onSelect(linkStat.locality)}>
+                        onClick={() => onSelect(linkStat.localityUuid)}>
                         <div className={s.mainLocalityName}>
-                          {linkStat.locality}
+                          {linkStat.localityLong}
                         </div>
                       </div>
                     </div>
@@ -276,11 +276,11 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                                       <div className={s.locality}>
                                         <Link to={
                                           getNavigationQuery({
-                                            locality: link.linkedLocality,
+                                            localityUuid: link.linkedLocalityUuid,
                                             transportTypes
                                           }) + '&view=map'
                                         }>
-                                          {link.linkedLocality}
+                                          {link.linkedLocalityLong}
                                         </Link>
                                         {
                                           index === slicedLinkedDepartures.length - 1 &&
@@ -401,16 +401,16 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
 
                               <Link to={
                                 getNavigationQuery({
-                                  locality: terminal.linkedTerminal.locality,
+                                  localityUuid: terminal.linkedTerminal.localityUuid,
                                   transportTypes: selectedTransportTypes
                                 }) + '&view=map'
                               }>
-                                { terminal.linkedTerminal.locality }
+                                { terminal.linkedTerminal.localityLong }
                               </Link>&nbsp;
                               (<Link to={
                                 getNavigationQuery({
-                                  locality: terminal.locality,
-                                  linkedLocality: terminal.linkedTerminal.locality,
+                                  localityUuid: terminal.localityUuid,
+                                  linkedLocalityUuid: terminal.linkedTerminal.localityUuid,
                                   transportTypes: selectedTransportTypes
                                 }) + '&view=map'
                               }>
@@ -433,16 +433,16 @@ const renderConnectionsList = (linkStat, linkMode, props) => {
 
                               <Link to={
                                 getNavigationQuery({
-                                  locality: terminal.linkedTerminal.locality,
+                                  localityUuid: terminal.linkedTerminal.localityUuid,
                                   transportTypes: selectedTransportTypes
                                 }) + '&view=map'
                               }>
-                                { terminal.linkedTerminal.locality }
+                                { terminal.linkedTerminal.localityLong }
                               </Link>&nbsp;
                               (<Link to={
                               getNavigationQuery({
-                                locality: terminal.locality,
-                                linkedLocality: terminal.linkedTerminal.locality,
+                                localityUuid: terminal.localityUuid,
+                                linkedLocalityUuid: terminal.linkedTerminal.localityUuid,
                                 transportTypes: selectedTransportTypes
                               }) + '&view=map'
                             }>
@@ -566,7 +566,7 @@ const LinksView = (props) => {
   const {
     intl, linksResult, loadedMapCenter, searchTerm, routeSearchTerm, viewMode, linkMode,
     mapZoom, transportTypes, showTransportTypes, mapBoundsUpdated, query,
-    selectedTransportTypes, selectedLocality, selectedLinkedLocality, selectedTerminal, selectedTag, selectedRoute,
+    selectedTransportTypes, selectedLocalityUuid, selectedLinkedLocalityUuid, selectedTerminal, selectedTag, selectedRoute,
     setProperty, navigate
   } = props;
 
@@ -574,13 +574,13 @@ const LinksView = (props) => {
   let displayLinks = displayLinksResult.links;
   let searchResultType = displayLinksResult.searchResultType;
 
-  const onSelectLocality = (locality) => {
+  const onSelectLocality = (localityUuid) => {
 
     setProperty('links.searchTerm', '');
-    setProperty('links.selectedLocality', locality);
+    setProperty('links.selectedLocalityUuid', localityUuid);
     setProperty('links.linkMode', 'external');
 
-    navigate(getNavigationPath({ locality, transportTypes: selectedTransportTypes, view: 'map' }));
+    navigate(getNavigationPath({ localityUuid, transportTypes: selectedTransportTypes, view: 'map' }));
 
   };
 
@@ -627,13 +627,14 @@ const LinksView = (props) => {
 
     if (displayLinks.length < 2) {
 
+      console.log('DISP LINK RES', displayLinksResult);
       filterOptions = {
         ...filterOptions,
-        locality: displayLinksResult.locality,
-        label: renderLocalityLabel(displayLinksResult.locality),
+        locality: displayLinksResult.localityLong,
+        label: renderLocalityLabel(displayLinksResult.localityLong),
         getUrl: () => getNavigationQuery({
           ...urlParams,
-          locality: displayLinksResult.locality
+          localityUuid: displayLinksResult.localityUuid
         })
       };
 
@@ -669,7 +670,7 @@ const LinksView = (props) => {
                            onKeyDown={(e) => {
                              if (e.keyCode === 13) {
                                setProperty('links.routeSearchTerm', '');
-                               navigate(getNavigationPath({ from: displayLinksResult.locality, to: routeSearchTerm, view: 'map' }));
+                               navigate(getNavigationPath({ from: displayLinksResult.localityUuid, to: routeSearchTerm, view: 'map' }));
                              }
                            }}/>
               </div>
@@ -700,8 +701,8 @@ const LinksView = (props) => {
         //mapContent = renderConnectionsMap(displayLinks[0], selectedTransportTypes, actualLinkMode, selectedTerminal, onHighlightConnection, onSelectConnection, intl);
         mapContent = getConnectionsMapContent(links.departures.filter(dep => !dep.ignore).concat(links.arrivals), terminal => {
           navigate(getNavigationPath({
-            locality: terminal.locality,
-            linkedLocality: terminal.linkedTerminal.locality,
+            localityUuid: terminal.localityUuid,
+            linkedLocalityUuid: terminal.linkedTerminal.localityUuid,
             transportTypes: selectedTransportTypes,
             view: 'map'
           }));
@@ -721,24 +722,24 @@ const LinksView = (props) => {
 
     filterOptions = {
       ...filterOptions,
-      locality: displayLinksResult.locality,
+      locality: displayLinksResult.localityLong,
       label: renderLinkedLocalityLabel(
-        displayLinksResult.locality,
-        displayLinksResult.linkedLocality,
+        displayLinksResult.localityLong,
+        displayLinksResult.linkedLocalityLong,
         getNavigationQuery({
-          locality: displayLinksResult.linkedLocality,
-          linkedLocality: displayLinksResult.locality,
+          localityUuid: displayLinksResult.linkedLocalityUuid,
+          linkedLocalityUuid: displayLinksResult.localityUuid,
           transportTypes: selectedTransportTypes,
           view: 'map'
         })
       ),
       getUrl: () => getNavigationQuery({
         ...urlParams,
-        locality: displayLinksResult.locality,
-        linkedLocality: displayLinksResult.linkedLocality
+        localityUuid: displayLinksResult.localityUuid,
+        linkedLocalityUuid: displayLinksResult.linkedLocalityUuid
       }),
       clearUrl: getNavigationQuery({
-        locality: displayLinksResult.locality,
+        localityUuid: displayLinksResult.localityUuid,
         transportTypes: selectedTransportTypes,
         view: 'map'
       })
@@ -894,8 +895,8 @@ const LinksView = (props) => {
                              setProperty('links.searchTerm', input);
                              if (input.length > 2 || input.length === 0) {
                                setProperty('links.linkMode', 'external');
-                               setProperty('links.selectedLocality', null);
-                               setProperty('links.selectedLinkedLocality', null);
+                               setProperty('links.selectedLocalityUuid', null);
+                               setProperty('links.selectedLinkedLocalityUuid', null);
                                navigate(getNavigationPath({
                                  search: input,
                                  transportTypes: selectedTransportTypes,
@@ -992,8 +993,8 @@ const LinksView = (props) => {
                       setProperty('links.selectedTransportTypes', newSelectedTransportTypes);
 
                       const pathParams = {
-                        locality: selectedLocality,
-                        linkedLocality: selectedLinkedLocality,
+                        localityUuid: selectedLocalityUuid,
+                        linkedLocalityUuid: selectedLinkedLocalityUuid,
                         search: searchTerm,
                         transportTypes: newSelectedTransportTypes,
                         view: 'map'
@@ -1064,8 +1065,8 @@ export default injectIntl(
       linkMode: state.links.linkMode || 'external',
       searchTerm: state.links.searchTerm,
       routeSearchTerm: state.links.routeSearchTerm,
-      selectedLocality: state.links.selectedLocality,
-      selectedLinkedLocality: state.links.selectedLinkedLocality,
+      selectedLocalityUuid: state.links.selectedLocalityUuid,
+      selectedLinkedLocalityUuid: state.links.selectedLinkedLocalityUuid,
       selectedTag: state.links.selectedTag,
       selectedTerminal: state.links.selectedTerminal,
       selectedRoute: state.links.selectedRoute,

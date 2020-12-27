@@ -30,10 +30,10 @@ export default {
 
   },
 
-  getCheckInWithPostsByLocality: async (locality) => {
+  getCheckInWithPostsByLocality: async (localityUuid) => {
 
-    let queryWithPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p, "MediaItem" mi WHERE ci."locality" = '${locality}' AND ci."id" = p."checkInId" AND mi."entityUuid" = p."uuid"::varchar`;
-    let queryWithoutPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p WHERE ci."locality" = '${locality}' AND ci."id" = p."checkInId"`;
+    let queryWithPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p, "MediaItem" mi WHERE ci."localityUuid" = '${localityUuid}' AND ci."id" = p."checkInId" AND mi."entityUuid" = p."uuid"::varchar`;
+    let queryWithoutPhotos = `SELECT ci.* FROM "CheckIn" ci, "Post" p WHERE ci."localityUuid" = '${localityUuid}' AND ci."id" = p."checkInId"`;
 
     let checkIns = await sequelize.query(queryWithPhotos, { model: CheckIn, mapToModel: true });
     if (checkIns.length === 0) {
@@ -113,6 +113,29 @@ export default {
 
   },
 
+  setLocalityAdminLevel: async (locality, country, adminLevel1, adminLevel2) => {
+
+    let adminLevel = '';
+    if (country) adminLevel = ` || ', ' || loc.country`;
+    if (adminLevel1) adminLevel = ` || ', ' || loc."adminArea1" || ', ' || loc.country`;
+    if (adminLevel2) adminLevel = ` || ', ' || loc."adminArea2" || ', ' || loc."adminArea1"`;
+
+    let adminLevelQuery = '';
+    if (country) adminLevelQuery = ` AND loc.country = '${country}'`;
+    if (adminLevel1) adminLevelQuery = ` AND loc.country = '${country}'`;
+    const query = `
+        UPDATE "CheckIn" ci SET "localityLong" = loc.name ${adminLevel}
+          FROM "Locality" loc 
+          WHERE loc.name = '${locality}'
+            ${adminLevelQuery}
+            AND loc.uuid = ci."localityUuid"::uuid;
+    `;
+
+    console.log('admin level query', query);
+    await sequelize.query(query);
+
+  },
+
   saveCheckIn: async (checkIn) => {
 
     if (checkIn.id || checkIn.uuid) {
@@ -151,8 +174,8 @@ export default {
 
   },
 
-  getCheckInCount: async (locality) => {
-    const query = `SELECT COUNT(id) FROM "CheckIn" WHERE locality = '${locality}'`;
+  getCheckInCount: async (localityUuid) => {
+    const query = `SELECT COUNT(id) FROM "CheckIn" WHERE "localityUuid" = '${localityUuid}'`;
     const checkInCount = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return checkInCount[0].count;
   },
@@ -238,11 +261,11 @@ export default {
   },
 
   getLatestCheckIns: async (limit, offset, search) => {
-    let query = `SELECT DISTINCT "locality", MAX("createdAt") as "lastCreated" FROM "CheckIn"`;
+    let query = `SELECT DISTINCT "localityUuid", MAX("createdAt") as "lastCreated" FROM "CheckIn"`;
     if (search) {
       query += ` WHERE "locality" ILIKE '%${search}%' OR "country" ILIKE '%${search}%'`;
     }
-    query += ` GROUP BY "locality" ORDER BY "lastCreated" DESC, "locality" LIMIT ${limit} OFFSET ${offset}`;
+    query += ` GROUP BY "localityUuid" ORDER BY "lastCreated" DESC, "localityUuid" LIMIT ${limit} OFFSET ${offset}`;
     const latestCheckIns = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
     return latestCheckIns;
   },

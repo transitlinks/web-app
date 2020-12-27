@@ -147,6 +147,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     checkInUuid: checkIn.uuid,
     localityUuid: checkIn.localityUuid,
     locality: checkIn.locality,
+    localityLong: checkIn.localityLong,
     country: checkIn.country,
     latitude: checkIn.latitude,
     longitude: checkIn.longitude,
@@ -159,6 +160,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     newTerminal.linkedTerminalId = newLinkedTerminal.id;
     newTerminal.linkedLocalityUuid = newLinkedTerminal.localityUuid;
     newTerminal.linkedLocality = newLinkedTerminal.locality;
+    newTerminal.linkedLocalityLong = newLinkedTerminal.localityLong;
     newTerminal.linkedFormattedAddress = newLinkedTerminal.formattedAddress;
     if (!terminalInput.transportId) newTerminal.transportId = newLinkedTerminal.transportId;
     if (!terminalInput.priceAmount) newTerminal.priceAmount = newLinkedTerminal.priceAmount;
@@ -246,6 +248,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
       linkedTerminalId: savedTerminal.id,
       linkedLocalityUuid: savedTerminal.localityUuid,
       linkedLocality: savedTerminal.locality,
+      linkedLocalityLong: savedTerminal.localityLong,
       linkedFormattedAddress: savedTerminal.formattedAddress,
       ...linkedTerminalUpdate
     });
@@ -358,16 +361,61 @@ const deleteTerminal = async (uuid, clientId, request) => {
     const departure = terminal.type === 'departure' ? terminal : linkedTerminal;
     const arrival = terminal.type === 'arrival' ? terminal : linkedTerminal;
     await terminalRepository.deleteConnection({ sourceTerminalId: departure.id, targetTerminalId: arrival.id }, 'AND');
-    await terminalRepository.saveTerminal({
-      uuid: linkedTerminal.uuid,
-      linkedTerminalId: null,
-      linkedLocality: null,
-      linkedLocalityUuid: null,
-      linkedFormattedAddress: null
-    });
+    if (terminal.type === 'departure') {
+      await terminalRepository.deleteTerminal(linkedTerminal.uuid);
+    } else {
+      await terminalRepository.saveTerminal({
+        uuid: linkedTerminal.uuid,
+        linkedTerminalId: null,
+        linkedLocality: null,
+        linkedLocalityUuid: null,
+        linkedFormattedAddress: null
+      });
+    }
   }
 
   return await terminalRepository.deleteTerminal(uuid);
+
+};
+
+const adjustLocalityAdminLevels = async (checkIn, localityUuid) => {
+
+  const matchingLocalities = await localityRepository.getLocalities({ name: checkIn.locality });
+
+  if (matchingLocalities.length > 0) {
+
+    if (matchingLocalities.length === 1 && matchingLocalities[0].uuid === localityUuid) {
+      return checkIn.locality;
+    }
+
+    const matchingCountryLocalities = await localityRepository.getLocalities({ name: checkIn.locality, country: checkIn.country });
+    if (matchingCountryLocalities.length === 1 && matchingCountryLocalities[0].uuid === localityUuid) {
+      // TODO: Set Terminal, CheckIn and EntityTag localityLong to country level
+      await localityRepository.setAdminLevel(checkIn.locality, checkIn.country);
+      await checkInRepository.setLocalityAdminLevel(checkIn.locality, checkIn.country);
+      await terminalRepository.setLocalityAdminLevel(checkIn.locality, checkIn.country);
+      return `${checkIn.locality}, ${checkIn.country}`;
+    } else {
+      const matchingAdmin1Localities = await localityRepository.getLocalities({ name: checkIn.locality, country: checkIn.country, adminArea1: checkIn.adminArea1 });
+      if (matchingAdmin1Localities.length === 1 && matchingAdmin1Localities[0].uuid === localityUuid) {
+        // TODO: Set Terminal, CheckIn and EntityTag localityLong to adnin area 1 level
+        await localityRepository.setAdminLevel(checkIn.locality, checkIn.country, checkIn.adminArea1);
+        await checkInRepository.setLocalityAdminLevel(checkIn.locality, checkIn.country, checkIn.adminArea1);
+        await terminalRepository.setLocalityAdminLevel(checkIn.locality, checkIn.country, checkIn.adminArea1);
+        return `${checkIn.locality}, ${checkIn.adminArea1}, ${checkIn.country}`;
+      } else {
+        // TODO: Set Terminal, CheckIn and EntityTag localityLong to adnin area 2 level
+        await localityRepository.setAdminLevel(checkIn.locality, checkIn.country, checkIn.adminArea1, checkIn.adminArea2);
+        await checkInRepository.setLocalityAdminLevel(checkIn.locality, checkIn.country, checkIn.adminArea1, checkIn.adminArea2);
+        await terminalRepository.setLocalityAdminLevel(checkIn.locality, checkIn.country, checkIn.adminArea1, checkIn.adminArea2);
+        return `${checkIn.locality}, ${checkIn.adminArea2}, ${checkIn.adminArea1}`;
+      }
+
+    }
+
+  }
+
+  return checkIn.locality;
 
 };
 
@@ -381,7 +429,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   const userId = await requireOwnership(request, existingCheckIn, clientId);
 
   const newCheckIn = copyNonNull(checkInInput, {}, [
-    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'country', 'formattedAddress'
+    'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'adminArea1', 'adminArea2', 'country', 'formattedAddress'
   ]);
 
   const latitude = newCheckIn.latitude || existingCheckIn.latitude;
@@ -454,28 +502,34 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     departureBeforeNew = await terminalRepository.getDepartureBefore(newCheckIn.createdAt, userId);
   }
 
-  const localities = await localityRepository.getLocalities({ name: newCheckIn.locality });
-  const matchingLocality = localities.find(locality => {
-    if (locality.country !== newCheckIn.country) return false;
-    const distance = getDistance(locality.toJSON(), newCheckIn);
-    if (distance > 100000) return false;
-    return true;
-  });
+  let savedCheckIn = null;
 
-  if (!matchingLocality) {
+  const matchingAdmin2Localities = await localityRepository.getLocalities({ name: newCheckIn.locality, country: newCheckIn.country, adminArea1: newCheckIn.adminArea1, adminArea2: newCheckIn.adminArea2 });
+
+  if (matchingAdmin2Localities.length === 0) {
+
     log.debug(`create-locality name=${newCheckIn.locality} country=${newCheckIn.country} latitude=${newCheckIn.latitude} longitude=${newCheckIn.longitude}`);
     const savedLocality = await localityRepository.saveLocality({
       name: newCheckIn.locality,
+      nameLong: newCheckIn.locality,
       latitude: newCheckIn.latitude,
       longitude: newCheckIn.longitude,
+      adminArea1: newCheckIn.adminArea1,
+      adminArea2: newCheckIn.adminArea2,
       country: newCheckIn.country
     });
+
+    const localityLong = await adjustLocalityAdminLevels(newCheckIn, savedLocality.uuid);
     newCheckIn.localityUuid = savedLocality.uuid;
+    newCheckIn.localityLong = localityLong;
+    savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
+
   } else {
-    newCheckIn.localityUuid = matchingLocality.uuid;
+    newCheckIn.localityUuid = matchingAdmin2Localities[0].uuid;
+    newCheckIn.localityLong = matchingAdmin2Localities[0].nameLong;
+    savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
   }
 
-  const savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
 
   if (departureBeforeExisting && departureBeforeExisting.linkedTerminal) await adjustConnection(departureBeforeExisting);
   if (departureBeforeNew && departureBeforeNew.linkedTerminal) await adjustConnection(departureBeforeNew);
@@ -535,6 +589,11 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
 
   await postRepository.deleteCheckIns({ uuid: checkIn.uuid });
   if (departureBefore) await adjustConnection(departureBefore);
+
+  const checkInsWithSameLocality = await checkInRepository.getCheckIns({ localityUuid: checkIn.localityUuid });
+  if (checkInsWithSameLocality.length === 0) {
+    await localityRepository.deleteLocalities({ uuid: checkIn.localityUuid });
+  }
 
   let nextUrl = '/';
   if (outboundCheckIns.length > 0) nextUrl = `/check-in/${outboundCheckIns[0].uuid}`;
