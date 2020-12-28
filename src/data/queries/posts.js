@@ -504,29 +504,33 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
 
   let savedCheckIn = null;
 
-  const matchingAdmin2Localities = await localityRepository.getLocalities({ name: newCheckIn.locality, country: newCheckIn.country, adminArea1: newCheckIn.adminArea1, adminArea2: newCheckIn.adminArea2 });
+  if (!existingCheckIn) {
+    const matchingAdmin2Localities = await localityRepository.getLocalities({ name: newCheckIn.locality, country: newCheckIn.country, adminArea1: newCheckIn.adminArea1, adminArea2: newCheckIn.adminArea2 });
 
-  if (matchingAdmin2Localities.length === 0) {
+    if (matchingAdmin2Localities.length === 0) {
 
-    log.debug(`create-locality name=${newCheckIn.locality} country=${newCheckIn.country} latitude=${newCheckIn.latitude} longitude=${newCheckIn.longitude}`);
-    const savedLocality = await localityRepository.saveLocality({
-      name: newCheckIn.locality,
-      nameLong: newCheckIn.locality,
-      latitude: newCheckIn.latitude,
-      longitude: newCheckIn.longitude,
-      adminArea1: newCheckIn.adminArea1,
-      adminArea2: newCheckIn.adminArea2,
-      country: newCheckIn.country
-    });
+      log.debug(`create-locality name=${newCheckIn.locality} country=${newCheckIn.country} latitude=${newCheckIn.latitude} longitude=${newCheckIn.longitude}`);
+      const savedLocality = await localityRepository.saveLocality({
+        name: newCheckIn.locality,
+        nameLong: newCheckIn.locality,
+        latitude: newCheckIn.latitude,
+        longitude: newCheckIn.longitude,
+        adminArea1: newCheckIn.adminArea1,
+        adminArea2: newCheckIn.adminArea2,
+        country: newCheckIn.country
+      });
 
-    const localityLong = await adjustLocalityAdminLevels(newCheckIn, savedLocality.uuid);
-    newCheckIn.localityUuid = savedLocality.uuid;
-    newCheckIn.localityLong = localityLong;
-    savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
+      const localityLong = await adjustLocalityAdminLevels(newCheckIn, savedLocality.uuid);
+      newCheckIn.localityUuid = savedLocality.uuid;
+      newCheckIn.localityLong = localityLong;
+      savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
 
+    } else {
+      newCheckIn.localityUuid = matchingAdmin2Localities[0].uuid;
+      newCheckIn.localityLong = matchingAdmin2Localities[0].nameLong;
+      savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
+    }
   } else {
-    newCheckIn.localityUuid = matchingAdmin2Localities[0].uuid;
-    newCheckIn.localityLong = matchingAdmin2Localities[0].nameLong;
     savedCheckIn = await postRepository.saveCheckIn(newCheckIn);
   }
 
@@ -1227,6 +1231,18 @@ export const PostQueryFields = {
         userId = await userRepository.getUserIdByUuid(user);
       }
 
+      let localityName = null;
+      if (locality) {
+        const localityEntity = await localityRepository.getLocality({ uuid: locality });
+        if (localityEntity) localityName = localityEntity.nameLong;
+      }
+
+      let linkedLocalityName = null;
+      if (linkedLocality) {
+        const localityEntity = await localityRepository.getLocality({ uuid: linkedLocality });
+        if (localityEntity) linkedLocalityName = localityEntity.nameLong;
+      }
+
       let tripName = null;
       if (from && to) {
 
@@ -1282,11 +1298,11 @@ export const PostQueryFields = {
         if (userId) query.userId = userId;
         checkIns = await checkInRepository.getFeedCheckIns(query, options);
       } else if (locality && linkedLocality) {
-        const terminals = await terminalRepository.getInterTerminalsByLocality(locality, { linkedLocality }, options);
+        const terminals = await terminalRepository.getInterTerminalsByLocality(locality, { linkedLocalityUuid: linkedLocality }, options);
         checkIns = terminals.map(terminal => terminal.checkIn);
       } else {
         const query = {};
-        if (locality) query.locality = locality;
+        if (locality) query.localityUuid = locality;
         if (userId) query.userId = userId;
         checkIns = await checkInRepository.getFeedCheckIns(query, options);
       }
@@ -1330,6 +1346,8 @@ export const PostQueryFields = {
           };
         }),
         user: userName,
+        locality: localityName,
+        linkedLocality: linkedLocalityName,
         userImage,
         tripName
       };

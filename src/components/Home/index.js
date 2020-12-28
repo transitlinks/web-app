@@ -60,16 +60,16 @@ const HomeView = ({ feed, query, transportTypes, post }) => {
     };
   } else if (locality && linkedLocality) {
     filterOptions = {
-      locality,
-      label: renderLinkedLocalityLabel(locality, linkedLocality, `/?locality=${linkedLocality}&linkedLocality=${locality}`),
-      getUrl: () => `/links?locality=${locality}&linkedLocality=${linkedLocality}&view=map`,
+      locality: feed.locality,
+      label: renderLinkedLocalityLabel(feed.locality, feed.linkedLocality, `/?locality=${linkedLocality}&linkedLocality=${locality}`),
+      getUrl: () => `/links?localityUuid=${locality}&linkedLocalityUuid=${linkedLocality}&view=map`,
       clearUrl: `/?locality=${locality}`
     };
   } else if (locality) {
     filterOptions = {
-      locality,
-      label: renderLocalityLabel(locality),
-      getUrl: () => `/links?locality=${locality}&view=map`
+      locality: feed.locality,
+      label: renderLocalityLabel(feed.locality),
+      getUrl: () => `/links?localityUuid=${locality}&view=map`
     };
   }
 

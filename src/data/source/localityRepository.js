@@ -132,6 +132,17 @@ export default {
     console.log('loc admin level query', query);
     await sequelize.query(query);
 
+    if (!adminLevel1) {
+
+      const otherLocsQuery = `
+        UPDATE "Locality" loc SET "nameLong" = loc.name ${adminLevel}
+          WHERE loc.name = '${locality}' AND loc.country != '${country}' AND loc."nameLong" = '${locality}'
+        `;
+      console.log('other loc admin level query', otherLocsQuery);
+      await sequelize.query(otherLocsQuery);
+
+    }
+
   },
 
 };

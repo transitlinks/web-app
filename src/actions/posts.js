@@ -264,6 +264,7 @@ export const getDiscoveries = (search, type) => {
                   placeId,
                   formattedAddress,
                   locality,
+                  localityUuid,
                   country,
                   tags,
                   likes,

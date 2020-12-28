@@ -87,6 +87,7 @@ export const getCheckInEntity = () => {
       placeId,
       formattedAddress,
       locality,
+      localityUuid,
       country,
       tags,
       likes,

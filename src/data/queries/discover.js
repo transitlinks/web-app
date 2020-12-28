@@ -63,7 +63,8 @@ const getLocalityDiscovery = async (localityUuid, request) => {
 
   return {
     groupType: 'locality',
-    groupName: locality.localityLong,
+    groupName: locality.nameLong,
+    groupId: locality.uuid,
     checkInCount,
     postCount,
     tags,

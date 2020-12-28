@@ -74,7 +74,7 @@ export const renderLocalityLabel = (locality) => {
     <div className={s.linksListHeader}>
       <div className={s.image}>
         <FontIcon className="material-icons" style={{ fontSize: '28px' }}>
-          place
+          location_city
         </FontIcon>
       </div>
       <div className={s.label}>{locality}</div>

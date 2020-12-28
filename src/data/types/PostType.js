@@ -208,6 +208,8 @@ export const FeedType = new GraphQLObjectType({
     openTerminals: { type: new GraphQLList(TerminalType) },
     user: { type: GraphQLString },
     userImage: { type: GraphQLString },
+    locality: { type: GraphQLString },
+    linkedLocality: { type: GraphQLString },
     tripName: { type: GraphQLString }
   }
 });

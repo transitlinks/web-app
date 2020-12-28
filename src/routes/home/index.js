@@ -57,6 +57,8 @@ export default {
             },
             user,
             userImage,
+            locality,
+            linkedLocality,
             tripName
           },
           transportTypes { slug },

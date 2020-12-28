@@ -264,7 +264,7 @@ const CheckInItem = (
                     <div className={s.icon}>
                       <FontIcon className="material-icons" style={{ fontSize: '21px', color: '#a0a0a0' }}>location_city</FontIcon>
                     </div>
-                    <div className={s.label} onClick={() => navigate({ pathname: '/', search: `?locality=${checkIn.locality}` })}>
+                    <div className={s.label} onClick={() => navigate({ pathname: '/', search: `?locality=${checkIn.localityUuid}` })}>
                       {checkIn.locality}
                     </div>
                   </div>

@@ -179,6 +179,8 @@ export const getFeed = (clientId, params) => {
           },
           user,
           userImage,
+          locality,
+          linkedLocality,
           tripName
         }
       }
