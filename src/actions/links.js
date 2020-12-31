@@ -5,9 +5,12 @@ import {
   GET_LINKS_START,
   GET_LINKS_SUCCESS,
   GET_LINKS_ERROR,
+  SEARCH_LOCALITIES_START,
+  SEARCH_LOCALITIES_SUCCESS,
+  SEARCH_LOCALITIES_ERROR,
   SET_PROPERTY
 } from '../constants';
-import { getLinksQuery } from '../data/queries/queries';
+import { getLinksQuery, getSearchLocalitiesQuery } from '../data/queries/queries';
 
 export const getLinks = (params) => {
 
@@ -23,6 +26,26 @@ export const getLinks = (params) => {
       GET_LINKS_START,
       GET_LINKS_SUCCESS,
       GET_LINKS_ERROR
+    );
+
+  };
+
+};
+
+export const searchLocalities = (search, from) => {
+
+  return async (...args) => {
+
+    const query = `query {
+          ${getSearchLocalitiesQuery(search, from)}
+        }`;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'searchLocalities' ],
+      SEARCH_LOCALITIES_START,
+      SEARCH_LOCALITIES_SUCCESS,
+      SEARCH_LOCALITIES_ERROR,
     );
 
   };

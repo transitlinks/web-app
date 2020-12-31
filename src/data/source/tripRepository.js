@@ -80,8 +80,10 @@ export default {
 
     const query = `
       SELECT t.* FROM "Trip" t, "CheckIn" fci, "CheckIn" ci, "CheckIn" lci 
-      WHERE ci.id = ${checkInId} AND t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id 
-      AND ci."createdAt" BETWEEN fci."createdAt" AND lci."createdAt";
+      WHERE (
+            ci.id = ${checkInId} AND t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id 
+            AND ci."createdAt" BETWEEN fci."createdAt" AND lci."createdAt"
+        ) OR t."firstCheckInId" = ${checkInId} OR t."lastCheckInId" = ${checkInId};
     `;
 
     const results = await sequelize.query(query, { model: Trip, mapToModel: true });

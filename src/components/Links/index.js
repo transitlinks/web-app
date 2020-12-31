@@ -5,7 +5,7 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { compose, withProps } from 'recompose';
 import cx from 'classnames';
 import s from './Links.css';
-import { getLinks, setZoomLevel } from '../../actions/links';
+import { getLinks, searchLocalities, setZoomLevel } from '../../actions/links';
 import { navigate } from '../../actions/route';
 import { setProperty } from '../../actions/properties';
 import { injectIntl } from 'react-intl';
@@ -17,6 +17,7 @@ import FilterHeader, {
   renderTagLabel,
   renderTripLabel
 } from '../FilterHeader';
+import DropdownList from '../DropdownList';
 import LinkDetails from './LinkDetails';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
@@ -564,10 +565,10 @@ const getLinksMapContent = (terminals, selectedTerminal, onSelect) => {
 const LinksView = (props) => {
 
   const {
-    intl, linksResult, loadedMapCenter, searchTerm, routeSearchTerm, viewMode, linkMode,
+    intl, linksResult, localitySearchResults, searchTerm, routeSearchTerm, viewMode, linkMode,
     mapZoom, transportTypes, showTransportTypes, mapBoundsUpdated, query,
     selectedTransportTypes, selectedLocalityUuid, selectedLinkedLocalityUuid, selectedTerminal, selectedTag, selectedRoute,
-    setProperty, navigate
+    setProperty, searchLocalities, navigate
   } = props;
 
   let displayLinksResult = linksResult || [];
@@ -584,7 +585,7 @@ const LinksView = (props) => {
 
   };
 
-  let mapCenter = {
+  const mapCenter = {
     lat: 60.16952,
     lng: 24.93545
   };
@@ -666,13 +667,27 @@ const LinksView = (props) => {
                            onChange={(event) => {
                              const input = event.target.value;
                              setProperty('links.routeSearchTerm', input);
-                           }}
-                           onKeyDown={(e) => {
-                             if (e.keyCode === 13) {
-                               setProperty('links.routeSearchTerm', '');
-                               navigate(getNavigationPath({ from: displayLinksResult.localityUuid, to: routeSearchTerm, view: 'map' }));
+                             if (input.length > 2) {
+                               searchLocalities(input);
+                             } else {
+                               setProperty('links.searchLocalities', null);
                              }
-                           }}/>
+                           }}
+                />
+
+                {
+                  localitySearchResults &&
+                    <DropdownList
+                      options={localitySearchResults.map(loc => ({ label: loc.nameLong, uuid: loc.uuid }))}
+                      onSelect={(option) => {
+                        setProperty('links.routeSearchTerm', '');
+                        setProperty('links.searchLocalities', null);
+                        navigate(getNavigationPath({ from: displayLinksResult.localityUuid, to: option.uuid, view: 'map' }));
+                      }}
+                      optionsRef={'links.searchLocalities'}
+                    />
+                }
+
               </div>
             </div>
           </div>
@@ -760,7 +775,7 @@ const LinksView = (props) => {
       ...filterOptions,
       from: displayLinksResult.from,
       to: displayLinksResult.to,
-      label: renderRouteLabel(displayLinksResult.from, displayLinksResult.to),
+      label: renderRouteLabel(displayLinksResult.fromName, displayLinksResult.toName),
       getUrl: () => getNavigationQuery({
         ...urlParams,
         locality: displayLinksResult.from,
@@ -771,7 +786,7 @@ const LinksView = (props) => {
       }),
       clearUrl: getNavigationQuery({
         transportTypes: selectedTransportTypes,
-        locality: displayLinksResult.from,
+        localityUuid: displayLinksResult.from,
         view: 'map'
       })
     };
@@ -787,7 +802,7 @@ const LinksView = (props) => {
     } else {
       const noResults = (
         <div className={s.noResults}>
-          We can't find any routes from {displayLinksResult.from} to {displayLinksResult.to} yet.
+          We can't find any routes from {displayLinksResult.fromName} to {displayLinksResult.toName} yet.
           <br /><br />
           Please help us develop Transitlinks and contribute route information!
         </div>
@@ -1072,10 +1087,12 @@ export default injectIntl(
       selectedRoute: state.links.selectedRoute,
       mapZoom: state.links.mapZoom,
       showTransportTypes: state.links.showTransportTypes,
-      selectedTransportTypes: state.links.selectedTransportTypes || []
+      selectedTransportTypes: state.links.selectedTransportTypes || [],
+      localitySearchResults: state.links.searchLocalities
     }
   }, {
     getLinks,
+    searchLocalities,
     setZoomLevel,
     setProperty,
     navigate

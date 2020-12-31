@@ -113,21 +113,17 @@ export default {
 
   },
 
-  setLocalityAdminLevel: async (locality, country, adminLevel1, adminLevel2) => {
+  setLocalityAdminLevel: async (locality, country, adminArea1, adminArea2) => {
 
-    let adminLevel = '';
-    if (country) adminLevel = ` || ', ' || loc.country`;
-    if (adminLevel1) adminLevel = ` || ', ' || loc."adminArea1" || ', ' || loc.country`;
-    if (adminLevel2) adminLevel = ` || ', ' || loc."adminArea2" || ', ' || loc."adminArea1"`;
+    let where = '';
+    if (adminArea1) where += ` AND loc."country" = '${country}'`;
+    if (adminArea2) where += ` AND loc."adminArea1" = '${adminArea1}'`;
 
-    let adminLevelQuery = '';
-    if (country) adminLevelQuery = ` AND loc.country = '${country}'`;
-    if (adminLevel1) adminLevelQuery = ` AND loc.country = '${country}'`;
     const query = `
-        UPDATE "CheckIn" ci SET "localityLong" = loc.name ${adminLevel}
-          FROM "Locality" loc 
-          WHERE loc.name = '${locality}'
-            ${adminLevelQuery}
+        UPDATE "CheckIn" ci SET "localityLong" = loc."nameLong"
+          FROM "Locality" loc
+          WHERE ci.locality = '${locality}'
+            ${where}
             AND loc.uuid = ci."localityUuid"::uuid;
     `;
 

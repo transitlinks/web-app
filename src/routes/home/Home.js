@@ -58,6 +58,7 @@ class Home extends React.Component {
 
         const clientId = getClientId();
         const params = getParams(this.props);
+        console.log('fetch with params', params);
         this.setState({ fetchedOffset: params.offset });
         this.props.getFeed(clientId, { ...params, add: true });
       }
@@ -138,6 +139,11 @@ class Home extends React.Component {
       }, 100);
     }
 
+    if (this.props.feed && this.props.fetchedFeed) {
+      if (this.props.feed.fetchedAt > this.props.fetchedFeed.fetchedAt) {
+        this.props.setProperty('posts.feed', this.props.feed);
+      }
+    }
 
     const savedTerminal = this.props.savedTerminal;
     if (checkIn && savedTerminal) {
@@ -249,7 +255,8 @@ export default connect(state => ({
   activeTripUpdatedAt: state.trips.activeTripUpdatedAt,
   deletedTrip: state.trips.deletedTrip,
   lastCoords: state.global['geolocation.lastCoords'],
-  savedProfile: state.profile.savedProfile
+  savedProfile: state.profile.savedProfile,
+  fetchedFeed: state.posts.feed
 }), {
   getGeolocation,
   getFeed,

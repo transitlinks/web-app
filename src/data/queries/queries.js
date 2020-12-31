@@ -18,6 +18,16 @@ export const getActiveTripQuery = () => {
   `;
 };
 
+export const getSearchLocalitiesQuery = (search, from) => {
+  return `
+    searchLocalities (search:"${search}") {
+      uuid,
+      name,
+      nameLong
+    }
+  `;
+};
+
 export const getTripCoordEntity = () => {
   return `
     {
@@ -253,6 +263,8 @@ export const getLinksQuery = (params) => {
       linkedLocality,
       from,
       to,
+      fromName,
+      toName,
       user,
       userImage,
       tripName,

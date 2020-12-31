@@ -1209,7 +1209,7 @@ export const PostQueryFields = {
     },
     resolve: async ({ request }, { clientId, trip, tags, locality, country, linkedLocality, from, to, route, user, transportTypes, offset, limit }) => {
 
-      log.info(graphLog(request, 'get-feed'));
+      log.info(graphLog(request, 'get-feed', `locality=${locality} country=${country}`));
 
       let checkIns = [];
 

@@ -2,7 +2,10 @@ import { graphqlReduce, propToState } from "./utils";
 import {
   GET_LINKS_START,
   GET_LINKS_SUCCESS,
-  GET_LINKS_ERROR
+  GET_LINKS_ERROR,
+  SEARCH_LOCALITIES_START,
+  SEARCH_LOCALITIES_SUCCESS,
+  SEARCH_LOCALITIES_ERROR,
 } from "../constants";
 
 export default function reduce(state = {}, action) {
@@ -24,6 +27,23 @@ export default function reduce(state = {}, action) {
         GET_LINKS_START,
         GET_LINKS_SUCCESS,
         GET_LINKS_ERROR
+      );
+
+    case SEARCH_LOCALITIES_START:
+    case SEARCH_LOCALITIES_SUCCESS:
+    case SEARCH_LOCALITIES_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => ({
+            searchLocalities: action.payload.searchLocalities
+          }),
+          error: () => ({ searchLocalities: null })
+        },
+        SEARCH_LOCALITIES_START,
+        SEARCH_LOCALITIES_SUCCESS,
+        SEARCH_LOCALITIES_ERROR,
       );
 
   }

@@ -1,0 +1,30 @@
+@import '../../components/variables.css';
+
+.container {
+  position: absolute;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  z-index: 1;
+  left: calc(50% - 180px);
+  width: 350px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.option {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.option:hover {
+  background-color: #e0e0e0;
+}
+
+.notFound {
+
+}

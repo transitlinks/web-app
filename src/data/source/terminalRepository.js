@@ -489,24 +489,25 @@ export default {
 
   },
 
-  setLocalityAdminLevel: async (locality, country, adminLevel1, adminLevel2) => {
+  setLocalityAdminLevel: async (locality, country, adminArea1, adminArea2) => {
 
-    let adminLevel = '';
-    if (country) adminLevel = ` || ', ' || loc.country`;
-    if (adminLevel1) adminLevel = ` || ', ' || loc."adminArea1"`;
-    if (adminLevel2) adminLevel = ` || ', ' || loc."adminArea2"`;
+    let where = '';
+    if (adminArea1) where += ` AND loc."country" = '${country}'`;
+    if (adminArea2) where += ` AND loc."adminArea1" = '${adminArea1}'`;
 
     const localityQuery = `
-        UPDATE "Terminal" t SET "localityLong" = loc.name ${adminLevel}
+        UPDATE "Terminal" t SET "localityLong" = loc."nameLong"
           FROM "Locality" loc
           WHERE t.locality = '${locality}'
+            ${where}
             AND loc.uuid = t."localityUuid"::uuid;
     `;
 
     const linkedLocalityQuery = `
-        UPDATE "Terminal" t SET "linkedLocalityLong" = loc.name ${adminLevel}
+        UPDATE "Terminal" t SET "linkedLocalityLong" = loc."nameLong"
           FROM "Locality" loc
           WHERE t."linkedLocality" = '${locality}'
+            ${where}
             AND loc.uuid = t."linkedLocalityUuid"::uuid;
     `;
 

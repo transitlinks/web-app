@@ -127,6 +127,8 @@ export const LinkSearchResultType = new GraphQLObjectType({
     linkedLocalityUuid: { type: GraphQLString },
     from: { type: GraphQLString },
     to: { type: GraphQLString },
+    fromName: { type: GraphQLString },
+    toName: { type: GraphQLString },
     user: { type: GraphQLString },
     userImage: { type: GraphQLString },
     tripName: { type: GraphQLString },
@@ -164,6 +166,16 @@ export const MediaItemType = new GraphQLObjectType({
     type: { type: GraphQLString },
     thumbnail: { type: GraphQLString },
     url: { type: GraphQLString }
+  })
+});
+
+export const LocalitySearchResultsType = new GraphQLObjectType({
+  name: 'LocalitySearchResults',
+  description: 'Locality search result.',
+  fields: () => ({
+    uuid: { type: GraphQLString },
+    name: { type: GraphQLString },
+    nameLong: { type: GraphQLString }
   })
 });
 

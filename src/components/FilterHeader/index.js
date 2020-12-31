@@ -116,7 +116,7 @@ const FilterHeader = ({ icon, user, tag, locality, linkedLocality, label, clearU
   let directionsUrl = null;
 
   return (
-    <div className={s.container}>
+    <div className={s.filtersContainer}>
       <div className={s.filtersDisplay}>{label}</div>
       <div className={s.filtersReset}>
         {

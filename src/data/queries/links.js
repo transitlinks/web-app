@@ -15,7 +15,7 @@ import {
 } from '../source';
 
 import {
-  MediaItemType, LinkSearchResultType,
+  MediaItemType, LinkSearchResultType, LocalitySearchResultsType,
 } from '../types/TransitLinkType';
 
 import {
@@ -343,6 +343,8 @@ export const TransitLinkQueryFields = {
           searchResultType: 'route',
           from,
           to,
+          fromName: fromLocality.nameLong,
+          toName: toLocality.nameLong,
           links: linkStats
         };
 
@@ -557,6 +559,23 @@ export const TransitLinkQueryFields = {
         linkedLocalityLong: linkedLocality.nameLong,
         links: linkStats
       };
+
+    }
+
+  },
+
+  localities: {
+
+    type: new GraphQLList(LocalitySearchResultsType),
+    description: 'Search localities',
+    args: {
+      search: { type: GraphQLString },
+      from: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { search, from }) => {
+
+      const localities = await localityRepository.searchLocalitiesByName(search);
+      return localities.map(locality => locality.json());
 
     }
 

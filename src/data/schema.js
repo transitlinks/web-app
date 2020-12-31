@@ -28,6 +28,7 @@ const schema = new Schema({
       profile: AccountQueryFields.profile,
       transportTypes,
       linkInstanceMedia: TransitLinkQueryFields.linkInstanceMedia,
+      searchLocalities: TransitLinkQueryFields.localities,
       user: UserQueryFields.user,
       resetPassword: UserQueryFields.resetPassword,
       comments: CommentQueryFields.comments,
