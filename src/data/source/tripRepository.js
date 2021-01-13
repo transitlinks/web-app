@@ -52,7 +52,6 @@ export default {
 
     const trips = await Trip.findAll({
       where,
-      include: [{ all: true }],
       ...options
     });
 
@@ -78,15 +77,18 @@ export default {
 
   getTripByCheckInId: async (checkInId) => {
 
-    const query = `
+    let query = `SELECT * FROM "Trip" WHERE "firstCheckInId" = ${checkInId} OR "lastCheckInId" = ${checkInId}`;
+    let results = await sequelize.query(query, { model: Trip, mapToModel: true });
+
+    if (results.length > 0) return results[0];
+
+    query = `
       SELECT t.* FROM "Trip" t, "CheckIn" fci, "CheckIn" ci, "CheckIn" lci 
-      WHERE (
-            ci.id = ${checkInId} AND t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id 
-            AND ci."createdAt" BETWEEN fci."createdAt" AND lci."createdAt"
-        ) OR t."firstCheckInId" = ${checkInId} OR t."lastCheckInId" = ${checkInId};
+      WHERE ci.id = ${checkInId} AND t."firstCheckInId" = fci.id AND t."lastCheckInId" = lci.id 
+      AND ci."createdAt" BETWEEN fci."createdAt" AND lci."createdAt"
     `;
 
-    const results = await sequelize.query(query, { model: Trip, mapToModel: true });
+    results = await sequelize.query(query, { model: Trip, mapToModel: true });
     return results.length > 0 ? results[0] : null;
 
   },
@@ -176,7 +178,6 @@ export default {
 
     const tripCoords = await TripCoord.findAll({
       where,
-      include: [{ all: true }],
       ...options
     });
 

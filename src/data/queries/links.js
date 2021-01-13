@@ -206,7 +206,7 @@ export const TransitLinkQueryFields = {
 
       const { localityUuid, country, linkedLocalityUuid, from, to, tag, trip, user, type, search, transportTypes } = params;
 
-      log.info(graphLog(request, 'search-links',`search=${search} localityUuid=${localityUuid} tag=${tag} type=${type}`));
+      log.info(graphLog(request, 'links',`search=${search} localityUuid=${localityUuid} tag=${tag} type=${type}`));
 
       const linkStats = [];
 
