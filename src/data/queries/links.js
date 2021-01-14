@@ -361,7 +361,6 @@ export const TransitLinkQueryFields = {
       }
 
       const localities = await localityRepository.getMostTravelledLocalities(localityQuery);
-      console.log('GET LOCALITIES', localities);
       const singleLocality = localities.length === 1 ? localities[0].locality : null;
       const singleLocalityLong = localities.length === 1 ? localities[0].localityLong : null;
       const singleLocalityUuid = localities.length === 1 ? localities[0].localityUuid : null;
@@ -425,7 +424,6 @@ export const TransitLinkQueryFields = {
           for (let i = 0; i < linkedDepartureLocalities.length; i++) {
             departureLinks.push(await getLinkedLocalityInfo(terminalLocalityUuid, linkedDepartureLocalities[i], 'departure'));
           }
-          console.log('DEPS', linkedDepartureLocalities);
 
           const arrivalLinks = [];
           const linkedArrivalLocalities = await terminalRepository.getLinkedLocalitiesByLocality({
@@ -435,7 +433,6 @@ export const TransitLinkQueryFields = {
           for (let i = 0; i < linkedArrivalLocalities.length; i++) {
             arrivalLinks.push(await getLinkedLocalityInfo(terminalLocalityUuid, linkedArrivalLocalities[i], 'arrival'));
           }
-          console.log('ARRS', linkedArrivalLocalities);
 
           const terminal = await terminalRepository.getTerminal({ localityUuid: terminalLocalityUuid });
 
@@ -474,7 +471,6 @@ export const TransitLinkQueryFields = {
 
         }
 
-        console.log('SINGLE OOCA', singleLocality, singleLocalityLong, singleLocalityUuid);
         return {
           searchResultType: 'connections',
           links: linkStats,

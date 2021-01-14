@@ -289,6 +289,20 @@
   margin-top: 6px;
 }
 
+.contentScrollerContainer {
+  position: relative;
+}
+
+.contentScrollerContainer .scrollArrow {
+  position: absolute;
+  top: 0;
+  background-color: white;
+  display: flex;
+  height: 27px;
+  align-items: center;
+  cursor: pointer;
+}
+
 .contentScroller {
   width: 100%;
   position: relative;

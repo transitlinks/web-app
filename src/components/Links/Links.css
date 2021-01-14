@@ -1016,3 +1016,13 @@
   padding: 10px;
   text-align: center;
 }
+
+.localitySearchResults {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.localitySearchResults .localitySearchResult {
+  margin-left: 4px;
+}

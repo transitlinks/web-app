@@ -18,6 +18,7 @@ import FilterHeader, {
   renderTripLabel
 } from '../FilterHeader';
 import DropdownList from '../DropdownList';
+import HorizontalScroller from '../HorizontalScroller';
 import LinkDetails from './LinkDetails';
 import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
@@ -301,26 +302,26 @@ const renderLocationsList = (linkStats, transportTypes, onSelect) => {
                           }
                           {
                             linkStat.tags && linkStat.tags.length > 0 &&
-                            <div className={s.localityLinks}>
-                              {
-                                linkStat.trips.map(trip => {
-                                  return (
-                                    <div className={s.localityTrip}>
-                                      <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
-                                    </div>
-                                  );
-                                })
-                              }
-                              {
-                                linkStat.tags.map(tag => {
-                                  return (
-                                    <div className={s.localityTag}>
-                                      #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
-                                    </div>
-                                  );
-                                })
-                              }
-                            </div>
+                              <div className={s.localityLinks}>
+                                {
+                                  linkStat.trips.map(trip => {
+                                    return (
+                                      <div className={s.localityTrip}>
+                                        <Link to={`/?trip=${trip.uuid}`}>{ trip.name }</Link>
+                                      </div>
+                                    );
+                                  })
+                                }
+                                {
+                                  linkStat.tags.map(tag => {
+                                    return (
+                                      <div className={s.localityTag}>
+                                        #<Link to={`/?tags=${tag.tag}`}>{ tag.tag }</Link>
+                                      </div>
+                                    );
+                                  })
+                                }
+                              </div>
                           }
                         </div>
                         <div className={s.info}>
@@ -674,20 +675,6 @@ const LinksView = (props) => {
                              }
                            }}
                 />
-
-                {
-                  localitySearchResults &&
-                    <DropdownList
-                      options={localitySearchResults.map(loc => ({ label: loc.nameLong, uuid: loc.uuid }))}
-                      onSelect={(option) => {
-                        setProperty('links.routeSearchTerm', '');
-                        setProperty('links.searchLocalities', null);
-                        navigate(getNavigationPath({ from: displayLinksResult.localityUuid, to: option.uuid, view: 'map' }));
-                      }}
-                      optionsRef={'links.searchLocalities'}
-                    />
-                }
-
               </div>
             </div>
           </div>
@@ -937,31 +924,53 @@ const LinksView = (props) => {
         { searchHeader }
       </div>
       {
-        (
+        !localitySearchResults && (
           (searchResultType === 'connections' && displayLinks.length === 1) ||
           (searchResultType === 'links')
         ) &&
         <div className={s.filters}>
-          <div className={s.relevantTags}>
-            {
-              ((displayLinks || []).flatMap(link => link.trips || [])).map(trip => {
-                return (
-                  <div className={s.relevantTrip}>
-                    <Link to={`/?trip=${trip.uuid}`}>{trip.name}</Link>
-                  </div>
-                );
-              })
-            }
-            {
-              ((displayLinks || []).flatMap(link => link.tags || [])).map(tag => {
-                return (
-                  <div className={s.relevantTag}>
-                    #<Link to={`/?tags=${tag.tag}`}>{tag.tag}</Link>
-                  </div>
-                );
-              })
-            }
-          </div>
+          <HorizontalScroller content={
+            <div className={s.relevantTags}>
+              {
+                ((displayLinks || []).flatMap(link => link.trips || [])).map(trip => {
+                  return (
+                    <div className={s.relevantTrip}>
+                      <Link to={`/?trip=${trip.uuid}`}>{trip.name}</Link>
+                    </div>
+                  );
+                })
+              }
+              {
+                ((displayLinks || []).flatMap(link => link.tags || [])).map(tag => {
+                  return (
+                    <div className={s.relevantTag}>
+                      #<Link to={`/?tags=${tag.tag}`}>{tag.tag}</Link>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          } />
+        </div>
+      }
+      {
+        localitySearchResults &&
+        <div className={s.localitySearchResults}>
+        {
+          localitySearchResults.map(loc => (
+            <div className={s.localitySearchResult}>
+              <Link to={
+                getNavigationQuery({
+                  from: selectedLocalityUuid,
+                  to: loc.uuid,
+                  transportTypes: selectedTransportTypes
+                }) + '&view=map'
+              }>
+                {loc.nameLong}
+              </Link>
+            </div>
+          ))
+        }
         </div>
       }
       {
