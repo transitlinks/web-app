@@ -957,19 +957,21 @@ const LinksView = (props) => {
         localitySearchResults &&
         <div className={s.localitySearchResults}>
         {
-          localitySearchResults.map(loc => (
-            <div className={s.localitySearchResult}>
-              <Link to={
-                getNavigationQuery({
-                  from: selectedLocalityUuid,
-                  to: loc.uuid,
-                  transportTypes: selectedTransportTypes
-                }) + '&view=map'
-              }>
-                {loc.nameLong}
-              </Link>
-            </div>
-          ))
+          localitySearchResults.length > 0 ?
+            localitySearchResults.map(loc => (
+              <div className={s.localitySearchResult}>
+                <Link to={
+                  getNavigationQuery({
+                    from: selectedLocalityUuid,
+                    to: loc.uuid,
+                    transportTypes: selectedTransportTypes
+                  }) + '&view=map'
+                }>
+                  {loc.nameLong}
+                </Link>
+              </div>
+            )) :
+            <div className={s.localitySearchResult}>No places found</div>
         }
         </div>
       }
