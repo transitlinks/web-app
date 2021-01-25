@@ -23,6 +23,7 @@ import { setProperty } from '../../actions/properties';
 import { getClientId } from '../../core/utils';
 import { injectIntl } from 'react-intl';
 import CheckInControls from '../CheckIn/CheckInControls';
+import Video from '../Post/Video';
 
 const typeSelector = (iconName, isSelected, onClick, setProperty) => {
   return (
@@ -169,7 +170,7 @@ const getTabContent = (type, props) => {
                     {
                       mediaItem.type === 'image' ?
                         <img src={env.MEDIA_URL + mediaItem.url} width="100%" /> :
-                        <img src={mediaItem.thumbnail} width="100%"/>
+                        <Video mediaItem={mediaItem} />
 
                     }
                   </div>
@@ -289,27 +290,7 @@ const EditCheckInItemView = (props) => {
     item = fetchedFeedItem;
   }
 
-  let positionElem = null;
-  if (geolocation) {
-    if (geolocation.status === 'located') {
-      const { position } = geolocation;
-      positionElem = item.checkIn.formattedAddress;
-    } else if (geolocation.status === 'locating') {
-      positionElem = (
-        <div>
-          Locating...
-        </div>
-      );
-    } else if (geolocation.status === 'error') {
-      positionElem = (
-        <div>
-          { geolocation.error }
-        </div>
-      );
-    } else if (item.checkIn.formattedAddress) {
-      positionElem = item.checkIn.formattedAddress;
-    }
-  }
+  const positionElem = item.checkIn.formattedAddress;
 
   const { checkIn } = item;
 

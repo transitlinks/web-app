@@ -76,6 +76,7 @@ export const savePost = ({ post }) => {
             uuid,
             type,
             url,
+            hosting,
             latitude,
             longitude,
             date
@@ -110,6 +111,7 @@ export const getPosts = (input) => {
             uuid,
             type,
             url,
+            hosting,
             latitude,
             longitude,
             date
@@ -291,6 +293,7 @@ export const getDiscoveries = (search, type) => {
                     uuid,
                     type,
                     url,
+                    hosting,
                     latitude,
                     longitude,
                     date
@@ -316,6 +319,7 @@ export const getDiscoveries = (search, type) => {
                   uuid,
                   type,
                   url,
+                  hosting,
                   latitude,
                   longitude,
                   date
@@ -423,6 +427,7 @@ export const getMediaItem = (uuid) => {
           uuid,
           url,
           type,
+          hosting,
           thumbnail,
           uploadStatus,
           uploadProgress,
@@ -457,6 +462,7 @@ export const uploadFiles = (mediaItem, files) => {
           type,
           thumbnail,
           url,
+          hosting,
           uploadStatus,
           fileSize,
           uploadProgress,
@@ -490,6 +496,7 @@ export const deleteMediaItem = (mediaItemUuid) => {
           type,
           thumbnail,
           url,
+          hosting,
           uploadStatus,
           fileSize,
           uploadProgress

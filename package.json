@@ -87,6 +87,7 @@
     "universal-router": "1.2.2",
     "uuid": "^3.3.2",
     "uuid-validate": "^0.0.3",
+    "vimeo": "^2.1.1",
     "whatwg-fetch": "1.0.0"
   },
   "devDependencies": {

@@ -58,6 +58,10 @@ export function getGeolocation() {
       console.log('navigator.geolocation error', error);
       console.log('navigator.geolocation error code', error.code);
       console.log('navigator.geolocation error message', error.message);
+      dispatch({
+        type: GET_GEOLOCATION_ERROR,
+        payload: 'geolocation_unavailable',
+      });
     }, { enableHighAccuracy: true, timeout: 60000, maximumAge: 0 });
 
     return true;

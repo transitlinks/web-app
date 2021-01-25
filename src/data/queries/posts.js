@@ -9,7 +9,7 @@ import ExifReader from 'exifreader';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
 
-import { uploadVideo } from '../../services/youtubeDataApi';
+import { uploadVideo } from '../../services/vimeoDataApi';
 
 import {
   postRepository,
@@ -704,13 +704,15 @@ const processVideo = async (inputFile, outputFile, entityUuid, mediaItemUuid) =>
 
   try {
 
-    const upload = await uploadVideo(entityUuid, mediaItemUuid, outputFile);
+    const upload = await uploadVideo(outputFile);
     log.info(`video-upload-complete video-id=${upload.id}`);
 
     await postRepository.saveMediaItem({
       uuid: mediaItemUuid,
-      url: upload.id,
-      thumbnail: upload.snippet.thumbnails.medium.url,
+      url: upload.url,
+      hosting: 'vimeo',
+      thumbnail: upload.thumbnail,
+      // thumbnail: upload.snippet.thumbnails.medium.url,
       uploadStatus: 'uploaded'
     });
 
@@ -1005,7 +1007,9 @@ export const PostMutationFields = {
 
       const filePath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), mediaItem.url);
       await postRepository.deleteMediaItems({ uuid: mediaItem.uuid });
-      fs.unlinkSync(filePath);
+      if (mediaItem.type !== 'video') {
+        fs.unlinkSync(filePath);
+      }
 
       return mediaItem.json();
     }

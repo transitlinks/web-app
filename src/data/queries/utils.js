@@ -40,7 +40,7 @@ export const requireOwnership = async (request, entity, clientId) => {
     if (entity && adminUser.id !== userId && entity.userId !== userId) {
       throwUnauthorizedError();
     }
-  } else if (!(clientId && clientId === entity.clientId)) {
+  } else if (!(entity && clientId && clientId === entity.clientId)) {
     throwMustBeLoggedInError();
   }
 

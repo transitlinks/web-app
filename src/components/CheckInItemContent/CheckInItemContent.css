@@ -13,6 +13,7 @@
 .feedItemContent {
   margin: auto;
   padding-bottom: 12px;
+  max-width: 460px;
 }
 
 .feedItemContent .post {

@@ -1,7 +1,8 @@
 import React from 'react';
 import cx from 'classnames';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import Video from './Video';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Post.css';
 
@@ -26,15 +27,7 @@ const Post = ({
                 </div>
               );
             } else {
-              return (
-                <div key={mediaItem.uuid} className={s.videoContainer}>
-                  <iframe width="100%" height="315"
-                          src={`https://www.youtube.com/embed/${mediaItem.url}`}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen></iframe>
-                </div>
-              );
+              return <Video mediaItem={mediaItem} />;
             }
           })
         }

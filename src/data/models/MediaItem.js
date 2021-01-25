@@ -27,6 +27,10 @@ const MediaItem = Model.define('MediaItem', {
     type: DataType.STRING
   },
 
+  hosting: {
+    type: DataType.STRING
+  },
+
   thumbnail: {
     type: DataType.STRING
   },

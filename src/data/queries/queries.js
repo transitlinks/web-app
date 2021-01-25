@@ -150,6 +150,7 @@ export const getFeedItemEntity = () => {
             url,
             latitude,
             longitude,
+            hosting,
             date
         }
       },
@@ -225,6 +226,7 @@ export const getDiscoverQuery = (params) => {
           mediaItems {
             uuid,
             type,
+            hosting,
             url
           },
           checkIn {

@@ -18,6 +18,8 @@ class Links extends React.Component {
   componentDidMount() {
     const { query } = this.props;
     this.props.setProperty('links.selectedLink', null);
+    this.props.setProperty('links.searchLocalities', null);
+    this.props.setProperty('links.routeSearchTerm', null);
   }
 
   componentDidUpdate(prevProps) {
@@ -33,6 +35,14 @@ class Links extends React.Component {
       updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
     }
      */
+
+    const { routeSearchTerm } = query;
+    if (routeSearchTerm) {
+      if (!query.locality || query.linkedLocality) {
+        this.props.setProperty('links.searchLocalities', null);
+        this.props.setProperty('links.routeSearchTerm', null);
+      }
+    }
 
     if (query.locality) {
       this.props.setProperty('links.selectedLocality', query.locality);
