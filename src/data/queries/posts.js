@@ -704,7 +704,7 @@ const processVideo = async (inputFile, outputFile, entityUuid, mediaItemUuid) =>
 
   try {
 
-    const upload = await uploadVideo(outputFile);
+    const upload = await uploadVideo(outputFile, mediaItemUuid);
     log.info(`video-upload-complete video-id=${upload.id}`);
 
     await postRepository.saveMediaItem({
@@ -853,7 +853,7 @@ export const PostMutationFields = {
 
       const { file } = request;
 
-      console.log('uploading file', file);
+      console.log('uploading file', new Date(), file);
 
       let entity = null;
       let entityUuid = null;
