@@ -99,7 +99,7 @@ const CheckInView = ({ geolocation, searchLocation, selectedLocation, setPropert
             </div>
             <div className={s.positionSelector}>
               {
-                selectedLocation &&
+                (selectedLocation || geolocation.status === 'located') &&
                   <div className={s.editPositionButton} onClick={() => {
                     setProperty('posts.addType', null);
                     saveCheckIn({ checkIn: createCheckIn(geolocation, selectedLocation) });

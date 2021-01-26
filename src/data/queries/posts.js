@@ -9,7 +9,7 @@ import ExifReader from 'exifreader';
 import { getLog, graphLog } from '../../core/log';
 const log = getLog('data/queries/posts');
 
-import { uploadVideo } from '../../services/vimeoDataApi';
+import { uploadVideo, deleteVideo } from '../../services/vimeoDataApi';
 
 import {
   postRepository,
@@ -1007,7 +1007,9 @@ export const PostMutationFields = {
 
       const filePath = path.join((MEDIA_PATH || path.join(__dirname, 'public')), mediaItem.url);
       await postRepository.deleteMediaItems({ uuid: mediaItem.uuid });
-      if (mediaItem.type !== 'video') {
+      if (mediaItem.type === 'video') {
+        await deleteVideo(mediaItem.url);
+      } else {
         fs.unlinkSync(filePath);
       }
 

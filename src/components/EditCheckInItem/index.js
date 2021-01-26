@@ -81,7 +81,7 @@ const getTabContent = (type, props) => {
   };
 
   if (loadMediaItem && loadedMediaItemChanged > -1) {
-    const loadTimeout = loadedMediaItemChanged === 1 ? 1000 : 10000;
+    const loadTimeout = loadedMediaItemChanged === 1 ? 1000 : 1000;
     setProperty('posts.loadedMediaItemChanged', -1);
     setTimeout(() => {
       getMediaItem(loadMediaItem.uuid);
@@ -119,10 +119,15 @@ const getTabContent = (type, props) => {
         <div className={s.contentEditor}>
           <div className={s.mediaContent}>
             {
-              loadMediaItem &&
-                <div className={s.uploadingVideo}>
-                  Uploading media, please wait... {loadMediaItem.uploadProgress || 0}%
-                </div>
+              loadMediaItem && (
+                loadMediaItem.uploadProgress ?
+                  <div className={s.uploadingVideo}>
+                    Uploading media: {loadMediaItem.uploadProgress || 0}%
+                  </div> :
+                  <div className={s.uploadingVideo}>
+                    Preparing upload, please wait....
+                  </div>
+              )
             }
             {
               loadMediaItemError &&
