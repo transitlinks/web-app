@@ -505,6 +505,18 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   let savedCheckIn = null;
 
   if (!existingCheckIn) {
+
+    const shortNameLocalities = await localityRepository.getLocalities({ name: newCheckIn.locality, country: newCheckIn.country, adminArea1: null, adminArea2: null });
+    if (shortNameLocalities.length === 1) {
+      const shortNameLocality = shortNameLocalities[0];
+      await localityRepository.saveLocality({
+        uuid: shortNameLocality.uuid,
+        adminArea1: newCheckIn.adminArea1,
+        adminArea2: newCheckIn.adminArea2,
+        nameLong: newCheckIn.locality
+      });
+    }
+
     const matchingAdmin2Localities = await localityRepository.getLocalities({ name: newCheckIn.locality, country: newCheckIn.country, adminArea1: newCheckIn.adminArea1, adminArea2: newCheckIn.adminArea2 });
 
     if (matchingAdmin2Localities.length === 0) {
@@ -1250,6 +1262,8 @@ export const PostQueryFields = {
       }
 
       let tripName = null;
+      let fromName = null;
+      let toName = null;
       if (from && to) {
 
         const routeSearchParams = {};
@@ -1285,6 +1299,11 @@ export const PostQueryFields = {
 
         const routeCheckIns = await checkInRepository.getCheckIns({ id: checkInIds });
         checkIns = queryCheckInIds.map(id => routeCheckIns.find(checkIn => checkIn.id === id));
+
+        const fromLocality = await localityRepository.getLocality({ uuid: from });
+        fromName = fromLocality.nameLong;
+        const toLocality = await localityRepository.getLocality({ uuid: to });
+        toName = toLocality.nameLong;
 
       } else if (tags) {
         const tagsArray = tags.split(',');
@@ -1355,7 +1374,9 @@ export const PostQueryFields = {
         locality: localityName,
         linkedLocality: linkedLocalityName,
         userImage,
-        tripName
+        tripName,
+        from: fromName,
+        to: toName
       };
 
     }

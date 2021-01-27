@@ -59,7 +59,9 @@ export default {
             userImage,
             locality,
             linkedLocality,
-            tripName
+            tripName,
+            from,
+            to
           },
           transportTypes { slug },
           ${getActiveTripQuery()},

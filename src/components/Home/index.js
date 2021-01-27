@@ -34,7 +34,7 @@ const HomeView = ({ feed, query, transportTypes, post }) => {
     filterOptions = {
       from,
       to,
-      label: renderRouteLabel(from, to),
+      label: renderRouteLabel(feed.from, feed.to),
       getUrl: () => `/links?from=${from}&to=${to}&route=${route}&view=map`,
       clearUrl: `/?locality=${from}`
     };

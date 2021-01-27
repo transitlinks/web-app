@@ -181,7 +181,9 @@ export const getFeed = (clientId, params) => {
           userImage,
           locality,
           linkedLocality,
-          tripName
+          tripName,
+          from,
+          to
         }
       }
     `;

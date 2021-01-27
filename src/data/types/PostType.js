@@ -212,7 +212,9 @@ export const FeedType = new GraphQLObjectType({
     userImage: { type: GraphQLString },
     locality: { type: GraphQLString },
     linkedLocality: { type: GraphQLString },
-    tripName: { type: GraphQLString }
+    tripName: { type: GraphQLString },
+    from: { type: GraphQLString },
+    to: { type: GraphQLString }
   }
 });
 

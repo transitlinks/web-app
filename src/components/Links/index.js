@@ -530,7 +530,7 @@ const getRoutesMapContent = (terminals, selectedRoute, selectedTerminal, onSelec
     let color = '#909090';
     if (selectedRoute && terminal.routeId === selectedRoute) color = '#FF0000';
 
-    let opacity = 0.5;
+    let opacity = 0.25;
     if (selectedTerminal && selectedTerminal.uuid === terminal.uuid) opacity = 1;
 
     return [ createPolyLine(terminal, onSelect, color, opacity) ];
@@ -542,7 +542,7 @@ const getRoutesMapContent = (terminals, selectedRoute, selectedTerminal, onSelec
 
 const getTripMapContent = (terminals, selectedTerminal, onSelect) => {
   return terminals.map(terminal => {
-    let opacity = 0.5;
+    let opacity = 0.25;
     if (selectedTerminal && selectedTerminal.uuid === terminal.uuid) opacity = 1;
     return [ createPolyLine(terminal, onSelect, '#FF0000', opacity) ];
   });
@@ -557,7 +557,7 @@ const getConnectionsMapContent = (terminals, onSelect) => {
 const getLinksMapContent = (terminals, selectedTerminal, onSelect) => {
   return terminals.map(terminal => {
     const color = terminal.type === 'departure' ? '#FF0000' : '#A0A0A0';
-    let opacity = 0.5;
+    let opacity = 0.25;
     if (selectedTerminal && selectedTerminal.uuid === terminal.uuid) opacity = 1;
     return [ createPolyLine(terminal, onSelect, color, opacity) ];
   });
@@ -962,7 +962,7 @@ const LinksView = (props) => {
               <div className={s.localitySearchResult}>
                 <Link to={
                   getNavigationQuery({
-                    from: selectedLocalityUuid,
+                    from: displayLinksResult.localityUuid,
                     to: loc.uuid,
                     transportTypes: selectedTransportTypes
                   }) + '&view=map'
