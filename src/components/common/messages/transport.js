@@ -67,6 +67,11 @@ export default defineMessages({
     defaultMessage: 'Running',
     description: 'Running'
   },
+  'ski': {
+    id: 'transport.ski',
+    defaultMessage: 'Skiing',
+    description: 'Skiing'
+  },
   'swim': {
     id: 'transport.swim',
     defaultMessage: 'Swimming',

@@ -37,6 +37,7 @@ export const loadFixtures = () => {
 	  createTransport('bike'),
 	  createTransport('walk'),
 	  createTransport('run'),
+    createTransport('ski'),
 	  createTransport('swim'),
 	  createTransport('boat'),
 	  createTransport('plane'),
