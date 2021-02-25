@@ -17,13 +17,12 @@ import FilterHeader, {
   renderTagLabel,
   renderTripLabel
 } from '../FilterHeader';
-import DropdownList from '../DropdownList';
 import HorizontalScroller from '../HorizontalScroller';
 import LinkDetails from './LinkDetails';
-import { GoogleMap, OverlayView, Polyline, InfoWindow, Marker, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, OverlayView, Polyline, withGoogleMap } from 'react-google-maps';
 import TextField from 'material-ui/TextField';
 import msgTransport from '../common/messages/transport';
-import { getDateString, getTimeString, getNavigationPath, getNavigationQuery } from '../utils';
+import { getNavigationPath, getNavigationQuery } from '../utils';
 
 const LinksMap = compose(
   withProps({
@@ -629,7 +628,6 @@ const LinksView = (props) => {
 
     if (displayLinks.length < 2) {
 
-      console.log('DISP LINK RES', displayLinksResult);
       filterOptions = {
         ...filterOptions,
         locality: displayLinksResult.localityLong,

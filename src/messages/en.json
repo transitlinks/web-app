@@ -542,5 +542,15 @@
       "src/components/EditCheckInItem/messages.js",
       "src/components/NewCheckIn/messages.js"
     ]
+  },
+  {
+    "id": "transport.ski",
+    "description": "Skiing",
+    "defaultMessage": "Skiing",
+    "message": "",
+    "files": [
+      "src/components/common/messages/transport.js",
+      "src/components/EditCheckInItem/messages.terminal.js"
+    ]
   }
 ]

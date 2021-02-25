@@ -219,9 +219,20 @@
 
 .checkInLocalityAndCountry {
   display: flex;
+  justify-content: space-between;
+}
+
+.checkInLocalityAndCountry .left {
+  width: calc(100% - 20px);
+  display: flex;
   align-items: center;
-  width: 100%;
   overflow: hidden;
+  margin-bottom: 2px;
+  margin-top: -3px;
+  padding-left: 2px;
+}
+
+.checkInLocalityAndCountry .right {
 }
 
 .checkInLocalityAndCountry .locationElement {
@@ -230,10 +241,6 @@
   align-items: center;
   font-size: 19px;
   color: #808080;
-}
-
-.checkInLocalityAndCountry :first-child {
-  max-width: 66%;
 }
 
 .checkInLocalityAndCountry .locationElement .icon {
@@ -246,7 +253,15 @@
 }
 
 .checkInLocalityAndCountry .country {
-  max-width: 33%;
+  overflow: hidden;
+}
+
+.checkInLocalityAndCountry .mapToggle {
+  margin-right: 3px;
+}
+
+.checkInLocalityAndCountry .mapToggle .icon {
+
 }
 
 
@@ -263,6 +278,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.mapContainer {
+  height: 300px;
 }
 
 @keyframes ldio {
