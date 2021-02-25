@@ -12,46 +12,19 @@ import Link from '../Link';
 import Terminal from '../EditCheckInItem/Terminal';
 import EditCheckInItem from '../EditCheckInItem';
 import CheckInControls from '../CheckIn/CheckInControls';
-import { compose, withProps } from 'recompose';
-import { GoogleMap, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 
 
-const LinksMap = compose(
-  withProps({
-    googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div className={s.mapContainer} />,
-    mapElement: <div style={{ height: `100%` }} />,
-  }),
-  withGoogleMap
-)((props) => {
-
-  const mapProps = {
-    ref: props.onMapLoad,
-    defaultZoom: props.zoom,
-    zoom: props.zoom,
-    onClick: props.onMapClick,
-    options: {
-      streetViewControl: false,
-      mapTypeControl: false
-    }
-  };
-
-  if (props.center) {
-    mapProps.center = props.center;
-  }
-
-  if (props.defaultCenter) {
-    mapProps.defaultCenter = props.defaultCenter;
-  }
-
-  return (
-    <GoogleMap {...mapProps}>
-      {props.content}
-    </GoogleMap>
-  );
-
-});
+const MapWithAMarker = withScriptjs(withGoogleMap(props =>
+  <GoogleMap
+    defaultZoom={12}
+    defaultCenter={{ lat: props.checkIn.latitude, lng: props.checkIn.longitude }}
+  >
+    <Marker
+      position={{ lat: props.checkIn.latitude, lng: props.checkIn.longitude }}
+    />
+  </GoogleMap>
+));
 
 const typeSelector = (iconName, isSelected, onClick, type) => {
   return (
@@ -343,10 +316,13 @@ const CheckInItem = (
                   }
                 </div> :
                 <div>
-                  <iframe width="100%" height="300" id="gmap_canvas"
-                          src={googleMapsUrl}
-                          frameBorder="0" scrolling="no" marginHeight="0"
-                          marginWidth="0"></iframe>
+                  <MapWithAMarker
+                    googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places`}
+                    loadingElement={<div style={{ height: `100%` }} />}
+                    containerElement={<div style={{ height: `400px` }} />}
+                    mapElement={<div style={{ height: `100%` }} />}
+                    checkIn={checkIn}
+                  />
                 </div>
             }
           </div>
