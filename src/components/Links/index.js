@@ -26,7 +26,7 @@ import { getNavigationPath, getNavigationQuery } from '../utils';
 
 const LinksMap = compose(
   withProps({
-    googleMapURL: 'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places',
+    googleMapURL: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCqZjEwtftUOFYY0JhkfEiaT28H9I9xKAE&v=3.exp&libraries=geometry,drawing,places',
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div className={s.mapContainer} />,
     mapElement: <div style={{ height: `100%` }} />,
