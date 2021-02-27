@@ -36,9 +36,10 @@ class Links extends React.Component {
     }
      */
 
-    const { routeSearchTerm } = query;
+    //console.log('props', query, this.props, prevProps, linksResult);
+    const { routeSearchTerm } = this.props;
     if (routeSearchTerm) {
-      if (!query.locality || query.linkedLocality) {
+      if (!linksResult.locality || query.linkedLocalityUuid) {
         this.props.setProperty('links.searchLocalities', null);
         this.props.setProperty('links.routeSearchTerm', null);
       }
@@ -157,6 +158,7 @@ export default connect(state => ({
   mapZoom: state.links.mapZoom,
   mapBoundsHash: state.links.mapBoundsHash,
   viewMode: state.links.viewMode,
+  routeSearchTerm: state.links.routeSearchTerm,
   lastCoords: state.global['geolocation.lastCoords']
 }), {
   getLinks,

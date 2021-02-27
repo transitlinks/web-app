@@ -105,25 +105,27 @@
   background-color: white;
   border: 1px solid #666666;
   border-radius: 8px;
+  max-width: 100px;
+  cursor: pointer;
+  z-index: 999;
 }
 
 .localityOverlay .localityName {
-  padding: 6px;
-  color: white;
-  background-color: #3b5999;
+  padding: 4px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .localityOverlay .localityStats {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-right: 4px;
+  padding-right: 6px;
   padding-left: 4px;
-  border-top: 1px solid #e0e0e0;
 }
 
 .localityOverlay .localityStats span {
   font-size: 18px;
+  margin-right: 4px;
 }
 
 .mapControls {
@@ -409,6 +411,7 @@
   background-color: #ffffff;
   margin: auto;
   z-index: 1;
+  cursor: pointer;
 }
 
 .labelMap .arrivals {

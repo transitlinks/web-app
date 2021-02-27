@@ -19,7 +19,9 @@ import FilterHeader, {
 } from '../FilterHeader';
 import HorizontalScroller from '../HorizontalScroller';
 import LinkDetails from './LinkDetails';
-import { GoogleMap, OverlayView, Polyline, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Polyline, withGoogleMap } from 'react-google-maps';
+import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
+import MarkerWithLabel from 'react-google-maps/lib/components/addons/MarkerWithLabel';
 import TextField from 'material-ui/TextField';
 import msgTransport from '../common/messages/transport';
 import { getNavigationPath, getNavigationQuery } from '../utils';
@@ -62,27 +64,42 @@ const LinksMap = compose(
 });
 
 const renderLocationsMap = (linkStats, onSelect) => {
-  return (linkStats || []).map(linkStat => {
-    return (
-      <OverlayView position={{ lat: linkStat.latitude, lng: linkStat.longitude }}
-                   mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
-        <div className={s.localityOverlay}>
-          <div className={s.localityName} onClick={() => onSelect(linkStat.localityUuid)}>
-            {linkStat.localityLong}
-          </div>
-          <div className={s.localityStats}>
-            <span className="material-icons">call_made</span> {linkStat.departureCount}
-          </div>
-          <div className={s.localityStats}>
-            <span className="material-icons">call_received</span> {linkStat.arrivalCount}
-          </div>
-          <div className={s.localityStats}>
-            <span className="material-icons">cached</span> N/A
-          </div>
-        </div>
-      </OverlayView>
-    );
-  });
+
+  const iconPin = {
+    path: 'M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z',
+    fillOpacity: 0,
+    scale: 0.05
+  };
+
+  return [
+    (
+      <MarkerClusterer>
+        {(linkStats || []).map(linkStat => (
+          <MarkerWithLabel
+            icon={iconPin}
+            labelAnchor={{ x: 50, y: 30 }}
+            key={linkStats.localityUuid}
+            position={{ lat: linkStat.latitude, lng: linkStat.longitude }}
+            onClick={() => {
+              onSelect(linkStat.localityUuid);
+            }}>
+            <div className={s.localityOverlay}>
+              <div className={s.localityName}>
+                <a href={`/${linkStat.localityLong}`}>{linkStat.localityLong}</a>
+              </div>
+              <div className={s.localityStats}>
+                <span className="material-icons">call_made</span> {linkStat.departureCount} departures
+              </div>
+              <div className={s.localityStats}>
+                <span className="material-icons">call_received</span> {linkStat.arrivalCount} arrivals
+              </div>
+            </div>
+          </MarkerWithLabel>
+        ))}
+      </MarkerClusterer>
+    )
+  ];
+
 };
 
 const renderDetailedLinkInfo = (terminal, selectedTerminal, intl, setProperty, showContent, transportTypes) => {
@@ -567,7 +584,7 @@ const LinksView = (props) => {
   const {
     intl, linksResult, localitySearchResults, searchTerm, routeSearchTerm, viewMode, linkMode,
     mapZoom, transportTypes, showTransportTypes, mapBoundsUpdated, query,
-    selectedTransportTypes, selectedLocalityUuid, selectedLinkedLocalityUuid, selectedTerminal, selectedTag, selectedRoute,
+    selectedTransportTypes, selectedLocalityUuid, selectedLinkedLocalityUuid, selectedTerminal, selectedTag, selectedRoute, localityOverlays,
     setProperty, searchLocalities, navigate
   } = props;
 
@@ -1097,7 +1114,8 @@ export default injectIntl(
       mapZoom: state.links.mapZoom,
       showTransportTypes: state.links.showTransportTypes,
       selectedTransportTypes: state.links.selectedTransportTypes || [],
-      localitySearchResults: state.links.searchLocalities
+      localitySearchResults: state.links.searchLocalities,
+      localityOverlays: state.links.localityOverlays || []
     }
   }, {
     getLinks,
