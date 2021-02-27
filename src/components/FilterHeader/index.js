@@ -105,7 +105,7 @@ export const renderUserLabel = (user) => {
         <div className={s.userInfoTitle}>
           Viewing check-ins by
         </div>
-        <div className={s.userName}>{user.userImage}</div>
+        <div className={s.userName}>{user.userName}</div>
       </div>
     </div>
   );

@@ -39,9 +39,8 @@ function Html({ title, description, style, script, children, lang, state }) {
           <script src="https://www.google-analytics.com/analytics.js" async defer />
         }
         <script async defer
-          src={`https://maps.googleapis.com/maps/api/js?key=${MAPS_JS_API_KEY}`}>
+          src={`https://maps.googleapis.com/maps/api/js?key=${MAPS_JS_API_KEY}&callback=initMap`} type="text/javascript">
         </script>
-        <script src="/js/markerclustererplus.min.js"></script>
       </body>
     </html>
   );

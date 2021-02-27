@@ -188,6 +188,7 @@ const getUserDiscovery = async (user, request) => {
   return {
     groupType: 'user',
     groupName: user.username || user.firstName + ' ' + user.lastName,
+    groupId: user.uuid,
     checkInCount,
     feedItem: lastCheckIn ? await getFeedItem(request, lastCheckIn) : null,
     posts: fullPosts

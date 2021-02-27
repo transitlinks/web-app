@@ -350,7 +350,7 @@ export const TransitLinkQueryFields = {
 
       }
 
-      const localityQuery = { limit: 16 };
+      const localityQuery = {};
       const transportQuery = {};
 
       if (localityUuid) localityQuery.localityUuid = localityUuid;

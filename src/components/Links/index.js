@@ -1076,10 +1076,9 @@ const LinksView = (props) => {
         ) ?
           <div className={s.linksView}>
             {
-              (viewMode || query.view) === 'map' &&
-                <div className={s.map}>
-                  { mapView }
-                </div>
+              <div className={s.map}>
+                { mapView }
+              </div>
             }
             <div className={s.list}>
               { listContent }

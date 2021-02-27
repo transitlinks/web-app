@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { getLastCoords } from '../../actions/global';
 import { setProperty } from '../../actions/properties';
 import { getActiveTrip, saveTripCoord } from '../../actions/trips';
-import { updateLastCoords } from '../../services/linkService';
 import { isMobile } from '../utils';
 
 class App extends Component {

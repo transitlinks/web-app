@@ -11,6 +11,7 @@ import FilterHeader, {
   renderRouteLabel,
   renderTagLabel,
   renderTripLabel,
+  renderUserLabel
 } from '../FilterHeader';
 import ErrorHeader from '../ErrorHeader';
 
@@ -71,9 +72,11 @@ const HomeView = ({ feed, query, transportTypes, post }) => {
       label: renderLocalityLabel(feed.locality),
       getUrl: () => `/links?localityUuid=${locality}&view=map`
     };
+  } else if (user && userData) {
+    filterOptions = {
+      label: renderUserLabel(userData)
+    };
   }
-
-  if (userData) filterOptions.user = userData;
 
 	return (
     <div className={s.container}>
