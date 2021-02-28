@@ -28,15 +28,21 @@ function Html({ title, description, style, script, children, lang, state }) {
         )}
         {
           GA_TRACKING_ID &&
-          <script
-            dangerouslySetInnerHTML={{ __html:
-            'window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;' +
-            `ga('create','${GA_TRACKING_ID}','auto');ga('send','pageview')` }}
-          />
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}></script>
         }
         {
           GA_TRACKING_ID &&
-          <script src="https://www.google-analytics.com/analytics.js" async defer />
+          <script>
+            {
+              `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+  
+              gtag('config', '${GA_TRACKING_ID}');
+              `
+            }
+          </script>
         }
         <script async defer
           src={`https://maps.googleapis.com/maps/api/js?key=${MAPS_JS_API_KEY}&callback=initMap`} type="text/javascript">
