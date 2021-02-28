@@ -28,6 +28,12 @@ function Header() {
               <FontIcon className="material-icons" style={{ fontSize: '40px' }}>directions</FontIcon>
             </Link>
           </div>
+          <div className={s.logoBar}>
+            <div className={s.logoBarText}>
+              <div className={s.logoBarName}>Transitlinks.net</div>
+              <div className={s.logoBarCaption}>SOCIAL WORLD MAP</div>
+            </div>
+          </div>
         </div>
         <div className={s.navigation}>
           <Navigation className={s.nav} />

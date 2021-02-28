@@ -59,6 +59,24 @@
   margin-left: 10px;
 }
 
+.logoBar {
+
+}
+
+.logoBar .logoBarText {
+  margin-left: 2px;
+}
+
+.logoBar .logoBarText .logoBarName {
+  font-size: 20px;
+}
+
+.logoBar .logoBarText .logoBarCaption {
+  font-size: 13px;
+  margin-left: 1px;
+  margin-top: -4px;
+}
+
 .navigation {
   display: flex;
   align-items: center;
