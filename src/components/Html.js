@@ -6,15 +6,6 @@ function Html({ title, description, style, script, children, lang, state }) {
   return (
     <html className="no-js" lang={lang}>
       <head>
-        <meta charSet="utf-8" />
-        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-        <link rel="stylesheet" href="/css/material-icons.css" />
-        <link rel="stylesheet" href="/css/common.css" />
-        <style id="css" dangerouslySetInnerHTML={{ __html: style }} />
         {
           GA_TRACKING_ID &&
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}></script>
@@ -24,15 +15,24 @@ function Html({ title, description, style, script, children, lang, state }) {
             <script
               dangerouslySetInnerHTML={{ __html:
                   `
-                      window.dataLayer = window.dataLayer || [];
-                      function gtag(){dataLayer.push(arguments);}
-                      gtag('js', new Date());
-      
-                      gtag('config', '${GA_TRACKING_ID}');
-                    `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+        
+                        gtag('config', '${GA_TRACKING_ID}');
+                      `
               }}
-            />
+          />
         }
+        <meta charSet="utf-8" />
+        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+        <link rel="stylesheet" href="/css/material-icons.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <style id="css" dangerouslySetInnerHTML={{ __html: style }} />
       </head>
       <body>
         <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
