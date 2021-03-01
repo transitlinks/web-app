@@ -15,17 +15,6 @@ function Html({ title, description, style, script, children, lang, state }) {
         <link rel="stylesheet" href="/css/material-icons.css" />
         <link rel="stylesheet" href="/css/common.css" />
         <style id="css" dangerouslySetInnerHTML={{ __html: style }} />
-      </head>
-      <body>
-        <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
-        {
-          script && (
-          <script
-            id="source"
-            src={script}
-            data-initial-state={JSON.stringify(state)}
-          />
-        )}
         {
           GA_TRACKING_ID &&
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}></script>
@@ -35,14 +24,26 @@ function Html({ title, description, style, script, children, lang, state }) {
             <script
               dangerouslySetInnerHTML={{ __html:
                   `
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-    
-                    gtag('config', '${GA_TRACKING_ID}');
-                  `
+                      window.dataLayer = window.dataLayer || [];
+                      function gtag(){dataLayer.push(arguments);}
+                      gtag('js', new Date());
+      
+                      gtag('config', '${GA_TRACKING_ID}');
+                    `
               }}
             />
+        }
+      </head>
+      <body>
+        <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
+        {
+          script && (
+            <script
+              id="source"
+              src={script}
+              data-initial-state={JSON.stringify(state)}
+            />
+          )
         }
         <script async defer
           src={`https://maps.googleapis.com/maps/api/js?key=${MAPS_JS_API_KEY}&callback=initMap`} type="text/javascript">
