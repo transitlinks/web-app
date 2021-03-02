@@ -36,7 +36,7 @@
 
 }
 
-.logo {
+.navigation {
   display: flex;
   align-items: center;
   margin-top: -4px;
@@ -60,7 +60,9 @@
 }
 
 .logoBar {
-
+  margin-right: 8px;
+  margin-top: 0px;
+  cursor: pointer;
 }
 
 .logoBar .logoBarText {
@@ -77,9 +79,9 @@
   margin-top: -4px;
 }
 
-.navigation {
-  display: flex;
-  align-items: center;
+.logo {
+  margin-top: 4px;
+  margin-right: 4px;
 }
 
 .banner {
