@@ -91,7 +91,8 @@ export default {
       return <Home profile={profile} feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} activeTrip={activeTrip} />;
 
     } catch (error) {
-      return <ErrorPage errors={error.errors} />
+      console.log('HOME PAGE ERROR', error);
+      return <ErrorPage errors={error.errors} />;
     }
 
 
