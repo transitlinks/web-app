@@ -10,7 +10,7 @@ import { saveTripCoord } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
 import { isMobile } from '../../components/utils';
 
-const title = 'Transitlinks - Discover';
+const title = 'Transitlinks - Links';
 
 class Links extends React.Component {
 

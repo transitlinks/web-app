@@ -14,13 +14,16 @@ export default {
   async action({ params, context, query }) {
 
     const { graphqlRequest } = context.store.helpers;
-    const clientId = getClientId();
+
     const { frame } = query;
+
     if (frame) delete query.frame;
     const { tags, trip, user, locality } = query;
-    const queryParams = { clientId, limit: 8, ...query };
+
+    const queryParams = { limit: 8, ...query };
 
     const state = context.store.getState();
+
     const { auth } = state.auth;
     let uuid = null;
     if (auth.loggedIn) {
@@ -88,10 +91,10 @@ export default {
       }
 
       feed.fetchedAt = (new Date()).getTime();
+
       return <Home profile={profile} feed={feed} query={query} transportTypes={transportTypes} post={post} frame={frame} activeTrip={activeTrip} />;
 
     } catch (error) {
-      console.log('HOME PAGE ERROR', error);
       return <ErrorPage errors={error.errors} />;
     }
 

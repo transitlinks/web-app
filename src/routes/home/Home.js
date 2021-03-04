@@ -35,10 +35,11 @@ const getParams = (props) => {
 class Home extends React.Component {
 
   constructor(props) {
-
     super(props);
-
     this.state = {};
+  }
+
+  componentDidMount() {
 
     window.onscroll = debounce(() => {
 
@@ -63,10 +64,6 @@ class Home extends React.Component {
         this.props.getFeed(clientId, { ...params, add: true });
       }
     }, 100);
-
-  }
-
-  componentDidMount() {
 
     const clientId = getClientId();
     this.props.setProperty('posts.editPost', {});
