@@ -26,8 +26,7 @@ class Discover extends React.Component {
 
     const { search, type, offset, localityOffset, countryOffset, tagOffset, tripOffset, userOffset } = this.props;
 
-    ReactGA.initialize('G-G31PLH9T6R');
-    ReactGA.set({ page: '/discover' });
+    ReactGA.initialize('G-WJY0GVR87Z');
     ReactGA.pageview('/discover');
 
     window.onscroll = debounce(() => {

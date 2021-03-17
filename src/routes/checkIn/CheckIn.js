@@ -38,8 +38,7 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.savedPost', null);
     this.props.setProperty('posts.savedTerminal', null);
     this.props.setProperty('posts.deleteCandidate', null);
-    ReactGA.initialize('G-G31PLH9T6R');
-    ReactGA.set({ page: '/check-in' });
+    ReactGA.initialize('G-WJY0GVR87Z');
     ReactGA.pageview('/check-in');
   }
 

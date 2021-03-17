@@ -13,8 +13,7 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    ReactGA.initialize('G-G31PLH9T6R');
-    ReactGA.set({ page: '/login' });
+    ReactGA.initialize('G-WJY0GVR87Z');
     ReactGA.pageview('/login');
   }
 
