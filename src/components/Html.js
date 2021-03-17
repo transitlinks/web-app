@@ -6,24 +6,6 @@ function Html({ title, description, style, script, children, lang, state }) {
   return (
     <html className="no-js" lang={lang}>
       <head>
-        {
-          GA_TRACKING_ID &&
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}></script>
-        }
-        {
-          GA_TRACKING_ID &&
-            <script
-              dangerouslySetInnerHTML={{ __html:
-                  `
-                        window.dataLayer = window.dataLayer || [];
-                        function gtag(){dataLayer.push(arguments);}
-                        gtag('js', new Date());
-        
-                        gtag('config', '${GA_TRACKING_ID}');
-                      `
-              }}
-          />
-        }
         <meta charSet="utf-8" />
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         <title>{title}</title>

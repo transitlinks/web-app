@@ -15,6 +15,8 @@ import debounce from "lodash.debounce";
 import { updateLastCoords } from '../../services/linkService';
 import { isMobile } from '../../components/utils';
 
+import ReactGA from 'react-ga';
+
 const title = 'Transitlinks';
 
 const getParams = (props) => {
@@ -40,6 +42,10 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+
+    ReactGA.initialize('G-G31PLH9T6R');
+    ReactGA.set({ page: '/' });
+    ReactGA.pageview('/');
 
     window.onscroll = debounce(() => {
 
