@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
 import LoginView from '../../components/Login';
-import ReactGA from 'react-ga';
 
 const title = 'Transitlinks - Log In';
 
@@ -13,8 +12,9 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    ReactGA.initialize('G-WJY0GVR87Z');
-    ReactGA.pageview('/login');
+    window.gtag('config', 'G-WJY0GVR87Z', {
+      page_path: window.location.pathname,
+    });
   }
 
   render() {

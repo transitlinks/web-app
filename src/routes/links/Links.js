@@ -8,8 +8,6 @@ import { setProperty } from "../../actions/properties";
 import { getMapBounds, updateLastCoords } from '../../services/linkService';
 import { saveTripCoord } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
-import { isMobile } from '../../components/utils';
-import ReactGA from 'react-ga';
 
 const title = 'Transitlinks - Links';
 
@@ -17,13 +15,16 @@ class Links extends React.Component {
 
 
   componentDidMount() {
+
     const { query } = this.props;
     this.props.setProperty('links.selectedLink', null);
     this.props.setProperty('links.searchLocalities', null);
     this.props.setProperty('links.routeSearchTerm', null);
-    ReactGA.initialize('G-G31PLH9T6R');
-    ReactGA.set({ page: '/links' });
-    ReactGA.pageview('/links');
+
+    window.gtag('config', 'G-WJY0GVR87Z', {
+      page_path: '/links',
+    });
+
   }
 
   componentDidUpdate(prevProps) {

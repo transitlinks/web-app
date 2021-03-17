@@ -11,7 +11,6 @@ import { updateLastCoords } from '../../services/linkService';
 import { saveTripCoord, getActiveTrip } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
 import { isMobile } from '../../components/utils';
-import ReactGA from 'react-ga';
 
 const title = 'Transitlinks - Check In';
 
@@ -28,6 +27,7 @@ class CheckIn extends React.Component {
   }
 
   componentDidMount() {
+
     this.props.setProperty('posts.editPost', {});
     this.props.setProperty('editTerminal.terminal', {});
     this.props.setProperty('editTerminal.terminalProperties', {});
@@ -38,8 +38,11 @@ class CheckIn extends React.Component {
     this.props.setProperty('posts.savedPost', null);
     this.props.setProperty('posts.savedTerminal', null);
     this.props.setProperty('posts.deleteCandidate', null);
-    ReactGA.initialize('G-WJY0GVR87Z');
-    ReactGA.pageview('/check-in');
+
+    window.gtag('config', 'G-WJY0GVR87Z', {
+      page_path: window.location.pathname,
+    });
+
   }
 
   componentDidUpdate(prevProps) {

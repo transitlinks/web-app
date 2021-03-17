@@ -9,7 +9,6 @@ import { setProperty } from '../../actions/properties';
 import debounce from 'lodash.debounce';
 import { saveTripCoord } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
-import ReactGA from 'react-ga';
 
 const title = 'Transitlinks - Discover';
 
@@ -25,9 +24,6 @@ class Discover extends React.Component {
     this.props.setProperty('posts.checkIn', null);
 
     const { search, type, offset, localityOffset, countryOffset, tagOffset, tripOffset, userOffset } = this.props;
-
-    ReactGA.initialize('G-WJY0GVR87Z');
-    ReactGA.pageview('/discover');
 
     window.onscroll = debounce(() => {
 
@@ -51,6 +47,10 @@ class Discover extends React.Component {
     }, 100);
 
     this.props.getDiscoveries({ search, type, offset: offset || 0, localityOffset, countryOffset, tagOffset, tripOffset, userOffset, limit: 6 });
+
+    window.gtag('config', 'G-WJY0GVR87Z', {
+      page_path: '/',
+    });
 
   }
 
