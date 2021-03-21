@@ -19,7 +19,9 @@ function Html({ title, description, style, script, children, lang, state }) {
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+        <link rel="icon" type="image/ico" href="/favicon-16x16.ico" sizes="16x16" />
+        <link rel="icon" type="image/ico" href="/favicon-32x32.ico" sizes="32x32" />
+        <link rel="icon" type="image/ico" href="/favicon-96x96.ico" sizes="96x96" />
         <link rel="stylesheet" href="/css/material-icons.css" />
         <link rel="stylesheet" href="/css/common.css" />
         <style id="css" dangerouslySetInnerHTML={{ __html: style }} />
