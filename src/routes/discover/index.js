@@ -14,12 +14,12 @@ export default {
   async action({ params, context }) {
 
     const { graphqlRequest } = context.store.helpers;
+    //${getDiscoverQuery({ ...params, offset: 0, limit: 6 })}
 
     try {
 
       const { data } = await graphqlRequest(
-        `query {
-          ${getDiscoverQuery({ ...params, offset: 0, limit: 6 })},
+        `query {,
           transportTypes { slug },
           ${getActiveTripQuery()}
         }`

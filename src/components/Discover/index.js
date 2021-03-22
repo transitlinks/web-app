@@ -19,7 +19,10 @@ const DiscoverView = ({
   discover, searchTerm, fetchedFeedItems, loadedDiscover, transportTypes
 }) => {
 
-  let discoveries = (loadedDiscover || discover).discoveries;
+  let discoveries = [];
+
+  if (loadedDiscover) discoveries = loadedDiscover.discoveries;
+  else if (discover) discoveries = discover.discoveries;
 
   const renderTerminalsList = (terminalType, locations, groupName) => {
 
@@ -29,12 +32,12 @@ const DiscoverView = ({
           <div className={s.destinationList}>
             {
               locations.map((location, i) => (
-                <span>
-                <a href={`/links?locality=${location}&view=map`}>{location}</a>
+                <span key={`loc-${i}`}>
+                  <a href={`/links?locality=${location}&view=map`}>{location}</a>
                   {
                     (i < locations.length - 1) && (<span>, </span>)
                   }
-              </span>
+                </span>
               ))
             }
           </div>
@@ -60,9 +63,9 @@ const DiscoverView = ({
                       style={{ fontSize: '22px' }}>public</FontIcon>
           </div>
           {
-            discovery.trips.map(trip => {
+            discovery.trips.map((trip, i) => {
               return (
-                <div className={s.discoveryTrip} ref={(ref) => {
+                <div key={`trip-${i}`} className={s.discoveryTrip} ref={(ref) => {
                   trip.ref = ref;
                 }}>
                   <Link to={`/?trip=${trip.uuid}`}>{trip.name}</Link>
@@ -84,9 +87,9 @@ const DiscoverView = ({
                       style={{ fontSize: '22px' }}>local_offer</FontIcon>
           </div>
           {
-            discovery.tags.map(tag => {
+            discovery.tags.map((tag, i) => {
               return (
-                <div className={s.discoveryTag}>
+                <div key={`tag-${i}`} className={s.discoveryTag}>
                   #<Link to={`/?tags=${tag.tag}`}>{tag.tag}</Link>
                 </div>
               );
@@ -243,9 +246,9 @@ const DiscoverView = ({
                       <FontIcon className="material-icons" style={{ fontSize: '22px' }}>location_city</FontIcon>
                     </div>
                     {
-                      discovery.localities.map(locality => {
+                      discovery.localities.map((locality, i) => {
                         return (
-                          <div className={s.discoveryLocality}>
+                          <div key={`locality-${i}`} className={s.discoveryLocality}>
                             <Link to={`/?locality=${locality}`}>{ locality }</Link>
                           </div>
                         );
@@ -300,9 +303,9 @@ const DiscoverView = ({
                     <FontIcon className="material-icons" style={{ fontSize: '22px' }}>location_city</FontIcon>
                   </div>
                   {
-                    discovery.localities.map(locality => {
+                    discovery.localities.map((locality, i) => {
                       return (
-                        <div className={s.discoveryLocality}>
+                        <div key={`locality-${i}`} className={s.discoveryLocality}>
                           <Link to={`/?locality=${locality}`}>{ locality }</Link>
                         </div>
                       );

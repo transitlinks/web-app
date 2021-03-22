@@ -1,4 +1,5 @@
 @import '../../components/variables.css';
+@import '../../components/loading.css';
 
 .root {
 
@@ -6,4 +7,10 @@
 
 .container {
 
+}
+
+.windowStats {
+  background-color: #fff;
+  bottom: 0px;
+  text-align: center;
 }

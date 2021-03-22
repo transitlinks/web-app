@@ -55,7 +55,6 @@ export const searchLocalities = (search, from) => {
 export function setZoomLevel(linkStats, linkMode) {
 
   return async (dispatch) => {
-    console.log('set zoom level for', linkStats);
     const bounds = getMapBounds(linkStats, linkMode);
     const zoomLevel = getBoundsZoomLevel(bounds, { width: 400, height: 400 });
     dispatch({

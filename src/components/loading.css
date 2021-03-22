@@ -1,0 +1,41 @@
+.loading {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes ldio {
+  0% { transform: translate(-50%,-50%) rotate(0deg); }
+  100% { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+.ldio div {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 4px solid #000000;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+.ldio div {
+  animation: ldio 1s linear infinite;
+  top: 20px;
+  left: 20px
+}
+.loadingio {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  overflow: hidden;
+  background: #ffffff;
+}
+.ldio {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio div { box-sizing: content-box; }

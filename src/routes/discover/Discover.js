@@ -104,7 +104,17 @@ class Discover extends React.Component {
             {
               this.props.loadingDiscover &&
               <div className={s.windowStats}>
-                Loading discoveries {(this.props.offset || 0) + 1} - {(this.props.offset || 0) + 1 + 6}...
+                {
+                  !this.props.offset || this.props.offset === 0 ?
+                    <div className={s.loading}>
+                      <div className={s.loadingio}>
+                        <div className={s.ldio}>
+                          <div></div>
+                        </div>
+                      </div>
+                    </div> :
+                    <span>Loading discoveries {(this.props.offset || 0) + 1} - {(this.props.offset || 0) + 1 + 6}...</span>
+                }
               </div>
             }
           </div>

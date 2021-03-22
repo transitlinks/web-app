@@ -31,13 +31,13 @@ export default {
     }
 
     const paramsString = createParamString(queryParams);
+    //${getFeedItemsQuery()},
 
     try {
 
       const { data } = await graphqlRequest(
         `query {
           feed${paramsString} {
-            ${getFeedItemsQuery()},
             openTerminals {
               uuid,
               type,

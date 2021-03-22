@@ -104,7 +104,6 @@ class Links extends React.Component {
       this.props.locality !== prevProps.locality ||
       this.props.linkedLocality !== prevProps.linkedLocality ||
       this.props.mapBoundsHash !== mapBoundsHash) {
-        console.log('set zoom level', loadedLinks);
         this.props.setProperty('links.mapBoundsHash', mapBoundsHash);
         this.props.setZoomLevel(loadedLinks, this.props.linkMode);
     }

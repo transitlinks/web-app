@@ -12,8 +12,6 @@ import { saveTripCoord, getActiveTrip } from "../../actions/trips";
 import { getClientId } from "../../core/utils";
 
 import debounce from "lodash.debounce";
-import { updateLastCoords } from '../../services/linkService';
-import { isMobile } from '../../components/utils';
 
 const title = 'Transitlinks';
 
@@ -40,6 +38,9 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+
+    console.log('did mount ghome');
+    this.props.setProperty('posts.feedOffset', 0);
 
     window.onscroll = debounce(() => {
 
@@ -226,7 +227,18 @@ class Home extends React.Component {
         {
           this.props.loadingFeed &&
           <div className={s.windowStats}>
-            Loading posts {(this.props.offset || 0) + 1} - {(this.props.offset || 0) + 1 + 8}...
+            {
+              !this.props.offset || this.props.offset === 0 ?
+                <div className={s.loading}>
+                  <div className={s.loadingio}>
+                    <div className={s.ldio}>
+                      <div></div>
+                    </div>
+                  </div>
+                </div> :
+                <span>Loading posts {(this.props.offset || 0) + 1} - {(this.props.offset || 0) + 1 + 8}...</span>
+            }
+
           </div>
         }
       </div>
