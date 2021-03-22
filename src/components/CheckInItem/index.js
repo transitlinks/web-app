@@ -42,7 +42,7 @@ class CheckInItem extends React.Component {
     super(args);
     this.touchStart = this.touchStart.bind(this);
     this.touchEnd = this.touchEnd.bind(this);
-    this.state = {};
+    this.state = { touchStartX: 0, touchEndX: 0, touchStartY: 0, touchEndY: 0 };
   }
 
   componentDidMount() {
@@ -60,11 +60,11 @@ class CheckInItem extends React.Component {
   }
 
   touchStart(event) {
-    this.setState({ touchStartX: event.changedTouches[0].screenX });
+    this.setState({ touchStartX: event.changedTouches[0].screenX, touchStartY: event.changedTouches[0].screenY });
   }
 
   touchEnd(event) {
-    this.setState({ touchEndX: event.changedTouches[0].screenX });
+    this.setState({ touchEndX: event.changedTouches[0].screenX, touchEndY: event.changedTouches[0].screenY });
     this.handleGesture();
   }
 
@@ -91,14 +91,20 @@ class CheckInItem extends React.Component {
 
     const { inbound, outbound } = item;
 
-    if (this.state.touchEndX - this.state.touchStartX < -10) {
-      if (outbound.length > 0) {
-        this.selectCheckIn(outbound[0].uuid, frameId);
+    const { touchStartX, touchEndX, touchStartY, touchEndY } = this.state;
+
+    if (touchEndX - touchStartX < -10) {
+      if (Math.abs(touchEndY - touchStartY) < 50) {
+        if (outbound.length > 0) {
+          this.selectCheckIn(outbound[0].uuid, frameId);
+        }
       }
     }
-    if (this.state.touchEndX - this.state.touchStartX > 10) {
-      if (inbound.length > 0) {
-        this.selectCheckIn(inbound[0].uuid, frameId);
+    if (touchEndX - touchStartX > 10) {
+      if (Math.abs(touchEndY - touchStartY) < 50) {
+        if (inbound.length > 0) {
+          this.selectCheckIn(inbound[0].uuid, frameId);
+        }
       }
     }
 
