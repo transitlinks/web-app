@@ -2,14 +2,12 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import cx from 'classnames';
 import s from './Account.css';
-import Link from '../Link';
 
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import msg from './messages';
 
-const AccountView = ({ children, section, intl }) => {
+const AccountView = ({ children, intl }) => {
 
 	return (
     <div className={s.container}>

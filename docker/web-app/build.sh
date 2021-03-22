@@ -1,4 +1,5 @@
 #!/bin/bash
+docker rmi vhalme/transitlinks:latest
 if [ -z "$1" ] && [ -z "$2" ]
 then
   docker build -t vhalme/transitlinks .
