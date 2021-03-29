@@ -40,7 +40,7 @@ const LoginView = ({
         </div>
         <div className={s.extLogin}>
           <div className={s.fbLogin}>
-            <a href="/login/fb">
+            <a href="/auth/facebook">
               <div className={s.fbButton}>
                 <img src={require("./FB-f-Logo__blue_50.png")} />
               </div>
@@ -50,7 +50,7 @@ const LoginView = ({
             </a>
           </div>
           <div className={s.gLogin}>
-            <a href="/login/google">
+            <a href="/auth/google">
               <div className={s.gButton}>
                 <img src={require("./btn_google.png")} />
               </div>
@@ -66,7 +66,7 @@ const LoginView = ({
             <FormattedMessage {...msg[error.message]} />
           </div>
         }
-        <form action="/login" method="post" className={s.pwdLogin}>
+        <form action="/auth/login" method="post" className={s.pwdLogin}>
           <div className={s.formTitle}>
             <FormattedMessage {...msg['local']} />
           </div>

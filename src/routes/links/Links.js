@@ -5,7 +5,7 @@ import LinksView from '../../components/Links';
 import { getLinks, setZoomLevel } from "../../actions/links";
 import { connect } from "react-redux";
 import { setProperty } from "../../actions/properties";
-import { getMapBounds, updateLastCoords } from '../../services/linkService';
+import { getMapBounds } from '../../services/linkService';
 import { saveTripCoord } from '../../actions/trips';
 import { getLastCoords } from '../../actions/global';
 
@@ -16,7 +16,6 @@ class Links extends React.Component {
 
   componentDidMount() {
 
-    const { query } = this.props;
     this.props.setProperty('links.selectedLink', null);
     this.props.setProperty('links.searchLocalities', null);
     this.props.setProperty('links.routeSearchTerm', null);
@@ -30,16 +29,8 @@ class Links extends React.Component {
   componentDidUpdate(prevProps) {
 
     const { query } = this.props;
-    const prevQuery = prevProps.query;
 
     const linksResult = this.props.linksResult || this.props.loadedLinksResult;
-    const prevLinksResult = prevProps.linksResult || prevProps.loadedLinksResult;
-
-    /*
-    if (this.props.activeTrip && isMobile()) {
-      updateLastCoords(this.props.lastCoords, prevProps.lastCoords, this.props.saveTripCoord, this.props.getLastCoords);
-    }
-     */
 
     //console.log('props', query, this.props, prevProps, linksResult);
     const { routeSearchTerm } = this.props;

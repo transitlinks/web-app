@@ -63,7 +63,6 @@ const getAvatarPaths = (user, extension) => {
 
 };
 
-
 passport.serializeUser((user, done) => {
   log.debug('passport.serializeUser', `user.uuid=${user.uuid}`);
   done(null, user.uuid);

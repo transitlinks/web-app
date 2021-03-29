@@ -12,6 +12,7 @@ import requestLanguage from 'express-request-language';
 import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressSession from 'express-session';
+import pgSessionStore from 'connect-pg-simple';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import React from 'react';
@@ -90,7 +91,15 @@ app.use(expressJwt({
   getToken: req => req.cookies.id_token,
 }));
 */
-app.use(expressSession({ secret: "keyboard cat" }));
+const pgSession = pgSessionStore(expressSession);
+app.use(expressSession({
+  store: new pgSession({
+    conString: process.env.DB_URL
+  }),
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.passport = passport;
