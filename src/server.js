@@ -13,6 +13,7 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressSession from 'express-session';
 import pgSessionStore from 'connect-pg-simple';
+import { Pool } from 'pg';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import React from 'react';
@@ -91,10 +92,17 @@ app.use(expressJwt({
   getToken: req => req.cookies.id_token,
 }));
 */
+const pool = new Pool({
+  max: 10,
+  connectionString: process.env.DB_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 const pgSession = pgSessionStore(expressSession);
 app.use(expressSession({
   store: new pgSession({
-    conString: process.env.DB_URL
+    pool
   }),
   secret: 'secret',
   resave: false,
