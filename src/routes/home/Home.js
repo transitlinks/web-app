@@ -175,7 +175,7 @@ class Home extends React.Component {
       this.props.getActiveTrip();
     }
 
-    if (prevQuery.tags !== query.tags || prevQuery.user !== query.user) {
+    if (prevQuery.tags !== query.tags || prevQuery.user !== query.user || prevQuery.trip !== query.trip) {
       this.props.getFeed(clientId, params);
     }
 
