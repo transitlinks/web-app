@@ -12,9 +12,6 @@ then
   else
     git pull
   fi
-  npm install
+  yarn install
 fi
-cd migration
-./migrate.sh
-cd ..
-npm start -- --release
+yarn start --release

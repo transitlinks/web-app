@@ -92,13 +92,18 @@ app.use(expressJwt({
   getToken: req => req.cookies.id_token,
 }));
 */
-const pool = new Pool({
+
+const poolSettings = {
   max: 10,
-  connectionString: process.env.DB_URL,
-  ssl: {
+  connectionString: process.env.DB_URL
+};
+
+if (APP_ENV === 'stage') {
+  poolSettings.ssl = {
     rejectUnauthorized: false
-  }
-});
+  };
+}
+const pool = new Pool(poolSettings);
 const pgSession = pgSessionStore(expressSession);
 app.use(expressSession({
   store: new pgSession({
