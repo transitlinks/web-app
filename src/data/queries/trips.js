@@ -47,7 +47,7 @@ export const TripMutationFields = {
           for (let i = 0; i < allTripCoords.length - 2; i++) {
             const from = allTripCoords[i];
             const to = allTripCoords[i + 2];
-            const distance = getDistance(from.json(), to.json());
+            const distance = getDistance(from.toJSON(), to.toJSON());
             distances.push({ distance, index: i + 1 });
           }
           distances = distances.sort((a, b) => a.distance - b.distance);
@@ -55,7 +55,7 @@ export const TripMutationFields = {
           console.log('remove indexes:', removeIndexes);
           await tripRepository.deleteTripCoords({ id: removeIndexes });
         }
-        return savedTripCoord.json();
+        return savedTripCoord.toJSON();
       }
 
       return null;
@@ -109,7 +109,7 @@ export const TripMutationFields = {
 
       const savedTrip = await tripRepository.saveTrip(newTrip);
 
-      return savedTrip.json();
+      return savedTrip.toJSON();
 
     }
 
@@ -138,7 +138,7 @@ export const TripMutationFields = {
         throw new Error('Could not find trip to delete by uuid ' + uuid);
       }
 
-      return trip.json();
+      return trip.toJSON();
 
     }
 
@@ -158,7 +158,7 @@ export const TripQueryFields = {
     resolve: async ({ request }, { user }) => {
       const userId = await userRepository.getUserIdByUuid(user);
       const trips = await tripRepository.getTrips({ userId });
-      return trips.map(trip => trip.json());
+      return trips.map(trip => trip.toJSON());
     }
 
   },
@@ -170,7 +170,7 @@ export const TripQueryFields = {
       if (!request.user) return null;
       const userId = await userRepository.getUserIdByUuid(request.user.uuid);
       const lastTrip = await tripRepository.getLastUserTrip(userId);
-      return (lastTrip && !lastTrip.lastCheckInId) ? lastTrip.json() : null;
+      return (lastTrip && !lastTrip.lastCheckInId) ? lastTrip.toJSON() : null;
     }
   }
 

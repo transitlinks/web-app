@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 
 function ProvideIntl({ intl, children }) {
+  console.log('INTL', intl);
   return (
     <IntlProvider
       {...intl}

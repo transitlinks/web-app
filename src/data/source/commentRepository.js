@@ -55,7 +55,7 @@ export default {
 
     delete comment.uuid;
     await Comment.update(comment, { where: { id: existing.id } });
-    return await Comment.findById(existing.id);
+    return await Comment.findOne({ where: { id: existing.id } });
 
   },
 

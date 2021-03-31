@@ -162,7 +162,7 @@ export const CommentMutationFields = {
       const savedComment = await commentRepository.create(newComment);
       return {
         uuid: savedComment.uuid,
-        user: user.json(),
+        user: user.toJSON(),
         checkInUuid: checkInUuid || (terminal ? terminal.checkInUuid : null),
         terminalUuid,
         replyToUuid,
@@ -185,7 +185,7 @@ export const CommentMutationFields = {
 
       log.info(graphLog(request, 'delete-comment', 'clientId=' + clientId + ' uuid=' + uuid));
       const deletedComment = await deleteComment(uuid);
-      return deletedComment.json();
+      return deletedComment.toJSON();
 
     }
 

@@ -36,7 +36,7 @@ const Comment = Model.define('Comment', {
 
       const user = this.get('user');
       if (user) {
-        json.user = user.json();
+        json.user = user.toJSON();
       }
 
       return json;

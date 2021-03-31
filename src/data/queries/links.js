@@ -244,11 +244,11 @@ export const TransitLinkQueryFields = {
           const departures = (await terminalRepository.getTerminals(query, { order: [['createdAt', 'ASC']] }))
             .filter(dep => dep.linkedTerminal)
             .map(dep => ({
-              ...dep.json(),
+              ...dep.toJSON(),
               localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
               utcDateTime: dep.createdAt,
               linkedTerminal: {
-                ...dep.linkedTerminal.json(),
+                ...dep.linkedTerminal.toJSON(),
                 localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
                 utcDateTime: dep.linkedTerminal.createdAt,
               }
@@ -308,7 +308,7 @@ export const TransitLinkQueryFields = {
                 localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
                 utcDateTime: dep.createdAt,
                 linkedTerminal: {
-                  ...dep.linkedTerminal.json(),
+                  ...dep.linkedTerminal.toJSON(),
                   localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
                   utcDateTime: dep.linkedTerminal.createdAt,
                 }
@@ -389,7 +389,7 @@ export const TransitLinkQueryFields = {
 
           const timeZone = geoTz(terminal.latitude, terminal.longitude)[0];
           const formattedTerminal = {
-            ...terminal.json(),
+            ...terminal.toJSON(),
             localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
             utcDateTime: terminal.createdAt,
           };
@@ -522,22 +522,22 @@ export const TransitLinkQueryFields = {
           longitude: terminal.longitude,
           departures: departures.map(dep => ({
             route: dep.route,
-            ...dep.json(),
+            ...dep.toJSON(),
             localDateTime: getLocalDateTime(dep.createdAt, geoTz(dep.latitude, dep.longitude)[0]),
             utcDateTime: dep.createdAt,
             linkedTerminal: {
-              ...dep.linkedTerminal.json(),
+              ...dep.linkedTerminal.toJSON(),
               localDateTime: getLocalDateTime(dep.linkedTerminal.createdAt, geoTz(dep.linkedTerminal.latitude, dep.linkedTerminal.longitude)[0]),
               utcDateTime: dep.linkedTerminal.createdAt,
             }
           })),
           arrivals: arrivals.map(arr => ({
             route: arr.route,
-            ...arr.json(),
+            ...arr.toJSON(),
             localDateTime: getLocalDateTime(arr.createdAt, geoTz(arr.latitude, arr.longitude)[0]),
             utcDateTime: arr.createdAt,
             linkedTerminal: {
-              ...arr.linkedTerminal.json(),
+              ...arr.linkedTerminal.toJSON(),
               localDateTime: getLocalDateTime(arr.linkedTerminal.createdAt, geoTz(arr.linkedTerminal.latitude, arr.linkedTerminal.longitude)[0]),
               utcDateTime: arr.linkedTerminal.createdAt,
             }
@@ -571,7 +571,7 @@ export const TransitLinkQueryFields = {
     resolve: async ({ request }, { search, from }) => {
 
       const localities = await localityRepository.searchLocalitiesByName(search);
-      return localities.map(locality => locality.json());
+      return localities.map(locality => locality.toJSON());
 
     }
 

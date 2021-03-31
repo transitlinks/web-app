@@ -14,8 +14,8 @@ export default {
     }
 
     if (entity === 'Post') {
-      const post = await Post.findById(entityId);
-      const checkIn = await CheckIn.findById(post.checkInId);
+      const post = await Post.findOne({ where: { id: entityId } });
+      const checkIn = await CheckIn.findOne({ where: { id: post.checkInId } });
       const entityTag = await EntityTag.findOne({ where: { checkInId: checkIn.id, tagId: tag.id } });
       if (!entityTag) {
         await EntityTag.create({

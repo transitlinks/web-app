@@ -6,7 +6,7 @@ fetch.Promise = Promise;
 Response.Promise = Promise;
 
 function localUrl(url) {
-  
+
   if (url.startsWith('//')) {
     return `https:${url}`;
   }
@@ -16,7 +16,7 @@ function localUrl(url) {
   }
 
   return `http://${HTTP_HOST}:${HTTP_PORT}${url}`;
-  
+
 }
 
 const localFetch = async (url, options) => {

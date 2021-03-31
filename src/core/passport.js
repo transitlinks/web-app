@@ -71,7 +71,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((uuid, done) => {
   log.debug('deserialize-user', `uuid=${uuid}`);
   User.findOne({ where: { uuid } })
-  .then(user => done(null, user.json()));
+  .then(user => done(null, user.toJSON()));
 });
 
 passport.use('login-local', new LocalStrategy({

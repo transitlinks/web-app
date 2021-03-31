@@ -28,7 +28,7 @@ export const getUserUuidById = async (id) => {
 
 export const getById = async (id) => {
 
-  const user = await User.findById(id);
+  const user = await User.findOne({ where: { id } });
   if (!user) {
     throw new Error('User not found');
   }

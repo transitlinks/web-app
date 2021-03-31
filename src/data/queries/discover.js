@@ -36,10 +36,10 @@ const getPostContent = async (post) => {
     userName = user.firstName + ' ' + user.lastName;
   }
   return {
-    ...post.json(),
+    ...post.toJSON(),
     user: userName,
-    checkIn: checkIn.json(),
-    mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+    checkIn: checkIn.toJSON(),
+    mediaItems: mediaItems.map(mediaItem => mediaItem.toJSON())
   };
 
 }

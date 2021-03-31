@@ -70,7 +70,7 @@ export const UserMutationFields = {
       let user = await userRepository.update(uuid, values);
       if (user.logins === 1) user = await userRepository.update(uuid, { logins: 2 });
       console.log(user);
-      return user.json();
+      return user.toJSON();
     }
 
   },

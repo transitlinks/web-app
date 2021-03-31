@@ -1,18 +1,26 @@
 import Sequelize from 'sequelize';
 import fixtures from 'sequelize-fixtures';
 import { APP_ENV, DB_URL, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } from '../config';
+import { Pool } from 'pg';
 
 const dbUrl = DB_URL ||
   `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
+
+const pool = new Pool({
+  max: 10,
+  connectionString: process.env.DB_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
 const sequelize = new Sequelize(dbUrl, {
   dialect: 'postgres',
-  dialectOptions: {
-    ssl: APP_ENV === 'stage'
-  },
+  native: APP_ENV === 'stage',
   logging: false,
   define: {
-    freezeTableName: true,
+    freezeTableName: true
   }
 });
 

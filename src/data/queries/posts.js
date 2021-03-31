@@ -323,9 +323,9 @@ const savePost = async (postInput, clientId, request) => {
   }
 
 
-  saved = saved.json();
+  saved = saved.toJSON();
   const savedMediaItems = await postRepository.getMediaItems({ entityUuid: saved.uuid });
-  saved.mediaItems = savedMediaItems.map(mediaItem => mediaItem.json());
+  saved.mediaItems = savedMediaItems.map(mediaItem => mediaItem.toJSON());
   saved.checkInUuid = checkIn.uuid;
 
   return saved;
@@ -559,7 +559,7 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   const localDateTime = getLocalDateTime(savedCheckIn.createdAt, timeZone);
 
   return {
-    ...savedCheckIn.json(),
+    ...savedCheckIn.toJSON(),
     tags: (await tagRepository.getTagsByCheckInIds([savedCheckIn.id])).map(tag => tag.tag),
     date: localDateTime
   };
@@ -615,7 +615,7 @@ const deleteCheckIn = async (checkInUuid, clientId, request) => {
   if (outboundCheckIns.length > 0) nextUrl = `/check-in/${outboundCheckIns[0].uuid}`;
   else if (inboundCheckIns.length > 0) nextUrl = `/check-in/${inboundCheckIns[0].uuid}`;
   return {
-    ...checkIn.json(),
+    ...checkIn.toJSON(),
     nextUrl
   };
 
@@ -646,7 +646,7 @@ const getLinkedCheckIns = async (checkIn) => {
 
   return {
     inbound: inboundCheckIns,
-    outbound: outboundCheckIns.map(checkIn => checkIn.json())
+    outbound: outboundCheckIns.map(checkIn => checkIn.toJSON())
   };
 
 };
@@ -1025,7 +1025,7 @@ export const PostMutationFields = {
         fs.unlinkSync(filePath);
       }
 
-      return mediaItem.json();
+      return mediaItem.toJSON();
     }
 
   },
@@ -1101,18 +1101,18 @@ export const getFeedItem = async (request, checkIn) => {
   }
 
   if (trip) {
-    trip = trip.json();
-    if (trip.firstCheckInId) trip.firstCheckIn = (await checkInRepository.getCheckIn({ id: trip.firstCheckInId })).json();
-    if (trip.lastCheckInId) trip.lastCheckIn = (await checkInRepository.getCheckIn({ id: trip.lastCheckInId })).json();
+    trip = trip.toJSON();
+    if (trip.firstCheckInId) trip.firstCheckIn = (await checkInRepository.getCheckIn({ id: trip.firstCheckInId })).toJSON();
+    if (trip.lastCheckInId) trip.lastCheckIn = (await checkInRepository.getCheckIn({ id: trip.lastCheckInId })).toJSON();
   }
 
 
   return {
     userAccess: credentials.userAccess,
     checkIn: {
-      ...(checkIn.json()),
+      ...(checkIn.toJSON()),
       departure: departure ? {
-        ...departure.json(),
+        ...departure.toJSON(),
         localDateTime: getLocalDateTime(departure.createdAt, geoTz(departure.latitude, departure.longitude)[0])
       } : null,
       user: credentials.ownerFullName,
@@ -1129,9 +1129,9 @@ export const getFeedItem = async (request, checkIn) => {
     posts: posts.map(async (post) => {
       const mediaItems = await postRepository.getMediaItems({ entityUuid: post.uuid });
       return {
-        ...post.json(),
+        ...post.toJSON(),
         user: credentials.ownerFullName,
-        mediaItems: mediaItems.map(mediaItem => mediaItem.json())
+        mediaItems: mediaItems.map(mediaItem => mediaItem.toJSON())
       };
     }),
     terminals: terminals.map(async (terminal) => {
@@ -1140,19 +1140,19 @@ export const getFeedItem = async (request, checkIn) => {
         linkedTerminal = await terminalRepository.getTerminal({ id: terminal.linkedTerminalId });
         const linkedTerminalCheckIn = await postRepository.getCheckIn({ id: linkedTerminal.checkInId });
         linkedTerminal = {
-          ...linkedTerminal.json(),
+          ...linkedTerminal.toJSON(),
           localDateTime: getLocalDateTime(linkedTerminal.createdAt, timeZone),
           utcDateTime: linkedTerminal.createdAt
         };
         linkedTerminal.checkIn = {
-          ...linkedTerminalCheckIn.json(),
+          ...linkedTerminalCheckIn.toJSON(),
           date: getLocalDateTime(linkedTerminalCheckIn.createdAt, timeZone)
         };
       }
 
       const terminalId = terminal.id;
       return {
-        ...terminal.json(),
+        ...terminal.toJSON(),
         localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
         utcDateTime: terminal.createdAt,
         comments: await getComments({ terminalId }),
@@ -1364,7 +1364,7 @@ export const PostQueryFields = {
           const timeZone = geoTz(terminalCheckIn.latitude, terminalCheckIn.longitude)[0];
           terminalCheckIn.date = getLocalDateTime(terminalCheckIn.createdAt, timeZone);
           return {
-            ...terminal.json(),
+            ...terminal.toJSON(),
             localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
             utcDateTime: terminal.createdAt,
             checkIn: terminalCheckIn
@@ -1408,10 +1408,10 @@ export const PostQueryFields = {
         const timeZone = geoTz(terminalCheckIn.latitude, terminalCheckIn.longitude)[0];
         terminalCheckIn.date = getLocalDateTime(terminalCheckIn.createdAt, timeZone);
         return {
-          ...terminal.json(),
+          ...terminal.toJSON(),
           localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
           utcDateTime: terminal.createdAt,
-          checkIn: terminalCheckIn.json()
+          checkIn: terminalCheckIn.toJSON()
         };
       });
 
@@ -1453,7 +1453,7 @@ export const PostQueryFields = {
         throw new Error(`MediaItem (uuid ${uuid}) not found`);
       }
 
-      return mediaItem.json();
+      return mediaItem.toJSON();
 
     }
 

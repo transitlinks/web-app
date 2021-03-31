@@ -21,14 +21,6 @@ const Trip = Model.define('Trip', {
 
 }, {
 
-  instanceMethods: {
-    json: function() {
-      const json = this.toJSON();
-      delete json.id;
-      return json;
-    }
-  },
-
   indexes: [
     { fields: ['id', 'uuid' ] },
   ],

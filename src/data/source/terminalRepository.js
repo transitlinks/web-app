@@ -432,11 +432,9 @@ export default {
   },
 
   getDepartureBefore: async (dateTime, userId, checkIn) => {
-    const query = {
-      createdAt: { $lte: dateTime },
-      userId
-    };
 
+    const query = { createdAt: { $lte: dateTime } };
+    if (userId) query.userId = userId;
     if (checkIn) query.checkInId = { $ne: checkIn.id };
 
     const terminal = await Terminal.findOne({
