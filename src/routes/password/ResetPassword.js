@@ -7,7 +7,6 @@ import { requestResetPassword, codeResetPassword } from '../../actions/account';
 import PasswordInput from '../../components/PasswordInput';
 import RaisedButton from 'material-ui/RaisedButton';
 import { emailValid } from '../../core/utils';
-import msg from '../../components/Account/messages.profile';
 import EmailInput from '../../components/EmailInput';
 
 const title = 'Transitlinks - Reset password';

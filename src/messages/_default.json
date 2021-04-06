@@ -5,7 +5,6 @@
     "defaultMessage": "Links",
     "message": "",
     "files": [
-      "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
       "src/components/ErrorHeader/messages.js",
       "src/components/Links/messages.js",
@@ -18,7 +17,6 @@
     "defaultMessage": "Profile",
     "message": "",
     "files": [
-      "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
       "src/components/ErrorHeader/messages.js",
       "src/components/Links/messages.js",
@@ -31,7 +29,6 @@
     "defaultMessage": "User links",
     "message": "",
     "files": [
-      "src/components/Account/messages.links.js",
       "src/components/EditCheckInItem/messages.links.js"
     ]
   },
@@ -41,7 +38,6 @@
     "defaultMessage": "E-mail",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -52,7 +48,6 @@
     "defaultMessage": "User photo",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -270,7 +265,6 @@
     "defaultMessage": "New password",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -281,7 +275,6 @@
     "defaultMessage": "CHANGE",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -292,7 +285,6 @@
     "defaultMessage": "Save",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -303,7 +295,6 @@
     "defaultMessage": "Error! Failed saving new password :(",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -314,7 +305,6 @@
     "defaultMessage": "Password changed",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -325,7 +315,6 @@
     "defaultMessage": "Error! Failed saving profile :(",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -336,7 +325,6 @@
     "defaultMessage": "Profile saved",
     "message": "",
     "files": [
-      "src/components/Account/messages.profile.js",
       "src/components/EditCheckInItem/messages.terminal.js",
       "src/components/EditCheckInItem/messages.profile.js"
     ]
@@ -417,7 +405,6 @@
     "defaultMessage": "Log out",
     "message": "",
     "files": [
-      "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
       "src/components/EditCheckInItem/messages.js",
       "src/components/Links/messages.js",
