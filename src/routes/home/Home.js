@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 import HomeView from '../../components/Home';
-import ProfileSettings from '../../components/Account/ProfileSettings';
 
 import { connect } from "react-redux";
 import { getGeolocation, getLastCoords } from "../../actions/global";
