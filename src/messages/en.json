@@ -8,8 +8,8 @@
       "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
       "src/components/ErrorHeader/messages.js",
-      "src/components/Home/messages.js",
-      "src/components/Links/messages.js"
+      "src/components/Links/messages.js",
+      "src/components/Home/messages.js"
     ]
   },
   {
@@ -21,8 +21,8 @@
       "src/components/Account/messages.js",
       "src/components/Discover/messages.js",
       "src/components/ErrorHeader/messages.js",
-      "src/components/Home/messages.js",
-      "src/components/Links/messages.js"
+      "src/components/Links/messages.js",
+      "src/components/Home/messages.js"
     ]
   },
   {
@@ -42,8 +42,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -53,8 +53,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -271,8 +271,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -282,8 +282,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -293,8 +293,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -304,8 +304,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -315,8 +315,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -326,8 +326,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {
@@ -337,8 +337,8 @@
     "message": "",
     "files": [
       "src/components/Account/messages.profile.js",
-      "src/components/EditCheckInItem/messages.profile.js",
-      "src/components/EditCheckInItem/messages.terminal.js"
+      "src/components/EditCheckInItem/messages.terminal.js",
+      "src/components/EditCheckInItem/messages.profile.js"
     ]
   },
   {

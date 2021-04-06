@@ -90,6 +90,11 @@ class Home extends React.Component {
       page_path: '/',
     });
 
+    const { profile } = this.props;
+    if (profile && profile.logins === 1) {
+      window.location.href = '/account';
+    }
+
   }
 
   componentDidUpdate(prevProps) {
@@ -208,16 +213,6 @@ class Home extends React.Component {
     this.context.setTitle(title);
 
     const { profile, savedProfile, feed, query, transportTypes, post } = this.props;
-
-    if (profile && profile.logins === 1 && !savedProfile) {
-      return (
-        <div>
-          <div className={s.root}>
-            <ProfileSettings profile={profile} withSubmit />
-          </div>
-        </div>
-      );
-    }
 
     return (
       <div>
