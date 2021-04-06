@@ -19,24 +19,28 @@ const Navigation = ({ env, auth, savedProfile, className }) => {
     console.log('USER AVATAR', user.avatar, savedProfile);
 
     loginElem = (
-      <div id="logout-link">
-        <Link to="/account">
+      <div id="logout-link" style={{ cursor: 'pointer' }}>
+        <div onClick={() => {
+          window.location.href = '/account';
+        }}>
           <div className={s.avatar}>
             <img src={user.avatar ? `${env.MEDIA_URL}${user.avatar}?${(new Date()).getTime()}` : user.photo} />
           </div>
-        </Link>
+        </div>
       </div>
     );
   } else {
     loginElem = (
-      <Link className={s.link} id="login-link" to="/login">
+      <div className={s.link} id="login-link" onClick={() => {
+        window.location.href = '/login';
+      }}>
         <FormattedMessage {...msg.login} />
-      </Link>
+      </div>
     );
   }
 
   return (
-    <div className={cx(s.root, className)} role="navigation">
+    <div className={cx(s.root, className)} role="navigation" style={{ cursor: 'pointer' }}>
       <div className={s.content}>
         {loginElem}
       </div>

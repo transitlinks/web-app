@@ -19,8 +19,6 @@ import home from './home';
 import discover from './discover';
 import links from './links';
 import checkIn from './checkIn';
-import login from './login';
-import account from './account';
 import content from './content';
 import password from './password';
 import error from './error';
@@ -36,8 +34,6 @@ const routes = {
     home,
     discover,
     links,
-    login,
-    account,
     checkIn,
     password,
     content,
