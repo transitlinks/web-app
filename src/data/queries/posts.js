@@ -1069,12 +1069,9 @@ export const getFeedItem = async (request, checkIn) => {
   let checkInLikedByUser = false;
 
   let userId = null;
-  let user = null;
-  if (request.user) {
-    user = await userRepository.getUser({ id: checkIn.id });
-    if (user) {
-      userId = await user.id;
-    }
+  const user = await userRepository.getUser({ id: checkIn.userId });
+  if (user) {
+    userId = await user.id;
   }
 
   if (userId) {
