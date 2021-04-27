@@ -97,7 +97,15 @@ const Terminal = Model.define('Terminal', {
 
   priceCurrency: {
     type: DataType.STRING
-  }
+  },
+
+  priceType: {
+    type: DataType.STRING
+  },
+
+  priceTerminalUuid: {
+    type: DataType.STRING
+  },
 
 }, {
 

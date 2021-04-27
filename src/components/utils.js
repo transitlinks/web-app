@@ -182,3 +182,19 @@ export const isMobile = () => {
   }
   return isMobile;
 };
+
+export const getImageUrl = (src, photo, mediaUrl) => {
+
+  if (src) {
+
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      return src;
+    }
+
+    return `${mediaUrl}${src}?${(new Date()).getTime()}`;
+
+  }
+
+  return photo;
+
+};

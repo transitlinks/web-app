@@ -72,7 +72,15 @@ export const saveCheckIn = ({ checkIn }) => {
           uuid,
           date,
           userUuid,
-          userImage,
+          user {
+            uuid,
+            username,
+            firstName,
+            lastName,
+            photo,
+            avatar,
+            avatarSource
+          },
           latitude,
           longitude,
           placeId,
@@ -177,7 +185,15 @@ export const getFeed = (clientId, params) => {
               country
             }
           },
-          user,
+          user {
+            uuid,
+            username,
+            firstName,
+            lastName,
+            photo,
+            avatar,
+            avatarSource
+          },
           userImage,
           locality,
           linkedLocality,

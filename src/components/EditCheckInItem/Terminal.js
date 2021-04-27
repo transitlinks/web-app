@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { setProperty } from '../../actions/properties';
-import { saveTerminal } from '../../actions/posts';
+import { saveTerminal, getTerminal } from '../../actions/posts';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Terminal.css';
 import TextField from 'material-ui/TextField';
@@ -32,8 +32,8 @@ const labels = {
 }
 
 const Terminal = ({
-  intl, checkIn, transportTypes, openTerminals, type, editTerminal,
-  saveDisabled, setProperty, saveTerminal, terminalInputErrors
+  intl, checkIn, transportTypes, openTerminals, type, editTerminal, userDepartures, priceTerminal,
+  saveDisabled, setProperty, saveTerminal, getTerminal, terminalInputErrors
 }) => {
 
   const transportOptions = transportTypes.map(type => (
@@ -116,9 +116,17 @@ const Terminal = ({
     return newDate + 'T' + newTime;
   };
 
+  const transportValue = editTerminal.transport || (priceTerminal ? priceTerminal.transport : undefined);
+  const transportIdValue = (editTerminal.transportId || (priceTerminal || {}).transportId) || '';
+  const descriptionValue = (editTerminal.description || (priceTerminal || {}).description) || '';
+
+  const priceTerminalUuidValue = editTerminal.priceTerminalUuid ||
+    (editTerminal.priceTerminal ? editTerminal.priceTerminal.uuid : undefined) ||
+    (userDepartures && userDepartures.length > 0) && userDepartures[0].uuid;
+  console.log('editTerminal', priceTerminalUuidValue, userDepartures, transportValue);
   const save = () => {
 
-    if (!editTerminal.transport && !linkedTerminal) {
+    if (!transportValue && !linkedTerminal) {
       setProperty('editTerminal.terminalInputErrors', {
         transport: 'empty'
       });
@@ -129,10 +137,12 @@ const Terminal = ({
       uuid: editTerminal.uuid,
       checkInUuid: checkIn.uuid,
       type,
-      transport: editTerminal.transport,
-      transportId: editTerminal.transportId,
-      description: editTerminal.description,
-      priceCurrency: editTerminal.priceCurrency
+      transport: transportValue,
+      transportId: transportIdValue,
+      description: descriptionValue,
+      priceCurrency: editTerminal.priceCurrency,
+      priceType: editTerminal.priceType || 'payment',
+      priceTerminalUuid: editTerminal.priceType === 'part' ? priceTerminalUuidValue : null
     };
 
     if (editTerminal.priceAmount && editTerminal.priceAmount.length > 0) {
@@ -226,7 +236,7 @@ const Terminal = ({
                 <div className={s.inputRow1}>
                   <div className={s.transport}>
                     <SelectField id="transport-select"
-                                 value={editTerminal.transport}
+                                 value={transportValue}
                                  fullWidth
                                  floatingLabelFixed
                                  floatingLabelText="Transport"
@@ -265,7 +275,7 @@ const Terminal = ({
                 <div className={s.inputRow2}>
                   <div className={s.transportId}>
                     <TextField id="transport-id"
-                               value={editTerminal.transportId || ''}
+                               value={transportIdValue}
                                fullWidth
                                floatingLabelFixed
                                floatingLabelText="Transport ID"
@@ -277,7 +287,7 @@ const Terminal = ({
                 <div className={s.inputRow2}>
                   <div className={s.transportId}>
                     <TextField id="description"
-                               value={editTerminal.description || ''}
+                               value={descriptionValue}
                                fullWidth
                                floatingLabelFixed
                                floatingLabelText="Description"
@@ -287,27 +297,70 @@ const Terminal = ({
                   </div>
                 </div>
                 <div className={s.inputRow3}>
-                  <div className={s.cost}>
-                    <div className={s.amount}>
-                      <TextField id="price-amount-input"
-                                 value={editTerminal.priceAmount || ''}
-                                 style={{ width: '100%' }}
-                                 floatingLabelFixed
-                                 floatingLabelText="Cost"
-                                 hintText="Price"
-                                 onChange={(e) => setTerminalProperty('priceAmount', e.target.value)}
-                      />
+                  {
+                    (userDepartures && userDepartures.length > 0) &&
+                    <div className={s.priceTypeSelection}>
+                      <div className={s.priceType}>
+                        <FontIcon className="material-icons" style={{ fontSize: '20px', color: editTerminal.priceType !== 'part' ? '#0074c2' : 'black' }} onClick={() => {
+                          setTerminalProperty('priceType', 'payment');
+                        }}>payment</FontIcon>
+                      </div>
+                      <div className={s.priceType}>
+                        <FontIcon className="material-icons" style={{ fontSize: '20px', color: editTerminal.priceType === 'part' ? '#0074c2' : 'black' }} onClick={() => {
+                          setTerminalProperty('priceType', 'part');
+                          //setTerminalProperty('priceTerminalUuid', userDepartures[0].uuid);
+                          getTerminal(priceTerminal ? priceTerminal.uuid : userDepartures[0].uuid);
+                        }}>dehaze</FontIcon>
+                      </div>
                     </div>
-                    <div className={s.currency}>
-                      <SelectField id="currency-select"
-                                   value={editTerminal.priceCurrency}
-                                   style={{ width: '100%' }}
-                                   floatingLabelText="Currency"
-                                   onChange={(event, index, value) => setTerminalProperty('priceCurrency', value)}>
-                        {currencies}
-                      </SelectField>
-                    </div>
-                  </div>
+                  }
+                  {
+                    editTerminal.priceType === 'part' ?
+                      <div>
+                        <SelectField value={priceTerminalUuidValue}
+                                     style={{ width: '100%' }}
+                                     floatingLabelText="Part of total cost"
+                                     onChange={(event, index, value) => {
+                                       setTerminalProperty('priceTerminalUuid', value);
+                                       getTerminal(value);
+                                     }}>
+                          {(userDepartures || []).filter(dep => dep.uuid !== editTerminal.uuid).map(dep => {
+                            const priceTerminalText = dep.transport + ' from ' + dep.locality + ' ' + dep.priceAmount + ' ' + dep.priceCurrency;
+                            return (
+                              <MenuItem id={`price-terminal-${dep.uuid}`}
+                                        key={`price-terminal-${dep.uuid}`}
+                                        value={dep.uuid}
+                                        primaryText={priceTerminalText}>
+                              </MenuItem>
+                            );
+                          })}
+                        </SelectField>
+                      </div> :
+                      <div className={s.cost}>
+                        <div className={s.amount}>
+                          <TextField id="price-amount-input"
+                                     value={editTerminal.priceAmount || ''}
+                                     style={{ width: '100%' }}
+                                     floatingLabelFixed
+                                     floatingLabelText="Cost"
+                                     hintText="Price"
+                                     onChange={(e) => {
+                                       setTerminalProperty('priceAmount', e.target.value);
+                                     }}
+                          />
+                        </div>
+                        <div className={s.currency}>
+                          <SelectField id="currency-select"
+                                       value={editTerminal.priceCurrency}
+                                       style={{ width: '100%' }}
+                                       floatingLabelText="Currency"
+                                       onChange={(event, index, value) => setTerminalProperty('priceCurrency', value)}>
+                            {currencies}
+                          </SelectField>
+                        </div>
+                      </div>
+
+                  }
                   <div className={s.controls}>
                     <RaisedButton label="OK" fullWidth disabled={saveDisabled} onClick={() => save()} />
                   </div>
@@ -330,7 +383,9 @@ export default injectIntl(
     editTerminal: state.editTerminal.terminal || {},
     saveDisabled: state.editTerminal.saveDisabled,
     terminalInputErrors: state.editTerminal.terminalInputErrors,
+    userDepartures: state.posts.userDepartures,
+    priceTerminal: state.editTerminal.priceTerminal
   }), {
-    setProperty, saveTerminal
+    setProperty, saveTerminal, getTerminal
   })(withStyles(s)(Terminal))
 );

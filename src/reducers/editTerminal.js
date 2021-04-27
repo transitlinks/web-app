@@ -14,7 +14,7 @@ import {
   SAVE_CHECKIN_ERROR,
   DELETE_CHECKIN_START,
   DELETE_CHECKIN_SUCCESS,
-  DELETE_CHECKIN_ERROR,
+  DELETE_CHECKIN_ERROR, GET_TERMINAL_START, GET_TERMINAL_SUCCESS, GET_TERMINAL_ERROR,
 } from '../constants';
 
 export default function reduce(state = {}, action) {
@@ -47,7 +47,15 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => state,
-          success: () => ({ ...state, terminalProperties: {}, savedTerminal: null }),
+          success: () => {
+            console.log('reset editterminal', state);
+            return {
+              ...state,
+              terminalProperties: {},
+              priceTerminal: null,
+              savedTerminal: null
+            };
+          },
           error: () => state
         },
         SAVE_CHECKIN_START,
@@ -103,6 +111,25 @@ export default function reduce(state = {}, action) {
         GET_TERMINALS_START,
         GET_TERMINALS_SUCCESS,
         GET_TERMINALS_ERROR
+      );
+    case GET_TERMINAL_START:
+    case GET_TERMINAL_SUCCESS:
+    case GET_TERMINAL_ERROR:
+      return graphqlReduce(
+        state, action,
+        {
+          start: () => ({}),
+          success: () => {
+            const { transport, transportId, description } = action.payload.terminal;
+            return {
+              priceTerminal: action.payload.terminal
+            };
+          },
+          error: () => ({ priceTerminal: null })
+        },
+        GET_TERMINAL_START,
+        GET_TERMINAL_SUCCESS,
+        GET_TERMINAL_ERROR
       );
 
   }

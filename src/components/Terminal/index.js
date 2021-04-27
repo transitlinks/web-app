@@ -28,6 +28,9 @@ const Terminal = ({
   const dateStr = terminal.localDateTime ? getDateString(getLocalDateTimeValue(terminal.localDateTime)) : '';
   const timeStr = terminal.localDateTime ? getTimeString(getLocalDateTimeValue(terminal.localDateTime)) : '';
 
+  let priceAmount = terminal.priceTerminal ? terminal.priceTerminal.priceAmount : terminal.priceAmount;
+  let priceCurrency = terminal.priceTerminal ? terminal.priceTerminal.priceCurrency : terminal.priceCurrency;
+
   return (
     <div className={s.terminalEntry}>
       <div className={s.terminalEntryRow1}>
@@ -46,10 +49,10 @@ const Terminal = ({
             </div>
         }
         {
-          terminal.priceAmount &&
+          priceAmount &&
             <div className={s.price}>
               <FontIcon className="material-icons" style={{ marginRight: '4px' }}>payment</FontIcon>
-              { terminal.priceAmount } { terminal.priceCurrency }
+              { priceAmount } { priceCurrency }
             </div>
         }
       </div>

@@ -15,9 +15,10 @@ import { saveCheckIn } from '../../actions/checkIns';
 import PropTypes from 'prop-types';
 import { saveLike, saveComment } from '../../actions/comments';
 import DeleteContentDialog from '../common/DeleteContentDialog';
+import { getImageUrl } from '../utils';
 
 const CheckInItemContent = ({
-  checkInItem, contentType, feedProperties, frameId, editPost, showSettings,
+  checkInItem, contentType, feedProperties, frameId, editPost, showSettings, env,
   savedTerminal, sentLike, deleteCandidate,
   setDeepProperty, setProperty, saveCheckIn, deletePost, deleteTerminal, saveLike,
   editable
@@ -112,7 +113,7 @@ const CheckInItemContent = ({
 
   const showHeader = content && content.length !== 0;
 
-  const userName = checkIn.user || 'Anonymoyus';
+  const userName = checkIn.user ? (checkIn.user.username || (checkIn.user.firstName + ' ' + checkIn.user.lastName)) : 'Anonymoyus';
   const dateStr = (new Date(checkIn.date)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const commentsAttributes = {
@@ -131,6 +132,7 @@ const CheckInItemContent = ({
     deleteContentDialog = <DeleteContentDialog />;
   }
 
+  const userImageSrc = getImageUrl(checkIn.user.avatar || checkIn.user.avatarSource, checkIn.user.photo, env.MEDIA_URL);
   return (
     <div className={s.feedItemContent} id={`content-${frameId}`}>
       {
@@ -138,10 +140,10 @@ const CheckInItemContent = ({
         <div className={s.contentHeader}>
           <div className={s.contentHeaderLeft}>
             {
-              checkIn.userImage &&
+              userImageSrc &&
                 <Link to={`/?user=${checkIn.userUuid}`}>
                   <div className={s.userIcon}>
-                    <img src={checkIn.userImage} />
+                    <img src={userImageSrc} />
                   </div>
                 </Link>
             }

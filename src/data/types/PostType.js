@@ -63,6 +63,8 @@ export const TerminalType = new GraphQLObjectType({
       utcDateTime: { type: GraphQLString },
       priceAmount: { type: GraphQLFloat },
       priceCurrency: { type: GraphQLString },
+      priceType: { type: GraphQLString },
+      priceTerminal: { type: TerminalType },
       linkedTerminal: { type: TerminalType },
       checkInUuid: { type: GraphQLString },
       checkIn: { type: CheckInType },
@@ -87,8 +89,24 @@ export const TerminalInputType = new GraphQLInputObjectType({
     date: { type: GraphQLString },
     time: { type: GraphQLString },
     priceAmount: { type: GraphQLFloat },
-    priceCurrency: { type: GraphQLString }
+    priceCurrency: { type: GraphQLString },
+    priceType: { type: GraphQLString },
+    priceTerminalUuid: { type: GraphQLString }
   }
+});
+
+export const CheckInUserType = new GraphQLObjectType({
+  name: 'CheckInType',
+  description: 'CheckIn user info',
+  fields: {
+    uuid: { type: new GraphQLNonNull(GraphQLString) },
+    photo: { type: GraphQLString },
+    avatar: { type: GraphQLString },
+    avatarSource: { type: GraphQLString },
+    username: { type: GraphQLString },
+    firstName: { type: GraphQLString },
+    lastName: { type: GraphQLString }
+  },
 });
 
 export const CheckInType = new GraphQLObjectType({
@@ -98,7 +116,7 @@ export const CheckInType = new GraphQLObjectType({
     uuid: { type: new GraphQLNonNull(GraphQLString) },
     clientId: { type: GraphQLString },
     checkInUuid: { type: GraphQLString },
-    user: { type: GraphQLString },
+    user: { type: CheckInUserType },
     userUuid: { type: GraphQLString },
     userImage: { type: GraphQLString },
     latitude: {type: GraphQLFloat},
@@ -208,7 +226,7 @@ export const FeedType = new GraphQLObjectType({
   fields: {
     feedItems: { type: new GraphQLList(FeedItemType) },
     openTerminals: { type: new GraphQLList(TerminalType) },
-    user: { type: GraphQLString },
+    user: { type: CheckInUserType },
     userImage: { type: GraphQLString },
     locality: { type: GraphQLString },
     linkedLocality: { type: GraphQLString },

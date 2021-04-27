@@ -34,6 +34,7 @@ const schema = new Schema({
       comments: CommentQueryFields.comments,
       posts: PostQueryFields.posts,
       post: PostQueryFields.post,
+      terminal: PostQueryFields.terminal,
       checkIn: CheckInQueryFields.checkIn,
       feed: PostQueryFields.feed,
       openTerminals: PostQueryFields.openTerminals,

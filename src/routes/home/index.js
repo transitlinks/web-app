@@ -58,7 +58,15 @@ export default {
                 country
               }
             },
-            user,
+            user {
+              uuid,
+              username,
+              firstName,
+              lastName,
+              photo,
+              avatar,
+              avatarSource
+            },
             userImage,
             locality,
             linkedLocality,

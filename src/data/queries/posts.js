@@ -167,7 +167,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     if (!terminalInput.priceCurrency) newTerminal.priceCurrency = newLinkedTerminal.priceCurrency;
   }
 
-  copyNonNull(terminalInput, newTerminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency' ]);
+  copyNonNull(terminalInput, newTerminal, [ 'uuid', 'clientId', 'type', 'transport', 'transportId', 'description', 'priceAmount', 'priceCurrency', 'priceType' ]);
 
   const timeZone = geoTz(checkIn.latitude, checkIn.longitude)[0];
 
@@ -227,6 +227,14 @@ const saveTerminal = async (terminalInput, clientId, request) => {
     newTerminal.updatedAt = tzDateTimeValue;
   }
 
+  if (newTerminal.priceType === 'part') {
+    newTerminal.priceTerminalUuid = terminalInput.priceTerminalUuid;
+    newTerminal.priceAmount = null;
+    newTerminal.priceCurrency = null;
+  } else {
+    newTerminal.priceTerminalUuid = null;
+  }
+
   const savedTerminal = await terminalRepository.saveTerminal(newTerminal);
 
   const checkInTimeSeconds = new Date(checkIn.createdAt).getSeconds();
@@ -238,7 +246,7 @@ const saveTerminal = async (terminalInput, clientId, request) => {
   }
 
   if (savedTerminal.type === 'departure' && (new Date(savedTerminal.createdAt)).getTime() < (new Date(checkIn.createdAt)).getTime()) {
-    await checkInRepository.saveCheckIn({ id: checkIn.id, createdAt: savedTerminalTimeWithSeconds });
+    await checkInRepository.saveCheckIn({ id: checkIn.id, departureId: savedTerminal.id, createdAt: savedTerminalTimeWithSeconds });
   }
 
   if (newLinkedTerminal) {
@@ -271,8 +279,11 @@ const saveTerminal = async (terminalInput, clientId, request) => {
   const localDateTime = getLocalDateTime(savedTerminal.createdAt, timeZone);
   log.info('localDateTime', localDateTime);
   log.info('utcDateTime', savedTerminal.createdAt);
+
+  const priceTerminal = savedTerminal.priceTerminalUuid ? await terminalRepository.getTerminal({ uuid: savedTerminal.priceTerminalUuid }) : null;
   return {
     ...savedTerminal.toJSON(),
+    priceTerminal: priceTerminal ? priceTerminal.toJSON() : null,
     localDateTime,
     utcDateTime: savedTerminal.createdAt
   };
@@ -373,6 +384,9 @@ const deleteTerminal = async (uuid, clientId, request) => {
       });
     }
   }
+
+  const resetPriceTerminalCount = await terminalRepository.updateTerminals({ priceTerminalUuid: uuid }, { priceTerminalUuid: null });
+  log.debug('RESET PRICE TERMINALS', resetPriceTerminalCount);
 
   return await terminalRepository.deleteTerminal(uuid);
 
@@ -1047,7 +1061,14 @@ export const getFeedItem = async (request, checkIn) => {
   let checkInLikedByUser = false;
 
   let userId = null;
-  if (request.user) userId = await userRepository.getUserIdByUuid(request.user.uuid);
+  let user = null;
+  if (request.user) {
+    user = await userRepository.getUser({ uuid: request.user.uuid });
+    if (user) {
+      userId = await user.id;
+    }
+  }
+
   if (userId) {
     const checkInUserLikes = await commentRepository.countLikes({ userId, entityId: checkIn.id, entityType: 'CheckIn' });
     checkInLikedByUser = checkInUserLikes > 0;
@@ -1115,7 +1136,15 @@ export const getFeedItem = async (request, checkIn) => {
         ...departure.toJSON(),
         localDateTime: getLocalDateTime(departure.createdAt, geoTz(departure.latitude, departure.longitude)[0])
       } : null,
-      user: credentials.ownerFullName,
+      user: {
+        uuid: user.uuid,
+        photo: user.photo,
+        avatar: user.avatar,
+        avatarSource: user.avatarSource,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName
+      },
       userImage: credentials.userImage,
       userUuid: credentials.userUuid,
       date: getLocalDateTime(checkIn.createdAt, timeZone),
@@ -1150,9 +1179,13 @@ export const getFeedItem = async (request, checkIn) => {
         };
       }
 
+
+      const priceTerminal = terminal.priceTerminalUuid ? await terminalRepository.getTerminal({ uuid: terminal.priceTerminalUuid }) : null;
+
       const terminalId = terminal.id;
       return {
         ...terminal.toJSON(),
+        priceTerminal: priceTerminal ? priceTerminal.toJSON() : null,
         localDateTime: getLocalDateTime(terminal.createdAt, timeZone),
         utcDateTime: terminal.createdAt,
         comments: await getComments({ terminalId }),
@@ -1201,6 +1234,27 @@ export const PostQueryFields = {
       const posts = await postRepository.getFeedPosts(request.user ? request.user.id : null);
       log.info(graphLog(request, 'find-posts', 'results=' + posts.length));
       return { posts: posts.map(post => post.toJSON()) };
+
+    }
+
+  },
+
+  terminal: {
+
+    type: TerminalType,
+    description: 'Find a terminal by uuid',
+    args: {
+      uuid: { type: GraphQLString }
+    },
+    resolve: async ({ request }, { uuid }) => {
+
+      log.info(graphLog(request, 'find-terminal-by-uuid','uuid=${uuid}'));
+      const terminal = await terminalRepository.getTerminal({ uuid });
+      if (!terminal) {
+        throw new Error(`Terminal (uuid ${uuid}) not found`);
+      }
+
+      return { ...terminal.toJSON() };
 
     }
 

@@ -40,20 +40,6 @@ const CheckInControls = ({
 
   return (
     <div>
-      {
-        checkIn.departure && (
-          <div className={s.checkInDeparture}>
-            <div className={s.departureSummary}>
-              { intl.formatMessage(msgTransport[checkIn.departure.transport]) } from { checkIn.departure.locality } { getFormattedDateTime(checkIn.departure.localDateTime) }
-            </div>
-            <div className={s.clearDeparture}>
-              <FontIcon className="material-icons" style={{ fontSize: '16px' }} onClick={() => {
-                saveCheckIn({ checkIn: { uuid: checkIn.uuid, departureUuid: null } });
-              }}>cancel</FontIcon>
-            </div>
-          </div>
-        )
-      }
       <div className={s.checkInControls}>
         <div className={s.checkInControlsLeft}>
           <FontIcon className="material-icons" style={{ fontSize: '20px' }} onClick={() => {

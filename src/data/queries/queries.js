@@ -88,7 +88,15 @@ export const getCheckInEntity = () => {
     {
       uuid,
       clientId,
-      user,
+      user {
+        uuid,
+        username,
+        firstName,
+        lastName,
+        photo,
+        avatar,
+        avatarSource
+      },
       userUuid,
       userImage,
       date,
@@ -164,6 +172,15 @@ export const getFeedItemEntity = () => {
           utcDateTime,
           priceAmount,
           priceCurrency,
+          priceType,
+          priceTerminal {
+            uuid,
+            transport,
+            transportId,
+            description,
+            priceAmount,
+            priceCurrency
+          }
           comments ${getCommentEntity()},
           linkedTerminal {
           uuid,

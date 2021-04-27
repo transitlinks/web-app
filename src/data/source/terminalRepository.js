@@ -308,6 +308,14 @@ export default {
 
   },
 
+  updateTerminals: async (where, values, options = {}) => {
+    const result = await Terminal.update(values, { where, ...options });
+    if (result.length !== 1) {
+      throw new Error(`Invalid terminal update result: ${result}`);
+    }
+    return result[0] !== 1;
+  },
+
   deleteTerminal: async (uuid) => {
 
     const terminal = await Terminal.findOne({ where: { uuid }});

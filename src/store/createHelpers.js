@@ -2,7 +2,7 @@ import fetch from '../core/fetch';
 
 function createGraphqlRequest(fetchKnowingCookie) {
 
-  return async function graphqlRequest(query, variables = {}, files) {
+  return async function graphqlRequest(query, variables = {}, files, path) {
 
     const fetchConfig = {
       method: 'post',
@@ -25,7 +25,7 @@ function createGraphqlRequest(fetchKnowingCookie) {
 
     let response = {};
     try {
-      response = await fetchKnowingCookie('/graphql', fetchConfig);
+      response = await fetchKnowingCookie(path || '/graphql', fetchConfig);
     } catch (error) {
       response.errors = [ error ];
     }

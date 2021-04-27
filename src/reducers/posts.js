@@ -9,6 +9,9 @@ import {
   GET_TERMINALS_ERROR,
   GET_TERMINALS_START,
   GET_TERMINALS_SUCCESS,
+  GET_TERMINAL_ERROR,
+  GET_TERMINAL_START,
+  GET_TERMINAL_SUCCESS,
   SAVE_CHECKIN_START,
   SAVE_CHECKIN_SUCCESS,
   SAVE_CHECKIN_ERROR,
@@ -169,9 +172,17 @@ export default function reduce(state = {}, action) {
         state, action,
         {
           start: () => ({}),
-          success: () => ({
-            terminals: action.payload.posts
-          }),
+          success: () => {
+            if (action.payload.terminals) {
+              return {
+                terminals: action.payload.terminals
+              };
+            } else {
+              return {
+                userDepartures: action.payload.getUserDepartures
+              };
+            }
+          },
           error: () => ({ terminals: null })
         },
         GET_TERMINALS_START,

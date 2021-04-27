@@ -9,6 +9,7 @@ import s from './CheckIn.css';
 import CheckInView from '../../components/CheckIn';
 import { updateLastCoords } from '../../services/linkService';
 import { saveTripCoord, getActiveTrip } from '../../actions/trips';
+import { getUserDepartures } from '../../actions/posts';
 import { getLastCoords } from '../../actions/global';
 import { isMobile } from '../../components/utils';
 
@@ -30,6 +31,7 @@ class CheckIn extends React.Component {
 
     this.props.setProperty('posts.editPost', {});
     this.props.setProperty('editTerminal.terminal', {});
+    this.props.setProperty('editTerminal.priceTerminal', null);
     this.props.setProperty('editTerminal.terminalProperties', {});
     this.props.setProperty('posts.disabledTags', []);
     this.props.setProperty('posts.fetchedFeedItem', null);
@@ -42,6 +44,8 @@ class CheckIn extends React.Component {
     window.gtag('config', 'G-WJY0GVR87Z', {
       page_path: window.location.pathname,
     });
+
+    this.props.getUserDepartures(this.props.feedItem.checkIn.uuid);
 
   }
 
@@ -176,5 +180,6 @@ export default connect(state => ({
   setProperty,
   saveTripCoord,
   getLastCoords,
-  getActiveTrip
+  getActiveTrip,
+  getUserDepartures
 })(withStyles(s)(CheckIn));

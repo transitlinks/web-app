@@ -6,6 +6,7 @@ import HomeView from '../../components/Home';
 import { connect } from "react-redux";
 import { getGeolocation, getLastCoords } from "../../actions/global";
 import { getFeed, getFeedItem } from "../../actions/checkIns";
+import { getUserDepartures } from '../../actions/posts';
 import { setProperty } from "../../actions/properties";
 import { saveTripCoord, getActiveTrip } from "../../actions/trips";
 import { getClientId } from "../../core/utils";
@@ -84,6 +85,7 @@ class Home extends React.Component {
     const params = getParams(this.props);
     params.offset = 0;
     this.props.getFeed(clientId, params);
+    this.props.getUserDepartures();
 
     window.gtag('config', 'G-WJY0GVR87Z', {
       page_path: '/',
@@ -271,5 +273,6 @@ export default connect(state => ({
   setProperty,
   saveTripCoord,
   getLastCoords,
-  getActiveTrip
+  getActiveTrip,
+  getUserDepartures
 })(withStyles(s)(Home));

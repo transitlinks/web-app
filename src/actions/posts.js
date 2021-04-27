@@ -21,6 +21,9 @@ import {
   DELETE_TERMINAL_START,
   DELETE_TERMINAL_SUCCESS,
   DELETE_TERMINAL_ERROR,
+  GET_TERMINAL_START,
+  GET_TERMINAL_SUCCESS,
+  GET_TERMINAL_ERROR,
   MEDIA_FILE_UPLOAD_START,
   MEDIA_FILE_UPLOAD_SUCCESS,
   MEDIA_FILE_UPLOAD_ERROR,
@@ -149,7 +152,16 @@ export const saveTerminal = ({ terminal }) => {
           date,
           time,
           priceAmount,
-          priceCurrency
+          priceCurrency,
+          priceType,
+          priceTerminal {
+            uuid,
+            transport,
+            transportId,
+            description,
+            priceAmount,
+            priceCurrency
+          }
         }
       }
     `;
@@ -244,7 +256,73 @@ export const getTerminals = (checkInId) => {
 
   };
 
-}
+};
+
+export const getTerminal = (uuid) => {
+
+  return async (...args) => {
+
+    const query = `
+      query {
+        terminal (uuid:"${uuid}") {
+          uuid,
+          type,
+          transport,
+          transportId,
+          description,
+          date,
+          time,
+          priceAmount,
+          priceCurrency
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'terminal' ],
+      GET_TERMINAL_START,
+      GET_TERMINAL_SUCCESS,
+      GET_TERMINAL_ERROR
+    );
+
+  };
+
+};
+
+export const getUserDepartures = (checkInUuid) => {
+
+  return async (...args) => {
+    const queryParams = checkInUuid ? `(checkInUuid: "${checkInUuid}")` : '';
+    const query = `
+      query {
+        getUserDepartures ${queryParams} {
+          uuid,
+          type,
+          transport,
+          transportId,
+          description,
+          date,
+          time,
+          locality,
+          priceAmount,
+          priceCurrency
+        }
+      }
+    `;
+
+    return graphqlAction(
+      ...args,
+      { query }, [ 'getUserDepartures' ],
+      GET_TERMINALS_START,
+      GET_TERMINALS_SUCCESS,
+      GET_TERMINALS_ERROR,
+      '/v2/graphql'
+    );
+
+  };
+
+};
 
 export const getDiscoveries = (search, type) => {
 

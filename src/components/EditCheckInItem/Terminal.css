@@ -68,6 +68,17 @@
   justify-content: space-between;
 }
 
+
+.priceTypeSelection {
+  margin-top: 20px;
+  margin-right: 8px;
+}
+
+.priceTypeSelection .priceType {
+  height: 20px;
+  cursor: pointer;
+}
+
 .cost {
   display: flex;
 }
