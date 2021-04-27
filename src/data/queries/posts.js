@@ -1,3 +1,6 @@
+import { getLog, graphLog } from '../../core/log';
+const log = getLog('data/queries/posts');
+
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
@@ -6,8 +9,7 @@ import uuidValidate from 'uuid-validate';
 import moment from 'moment-timezone';
 import { getDistance } from 'geolib';
 import ExifReader from 'exifreader';
-import { getLog, graphLog } from '../../core/log';
-const log = getLog('data/queries/posts');
+import { unescape } from 'safe-string-literal';
 
 import { uploadVideo, deleteVideo } from '../../services/vimeoDataApi';
 
@@ -445,6 +447,12 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
   const newCheckIn = copyNonNull(checkInInput, {}, [
     'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'adminArea1', 'adminArea2', 'country', 'formattedAddress'
   ]);
+
+  newCheckIn.locality = unescape(newCheckIn.locality);
+  newCheckIn.adminArea1 = unescape(newCheckIn.adminArea1);
+  newCheckIn.adminArea2 = unescape(newCheckIn.adminArea1);
+  newCheckIn.country = unescape(newCheckIn.country);
+  newCheckIn.formattedAddress = unescape(newCheckIn.formattedAddress);
 
   const latitude = newCheckIn.latitude || existingCheckIn.latitude;
   const longitude = newCheckIn.longitude || existingCheckIn.longitude;
@@ -1063,7 +1071,7 @@ export const getFeedItem = async (request, checkIn) => {
   let userId = null;
   let user = null;
   if (request.user) {
-    user = await userRepository.getUser({ uuid: request.user.uuid });
+    user = await userRepository.getUser({ id: checkIn.id });
     if (user) {
       userId = await user.id;
     }
@@ -1136,7 +1144,7 @@ export const getFeedItem = async (request, checkIn) => {
         ...departure.toJSON(),
         localDateTime: getLocalDateTime(departure.createdAt, geoTz(departure.latitude, departure.longitude)[0])
       } : null,
-      user: {
+      user: user ? {
         uuid: user.uuid,
         photo: user.photo,
         avatar: user.avatar,
@@ -1144,7 +1152,7 @@ export const getFeedItem = async (request, checkIn) => {
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName
-      },
+      } : null,
       userImage: credentials.userImage,
       userUuid: credentials.userUuid,
       date: getLocalDateTime(checkIn.createdAt, timeZone),

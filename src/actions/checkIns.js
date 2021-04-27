@@ -3,6 +3,7 @@ import { graphqlAction } from './utils';
 import { geocode, extractPlaceFields } from '../services/linkService';
 import { getClientId } from "../core/utils";
 import { createQuery, getFeedItemQuery, getFeedItemsQuery } from '../data/queries/queries';
+import { escape } from 'safe-string-literal';
 
 import {
   SAVE_CHECKIN_START,
@@ -36,12 +37,12 @@ export const saveCheckIn = ({ checkIn }) => {
       };
 
       const checkInLocation = await geocodeCheckInLocation();
-      completedCheckIn.locality = checkInLocation.locality;
-      completedCheckIn.adminArea1 = checkInLocation.adminArea1;
-      completedCheckIn.adminArea2 = checkInLocation.adminArea2;
-      completedCheckIn.country = checkInLocation.country;
+      completedCheckIn.locality = escape(checkInLocation.locality);
+      completedCheckIn.adminArea1 = escape(checkInLocation.adminArea1);
+      completedCheckIn.adminArea2 = escape(checkInLocation.adminArea2);
+      completedCheckIn.country = escape(checkInLocation.country);
       if (checkIn.exif) {
-        completedCheckIn.formattedAddress = checkInLocation.result.formatted_address;
+        completedCheckIn.formattedAddress = escape(checkInLocation.result.formatted_address);
         delete completedCheckIn.exif;
       }
     }

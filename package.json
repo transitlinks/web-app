@@ -82,6 +82,7 @@
     "recompose": "^0.30.0",
     "redux": "^3.4.0",
     "redux-thunk": "^2.1.0",
+    "safe-string-literal": "^1.0.4",
     "sequelize": "^4.44.4",
     "sequelize-fixtures": "^1.2.0",
     "sharp": "^0.23.2",
