@@ -134,6 +134,13 @@ export default {
 
   saveCheckIn: async (checkIn) => {
 
+    const { locality, adminArea1, adminArea2, country, formattedAddress } = checkIn;
+    if (locality) checkIn.locality = locality.replaceAll("'", "\\'");
+    if (adminArea1) checkIn.adminArea1 = adminArea1.replaceAll("'", "\\'");
+    if (adminArea2) checkIn.adminArea2 = adminArea2.replaceAll("'", "\\'");
+    if (country) checkIn.country = country.replaceAll("'", "\\'");
+    if (formattedAddress) checkIn.formattedAddress = formattedAddress.replaceAll("'", "\\'");
+
     if (checkIn.id || checkIn.uuid) {
 
       const query = checkIn.id ? { id: checkIn.id } : { uuid: checkIn.uuid };
