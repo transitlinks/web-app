@@ -9,7 +9,7 @@ import uuidValidate from 'uuid-validate';
 import moment from 'moment-timezone';
 import { getDistance } from 'geolib';
 import ExifReader from 'exifreader';
-import { unescape } from 'safe-string-literal';
+import urlencode from 'urlencode';
 
 import { uploadVideo, deleteVideo } from '../../services/vimeoDataApi';
 
@@ -448,11 +448,11 @@ const saveCheckIn = async (checkInInput, clientId, request) => {
     'uuid', 'clientId', 'latitude', 'longitude', 'placeId', 'locality', 'adminArea1', 'adminArea2', 'country', 'formattedAddress'
   ]);
 
-  newCheckIn.locality = unescape(newCheckIn.locality);
-  newCheckIn.adminArea1 = unescape(newCheckIn.adminArea1);
-  newCheckIn.adminArea2 = unescape(newCheckIn.adminArea1);
-  newCheckIn.country = unescape(newCheckIn.country);
-  newCheckIn.formattedAddress = unescape(newCheckIn.formattedAddress);
+  newCheckIn.locality = urlencode.decode(newCheckIn.locality);
+  newCheckIn.adminArea1 = urlencode.decode(newCheckIn.adminArea1);
+  newCheckIn.adminArea2 = urlencode.decode(newCheckIn.adminArea1);
+  newCheckIn.country = urlencode.decode(newCheckIn.country);
+  newCheckIn.formattedAddress = urlencode.decode(newCheckIn.formattedAddress);
 
   const latitude = newCheckIn.latitude || existingCheckIn.latitude;
   const longitude = newCheckIn.longitude || existingCheckIn.longitude;
