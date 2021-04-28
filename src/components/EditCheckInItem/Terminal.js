@@ -120,9 +120,9 @@ const Terminal = ({
   const transportIdValue = (editTerminal.transportId || (priceTerminal || {}).transportId) || '';
   const descriptionValue = (editTerminal.description || (priceTerminal || {}).description) || '';
 
-  const priceTerminalUuidValue = editTerminal.priceTerminalUuid ||
+  let priceTerminalUuidValue = editTerminal.priceTerminalUuid ||
     (editTerminal.priceTerminal ? editTerminal.priceTerminal.uuid : undefined) ||
-    (userDepartures && userDepartures.length > 0) && userDepartures[0].uuid;
+    ((userDepartures && userDepartures.length > 0) ? userDepartures[0].uuid : undefined);
   console.log('editTerminal', priceTerminalUuidValue, userDepartures, transportValue);
   const save = () => {
 
@@ -325,7 +325,11 @@ const Terminal = ({
                                        getTerminal(value);
                                      }}>
                           {(userDepartures || []).filter(dep => dep.uuid !== editTerminal.uuid).map(dep => {
-                            const priceTerminalText = dep.transport + ' from ' + dep.locality + ' ' + dep.priceAmount + ' ' + dep.priceCurrency;
+                            let priceTerminalText = dep.transport + ' from ' + dep.locality;
+                            if (dep.priceAmount) {
+                              priceTerminalText += ' ' + dep.priceAmount + ' ' + dep.priceCurrency;
+                            }
+
                             return (
                               <MenuItem id={`price-terminal-${dep.uuid}`}
                                         key={`price-terminal-${dep.uuid}`}
