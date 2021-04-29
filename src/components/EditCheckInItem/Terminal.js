@@ -120,10 +120,12 @@ const Terminal = ({
   const transportIdValue = (editTerminal.transportId || (priceTerminal || {}).transportId) || '';
   const descriptionValue = (editTerminal.description || (priceTerminal || {}).description) || '';
 
+  const validUserDepartures = (userDepartures || []).filter(dep => dep.uuid !== editTerminal.uuid);
+
   let priceTerminalUuidValue = editTerminal.priceTerminalUuid ||
     (editTerminal.priceTerminal ? editTerminal.priceTerminal.uuid : undefined) ||
-    ((userDepartures && userDepartures.length > 0) ? userDepartures[0].uuid : undefined);
-  console.log('editTerminal', priceTerminalUuidValue, userDepartures, transportValue);
+    (validUserDepartures.length > 0 ? validUserDepartures[0].uuid : undefined);
+  console.log('editTerminal', priceTerminalUuidValue, validUserDepartures, transportValue);
   const save = () => {
 
     if (!transportValue && !linkedTerminal) {
@@ -298,7 +300,7 @@ const Terminal = ({
                 </div>
                 <div className={s.inputRow3}>
                   {
-                    (userDepartures && userDepartures.length > 0) &&
+                    (validUserDepartures && validUserDepartures.length > 0) &&
                     <div className={s.priceTypeSelection}>
                       <div className={s.priceType}>
                         <FontIcon className="material-icons" style={{ fontSize: '20px', color: editTerminal.priceType !== 'part' ? '#0074c2' : 'black' }} onClick={() => {
@@ -309,7 +311,7 @@ const Terminal = ({
                         <FontIcon className="material-icons" style={{ fontSize: '20px', color: editTerminal.priceType === 'part' ? '#0074c2' : 'black' }} onClick={() => {
                           setTerminalProperty('priceType', 'part');
                           //setTerminalProperty('priceTerminalUuid', userDepartures[0].uuid);
-                          getTerminal(priceTerminal ? priceTerminal.uuid : userDepartures[0].uuid);
+                          getTerminal(priceTerminal ? priceTerminal.uuid : validUserDepartures[0].uuid);
                         }}>dehaze</FontIcon>
                       </div>
                     </div>
@@ -324,7 +326,7 @@ const Terminal = ({
                                        setTerminalProperty('priceTerminalUuid', value);
                                        getTerminal(value);
                                      }}>
-                          {(userDepartures || []).filter(dep => dep.uuid !== editTerminal.uuid).map(dep => {
+                          {validUserDepartures.map(dep => {
                             let priceTerminalText = dep.transport + ' from ' + dep.locality;
                             if (dep.priceAmount) {
                               priceTerminalText += ' ' + dep.priceAmount + ' ' + dep.priceCurrency;
