@@ -27,7 +27,7 @@ const HomeView = ({ feed, query, transportTypes, post }) => {
 
   const userData = feed.user && {
     uuid: user,
-    userName: feed.user,
+    userName: feed.user.username || feed.user.firstName + ' ' + feed.user.lastName,
     userImage: feed.userImage
   };
 

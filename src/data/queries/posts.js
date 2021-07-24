@@ -1406,9 +1406,11 @@ export const PostQueryFields = {
 
       let userName = null;
       let userImage = null;
+      let userData = null;
       if (userId) {
         const userById = await userRepository.getById(userId);
         if (userById) {
+          userData = userById.toJSON();
           userName = userById.firstName + ' ' + userById.lastName;
           userImage = userById.photo;
         }
@@ -1429,7 +1431,7 @@ export const PostQueryFields = {
             checkIn: terminalCheckIn
           };
         }),
-        user: userName,
+        user: userData,
         locality: localityName,
         linkedLocality: linkedLocalityName,
         userImage,
