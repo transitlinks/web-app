@@ -24,7 +24,7 @@ const PostCollection = ({ discovery, checkInItem, transportTypes, posts, env, ch
   else if (groupType === 'user') postCountUrl = `/?user=${groupName}`;
 
   let connectionCountUrl = null;
-  if (groupType === 'locality') connectionCountUrl = `/links?locality=${groupName}&view=map`;
+  if (groupType === 'locality') connectionCountUrl = `/links?locality=${groupId}&view=map`;
   else if (groupType === 'trip') connectionCountUrl = `/links?trip=${groupId}&view=map`;
   else if (groupType === 'user') connectionCountUrl = `/links?user=${groupName}&view=map`;
 
