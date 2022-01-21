@@ -41,7 +41,7 @@
     "isomorphic-style-loader": "1.0.0",
     "jdenticon": "^3.0.1",
     "jsonwebtoken": "^7.0.1",
-    "log4js": "^0.6.38",
+    "log4js": "^6.4.0",
     "markdown-it": "^7.0.0",
     "material-design-icons": "^2.2.3",
     "material-icons": "^0.1.0",
