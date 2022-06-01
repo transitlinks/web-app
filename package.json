@@ -85,7 +85,7 @@
     "safe-string-literal": "^1.0.4",
     "sequelize": "^4.44.4",
     "sequelize-fixtures": "^1.2.0",
-    "sharp": "^0.23.2",
+    "sharp": "^0.30.5",
     "source-map-support": "0.4.0",
     "sqlite3": "^3.1.4",
     "universal-router": "1.2.2",
